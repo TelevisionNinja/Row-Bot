@@ -1,2 +1,2 @@
 # Row-Bot
-1st discord bot
+My 1st discord bot
