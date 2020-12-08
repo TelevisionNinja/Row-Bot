@@ -1,8 +1,8 @@
-import Client from 'discord.js';
-import { prefix, token } from 'config.json';
-import fileSys from 'fs';
+const Discord = require('discord.js');
+const fileSys = require('fs');
+const { prefix, token } = require('./config.json');
 
-const client = new Client();
+const client = new Discord.Client();
 client.login(token);
 
 const cooldowns = new Discord.Collection();
@@ -36,7 +36,7 @@ client.on('message', msg => {
         return;
     }
 
-    const command = client.commands.get(commandName);
+    const command = client.commands.get(userCommand);
 
     if (command.args && !args.length) {
         msg.channel.send(`Provide arguments\nex: ${prefix}${command.name} ${command.usage}`);
@@ -64,8 +64,8 @@ client.on('message', msg => {
         }
     }
 
-    timestamps.set(message.author.id, now);
-    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+    timestamps.set(msg.author.id, now);
+    setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
 
     //--------------------------------------------------------------------------------
 
