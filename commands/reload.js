@@ -14,6 +14,16 @@ module.exports = {
             return;
         }
 
-        msg.channel.send(`\'${commandName}\' reloaded`);
+        delete require.cache[require.resolve(`./${command.name}.js`)];
+
+        try {
+            const newCommand = require(`./${command.name}.js`);
+            msg.client.commands.set(newCommand.name, newCommand);
+        }
+        catch (error) {
+            msg.channel.send('Reload failed');
+        }
+
+        msg.channel.send(`\'${commandName}\' was reloaded`);
     }
 };
