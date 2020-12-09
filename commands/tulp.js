@@ -5,7 +5,14 @@ module.exports = {
     usage: '<message>',
     cooldown: 0,
     async execute(msg, args) {
-        await msg.delete();
+        try {
+            await msg.delete();
+        }
+        catch (error) {
+            msg.channel.send('I don\'t permission to do that command :cry:');
+            return;
+        }
+
         if (args.length) {
             msg.channel.send(args.join(' '));
         }
