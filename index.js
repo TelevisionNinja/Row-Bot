@@ -59,7 +59,7 @@ client.on('message', msg => {
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
-            msg.reply(`Please let the command cooldown in ${timeLeft.toFixed(1)} second(s)`);
+            msg.channel.send(`Please let the command cooldown in ${timeLeft.toFixed(1)} second(s)`);
             return;
         }
     }
