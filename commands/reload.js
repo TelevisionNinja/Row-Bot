@@ -22,6 +22,7 @@ module.exports = {
         }
         catch (error) {
             msg.channel.send('Reload failed');
+            return;
         }
 
         msg.channel.send(`\'${commandName}\' was reloaded`);
