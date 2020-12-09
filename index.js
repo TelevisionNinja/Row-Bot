@@ -39,7 +39,7 @@ client.on('message', msg => {
     const command = client.commands.get(userCommand);
 
     if (command.args && !args.length) {
-        msg.channel.send(`Provide arguments\nex: ${prefix}${command.name} ${command.usage}`);
+        msg.channel.send(`Please provide arguments\nex: ${prefix}${command.name} ${command.usage}`);
         return;
     }
 
@@ -59,7 +59,7 @@ client.on('message', msg => {
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
-            msg.channel.send(`Please let the command cooldown in ${timeLeft.toFixed(1)} second(s)`);
+            msg.channel.send(`Please let me cooldown for ${timeLeft.toFixed(1)} second(s)`);
             return;
         }
     }
@@ -73,6 +73,6 @@ client.on('message', msg => {
         command.execute(msg, args);
     }
     catch (error) {
-        msg.channel.send('I couldn\'t do that command for some reason');
+        msg.channel.send('I couldn\'t do that command for some reason :cry:');
     }
 });
