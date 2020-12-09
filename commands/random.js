@@ -5,16 +5,16 @@ module.exports = {
     usage: '<min> <max>',
     cooldown: 1,
     execute(msg, args) {
-        var min = 0,
+        let min = 0,
             max = 0,
             result = 0;
 
         if (args.length === 1) {
-            max = args[0];
+            max = parseInt(args[0]);
         }
         else {
-            min = args[0];
-            max = args[1];
+            min = parseInt(args[0]);
+            max = parseInt(args[1]);
         }
 
         if (max === min) {
@@ -22,7 +22,7 @@ module.exports = {
         }
         else {
             if (min > max) {
-                var temp = max;
+                let temp = max;
                 max = min;
                 min = temp;
             }
