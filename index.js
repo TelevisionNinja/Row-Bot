@@ -27,12 +27,28 @@ for (let i = 0; i < noncommandFiles.length; i++) {
 }
 
 //--------------------------------------------------------------------------------
-// commands
+
 client.on('message', msg => {
-    if (!msg.content.startsWith(prefix) || msg.author.bot) {
+    if (msg.author.bot) {
         return;
     }
 
+    // noncommands
+    if (!msg.content.startsWith(prefix)) {
+        const name = msg.content.split(' ');
+
+        if (aliases.indexOf(name[name.length - 1]) > -1) {
+            for (let i = 0; i < client.noncommands.length; i++) {
+                if (client.noncommands[i].execute(msg)) {
+                    return;
+                }
+            }
+        }
+
+        return;
+    }
+
+    // commands
     //--------------------------------------------------------------------------------
 
     const args = msg.content.slice(prefix.length).trim().split(' ');
@@ -82,23 +98,5 @@ client.on('message', msg => {
     }
     catch (error) {
         msg.channel.send('I couldn\'t do that command for some reason :cry:');
-    }
-});
-
-//--------------------------------------------------------------------------------
-// noncommands
-client.on('message', msg => {
-    if (msg.content.startsWith(prefix) || msg.author.bot) {
-        return;
-    }
-
-    const name = msg.content.split(' ');
-
-    if (aliases.indexOf(name[name.length - 1]) > -1) {
-        for (let i = 0; i < client.noncommands.length; i++) {
-            if (client.noncommands[i].execute(msg)) {
-                return;
-            }
-        }
     }
 });
