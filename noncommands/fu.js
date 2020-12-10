@@ -1,6 +1,5 @@
 module.exports = {
     description: 'Reply to swear',
-    args: false,
     execute(msg) {
         const { fu, sadreplies } = require('../config.json');
 

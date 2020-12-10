@@ -1,6 +1,5 @@
 module.exports = {
     description: 'Say hi',
-    args: false,
     execute(msg) {
         const { greetings } = require('../config.json');
         for (let i = 0; i < greetings.length; i++) {
