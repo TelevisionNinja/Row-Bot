@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const fileSys = require('fs');
-const { prefix, token } = require('./config.json');
+const { prefix, token, aliases } = require('./config.json');
 
 const client = new Discord.Client();
 client.login(token);
@@ -12,14 +12,22 @@ client.on('ready', () => {
 });
 
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
+const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 
 client.commands = new Discord.Collection();
+client.noncommands = [];
 
 for (const aFile of commandFiles) {
     const command = require(`./commands/${aFile}`);
     client.commands.set(command.name, command);
 }
 
+for (let i = 0; i < noncommandFiles.length; i++) {
+    client.noncommands[i] = require(`./noncommands/${noncommandFiles[i]}`);
+}
+
+//--------------------------------------------------------------------------------
+// commands
 client.on('message', msg => {
     if (!msg.content.startsWith(prefix) || msg.author.bot) {
         return;
@@ -74,5 +82,23 @@ client.on('message', msg => {
     }
     catch (error) {
         msg.channel.send('I couldn\'t do that command for some reason :cry:');
+    }
+});
+
+//--------------------------------------------------------------------------------
+// noncommands
+client.on('message', msg => {
+    if (msg.content.startsWith(prefix) || msg.author.bot) {
+        return;
+    }
+
+    const name = msg.content.split(' ');
+
+    if (aliases.indexOf(name[name.length - 1]) > -1) {
+        for (let i = 0; i < client.noncommands.length; i++) {
+            if (client.noncommands[i].execute(msg)) {
+                return;
+            }
+        }
     }
 });
