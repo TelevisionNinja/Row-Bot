@@ -17,8 +17,9 @@ module.exports = {
         for (let i = 0; i < fu.length; i++) {
             if (msg.content.toLowerCase().includes(fu[i].toLowerCase())) {
                 msg.channel.send(replies[Math.floor(Math.random() * (replies.length - 1))]);
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }
