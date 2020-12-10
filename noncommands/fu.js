@@ -2,21 +2,11 @@ module.exports = {
     description: 'Reply to swear',
     args: false,
     execute(msg) {
-        const fu = ["fuck you",
-            "fuk you",
-            "fuck u",
-            "fuk u"];
-        const replies = ["aww :(",
-            "aww :cry:",
-            "*sniff sniff*  :cry:",
-            "Wha- Why?",
-            ":cry:",
-            "I... I'm sorry",
-            "I... I'm sorry :cry:"];
+        const { fu, sadreplies } = require('../config.json');
 
         for (let i = 0; i < fu.length; i++) {
             if (msg.content.toLowerCase().includes(fu[i].toLowerCase())) {
-                msg.channel.send(replies[Math.floor(Math.random() * (replies.length - 1))]);
+                msg.channel.send(sadreplies[Math.floor(Math.random() * (sadreplies.length - 1))]);
                 return true;
             }
         }
