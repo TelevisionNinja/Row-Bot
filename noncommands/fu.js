@@ -6,9 +6,11 @@ module.exports = {
         for (let i = 0; i < fu.length; i++) {
             if (msg.content.toLowerCase().includes(fu[i].toLowerCase())) {
                 msg.channel.send(sadreplies[Math.floor(Math.random() * (sadreplies.length - 1))]);
+                
                 return true;
             }
         }
+
         return false;
     }
 }
