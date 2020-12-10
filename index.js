@@ -1,12 +1,13 @@
 const Discord = require('discord.js');
 const fileSys = require('fs');
-const { prefix, token, aliases } = require('./config.json');
+const { prefix, token, activityStatus, aliases } = require('./config.json');
 
 const client = new Discord.Client();
 client.login(token);
 
 client.on('ready', () => {
     console.log('Row Bot is up');
+    client.user.setActivity(activityStatus, { type: 'PLAYING' });
 });
 
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));

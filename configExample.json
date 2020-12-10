@@ -1,6 +1,7 @@
 {
     "prefix" : ".",
     "token" : "",
+    "activityStatus" : "& planning parties",
     "aliases" : ["robot", "row bot", "roe bot"],
     "greetings" : ["Hi",
         "Hello",
@@ -34,7 +35,7 @@
         "fuk you",
         "fuck u",
         "fuk u"],
-    "sadreplies" : ["aww :(",
+    "sadReplies" : ["aww :(",
         "aww :cry:",
         "*sniff sniff*  :cry:",
         "Wha- Why?",
