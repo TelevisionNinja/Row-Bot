@@ -5,8 +5,6 @@ const { prefix, token, aliases } = require('./config.json');
 const client = new Discord.Client();
 client.login(token);
 
-const cooldowns = new Discord.Collection();
-
 client.on('ready', () => {
     console.log('Row Bot is up');
 });
@@ -14,6 +12,7 @@ client.on('ready', () => {
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 
+const cooldowns = new Discord.Collection();
 client.commands = new Discord.Collection();
 client.noncommands = [];
 
@@ -98,5 +97,6 @@ client.on('message', msg => {
     }
     catch (error) {
         msg.channel.send('I couldn\'t do that command for some reason :cry:');
+        console.log(error);
     }
 });

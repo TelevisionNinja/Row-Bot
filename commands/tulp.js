@@ -10,6 +10,7 @@ module.exports = {
         }
         catch (error) {
             msg.channel.send('I don\'t permission to do that command :cry:');
+            console.log(error);
             return;
         }
 

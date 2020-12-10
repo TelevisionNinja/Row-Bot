@@ -22,6 +22,7 @@ module.exports = {
         }
         catch (error) {
             msg.channel.send('Reload failed');
+            console.log(error);
             return;
         }
 
