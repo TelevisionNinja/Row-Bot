@@ -1,5 +1,5 @@
 module.exports = {
-    description: 'Say hi',
+    description: 'Reply to swear',
     args: false,
     execute(msg) {
         const fu = ["fuck you",
