@@ -36,7 +36,7 @@ client.on('message', msg => {
     // noncommands
     if (!msg.content.startsWith(prefix)) {
         for (let i = 0; i < aliases.length; i++) {
-            if (msg.content.toLowerCase().endsWith(aliases[i].toLowerCase())) {
+            if (msg.content.toLowerCase().includes(aliases[i].toLowerCase())) {
                 for (let i = 0; i < client.noncommands.length; i++) {
                     const { isNoncommand, replyStr } = client.noncommands[i].execute(msg);
 
