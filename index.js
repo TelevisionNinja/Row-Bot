@@ -35,16 +35,16 @@ client.on('message', msg => {
 
     // noncommands
     if (!msg.content.startsWith(prefix)) {
-        const name = msg.content.split(' ');
-
-        if (aliases.indexOf(name[name.length - 1]) > -1) {
-            for (let i = 0; i < client.noncommands.length; i++) {
-                if (client.noncommands[i].execute(msg)) {
-                    return;
+        for (let i = 0; i < aliases.length; i++) {
+            if (msg.content.toLowerCase().endsWith(aliases[i].toLowerCase())) {
+                for (let i = 0; i < client.noncommands.length; i++) {
+                    if (client.noncommands[i].execute(msg)) {
+                        return;
+                    }
                 }
+                return;
             }
         }
-
         return;
     }
 
