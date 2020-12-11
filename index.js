@@ -38,7 +38,16 @@ client.on('message', msg => {
         for (let i = 0; i < aliases.length; i++) {
             if (msg.content.toLowerCase().endsWith(aliases[i].toLowerCase())) {
                 for (let i = 0; i < client.noncommands.length; i++) {
-                    if (client.noncommands[i].execute(msg)) {
+                    const { isNoncommand, replyStr } = client.noncommands[i].execute(msg);
+
+                    if (isNoncommand) {
+                        msg.channel.startTyping();
+
+                        setTimeout(() => {
+                            msg.channel.stopTyping();
+                            msg.channel.send(replyStr);
+                        }, replyStr.length * 50);
+
                         return;
                     }
                 }

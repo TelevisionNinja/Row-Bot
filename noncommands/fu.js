@@ -3,14 +3,15 @@ module.exports = {
     execute(msg) {
         const { fu, sadReplies } = require('../config.json');
 
+        let isNoncommand = false;
+        let replyStr = '';
+
         for (let i = 0; i < fu.length; i++) {
             if (msg.content.toLowerCase().includes(fu[i].toLowerCase())) {
-                msg.channel.send(sadReplies[Math.floor(Math.random() * (sadReplies.length - 1))]);
-                
-                return true;
+                return { isNoncommand: true, replyStr: sadReplies[Math.floor(Math.random() * (sadReplies.length - 1))] };
             }
         }
 
-        return false;
+        return { isNoncommand, replyStr };
     }
 }
