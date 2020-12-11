@@ -41,12 +41,14 @@ client.on('message', msg => {
                     const { isNoncommand, replyStr } = client.noncommands[i].execute(msg);
 
                     if (isNoncommand) {
-                        msg.channel.startTyping();
-
                         setTimeout(() => {
-                            msg.channel.stopTyping();
-                            msg.channel.send(replyStr);
-                        }, replyStr.length * 50);
+                            msg.channel.startTyping();
+
+                            setTimeout(() => {
+                                msg.channel.stopTyping();
+                                msg.channel.send(replyStr);
+                            }, replyStr.length * 120);
+                        }, 950);
 
                         return;
                     }
