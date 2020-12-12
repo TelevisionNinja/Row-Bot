@@ -48,17 +48,23 @@ client.on('message', msg => {
         //--------------------------------------------------------------------------------
         // noncommands
 
+        let nonCommandBool = false;
+
         for (let i = 0; i < aliases.length; i++) {
             if (msgStr.includes(aliases[i].toLowerCase())) {
+                nonCommandBool = true;
+
                 for (let j = 0; j < client.noncommands.length; j++) {
                     const { isNoncommand, replyStr } = client.noncommands[j].execute(msgStr);
 
                     if (isNoncommand) {
-                        hasReply = true;
+                        replyBool = true;
                         botReplay = replyStr;
                         break;
                     }
                 }
+
+                nonCommandBool = false;
                 break;
             }
         }
@@ -66,13 +72,15 @@ client.on('message', msg => {
         //--------------------------------------------------------------------------------
         // general message
 
-        for (let i = 0; i < client.genMsg.length; i++) {
-            const { hasReply, replyStr } = client.genMsg[i].execute(msgStr);
-
-            if (hasReply) {
-                replyBool = true;
-                botReplay = replyStr;
-                break;
+        if (!nonCommandBool) {
+            for (let i = 0; i < client.genMsg.length; i++) {
+                const { hasReply, replyStr } = client.genMsg[i].execute(msgStr);
+    
+                if (hasReply) {
+                    replyBool = true;
+                    botReplay = replyStr;
+                    break;
+                }
             }
         }
 
