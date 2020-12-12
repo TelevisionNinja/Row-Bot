@@ -88,7 +88,11 @@
         "😘",
         "❤️",
         "🥰"],
-    "goodnights" : ["goodnight",
-        "night night",
-        "sleep tight"]
+    "goodnights" : ["Goodnight",
+        "Night night",
+        "Sleep tight"],
+    "goodMornings" : ["Good morning",
+        "Morning",
+        "Mornin",
+        "Mornin'"]
 }
