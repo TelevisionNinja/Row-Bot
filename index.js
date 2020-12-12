@@ -12,10 +12,12 @@ client.on('ready', () => {
 
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
+const genMsgFiles = fileSys.readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
 
 const cooldowns = new Discord.Collection();
 client.commands = new Discord.Collection();
 client.noncommands = [];
+client.genMsg = [];
 
 for (const aFile of commandFiles) {
     const command = require(`./commands/${aFile}`);
@@ -26,6 +28,10 @@ for (let i = 0; i < noncommandFiles.length; i++) {
     client.noncommands[i] = require(`./noncommands/${noncommandFiles[i]}`);
 }
 
+for (let i = 0; i < genMsgFiles.length; i++) {
+    client.genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
+}
+
 //--------------------------------------------------------------------------------
 
 client.on('message', msg => {
@@ -33,37 +39,64 @@ client.on('message', msg => {
         return;
     }
 
-    // noncommands
-    if (!msg.content.startsWith(prefix)) {
+    let msgStr = msg.content.toLowerCase();
+
+    if (!msgStr.startsWith(prefix)) {
+        let botReplay = '';
+        let replyBool = false;
+
+        //--------------------------------------------------------------------------------
+        // noncommands
+
         for (let i = 0; i < aliases.length; i++) {
-            if (msg.content.toLowerCase().includes(aliases[i].toLowerCase())) {
-                for (let i = 0; i < client.noncommands.length; i++) {
-                    const { isNoncommand, replyStr } = client.noncommands[i].execute(msg);
+            if (msgStr.includes(aliases[i].toLowerCase())) {
+                for (let j = 0; j < client.noncommands.length; j++) {
+                    const { isNoncommand, replyStr } = client.noncommands[j].execute(msgStr);
 
                     if (isNoncommand) {
-                        setTimeout(() => {
-                            msg.channel.startTyping();
-
-                            setTimeout(() => {
-                                msg.channel.stopTyping();
-                                msg.channel.send(replyStr);
-                            }, replyStr.length * 120);
-                        }, 950);
-
-                        return;
+                        hasReply = true;
+                        botReplay = replyStr;
+                        break;
                     }
                 }
-                return;
+                break;
             }
         }
+
+        //--------------------------------------------------------------------------------
+        // general message
+
+        for (let i = 0; i < client.genMsg.length; i++) {
+            const { hasReply, replyStr } = client.genMsg[i].execute(msgStr);
+
+            if (hasReply) {
+                replyBool = true;
+                botReplay = replyStr;
+                break;
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+
+        if (replyBool) {
+            setTimeout(() => {
+                msg.channel.startTyping();
+    
+                setTimeout(() => {
+                    msg.channel.stopTyping();
+                    msg.channel.send(botReplay);
+                }, botReplay.length * 115); // time before send
+            }, 950); // time before typing
+        }
+
         return;
     }
 
     // commands
     //--------------------------------------------------------------------------------
 
-    const args = msg.content.slice(prefix.length).trim().split(' ');
-    const userCommand = args.shift().toLowerCase();
+    const args = msgStr.slice(prefix.length).trim().split(' ');
+    const userCommand = args.shift();
 
     //--------------------------------------------------------------------------------
 
