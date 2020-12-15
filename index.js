@@ -3,12 +3,8 @@ const fileSys = require('fs');
 const { prefix, token, activityStatus, aliases } = require('./config.json');
 
 const client = new Discord.Client();
-client.login(token);
 
-client.on('ready', () => {
-    console.log('Row Bot is up');
-    client.user.setActivity(activityStatus, { type: 'PLAYING' });
-});
+//--------------------------------------------------------------------------------
 
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
@@ -31,6 +27,15 @@ for (let i = 0; i < noncommandFiles.length; i++) {
 for (let i = 0; i < genMsgFiles.length; i++) {
     client.genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
 }
+
+//--------------------------------------------------------------------------------
+
+client.login(token);
+
+client.on('ready', () => {
+    console.log('Row Bot is up');
+    client.user.setActivity(activityStatus, { type: 'PLAYING' });
+});
 
 //--------------------------------------------------------------------------------
 
@@ -94,7 +99,7 @@ client.on('message', msg => {
                     msg.channel.stopTyping();
                     msg.channel.send(botReplay);
                 }, botReplay.length * 100); // time before send
-            }, 900); // time before typing
+            }, 950); // time before typing
         }
 
         return;
