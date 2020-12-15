@@ -9,7 +9,7 @@ module.exports = {
             await msg.delete();
         }
         catch (error) {
-            msg.channel.send('I don\'t permission to do that command :cry:');
+            msg.channel.send('I don\'t permission to do that command 😢');
             console.log(error);
             return;
         }

@@ -93,8 +93,8 @@ client.on('message', msg => {
                 setTimeout(() => {
                     msg.channel.stopTyping();
                     msg.channel.send(botReplay);
-                }, botReplay.length * 115); // time before send
-            }, 950); // time before typing
+                }, botReplay.length * 100); // time before send
+            }, 900); // time before typing
         }
 
         return;
@@ -149,7 +149,7 @@ client.on('message', msg => {
         command.execute(msg, args);
     }
     catch (error) {
-        msg.channel.send('I couldn\'t do that command for some reason :cry:');
+        msg.channel.send('I couldn\'t do that command for some reason 😢');
         console.log(error);
     }
 });
