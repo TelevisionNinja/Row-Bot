@@ -4,5 +4,6 @@
     "activityStatus" : "",
     "aliases" : ["robot",
         "row bot",
-        "roe bot"]
+        "roe bot"],
+    "tenorAPIKey" : ""
 }
