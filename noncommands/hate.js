@@ -2,6 +2,7 @@ const {
     hate,
     sadReplies
 } = require('../messages.json');
+const rand = require('../lib/randomFunc');
 
 module.exports = {
     description: 'Reply to hate',
@@ -13,7 +14,7 @@ module.exports = {
             if (msg.includes(hate[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
-                    replyStr: sadReplies[Math.floor(Math.random() * (sadReplies.length - 1))]
+                    replyStr: sadReplies[rand.randomInt(sadReplies.length)]
                 };
             }
         }
