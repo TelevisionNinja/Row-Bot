@@ -5,3 +5,4 @@ Uses
 - discord.js
 - node.js
 - axios
+- xml2js
