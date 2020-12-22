@@ -3,7 +3,7 @@ const {
     loveMes,
     loveMeReplies
 } = require('../messages.json');
-const rand = require('../lib/randomFunc');
+const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: 'reply to love you\'s',
@@ -15,7 +15,7 @@ module.exports = {
             if (msg.includes(loves[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
-                    replyStr: loves[rand.randomInt(loves.length)]
+                    replyStr: loves[rand.randomCrypto(loves.length)]
                 };
             }
         }
@@ -24,7 +24,7 @@ module.exports = {
             if (msg.includes(loveMes[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
-                    replyStr: loveMeReplies[rand.randomInt(loveMeReplies.length)]
+                    replyStr: loveMeReplies[rand.randomMath(loveMeReplies.length)]
                 };
             }
         }

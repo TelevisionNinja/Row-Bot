@@ -1,5 +1,5 @@
 const { farewells } = require('../messages.json');
-const rand = require('../lib/randomFunc');
+const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: 'Say goodbye',
@@ -11,7 +11,7 @@ module.exports = {
             if (msg.includes(farewells[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
-                    replyStr: farewells[rand.randomInt(farewells.length)]
+                    replyStr: farewells[rand.randomMath(farewells.length)]
                 };
             }
         }

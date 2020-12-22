@@ -1,4 +1,4 @@
-const rand = require('../lib/randomFunc');
+const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     name: 'random',
@@ -20,19 +20,14 @@ module.exports = {
             max = parseInt(args[1]);
         }
 
-        if (max === min) {
-            result = max;
-        }
-        else {
-            if (min > max) {
-                const temp = max;
-                max = min;
-                min = temp;
-            }
-
-            result = rand.randomInt(min, max + 1);
+        if (min > max) {
+            const temp = max;
+            max = min;
+            min = temp;
         }
 
+        result = rand.randomMath(min, max + 1);
+        
         msg.channel.send(`Your random number is ${result}`);
     }
 }

@@ -1,5 +1,5 @@
 const { tenorAPIKey } = require('../config.json');
-const rand = require('../lib/randomFunc');
+const rand = require('../lib/randomFunctions.js');
 const axios = require('axios');
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
             const gifArr = response.data.results;
 
             if (gifArr.length) {
-                msg.channel.send(gifArr[rand.randomInt(gifArr.length)].url);
+                msg.channel.send(gifArr[rand.randomMath(gifArr.length)].url);
             }
             else {
                 msg.channel.send('Aww there\'s no results 😢');
