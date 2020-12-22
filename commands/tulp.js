@@ -1,5 +1,6 @@
 module.exports = {
     name: 'tulp',
+    fileName: __filename,
     description: 'Testing',
     args: false,
     usage: '<message>',
