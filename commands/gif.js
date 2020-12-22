@@ -16,7 +16,13 @@ module.exports = {
         try {
             const response = await axios.get(url);
             const gifArr = response.data.results;
-            msg.channel.send(gifArr[rand.randomInt(gifArr.length)].url);
+
+            if (gifArr.length) {
+                msg.channel.send(gifArr[rand.randomInt(gifArr.length)].url);
+            }
+            else {
+                msg.channel.send('Aww there\'s no results 😢');
+            }
         }
         catch (error) {
             console.log(error);
