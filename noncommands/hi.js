@@ -1,4 +1,5 @@
 const { greetings } = require('../messages.json');
+const rand = require('../lib/randomFunc');
 
 module.exports = {
     description: 'Say hi',
@@ -10,7 +11,7 @@ module.exports = {
             if (msg.includes(greetings[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
-                    replyStr: greetings[Math.floor(Math.random() * (greetings.length - 1))]
+                    replyStr: greetings[rand.randomInt(greetings.length)]
                 };
             }
         }
