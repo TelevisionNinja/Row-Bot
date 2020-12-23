@@ -12,15 +12,18 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         const tags = args.join('+');
-        let url = `${rule}&tags=${tags}`;
+        let pid = rand.randomMath(2001);
+        let url = `${rule}${tags}&pid=`;
 
         try {
-            let response = await axios.get(url);
+            let response = await axios.get(`${url}${pid}`);
             let XMLStr = response.data;
 
             let postCount = 0;
+            let postArr = [];
             parseString(XMLStr, (err, result) => {
                 postCount = parseInt(result.posts['$'].count);
+                postArr = result.posts.post;
             });
 
             if (postCount === 0) {
@@ -28,23 +31,16 @@ module.exports = {
                 return;
             }
 
-            postCount = ~~(postCount / 100);
-            let pageMax = 2000;
+            if (typeof postArr === 'undefined') {
+                pid = rand.randomMath(~~(postCount / 100) + 1);
 
-            if (postCount < pageMax) {
-                pageMax = postCount;
+                response = await axios.get(`${url}${pid}`);
+                XMLStr = response.data;
+
+                parseString(XMLStr, (err, result) => {
+                    postArr = result.posts.post;
+                });
             }
-
-            const pid = rand.randomMath(pageMax + 1);
-            url = `${url}&pid=${pid}`;
-
-            response = await axios.get(url);
-            XMLStr = response.data;
-
-            let postArr = [];
-            parseString(XMLStr, (err, result) => {
-                postArr = result.posts.post;
-            });
 
             const randIndex = rand.randomMath(postArr.length);
             const img = postArr[randIndex]['$'];
