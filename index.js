@@ -132,7 +132,7 @@ client.on('message', msg => {
     }
     
     const timestamps = cooldowns.get(command.name);
-    const cooldownAmount = (command.cooldown || 1) * 1000;
+    const cooldownAmount = command.cooldown * 1000;
     const now = Date.now();
     
     if (timestamps.has(msg.author.id)) {
