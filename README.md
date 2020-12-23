@@ -1,7 +1,7 @@
 # Row-Bot
 My 1st discord bot
 
-Uses
+Dependencies:
 - discord.js
 - node.js
 - axios
