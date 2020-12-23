@@ -5,6 +5,7 @@ const { prefix, token, activityStatus, aliases } = require('./config.json');
 const client = new Discord.Client();
 
 //--------------------------------------------------------------------------------
+// load commands, noncommands, and general messages
 
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
@@ -29,6 +30,7 @@ for (let i = 0; i < genMsgFiles.length; i++) {
 }
 
 //--------------------------------------------------------------------------------
+// login bot
 
 client.login(token);
 
@@ -90,6 +92,7 @@ client.on('message', msg => {
         }
 
         //--------------------------------------------------------------------------------
+        // reply
 
         if (replyBool) {
             setTimeout(() => {
@@ -105,13 +108,14 @@ client.on('message', msg => {
         return;
     }
 
-    // commands
     //--------------------------------------------------------------------------------
+    // split command and arguments
 
     const args = msgStr.slice(prefix.length).trim().split(' ');
     const userCommand = args.shift();
 
     //--------------------------------------------------------------------------------
+    // get command
 
     if (!client.commands.has(userCommand)) {
         return;
@@ -149,6 +153,7 @@ client.on('message', msg => {
     setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
 
     //--------------------------------------------------------------------------------
+    // execute command
 
     try {
         command.execute(msg, args);
