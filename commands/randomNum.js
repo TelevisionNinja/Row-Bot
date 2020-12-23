@@ -6,7 +6,7 @@ module.exports = {
     description: 'Gives a random value within a given range',
     args: true,
     usage: '<min> or <min> <max>',
-    cooldown: 1,
+    cooldown: 0,
     execute(msg, args) {
         let min = 0,
             max = 0,
