@@ -11,7 +11,7 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         const searchTerms = args.join(' ');
-        const url = `https://api.tenor.com/v1/search?q=${searchTerms}&key=${tenorAPIKey}&limit=50`;
+        const url = `https://api.tenor.com/v1/search?q=${searchTerms}&key=${tenorAPIKey}&limit=50&media_filter=minimal`;
 
         try {
             const response = await axios.get(url);
