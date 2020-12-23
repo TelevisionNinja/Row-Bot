@@ -11,7 +11,10 @@ module.exports = {
     usage: '<tags_w/_spaces_need_underscores>',
     cooldown: 1,
     async execute(msg, args) {
+        // tags are separated by '+'
         const tags = args.join('+');
+
+        // the max number of pages for the api is 2000
         let pid = rand.randomMath(2001);
         let url = `${rule}${tags}&pid=`;
 
@@ -22,6 +25,8 @@ module.exports = {
             let postCount = 0;
             let postArr = [];
             parseString(XMLStr, (err, result) => {
+                // obj's are named '$'
+                // 'count' is # of images for the tags provided
                 postCount = parseInt(result.posts['$'].count);
                 postArr = result.posts.post;
             });
@@ -32,6 +37,7 @@ module.exports = {
             }
 
             if (typeof postArr === 'undefined') {
+                // the site has a max of 100 posts per request
                 pid = rand.randomMath(~~(postCount / 100) + 1);
 
                 response = await axios.get(`${url}${pid}`);
