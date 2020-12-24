@@ -52,6 +52,7 @@ module.exports = {
             const img = postArr[randIndex]['$'];
 
             msg.channel.send(img.file_url);
+            msg.channel.send(`Results: ${postCount}`);
         }
         catch (error) {
             console.log(error);
