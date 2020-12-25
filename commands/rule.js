@@ -11,11 +11,11 @@ module.exports = {
     fileName: __filename,
     description: 'send rule pics',
     args: true,
-    usage: '<tags_w/_spaces_need_underscores>',
+    usage: '<tags separated by commas>',
     cooldown: 1,
     async execute(msg, args) {
         // tags are separated by '+'
-        const tags = args.join('+');
+        const tags = args.join('_').split(',_').join('+');
 
         const url0 = `${rule0}${tags}&pid=`;
         const url1 = `${rule1}${tags}&pid=`;
