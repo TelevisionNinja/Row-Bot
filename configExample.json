@@ -1,11 +1,13 @@
 {
-    "prefix" : ".",
+    "prefix" : "",
     "token" : "",
     "activityStatus" : "",
-    "aliases" : ["robot",
-        "row bot",
-        "roe bot"],
+    "aliases" : [""],
+
     "tenorAPIKey" : "",
     "rule0" : "",
-    "rule1" : ""
+    "rule1" : "",
+
+    "ruleAliases" : [""],
+    "tulpAliases" : [""]
 }

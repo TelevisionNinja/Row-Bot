@@ -3,14 +3,17 @@ const axios = require('axios');
 const parseString = require('xml2js').parseString;
 const {
     rule0,
-    rule1
+    rule1,
+    ruleAliases
 } = require('../config.json');
 
 module.exports = {
     name: 'rule',
+    aliases: ruleAliases,
     fileName: __filename,
-    description: 'send rule pics',
+    description: 'Send a rule pic',
     args: true,
+    guildOnly: false,
     usage: '<tags separated by commas>',
     cooldown: 1,
     async execute(msg, args) {

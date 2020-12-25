@@ -1,8 +1,12 @@
+const { tulpAliases } = require('../config.json');
+
 module.exports = {
     name: 'tulp',
+    aliases: tulpAliases,
     fileName: __filename,
-    description: 'Testing',
+    description: 'Send a tulp message',
     args: false,
+    guildOnly: true,
     usage: '<message>',
     cooldown: 0,
     async execute(msg, args) {
@@ -10,7 +14,6 @@ module.exports = {
             await msg.delete();
         }
         catch (error) {
-            msg.channel.send('I don\'t permission to do that command 😢');
             console.log(error);
             return;
         }

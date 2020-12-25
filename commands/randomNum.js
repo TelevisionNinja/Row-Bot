@@ -2,10 +2,12 @@ const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     name: 'random',
+    aliases: [],
     fileName: __filename,
     description: 'Gives a random value within a given range',
     args: true,
-    usage: '<min> or <min> <max>',
+    guildOnly: false,
+    usage: '<max> or <min> <max>',
     cooldown: 0,
     execute(msg, args) {
         let min = 0,

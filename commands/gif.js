@@ -4,9 +4,11 @@ const axios = require('axios');
 
 module.exports = {
     name: 'gif',
+    aliases: [],
     fileName: __filename,
-    description: 'sends gifs',
+    description: 'Send gif',
     args: true,
+    guildOnly: false,
     usage: '<search terms>',
     cooldown: 1,
     async execute(msg, args) {

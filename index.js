@@ -117,11 +117,17 @@ client.on('message', msg => {
     //--------------------------------------------------------------------------------
     // get command
 
-    if (!client.commands.has(userCommand)) {
+    const command = client.commands.get(userCommand)
+        || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(userCommand));
+
+    if (!command) {
         return;
     }
 
-    const command = client.commands.get(userCommand);
+    if (command.guildOnly && msg.channel.type === 'dm') {
+        msg.channel.send('I can\'t execute that command in DM\'s');
+        return;
+    }
 
     if (command.args && !args.length) {
         msg.channel.send(`Please provide arguments\nex: ${prefix}${command.name} ${command.usage}`);
