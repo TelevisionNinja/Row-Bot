@@ -1,6 +1,11 @@
 const Discord = require('discord.js');
 const fileSys = require('fs');
-const { prefix, token, activityStatus, aliases } = require('./config.json');
+const {
+    prefix,
+    token,
+    activityStatus,
+    aliases
+} = require('./config.json');
 
 const client = new Discord.Client();
 
@@ -46,7 +51,7 @@ client.on('message', msg => {
         return;
     }
 
-    let msgStr = msg.content.toLowerCase();
+    const msgStr = msg.content.toLowerCase();
 
     if (!msgStr.startsWith(prefix)) {
         let botReplay = '';
