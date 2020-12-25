@@ -18,10 +18,12 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         // tags are separated by '+'
-        const tags = args.join('_').split(',_').join('+');
+        const tags = args.join('_').split(',').map(t => t.replace(/^_+|_+$/g, ''));
 
-        const url0 = `${rule0}${tags}&pid=`;
-        const url1 = `${rule1}${tags}&pid=`;
+        const url0 = `${rule0}${tags.join('+')}&pid=`;
+
+        // this api has a max of 3 tags
+        const url1 = `${rule1}${tags.slice(0, 3).join('+')}&pid=`;
 
         // the max number of pages for rule0 api is 2000 (0-2000)
         // the max number of pages for rule1 api is 1999 (0-1999)
