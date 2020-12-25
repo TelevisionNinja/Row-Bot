@@ -17,48 +17,67 @@ module.exports = {
         // tags are separated by '+'
         const tags = args.join('+');
 
-        const url1 = `${rule0}${tags}&pid=`;
-        const url2 = `${rule1}${tags}&pid=`;
+        const url0 = `${rule0}${tags}&pid=`;
+        const url1 = `${rule1}${tags}&pid=`;
 
         // the max number of pages for rule0 api is 2000 (0-2000)
-        const { imgURL: img1, results: results1 } = await getImage(url1, 2000, 0);
-
         // the max number of pages for rule1 api is 1999 (0-1999)
-        const { imgURL: img2, results: results2 } = await getImage(url2, 1999, 1);
 
-        let finalImg = img1;
-        let finalResults = results1;
-        let source = rule0;
+        let randomSiteID = rand.randomMath(2);
+        let url = url0;
+        let pid = 2000;
 
-        if (results1) {
-            if (results2) {
-                if (rand.randomMath(2)) {
-                    finalImg = img2;
-                    finalResults = results2;
-                    source = rule1;
-                }
-            }
+        if (randomSiteID) {
+            url = url1;
+            pid = 1999;
         }
-        else {
-            if (results2) {
-                finalImg = img2;
-                finalResults = results2;
-                source = rule1;
+
+        const { imgURL, results } = await getImage(url, pid, randomSiteID);
+
+        let img = imgURL;
+        let count = results;
+
+        if (!results) {
+            // this cycles between the number of sites (2)
+            randomSiteID = ++randomSiteID % 2;
+
+            if (randomSiteID) {
+                url = url1;
+                pid = 1999;
             }
             else {
-                msg.channel.send(img1);
+                url = url0;
+                pid = 2000;
+            }
+            
+            const { imgURL, results } = await getImage(url, pid, randomSiteID);
+
+            if (!results) {
+                msg.channel.send('Aww there\'s no results 😢');
                 return;
             }
+
+            img = imgURL;
+            count = results;
         }
 
-        source = source.split('/')[2];
+        url = url.split('/')[2];
 
-        msg.channel.send(finalImg);
-        msg.channel.send(`From: ${source}\nResults: ${finalResults}`);
+        msg.channel.send(img);
+        msg.channel.send(`From: ${url}\nResults: ${count}`);
     }
 }
 
-async function getImage(url, pidMax, source) {
+/**
+ * returns an image url & number of results if there are any results
+ * 
+ * default return is an empty string and zero for the results
+ * 
+ * @param {*} url url w/ tags already appended
+ * @param {*} pidMax maximum number of pages
+ * @param {*} sourceID source id
+ */
+async function getImage(url, pidMax, sourceID) {
     let pid = rand.randomMath(pidMax + 1);
 
     let imgURL = '';
@@ -75,18 +94,15 @@ async function getImage(url, pidMax, source) {
             results = parseInt(result.posts['$'].count);
 
             // array of posts is named 'post' or 'tag' depending on the site
-            if (source === 0) {
-                postArr = result.posts.post;
-            }
-            else if (source === 1) {
+            if (sourceID) { // site 0
                 postArr = result.posts['tag'];
+            }
+            else { // site 1
+                postArr = result.posts.post;
             }
         });
 
-        if (results === 0) {
-            imgURL = 'Aww there\'s no results 😢';
-        }
-        else {
+        if (results) {
             if (typeof postArr === 'undefined') {
                 // the sites have a max of 100 posts per request
                 pid = rand.randomMath(~~(results / 100) + 1);
@@ -95,11 +111,11 @@ async function getImage(url, pidMax, source) {
                 XMLStr = response.data;
 
                 parseString(XMLStr, (err, result) => {
-                    if (source === 0) {
-                        postArr = result.posts.post;
-                    }
-                    else if (source === 1) {
+                    if (sourceID) { // site 0
                         postArr = result.posts['tag'];
+                    }
+                    else { // site 1
+                        postArr = result.posts.post;
                     }
                 });
             }
