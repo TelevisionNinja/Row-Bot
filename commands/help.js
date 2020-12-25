@@ -16,25 +16,26 @@ module.exports = {
 
 		if (args.length) {
 			const name = args[0];
-            const command = commands.get(name)
-                || commands.find(com => com.aliases && com.aliases.includes(name));
+            const argCommand = msg.client.commands.find(cmd =>
+                (cmd.name === name) ||
+                (cmd.aliases && cmd.aliases.includes(name)));
 
-            if (!command) {
+            if (!argCommand) {
                 sendDm(msg, 'That\'s not one of my commands');
                 return;
             }
 
-            data.push(`Command: ${command.name}`);
-            data.push(`Aliases: ${command.aliases.join(', ')}`);
-            data.push(`Description: ${command.description}`);
-            data.push(`Usage: ${prefix}${command.name} ${command.usage}`);
-            data.push(`Cooldown: ${command.cooldown} second(s)`);
+            data.push(`Command: ${argCommand.name}`);
+            data.push(`Aliases: ${argCommand.aliases.join(', ')}`);
+            data.push(`Description: ${argCommand.description}`);
+            data.push(`Usage: ${prefix}${argCommand.name} ${argCommand.usage}`);
+            data.push(`Cooldown: ${argCommand.cooldown} second(s)`);
 
             sendDm(msg, data);
         }
         else {
             data.push('My commands:\n');
-			data.push(commands.map(command => command.name).join('\n'));
+			data.push(commands.map(cmd => cmd.name).join('\n'));
 			data.push(`\nSend \`${prefix}help <command name>\` to get info on a specific command`);
 
             sendDm(msg, data);

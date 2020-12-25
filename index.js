@@ -117,8 +117,9 @@ client.on('message', msg => {
     //--------------------------------------------------------------------------------
     // get command
 
-    const command = client.commands.get(userCommand)
-        || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(userCommand));
+    const command = client.commands.find(cmd =>
+        (cmd.name === userCommand) ||
+        (cmd.aliases && cmd.aliases.includes(userCommand)));
 
     if (!command) {
         return;
