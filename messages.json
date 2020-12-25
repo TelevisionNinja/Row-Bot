@@ -114,5 +114,9 @@
     "goodMornings" : ["Good morning",
         "Morning",
         "Mornin",
-        "Mornin'"]
+        "Mornin'"],
+    "christmas" : ["Merry Christmas",
+        "Happy Hearth's Warming"],
+    "christmasEve" : ["Happy Christmas Eve",
+        "Happy Hearth's Warming Eve"]
 }
