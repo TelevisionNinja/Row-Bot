@@ -106,7 +106,7 @@ client.on('message', msg => {
                 setTimeout(() => {
                     msg.channel.stopTyping();
                     msg.channel.send(botReplay);
-                }, botReplay.length * 100); // time before send
+                }, botReplay.length * 80); // time before send
             }, 950); // time before typing
         }
 
