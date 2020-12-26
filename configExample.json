@@ -3,6 +3,9 @@
     "token" : "",
     "activityStatus" : "",
     "aliases" : [""],
+    "readingSpeed" : 0,
+    "typingSpeed" : 0,
+    "reactionSpeed" : 0,
 
     "tenorAPIKey" : "",
     "rule0" : "",
