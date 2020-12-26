@@ -43,6 +43,13 @@ module.exports = {
     }
 }
 
+/**
+ * Sends a message to the author's DM's.
+ * Splits the message into multiple messages if it exceeds the discord char limit.
+ * 
+ * @param {*} msg Discord.Message
+ * @param {*} data message to be sent through DM's
+ */
 function sendDm(msg, data) {
     try {
         msg.author.send(data, { split: true });
