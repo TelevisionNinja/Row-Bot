@@ -1,5 +1,6 @@
 const {
     derpAliases,
+    derpAPIKey,
     derpAPI,
     derpURL
 } = require('../config.json');
@@ -17,7 +18,7 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         const searchTerms = args.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')).join('%2C');
-        const url = `${derpAPI}${searchTerms}`;
+        const url = `${derpAPI}${derpAPIKey}&q=${searchTerms}`;
 
         try {
             let response = await axios.get(url);
