@@ -4,7 +4,7 @@ module.exports = {
     name: 'random',
     aliases: [],
     fileName: __filename,
-    description: 'Gives a random value within a given range',
+    description: 'Returns a random value within a given range',
     args: true,
     guildOnly: false,
     usage: '<max> or <min> <max>',

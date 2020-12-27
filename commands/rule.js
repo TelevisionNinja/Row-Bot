@@ -10,7 +10,7 @@ module.exports = {
     name: 'rule',
     aliases: ruleAliases,
     fileName: __filename,
-    description: 'Send a rule pic',
+    description: 'Returns a rule pic',
     args: true,
     guildOnly: false,
     usage: '<tags separated by commas>',

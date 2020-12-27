@@ -10,7 +10,7 @@ module.exports = {
     name: 'derp',
     aliases: derpAliases,
     fileName: __filename,
-    description: 'Send derp images. To search artists\' images, type `artist:<artist name>` as a tag',
+    description: 'Returns a derp image. To search artists\' images, type `artist:<artist name>` as a tag',
     args: true,
     guildOnly: false,
     usage: '<tags separated by commas>',

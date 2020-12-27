@@ -6,7 +6,7 @@ module.exports = {
     name: 'gif',
     aliases: [],
     fileName: __filename,
-    description: 'Send gif',
+    description: 'Returns a gif',
     args: true,
     guildOnly: false,
     usage: '<search terms>',

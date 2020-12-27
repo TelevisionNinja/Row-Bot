@@ -4,7 +4,7 @@ module.exports = {
     name: 'tulp',
     aliases: tulpAliases,
     fileName: __filename,
-    description: 'Send a tulp message',
+    description: 'Sends a tulp message',
     args: false,
     guildOnly: true,
     usage: '<message>',
