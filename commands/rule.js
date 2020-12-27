@@ -2,8 +2,7 @@ const rand = require('../lib/randomFunctions.js');
 const axios = require('axios');
 const parseString = require('xml2js').parseString;
 const {
-    rule0,
-    rule1,
+    ruleURLs,
     ruleAliases
 } = require('../config.json');
 
@@ -20,22 +19,19 @@ module.exports = {
         // tags are separated by '+'
         const tags = args.join('_').split(',').map(t => t.replace(/^_+|_+$/g, ''));
 
-        const url0 = `${rule0}${tags.join('+')}&pid=`;
+        const url0 = `${ruleURLs[0]}${tags.join('+')}&pid=`;
 
         // this api has a max of 3 tags
-        const url1 = `${rule1}${tags.slice(0, 3).join('+')}&pid=`;
+        const url1 = `${ruleURLs[1]}${tags.slice(0, 3).join('+')}&pid=`;
+
+        const urlArr = [url0, url1];
 
         // the max number of pages for rule0 api is 2000 (0-2000)
         // the max number of pages for rule1 api is 1999 (0-1999)
 
         let randomSiteID = rand.randomMath(2);
-        let url = url0;
-        let pid = 2000;
-
-        if (randomSiteID) {
-            url = url1;
-            pid = 1999;
-        }
+        let url = urlArr[randomSiteID];
+        let pid = 2000 - randomSiteID;
 
         const { imgURL, results } = await getImage(url, pid, randomSiteID);
 
@@ -46,14 +42,8 @@ module.exports = {
             // this cycles between the number of sites (2)
             randomSiteID = ++randomSiteID % 2;
 
-            if (randomSiteID) {
-                url = url1;
-                pid = 1999;
-            }
-            else {
-                url = url0;
-                pid = 2000;
-            }
+            url = urlArr[randomSiteID];
+            pid = 2000 - randomSiteID;
             
             const { imgURL, results } = await getImage(url, pid, randomSiteID);
 
@@ -95,14 +85,14 @@ async function getImage(url, pidMax, sourceID) {
         let postArr = [];
         parseString(XMLStr, (err, result) => {
             // obj's are named '$'
-            // 'count' is # of images for the tags provided
+            // 'count' is # of images for the provided tags
             results = parseInt(result.posts['$'].count);
 
             // array of posts is named 'post' or 'tag' depending on the site
-            if (sourceID) { // site 0
+            if (sourceID) { // site 1
                 postArr = result.posts['tag'];
             }
-            else { // site 1
+            else { // site 0
                 postArr = result.posts.post;
             }
         });
@@ -110,16 +100,17 @@ async function getImage(url, pidMax, sourceID) {
         if (results) {
             if (typeof postArr === 'undefined') {
                 // the sites have a max of 100 posts per request
+                // pid range: zero to count / (posts per page)
                 pid = rand.randomMath(~~(results / 100) + 1);
 
                 response = await axios.get(`${url}${pid}`);
                 XMLStr = response.data;
 
                 parseString(XMLStr, (err, result) => {
-                    if (sourceID) { // site 0
+                    if (sourceID) { // site 1
                         postArr = result.posts['tag'];
                     }
-                    else { // site 1
+                    else { // site 0
                         postArr = result.posts.post;
                     }
                 });

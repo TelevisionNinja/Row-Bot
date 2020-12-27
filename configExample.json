@@ -8,9 +8,12 @@
     "reactionSpeed" : 0,
 
     "tenorAPIKey" : "",
-    "rule0" : "",
-    "rule1" : "",
+
+    "ruleURLs" : [""],
+    "derpAPIURL" : "",
+    "derpURL" : "",
 
     "ruleAliases" : [""],
-    "tulpAliases" : [""]
+    "tulpAliases" : [""],
+    "darpAliases" : [""]
 }
