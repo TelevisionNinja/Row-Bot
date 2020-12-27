@@ -9,8 +9,17 @@
 
     "tenorAPIKey" : "",
 
-    "ruleURLs" : [""],
-    "derpAPIURL" : "",
+    "ruleURLs" : [
+        {
+            "url": "",
+            "api" : ""
+        },
+        {
+            "url": "",
+            "api" : ""
+        }
+    ],
+    "derpAPI" : "",
     "derpURL" : "",
 
     "ruleAliases" : [""],

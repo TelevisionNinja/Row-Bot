@@ -1,6 +1,6 @@
 const {
     derpAliases,
-    derpAPIURL,
+    derpAPI,
     derpURL
 } = require('../config.json');
 const rand = require('../lib/randomFunctions.js');
@@ -17,7 +17,7 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         const searchTerms = args.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')).join('%2C');
-        const url = `${derpAPIURL}${searchTerms}`;
+        const url = `${derpAPI}${searchTerms}`;
 
         try {
             let response = await axios.get(url);

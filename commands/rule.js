@@ -19,10 +19,10 @@ module.exports = {
         // tags are separated by '+'
         const tags = args.join('_').split(',').map(t => t.replace(/^_+|_+$/g, ''));
 
-        const url0 = `${ruleURLs[0]}${tags.join('+')}&pid=`;
+        const url0 = `${ruleURLs[0].api}${tags.join('+')}&pid=`;
 
         // this api has a max of 3 tags
-        const url1 = `${ruleURLs[1]}${tags.slice(0, 3).join('+')}&pid=`;
+        const url1 = `${ruleURLs[1].api}${tags.slice(0, 3).join('+')}&pid=`;
 
         const urlArr = [url0, url1];
 
@@ -33,9 +33,9 @@ module.exports = {
         let url = urlArr[randomSiteID];
         let pid = 2000 - randomSiteID;
 
-        const { imgURL, results } = await getImage(url, pid, randomSiteID);
+        const { imgID, results } = await getImage(url, pid, randomSiteID);
 
-        let img = imgURL;
+        let id = imgID;
         let count = results;
 
         if (!results) {
@@ -45,21 +45,19 @@ module.exports = {
             url = urlArr[randomSiteID];
             pid = 2000 - randomSiteID;
             
-            const { imgURL, results } = await getImage(url, pid, randomSiteID);
+            const { imgID, results } = await getImage(url, pid, randomSiteID);
 
             if (!results) {
                 msg.channel.send('Aww there\'s no results 😢');
                 return;
             }
 
-            img = imgURL;
+            id = imgID;
             count = results;
         }
 
-        url = url.split('/')[2];
-
-        msg.channel.send(img);
-        msg.channel.send(`From: ${url}\nResults: ${count}`);
+        msg.channel.send(`${ruleURLs[randomSiteID].url}${id}`);
+        msg.channel.send(`Results: ${count}`);
     }
 }
 
@@ -75,7 +73,7 @@ module.exports = {
 async function getImage(url, pidMax, sourceID) {
     let pid = rand.randomMath(pidMax + 1);
 
-    let imgURL = '';
+    let imgID = 0;
     let results = 0;
 
     try {
@@ -119,7 +117,7 @@ async function getImage(url, pidMax, sourceID) {
             const randIndex = rand.randomMath(postArr.length);
             const img = postArr[randIndex]['$'];
 
-            imgURL = img.file_url;
+            imgID = img.id;
         }
     }
     catch (error) {
@@ -127,7 +125,7 @@ async function getImage(url, pidMax, sourceID) {
     }
 
     return {
-        imgURL,
+        imgID,
         results
     };
 }
