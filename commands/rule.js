@@ -33,8 +33,9 @@ module.exports = {
         let url = urlArr[randomSiteID];
         let pid = 2000 - randomSiteID;
 
-        const { imgID, results } = await getImage(url, pid, randomSiteID);
+        const { imgURL, imgID, results } = await getImage(url, pid, randomSiteID);
 
+        let img = imgURL;
         let id = imgID;
         let count = results;
 
@@ -45,19 +46,20 @@ module.exports = {
             url = urlArr[randomSiteID];
             pid = 2000 - randomSiteID;
             
-            const { imgID, results } = await getImage(url, pid, randomSiteID);
+            const { imgURL, imgID, results } = await getImage(url, pid, randomSiteID);
 
             if (!results) {
                 msg.channel.send('Aww there\'s no results 😢');
                 return;
             }
 
+            img = imgURL;
             id = imgID;
             count = results;
         }
 
-        msg.channel.send(`${ruleURLs[randomSiteID].url}${id}`);
-        msg.channel.send(`Results: ${count}`);
+        msg.channel.send(img);
+        msg.channel.send(`Source: <${ruleURLs[randomSiteID].url}${id}>\nResults: ${count}`);
     }
 }
 
@@ -73,6 +75,7 @@ module.exports = {
 async function getImage(url, pidMax, sourceID) {
     let pid = rand.randomMath(pidMax + 1);
 
+    let imgURL = '';
     let imgID = 0;
     let results = 0;
 
@@ -117,6 +120,7 @@ async function getImage(url, pidMax, sourceID) {
             const randIndex = rand.randomMath(postArr.length);
             const img = postArr[randIndex]['$'];
 
+            imgURL = img.file_url;
             imgID = img.id;
         }
     }
@@ -125,6 +129,7 @@ async function getImage(url, pidMax, sourceID) {
     }
 
     return {
+        imgURL,
         imgID,
         results
     };

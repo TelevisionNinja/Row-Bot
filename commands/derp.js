@@ -44,8 +44,8 @@ module.exports = {
 
             const img = imgArr[rand.randomMath(imgArr.length)];
 
-            msg.channel.send(`${derpURL}${img.id}`);
-            msg.channel.send(`Results: ${count}`);
+            msg.channel.send(img.representations.full);
+            msg.channel.send(`Source: <${derpURL}${img.id}>\nResults: ${count}`);
         }
         catch (error) {
             console.log(error);
