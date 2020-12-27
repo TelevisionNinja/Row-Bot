@@ -17,7 +17,13 @@ module.exports = {
     usage: '<tags separated by commas>',
     cooldown: 1,
     async execute(msg, args) {
-        const searchTerms = args.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')).join('%2C');
+        const searchTerms = [...new Set(args.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')))].join('%2C');
+
+        if (searchTerms === '') {
+            msg.channel.send('Please provide tags');
+            return;
+        }
+
         const url = `${derpAPI}${derpAPIKey}&q=${searchTerms}`;
 
         try {
@@ -49,6 +55,7 @@ module.exports = {
             msg.channel.send(`Source: <${derpURL}${img.id}>\nResults: ${count}`);
         }
         catch (error) {
+            msg.channel.send('I couldn\'t get any results');
             console.log(error);
         }
     }

@@ -17,7 +17,7 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         // tags are separated by '+'
-        const tags = args.join('_').split(',').map(t => t.replace(/^_+|_+$/g, ''));
+        const tags = [...new Set(args.join('_').split(',').map(t => t.replace(/^_+|_+$/g, '')))];
 
         const url0 = `${ruleURLs[0].api}${tags.join('+')}&pid=`;
 

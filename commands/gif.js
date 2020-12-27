@@ -27,6 +27,7 @@ module.exports = {
             }
         }
         catch (error) {
+            msg.channel.send('I couldn\'t get any results');
             console.log(error);
         }
     }
