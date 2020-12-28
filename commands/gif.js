@@ -12,23 +12,39 @@ module.exports = {
     usage: '<search terms>',
     cooldown: 1,
     async execute(msg, args) {
-        const searchTerms = args.join(' ');
-        const url = `https://api.tenor.com/v1/search?q=${searchTerms}&key=${tenorAPIKey}&limit=50&media_filter=minimal`;
+        const { gif, hasResult } = await getGif(args);
 
-        try {
-            const response = await axios.get(url);
-            const gifArr = response.data.results;
-
-            if (gifArr.length) {
-                msg.channel.send(gifArr[rand.randomMath(gifArr.length)].url);
-            }
-            else {
-                msg.channel.send('Aww there\'s no results 😢');
-            }
+        if (hasResult) {
+            msg.channel.send(gif);
         }
-        catch (error) {
-            msg.channel.send('I couldn\'t get any results');
-            console.log(error);
+        else {
+            msg.channel.send('Aww there\'s no results 😢');
         }
     }
+}
+
+async function getGif(tagArr) {
+    const searchTerms = tagArr.join(' ');
+    const url = `https://api.tenor.com/v1/search?q=${searchTerms}&key=${tenorAPIKey}&limit=50&media_filter=minimal`;
+
+    let gif = '';
+    let hasResult = false;
+
+    try {
+        const response = await axios.get(url);
+        const gifArr = response.data.results;
+
+        if (gifArr.length) {
+            gif = gifArr[rand.randomMath(gifArr.length)].url;
+            hasResult = true;
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+
+    return {
+        gif,
+        hasResult
+    };
 }
