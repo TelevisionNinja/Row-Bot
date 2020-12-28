@@ -30,6 +30,11 @@ module.exports = {
     }
 }
 
+/**
+ * Returns an image. If no image is found, the results var is returned as zero.
+ * 
+ * @param {*} tagArr array of tags to be searched
+ */
 async function getImage(tagArr) {
     const searchTerms = [...new Set(tagArr.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')))].join('%2C');
 
@@ -70,6 +75,11 @@ async function getImage(tagArr) {
     }
 }
 
+/**
+ * Returns an image. If no image is found, the results var is returned as zero.
+ * 
+ * @param {*} tagArr array of tags to be searched
+ */
 async function getImage50(tagArr) {
     const searchTerms = [...new Set(tagArr.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')))].join('%2C');
     

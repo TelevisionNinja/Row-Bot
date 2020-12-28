@@ -16,50 +16,65 @@ module.exports = {
     usage: '<tags separated by commas>',
     cooldown: 1,
     async execute(msg, args) {
-        // tags are separated by '+'
-        const tags = [...new Set(args.join('_').split(',').map(t => t.replace(/^_+|_+$/g, '')))];
+        const { img, source, count } = await rule(args);
 
-        const url0 = `${ruleURLs[0].api}${tags.join('+')}&pid=`;
+        if (count) {
+            msg.channel.send(img);
+            msg.channel.send(`Source: <${source}>\nResults: ${count}`);
+        }
+        else {
+            msg.channel.send('Aww there\'s no results 😢');
+        }
+    }
+}
 
-        // this api has a max of 3 tags
-        const url1 = `${ruleURLs[1].api}${tags.slice(0, 3).join('+')}&pid=`;
+/**
+ * Returns an image from one of the rule sites. If no image is found, the count var is returned as zero.
+ * 
+ * @param {*} tagArr array of tags to be searched
+ */
+async function rule(tagArr) {
+    // tags are separated by '+'
+    const tags = [...new Set(tagArr.join('_').split(',').map(t => t.replace(/^_+|_+$/g, '')))];
 
-        const urlArr = [url0, url1];
+    const url0 = `${ruleURLs[0].api}${tags.join('+')}&pid=`;
 
-        // the max number of pages for rule0 api is 2000 (0-2000)
-        // the max number of pages for rule1 api is 1999 (0-1999)
+    // this api has a max of 3 tags
+    const url1 = `${ruleURLs[1].api}${tags.slice(0, 3).join('+')}&pid=`;
 
-        let randomSiteID = rand.randomMath(2);
-        let url = urlArr[randomSiteID];
-        let pid = 2000 - randomSiteID;
+    const urlArr = [url0, url1];
 
+    // the max number of pages for rule0 api is 2000 (0-2000)
+    // the max number of pages for rule1 api is 1999 (0-1999)
+
+    let randomSiteID = rand.randomMath(2);
+    let url = urlArr[randomSiteID];
+    let pid = 2000 - randomSiteID;
+
+    const { imgURL, imgID, results } = await getImage(url, pid, randomSiteID);
+
+    let img = imgURL;
+    let id = imgID;
+    let count = results;
+
+    if (!results) {
+        // this cycles between the number of sites (2)
+        randomSiteID = ++randomSiteID % 2;
+
+        url = urlArr[randomSiteID];
+        pid = 2000 - randomSiteID;
+        
         const { imgURL, imgID, results } = await getImage(url, pid, randomSiteID);
 
-        let img = imgURL;
-        let id = imgID;
-        let count = results;
+        img = imgURL;
+        id = imgID;
+        count = results;
+    }
 
-        if (!results) {
-            // this cycles between the number of sites (2)
-            randomSiteID = ++randomSiteID % 2;
-
-            url = urlArr[randomSiteID];
-            pid = 2000 - randomSiteID;
-            
-            const { imgURL, imgID, results } = await getImage(url, pid, randomSiteID);
-
-            if (!results) {
-                msg.channel.send('Aww there\'s no results 😢');
-                return;
-            }
-
-            img = imgURL;
-            id = imgID;
-            count = results;
-        }
-
-        msg.channel.send(img);
-        msg.channel.send(`Source: <${ruleURLs[randomSiteID].url}${id}>\nResults: ${count}`);
+    return {
+        img,
+        source: `${ruleURLs[randomSiteID].url}${id}`,
+        count,
     }
 }
 
