@@ -18,7 +18,11 @@ module.exports = {
     usage: '<tags separated by commas>',
     cooldown: 1,
     async execute(msg, args) {
-        const { imgURL, source, results } = await getImage(args);
+        const {
+            imgURL,
+            source,
+            results
+        } = await getImage(args);
 
         if (results) {
             msg.channel.send(imgURL);
@@ -31,14 +35,13 @@ module.exports = {
 }
 
 /**
- * Returns an image. If no image is found, the results var is returned as zero.
+ * Returns an image, a source url, and the number of results.
+ * If no image is found, the results var is returned as zero.
  * 
  * @param {*} tagArr array of tags to be searched
  */
 async function getImage(tagArr) {
     const searchTerms = [...new Set(tagArr.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')))].join('%2C');
-
-    //const searchTerms = Array.from(new Set(tagArr.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')))).join('%2C');
     
     let imgURL = '';
     let source = '';
@@ -76,7 +79,8 @@ async function getImage(tagArr) {
 }
 
 /**
- * Returns an image. If no image is found, the results var is returned as zero.
+ * Returns an image, a source url, and the number of results.
+ * If no image is found, the results var is returned as zero.
  * 
  * @param {*} tagArr array of tags to be searched
  */

@@ -1,6 +1,4 @@
-const {
-    newYear,
-} = require('../messages.json');
+const { newYear } = require('../messages.json');
 
 module.exports = {
     description: 'Wish a happy new year',
@@ -17,6 +15,9 @@ module.exports = {
             }
         }
 
-        return { hasReply, replyStr };
+        return {
+            hasReply,
+            replyStr
+        };
     }
 }

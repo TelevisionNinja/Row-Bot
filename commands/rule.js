@@ -16,7 +16,11 @@ module.exports = {
     usage: '<tags separated by commas>',
     cooldown: 1,
     async execute(msg, args) {
-        const { img, source, count } = await rule(args);
+        const {
+            img,
+            source,
+            count
+        } = await rule(args);
 
         if (count) {
             msg.channel.send(img);
@@ -29,7 +33,8 @@ module.exports = {
 }
 
 /**
- * Returns an image from one of the rule sites. If no image is found, the count var is returned as zero.
+ * Returns an image from one of the rule sites, a source url, and the number of results.
+ * If no image is found, the count var is returned as zero.
  * 
  * @param {*} tagArr array of tags to be searched
  */
@@ -51,7 +56,11 @@ async function rule(tagArr) {
     let url = urlArr[randomSiteID];
     let pid = 2000 - randomSiteID;
 
-    const { imgURL, imgID, results } = await getImage(url, pid, randomSiteID);
+    const {
+        imgURL,
+        imgID,
+        results
+    } = await getImage(url, pid, randomSiteID);
 
     let img = imgURL;
     let id = imgID;
@@ -64,7 +73,11 @@ async function rule(tagArr) {
         url = urlArr[randomSiteID];
         pid = 2000 - randomSiteID;
         
-        const { imgURL, imgID, results } = await getImage(url, pid, randomSiteID);
+        const {
+            imgURL,
+            imgID,
+            results
+        } = await getImage(url, pid, randomSiteID);
 
         img = imgURL;
         id = imgID;
@@ -79,15 +92,14 @@ async function rule(tagArr) {
 }
 
 /**
- * returns an image url & number of results if there are any results
- * 
- * default return is an empty string and zero for the results
+ * Returns an image, the image id, and the number of results.
+ * If no image is found, the results var is returned as zero.
  * 
  * @param {*} url url w/ tags already appended
  * @param {*} pidMax maximum number of pages
- * @param {*} sourceID source id
+ * @param {*} siteID which site
  */
-async function getImage(url, pidMax, sourceID) {
+async function getImage(url, pidMax, siteID) {
     let pid = rand.randomMath(pidMax + 1);
 
     let imgURL = '';
@@ -105,7 +117,7 @@ async function getImage(url, pidMax, sourceID) {
             results = parseInt(result.posts['$'].count);
 
             // array of posts is named 'post' or 'tag' depending on the site
-            if (sourceID) { // site 1
+            if (siteID) { // site 1
                 postArr = result.posts['tag'];
             }
             else { // site 0
@@ -123,7 +135,7 @@ async function getImage(url, pidMax, sourceID) {
                 XMLStr = response.data;
 
                 parseString(XMLStr, (err, result) => {
-                    if (sourceID) { // site 1
+                    if (siteID) { // site 1
                         postArr = result.posts['tag'];
                     }
                     else { // site 0

@@ -16,6 +16,9 @@ module.exports = {
             }
         }
 
-        return { isNoncommand, replyStr };
+        return {
+            isNoncommand,
+            replyStr
+        };
     }
 }

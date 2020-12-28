@@ -16,6 +16,9 @@ module.exports = {
             }
         }
 
-        return { hasReply, replyStr };
+        return {
+            hasReply,
+            replyStr
+        };
     }
 }
