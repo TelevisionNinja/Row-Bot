@@ -7,11 +7,6 @@ const {
     tagSeparator
 } = require('../config.json');
 
-const url0 = `${rule.sites[0].API}${tagArr.join(rule.separator)}&pid=`;
-
-// this api has a max of 3 tags
-const url1 = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}&pid=`;
-
 module.exports = {
     names: rule.names,
     fileName: __filename,
@@ -55,6 +50,11 @@ async function getRuleImage(tagArr) {
             .map(t => stringUtil.trim(t, rule.whitespace))
             )
         ];
+
+    const url0 = `${rule.sites[0].API}${tagArr.join(rule.separator)}&pid=`;
+
+    // this api has a max of 3 tags
+    const url1 = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}&pid=`;
 
     const urlArr = [url0, url1];
 
