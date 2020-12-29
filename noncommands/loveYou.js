@@ -11,7 +11,7 @@ module.exports = {
         let isNoncommand = false;
         let replyStr = '';
 
-        for (let i = 0; i < loves.length; i++) {
+        for (let i = 0, n = loves.length; i < n; i++) {
             if (msg.includes(loves[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
@@ -20,7 +20,7 @@ module.exports = {
             }
         }
 
-        for (let i = 0; i < loveMes.length; i++) {
+        for (let i = 0, n = loveMes.length; i < n; i++) {
             if (msg.includes(loveMes[i].toLowerCase())) {
                 return {
                     isNoncommand: true,

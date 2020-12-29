@@ -7,7 +7,7 @@ module.exports = {
         let hasReply = false;
         let replyStr = '';
 
-        for (let i = 0; i < farewells.length; i++) {
+        for (let i = 0, n = farewells.length; i < n; i++) {
             if (msg === farewells[i].toLowerCase()) {
                 return {
                     hasReply: true,

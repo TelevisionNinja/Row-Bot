@@ -10,7 +10,7 @@ module.exports = {
         let hasReply = false;
         let replyStr = '';
 
-        for (let i = 0; i < christmas.length; i++) {
+        for (let i = 0, n = christmas.length; i < n; i++) {
             if (msg === christmas[i].toLowerCase()) {
                 return {
                     hasReply: true,
@@ -19,7 +19,7 @@ module.exports = {
             }
         }
 
-        for (let i = 0; i < christmasEve.length; i++) {
+        for (let i = 0, n = christmasEve.length; i < n; i++) {
             if (msg === christmasEve[i].toLowerCase()) {
                 return {
                     hasReply: true,

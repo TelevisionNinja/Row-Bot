@@ -10,7 +10,7 @@ module.exports = {
         let isNoncommand = false;
         let replyStr = '';
 
-        for (let i = 0; i < hate.length; i++) {
+        for (let i = 0, n = hate.length; i < n; i++) {
             if (msg.includes(hate[i].toLowerCase())) {
                 return {
                     isNoncommand: true,

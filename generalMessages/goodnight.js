@@ -7,7 +7,7 @@ module.exports = {
         let hasReply = false;
         let replyStr = '';
 
-        for (let i = 0; i < goodnights.length; i++) {
+        for (let i = 0, n = goodnights.length; i < n; i++) {
             if (msg === goodnights[i].toLowerCase()) {
                 return {
                     hasReply: true,

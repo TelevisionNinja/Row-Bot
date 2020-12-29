@@ -33,16 +33,16 @@ client.commands = new Discord.Collection();
 client.noncommands = [];
 client.genMsg = [];
 
-for (const aFile of commandFiles) {
-    const command = require(`./commands/${aFile}`);
+for (let i = 0, n = commandFiles.length; i < n; n++) {
+    const command = require(`./commands/${commandFiles[i]}`);
     client.commands.set(command.names[0], command);
 }
 
-for (let i = 0; i < noncommandFiles.length; i++) {
+for (let i = 0, n = noncommandFiles.length; i < n; i++) {
     client.noncommands[i] = require(`./noncommands/${noncommandFiles[i]}`);
 }
 
-for (let i = 0; i < genMsgFiles.length; i++) {
+for (let i = 0, n = genMsgFiles.length; i < n; i++) {
     client.genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
 }
 
@@ -74,12 +74,15 @@ client.on('message', msg => {
 
         let nonCommandBool = false;
 
-        for (let i = 0; i < aliases.length; i++) {
+        for (let i = 0, n = aliases.length; i < n; i++) {
             if (msgStr.includes(aliases[i].toLowerCase())) {
                 nonCommandBool = true;
 
-                for (let j = 0; j < client.noncommands.length; j++) {
-                    const { isNoncommand, replyStr } = client.noncommands[j].execute(msgStr);
+                for (let j = 0, m = client.noncommands.length; j < m; j++) {
+                    const {
+                        isNoncommand,
+                        replyStr
+                    } = client.noncommands[j].execute(msgStr);
 
                     if (isNoncommand) {
                         replyBool = true;
@@ -97,8 +100,11 @@ client.on('message', msg => {
         // general message
 
         if (!nonCommandBool) {
-            for (let i = 0; i < client.genMsg.length; i++) {
-                const { hasReply, replyStr } = client.genMsg[i].execute(msgStr);
+            for (let i = 0, n = client.genMsg.length; i < n; i++) {
+                const {
+                    hasReply,
+                    replyStr
+                } = client.genMsg[i].execute(msgStr);
     
                 if (hasReply) {
                     replyBool = true;
