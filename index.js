@@ -33,7 +33,7 @@ client.commands = new Discord.Collection();
 client.noncommands = [];
 client.genMsg = [];
 
-for (let i = 0, n = commandFiles.length; i < n; n++) {
+for (let i = 0, n = commandFiles.length; i < n; i++) {
     const command = require(`./commands/${commandFiles[i]}`);
     client.commands.set(command.names[0], command);
 }
