@@ -50,49 +50,39 @@ async function getRuleImage(tagArr) {
             )
         ];
 
-    const url0 = `${rule.sites[0].API}${tagArr.join(rule.separator)}&pid=`;
-
-    // this api has a max of 3 tags
-    const url1 = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}&pid=`;
-
-    const urlArr = [url0, url1];
-
-    // the max number of images for the rule0 api is 200001 images (0-200000)
-    // the max number of images for the rule1 api is 200000 (0-199999)
-
-    // (max # images) / (limit per resquest) = pid max
-    // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
-
     let randomSiteID = rand.randomMath(2);
-    let url = urlArr[randomSiteID];
-    let pid = 2000 - randomSiteID;
 
-    const {
-        imgURL,
-        imgID,
-        results
-    } = await getImage(url, pid, randomSiteID);
+    let img = '';
+    let id = '';
+    let count = 0;
 
-    let img = imgURL;
-    let id = imgID;
-    let count = results;
+    let requestedImg;
 
-    if (!results) {
+    if (randomSiteID) {
+        requestedImg = await getImageRule1(tagArr);
+    }
+    else {
+        requestedImg = await getImageRule0(tagArr);
+    }
+
+    img = requestedImg.imgURL;
+    id = requestedImg.imgID;
+    count = requestedImg.results;
+
+    if (!count) {
         // this cycles between the number of sites (2)
         randomSiteID = ++randomSiteID % 2;
-
-        url = urlArr[randomSiteID];
-        pid = 2000 - randomSiteID;
         
-        const {
-            imgURL,
-            imgID,
-            results
-        } = await getImage(url, pid, randomSiteID);
-
-        img = imgURL;
-        id = imgID;
-        count = results;
+        if (randomSiteID) {
+            requestedImg = await getImageRule1(tagArr);
+        }
+        else {
+            requestedImg = await getImageRule0(tagArr);
+        }
+    
+        img = requestedImg.imgURL;
+        id = requestedImg.imgID;
+        count = requestedImg.results;
     }
 
     return {
@@ -106,58 +96,120 @@ async function getRuleImage(tagArr) {
  * Returns an image, the image id, and the number of results.
  * If no image is found, the results var is returned as zero.
  * 
- * @param {*} url url w/ tags already appended
- * @param {*} pidMax maximum number of pages
- * @param {*} siteID which site
+ * Best case: 1 request
+ * Worst case: 2 requests
+ * 
+ * @param {*} tagArr array of tags that are already formatted
  */
-async function getImage(url, pidMax, siteID) {
-    let pid = rand.randomMath(pidMax + 1);
+async function getImageRule0(tagArr) {
+    const url = `${rule.sites[0].API}${tagArr.join(rule.separator)}&pid=`;
+
+    // the max number of images for the rule0 api is 200001 images (0-200000)
+    let pid = rand.randomMath(200001);
 
     let imgURL = '';
-    let imgID = 0;
+    let imgID = '';
     let results = 0;
 
     try {
         let response = await axios.get(`${url}${pid}`);
         let XMLStr = response.data;
-
         let postArr = [];
+
         parseString(XMLStr, (err, result) => {
             // obj's are named '$'
             // 'count' is # of images for the provided tags
             results = parseInt(result.posts['$'].count);
 
-            // array of posts is named 'post' or 'tag' depending on the site
-            if (siteID) { // site 1
-                postArr = result.posts['tag'];
-            }
-            else { // site 0
-                postArr = result.posts.post;
-            }
+            // array of posts is named 'post'
+            postArr = result.posts.post;
         });
 
         if (results) {
             if (typeof postArr === 'undefined') {
-                // the sites have a max of 100 posts per request
-                // pid range: zero to count / (posts per page)
-                pid = rand.randomMath(~~(results / 100) + 1);
+                // the site has a max of 100 posts per request
+                // pid range: zero to count / (limit per request)
+
+                // (max # images) / (limit per request) = pid max
+                // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
+                // pid max is exclusive unless results > 200000
+                // the limit per request is set to 1 in this implementation
+                pid = rand.randomMath(results);
 
                 response = await axios.get(`${url}${pid}`);
                 XMLStr = response.data;
 
                 parseString(XMLStr, (err, result) => {
-                    if (siteID) { // site 1
-                        postArr = result.posts['tag'];
-                    }
-                    else { // site 0
-                        postArr = result.posts.post;
-                    }
+                    postArr = result.posts.post;
                 });
             }
 
-            const randIndex = rand.randomMath(postArr.length);
-            const img = postArr[randIndex]['$'];
+            const img = postArr[0]['$'];
+            imgURL = img.file_url;
+            imgID = img.id;
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
 
+    return {
+        imgURL,
+        imgID,
+        results
+    };
+}
+
+/**
+ * Returns an image, the image id, and the number of results.
+ * If no image is found, the results var is returned as zero.
+ * 
+ * Best case: 1 request
+ * Worst case: 2 requests
+ * 
+ * @param {*} tagArr array of tags that are already formatted
+ */
+async function getImageRule1(tagArr) {
+    // this api has a max of 3 tags
+    const url = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}`;
+
+    let imgURL = '';
+    let imgID = '';
+    let results = 0;
+
+    try {
+        let response = await axios.get(url);
+        let XMLStr = response.data;
+        let postArr = [];
+
+        parseString(XMLStr, (err, result) => {
+            // obj's are named '$'
+            // 'count' is # of images for the provided tags
+            results = parseInt(result.posts['$'].count);
+
+            // array of posts is named 'tag'
+            postArr = result.posts.tag;
+        });
+
+        if (results) {
+            // the site has a max of 100 posts per request
+            // pid range: zero to count / (limit per request)
+
+            // (max # images) / (limit per request) = pid max
+            // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0 meaning pid max is exclusive
+            // the limit per request is set to 1 in this implementation
+            pid = rand.randomMath(results);
+
+            if (pid !== 0) {
+                response = await axios.get(`${url}&pid=${pid}`);
+                XMLStr = response.data;
+
+                parseString(XMLStr, (err, result) => {
+                    postArr = result.posts.tag;
+                });
+            }
+
+            const img = postArr[0]['$'];
             imgURL = img.file_url;
             imgID = img.id;
         }
