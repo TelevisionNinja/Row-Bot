@@ -41,8 +41,7 @@ module.exports = {
 async function getRuleImage(tagArr) {
     // whitespace is replaced with '_'
     // tags are separated by '+'
-    tagArr =
-        [
+    tagArr = [
         ...new Set(
             tagArr
             .join(rule.whitespace)
