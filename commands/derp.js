@@ -37,6 +37,9 @@ module.exports = {
  * Returns an image, a source url, and the number of results.
  * If no image is found, the results var is returned as zero.
  * 
+ * Best case: 1 request
+ * Worst case: 2 requests
+ * 
  * @param {*} tagArr array of tags to be searched
  */
 async function getImage(tagArr) {
