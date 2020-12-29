@@ -1,10 +1,9 @@
-const { tulpAliases } = require('../config.json');
+const { tulp } = require('../config.json');
 
 module.exports = {
-    name: 'tulp',
-    aliases: tulpAliases,
+    names: tulp.names,
     fileName: __filename,
-    description: 'Sends a tulp message',
+    description: tulp.description,
     args: false,
     guildOnly: true,
     usage: '<message>',

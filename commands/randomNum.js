@@ -1,8 +1,7 @@
 const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
-    name: 'random',
-    aliases: [],
+    names: ['random'],
     fileName: __filename,
     description: 'Returns a random value within a given range',
     args: true,

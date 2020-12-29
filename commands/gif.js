@@ -1,12 +1,13 @@
-const { tenorAPIKey } = require('../config.json');
+const { tenor } = require('../config.json');
 const rand = require('../lib/randomFunctions.js');
 const axios = require('axios');
 
+const URL = `${tenor.API}${tenor.APIKey}&q=`;
+
 module.exports = {
-    name: 'gif',
-    aliases: [],
+    names: tenor.names,
     fileName: __filename,
-    description: 'Returns a gif',
+    description: tenor.description,
     args: true,
     guildOnly: false,
     usage: '<search terms>',
@@ -34,17 +35,17 @@ module.exports = {
  */
 async function getGif(tagArr) {
     const searchTerms = tagArr.join(' ');
-    const url = `https://api.tenor.com/v1/search?q=${searchTerms}&key=${tenorAPIKey}&limit=50&media_filter=minimal`;
+    const searchURL = `${URL}${searchTerms}`;
 
     let gif = '';
     let hasResult = false;
 
     try {
-        const response = await axios.get(url);
+        const response = await axios.get(searchURL);
         const gifArr = response.data.results;
 
         if (gifArr.length) {
-            gif = gifArr[rand.randomMath(gifArr.length)].url;
+            gif = gifArr[0].url;
             hasResult = true;
         }
     }

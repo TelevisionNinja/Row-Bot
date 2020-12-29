@@ -35,7 +35,7 @@ client.genMsg = [];
 
 for (const aFile of commandFiles) {
     const command = require(`./commands/${aFile}`);
-    client.commands.set(command.name, command);
+    client.commands.set(command.names[0], command);
 }
 
 for (let i = 0; i < noncommandFiles.length; i++) {
@@ -134,9 +134,7 @@ client.on('message', msg => {
     //--------------------------------------------------------------------------------
     // get command
 
-    const command = client.commands.find(cmd =>
-        (cmd.name === userCommand) ||
-        (cmd.aliases && cmd.aliases.includes(userCommand)));
+    const command = client.commands.find(cmd => cmd.names.includes(userCommand));
 
     if (!command) {
         return;
@@ -148,18 +146,18 @@ client.on('message', msg => {
     }
 
     if (command.args && !args.length) {
-        msg.channel.send(`Please provide arguments\nex: ${prefix}${command.name} ${command.usage}`);
+        msg.channel.send(`Please provide arguments\nex: ${prefix}${command.names[0]} ${command.usage}`);
         return;
     }
 
     //--------------------------------------------------------------------------------
     // cooldown
 
-    if (!cooldowns.has(command.name)) {
-        cooldowns.set(command.name, new Discord.Collection());
+    if (!cooldowns.has(command.names[0])) {
+        cooldowns.set(command.names[0], new Discord.Collection());
     }
     
-    const timestamps = cooldowns.get(command.name);
+    const timestamps = cooldowns.get(command.names[0]);
     const cooldownAmount = command.cooldown * 1000;
     const now = Date.now();
     

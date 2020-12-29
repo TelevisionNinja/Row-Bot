@@ -1,26 +1,31 @@
 const rand = require('../lib/randomFunctions.js');
+const stringUtil = require('../lib/stringUtils.js');
 const axios = require('axios');
 const parseString = require('xml2js').parseString;
 const {
-    ruleURLs,
-    ruleAliases
+    rule,
+    tagSeparator
 } = require('../config.json');
 
+const url0 = `${rule.sites[0].API}${tagArr.join(rule.separator)}&pid=`;
+
+// this api has a max of 3 tags
+const url1 = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}&pid=`;
+
 module.exports = {
-    name: 'rule',
-    aliases: ruleAliases,
+    names: rule.names,
     fileName: __filename,
-    description: 'Returns a rule pic',
+    description: rule.description,
     args: true,
     guildOnly: false,
-    usage: '<tags separated by commas>',
+    usage: `<tags separated by a "${tagSeparator}">`,
     cooldown: 1,
     async execute(msg, args) {
         const {
             img,
             source,
             count
-        } = await rule(args);
+        } = await getRuleImage(args);
 
         if (count) {
             msg.channel.send(img);
@@ -38,19 +43,26 @@ module.exports = {
  * 
  * @param {*} tagArr array of tags to be searched
  */
-async function rule(tagArr) {
+async function getRuleImage(tagArr) {
+    // whitespace is replaced with '_'
     // tags are separated by '+'
-    const tags = [...new Set(tagArr.join('_').split(',').map(t => t.replace(/^_+|_+$/g, '')))];
-
-    const url0 = `${ruleURLs[0].api}${tags.join('+')}&pid=`;
-
-    // this api has a max of 3 tags
-    const url1 = `${ruleURLs[1].api}${tags.slice(0, 3).join('+')}&pid=`;
+    tagArr =
+        [
+        ...new Set(
+            tagArr
+            .join(rule.whitespace)
+            .split(tagSeparator)
+            .map(t => stringUtil.trim(t, rule.whitespace))
+            )
+        ];
 
     const urlArr = [url0, url1];
 
-    // the max number of pages for rule0 api is 2000 (0-2000)
-    // the max number of pages for rule1 api is 1999 (0-1999)
+    // the max number of images for the rule0 api is 200001 images (0-200000)
+    // the max number of images for the rule1 api is 200000 (0-199999)
+
+    // (max # images) / (limit per resquest) = pid max
+    // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
 
     let randomSiteID = rand.randomMath(2);
     let url = urlArr[randomSiteID];
@@ -86,7 +98,7 @@ async function rule(tagArr) {
 
     return {
         img,
-        source: `${ruleURLs[randomSiteID].url}${id}`,
+        source: `${rule.sites[randomSiteID].URL}${id}`,
         count,
     }
 }

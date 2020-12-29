@@ -2,8 +2,10 @@ const { prefix } = require('../config.json');
 const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
-    name: 'help',
-    aliases: ['commands'],
+    names: [
+        'help',
+        'commands'
+    ],
     fileName: __filename,
     description: 'Lists all commands',
     args: false,
@@ -15,27 +17,25 @@ module.exports = {
 		const { commands } = msg.client;
 
 		if (args.length) {
-			const name = args[0];
-            const argCommand = msg.client.commands.find(cmd =>
-                (cmd.name === name) ||
-                (cmd.aliases && cmd.aliases.includes(name)));
+			const userCommand = args[0];
+            const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
 
             if (!argCommand) {
                 sendDm(msg, 'That\'s not one of my commands');
                 return;
             }
 
-            data.push(`Command: ${argCommand.name}`);
-            data.push(`Aliases: ${argCommand.aliases.join(', ')}`);
+            data.push(`Command: ${argCommand.names[0]}`);
+            data.push(`Aliases: ${argCommand.names.slice(1).join(', ')}`);
             data.push(`Description: ${argCommand.description}`);
-            data.push(`Usage: ${prefix}${argCommand.name} ${argCommand.usage}`);
+            data.push(`Usage: \`${prefix}${argCommand.names[0]} ${argCommand.usage}\``);
             data.push(`Cooldown: ${argCommand.cooldown} second(s)`);
 
             sendDm(msg, data);
         }
         else {
             data.push('My commands:\n');
-			data.push(commands.map(cmd => cmd.name).join('\n'));
+			data.push(commands.map(cmd => cmd.names[0]).join('\n'));
 			data.push(`\nSend \`${prefix}help <command name>\` to get info on a specific command`);
 
             sendDm(msg, data);

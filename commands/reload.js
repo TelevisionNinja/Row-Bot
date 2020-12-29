@@ -1,6 +1,5 @@
 module.exports = {
-    name: 'reload',
-    aliases: [],
+    names: ['reload'],
     fileName: __filename,
     description: 'Reloads a command',
     args: true,
@@ -8,10 +7,8 @@ module.exports = {
     usage:'<command>',
     cooldown: 0,
     execute(msg, args) {
-        const commandName = args[0].toLowerCase();
-        const command = msg.client.commands.find(cmd =>
-            (cmd.name === commandName) ||
-            (cmd.aliases && cmd.aliases.includes(commandName)));
+        const commandName = args[0];
+        const command = msg.client.commands.find(cmd => cmd.names.includes(commandName));
 
         if (!command) {
             msg.channel.send(`\'${commandName}\' doesn't exist`);
@@ -22,7 +19,7 @@ module.exports = {
 
         try {
             const newCommand = require(command.fileName);
-            msg.client.commands.set(newCommand.name, newCommand);
+            msg.client.commands.set(newCommand.names[0], newCommand);
         }
         catch (error) {
             msg.channel.send('Reload failed');

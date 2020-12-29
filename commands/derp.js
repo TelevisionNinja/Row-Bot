@@ -1,21 +1,21 @@
 const {
-    derpAliases,
-    derpAPIKey,
-    derpAPI,
-    derpAPI50,
-    derpURL
+    derp,
+    tagSeparator
 } = require('../config.json');
 const rand = require('../lib/randomFunctions.js');
+const stringUtil = require('../lib/stringUtils.js');
 const axios = require('axios');
 
+const URL = `${derp.APIImg}${derp.APIKey}&q=`;
+const URL50 = `${derp.APIImg50}${derp.APIKey}&q=`;
+
 module.exports = {
-    name: 'derp',
-    aliases: derpAliases,
+    names: derp.names,
     fileName: __filename,
-    description: 'Returns a derp image. To search artists\' images, type `artist:<artist name>` as a tag',
+    description: derp.description,
     args: true,
     guildOnly: false,
-    usage: '<tags separated by commas>',
+    usage: `<tags separated by a "${tagSeparator}">`,
     cooldown: 1,
     async execute(msg, args) {
         const {
@@ -41,28 +41,39 @@ module.exports = {
  * @param {*} tagArr array of tags to be searched
  */
 async function getImage(tagArr) {
-    const searchTerms = [...new Set(tagArr.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')))].join('%2C');
+    // whitespace is replaced with '+'
+    // tags are separated by '%2C'
+    const tags =
+        [
+        ...new Set(
+            tagArr
+            .join(derp.whitespace)
+            .split(tagSeparator)
+            .map(t => stringUtil.trim(t, derp.whitespace))
+            )
+        ]
+        .join(derp.separator);
     
     let imgURL = '';
     let source = '';
     let results = 0;
 
-    if (searchTerms !== '') {
-        const url = `${derpAPI}${derpAPIKey}&q=${searchTerms}`;
+    if (tags !== '') {
+        const searchURL = `${URL}${tags}`;
 
         try {
-            let response = await axios.get(url);
+            let response = await axios.get(searchURL);
             const count = parseInt(response.data.total);
 
             if (count) {
                 const pageNum = rand.randomMath(1, count + 1);
 
-                response = await axios.get(`${url}&page=${pageNum}`);
+                response = await axios.get(`${searchURL}&page=${pageNum}`);
 
                 const img = response.data.images[0];
 
                 imgURL = img.representations.full;
-                source = `${derpURL}${img.id}`;
+                source = `${derp.URL}${img.id}`;
                 results = count;
             }
         }
@@ -78,6 +89,8 @@ async function getImage(tagArr) {
     }
 }
 
+//----------------------------------------------------------------
+
 /**
  * Returns an image, a source url, and the number of results.
  * If no image is found, the results var is returned as zero.
@@ -85,17 +98,28 @@ async function getImage(tagArr) {
  * @param {*} tagArr array of tags to be searched
  */
 async function getImage50(tagArr) {
-    const searchTerms = [...new Set(tagArr.join('+').split(',').map(t => t.replace(/^\++|\++$/g, '')))].join('%2C');
+    // whitespace is replaced with '+'
+    // tags are separated by '%2C'
+    const tags =
+        [
+        ...new Set(
+            tagArr
+            .join(derp.whitespace)
+            .split(tagSeparator)
+            .map(t => stringUtil.trim(t, derp.whitespace))
+            )
+        ]
+        .join(derp.separator);
     
     let imgURL = '';
     let source = '';
     let results = 0;
 
-    if (searchTerms !== '') {
-        const url = `${derpAPI50}${derpAPIKey}&q=${searchTerms}`;
+    if (tags !== '') {
+        const searchURL = `${URL50}${tags}`;
 
         try {
-            let response = await axios.get(url);
+            let response = await axios.get(searchURL);
             const count = parseInt(response.data.total);
 
             if (count) {
@@ -109,14 +133,14 @@ async function getImage50(tagArr) {
                 // page number starts at 1
                 const pageNum = rand.randomMath(1, maxPages + 1);
 
-                response = await axios.get(`${url}&page=${pageNum}&per_page=50`);
+                response = await axios.get(`${searchURL}&page=${pageNum}`);
 
                 const imgArr = response.data.images;
 
                 const img = imgArr[rand.randomMath(imgArr.length)];
 
                 imgURL = img.representations.full;
-                source = `${derpURL}${img.id}`;
+                source = `${derp.URL}${img.id}`;
                 results = count;
             }
         }
