@@ -1,5 +1,5 @@
 const rand = require('../lib/randomFunctions.js');
-const stringUtil = require('../lib/stringUtils.js');
+const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
 const parseString = require('xml2js').parseString;
 const {
@@ -41,15 +41,7 @@ module.exports = {
 async function getRuleImage(tagArr) {
     // whitespace is replaced with '_'
     // tags are separated by '+'
-    tagArr = [
-        ...new Set(
-            tagArr
-            .join(rule.whitespace)
-            .split(tagSeparator)
-            .map(t => stringUtil.trim(t, rule.whitespace))
-            .filter(t => t !== '')
-            )
-        ];
+    tagArr = stringUtils.tagsToArr(tagArr, rule.whitespace)
 
     let randomSiteID = rand.randomMath(2);
 

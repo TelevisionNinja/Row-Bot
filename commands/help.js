@@ -1,5 +1,4 @@
 const { prefix } = require('../config.json');
-const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     names: [

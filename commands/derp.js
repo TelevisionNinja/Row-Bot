@@ -3,7 +3,7 @@ const {
     tagSeparator
 } = require('../config.json');
 const rand = require('../lib/randomFunctions.js');
-const stringUtil = require('../lib/stringUtils.js');
+const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
 
 const URL = `${derp.API}${derp.APIKey}&q=`;
@@ -45,16 +45,7 @@ module.exports = {
 async function getImage(tagArr) {
     // whitespace is replaced with '+'
     // tags are separated by '%2C'
-    const tags = [
-        ...new Set(
-            tagArr
-            .join(derp.whitespace)
-            .split(tagSeparator)
-            .map(t => stringUtil.trim(t, derp.whitespace))
-            .filter(t => t !== '')
-            )
-        ]
-        .join(derp.separator);
+    const tags = stringUtils.tagsToStr(tagArr, derp.whitespace, derp.separator);
     
     let imgURL = '';
     let source = '';
