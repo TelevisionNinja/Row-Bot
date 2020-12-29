@@ -7,24 +7,46 @@
     "typingSpeed" : 0,
     "reactionSpeed" : 0,
 
-    "tenorAPIKey" : "",
-    "derpAPIKey" : "",
+    "tagSeparator" : "",
 
-    "ruleURLs" : [
-        {
-            "url": "",
-            "api" : ""
-        },
-        {
-            "url": "",
-            "api" : ""
-        }
-    ],
-    "derpAPI" : "",
-    "derpAPI50" : "",
-    "derpURL" : "",
+    "tenor" : {
+        "APIKey" : "",
+        "names" : [""],
+        "description" : "",
+        "API" : ""
+    },
 
-    "ruleAliases" : [""],
-    "tulpAliases" : [""],
-    "derpAliases" : [""]
+    "tulp" : {
+        "names" : [""],
+        "description" : ""
+    },
+
+    "rule" : {
+        "names" : [""],
+        "description" : "",
+        "whitespace" : "",
+        "separator" : "",
+        "sites" : [
+            {
+                "URL": "",
+                "API" : ""
+            },
+            {
+                "URL": "",
+                "API" : ""
+            }
+        ]
+    },
+
+    "derp" : {
+        "APIKey" : "",
+        "names" : [""],
+        "description" : "",
+        "whitespace" : "",
+        "separator" : "",
+        "APIImg" : "",
+        "APIImg50" : "",
+        "APITag" : "",
+        "URL" : ""
+    }
 }
