@@ -51,6 +51,7 @@ async function getImage(tagArr) {
             .join(derp.whitespace)
             .split(tagSeparator)
             .map(t => stringUtil.trim(t, derp.whitespace))
+            .filter(t => t !== '')
             )
         ]
         .join(derp.separator);

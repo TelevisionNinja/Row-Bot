@@ -47,6 +47,7 @@ async function getRuleImage(tagArr) {
             .join(rule.whitespace)
             .split(tagSeparator)
             .map(t => stringUtil.trim(t, rule.whitespace))
+            .filter(t => t !== '')
             )
         ];
 
