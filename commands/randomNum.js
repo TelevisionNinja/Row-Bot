@@ -1,9 +1,10 @@
 const rand = require('../lib/randomFunctions.js');
+const { random } = require('../config.json');
 
 module.exports = {
-    names: ['random'],
+    names: random.names,
     fileName: __filename,
-    description: 'Returns a random value within a given range',
+    description: random.description,
     args: true,
     guildOnly: false,
     usage: '<max> or <min> <max>',

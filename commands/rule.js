@@ -95,7 +95,7 @@ async function getRuleImage(tagArr) {
  * @param {*} tagArr array of tags that are already formatted
  */
 async function getImageRule0(tagArr) {
-    const url = `${rule.sites[0].API}${tagArr.join(rule.separator)}&pid=`;
+    const URL = `${rule.sites[0].API}${tagArr.join(rule.separator)}&pid=`;
 
     // the max number of images for the rule0 api is 200001 images (0-200000)
     let pid = rand.randomMath(200001);
@@ -105,7 +105,7 @@ async function getImageRule0(tagArr) {
     let results = 0;
 
     try {
-        let response = await axios.get(`${url}${pid}`);
+        let response = await axios.get(`${URL}${pid}`);
         let XMLStr = response.data;
         let postArr = [];
 
@@ -129,7 +129,7 @@ async function getImageRule0(tagArr) {
                 // the limit per request is set to 1 in this implementation
                 pid = rand.randomMath(results);
 
-                response = await axios.get(`${url}${pid}`);
+                response = await axios.get(`${URL}${pid}`);
                 XMLStr = response.data;
 
                 parseString(XMLStr, (err, result) => {
@@ -164,14 +164,14 @@ async function getImageRule0(tagArr) {
  */
 async function getImageRule1(tagArr) {
     // this api has a max of 3 tags
-    const url = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}`;
+    const URL = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}`;
 
     let imgURL = '';
     let imgID = '';
     let results = 0;
 
     try {
-        let response = await axios.get(url);
+        let response = await axios.get(URL);
         let XMLStr = response.data;
         let postArr = [];
 
@@ -194,7 +194,7 @@ async function getImageRule1(tagArr) {
             pid = rand.randomMath(results);
 
             if (pid !== 0) {
-                response = await axios.get(`${url}&pid=${pid}`);
+                response = await axios.get(`${URL}&pid=${pid}`);
                 XMLStr = response.data;
 
                 parseString(XMLStr, (err, result) => {

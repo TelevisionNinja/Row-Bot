@@ -1,12 +1,12 @@
-const { prefix } = require('../config.json');
+const {
+    prefix,
+    help
+} = require('../config.json');
 
 module.exports = {
-    names: [
-        'help',
-        'commands'
-    ],
+    names: help.names,
     fileName: __filename,
-    description: 'Lists all commands',
+    description: help.description,
     args: false,
     guildOnly: false,
     usage: '<command name>',

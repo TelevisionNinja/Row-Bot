@@ -9,6 +9,16 @@
 
     "tagSeparator" : "",
 
+    "derp" : {
+        "APIKey" : "",
+        "names" : [""],
+        "description" : "",
+        "whitespace" : "",
+        "separator" : "",
+        "API" : "",
+        "URL" : ""
+    },
+
     "tenor" : {
         "APIKey" : "",
         "names" : [""],
@@ -16,7 +26,17 @@
         "API" : ""
     },
 
-    "tulp" : {
+    "help" : {
+        "names" : [""],
+        "description" : ""
+    },
+
+    "random" : {
+        "names" : [""],
+        "description" : ""
+    },
+
+    "reload" : {
         "names" : [""],
         "description" : ""
     },
@@ -38,13 +58,8 @@
         ]
     },
 
-    "derp" : {
-        "APIKey" : "",
+    "tulp" : {
         "names" : [""],
-        "description" : "",
-        "whitespace" : "",
-        "separator" : "",
-        "API" : "",
-        "URL" : ""
+        "description" : ""
     }
 }

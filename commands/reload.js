@@ -1,7 +1,9 @@
+const { reload } = require('../config.json');
+
 module.exports = {
-    names: ['reload'],
+    names: reload.names,
     fileName: __filename,
-    description: 'Reloads a command',
+    description: reload.description,
     args: true,
     guildOnly: false,
     usage:'<command>',

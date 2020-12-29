@@ -9,6 +9,7 @@
         "Whats up",
         "What up",
         "Sup"],
+
     "acknowledgements" : ["ok",
         "okay",
         "okie dokie",
@@ -20,6 +21,7 @@
         "okie dokie lokie",
         "okey dokey lokey",
         "alright"],
+
     "farewells" : ["Bye",
         "Goodbye",
         "Buh bye",
@@ -30,6 +32,7 @@
         "See you soon",
         "Toodles",
         "farewell"],
+
     "hate" : ["fuck you",
         "fuk you",
         "fuck u",
@@ -42,6 +45,7 @@
         "kill yourself",
         "shut the fuck up",
         "stfu"],
+
     "sadReplies" : ["aww :(",
         "aww 😢",
         "*sniff sniff* 😢",
@@ -59,6 +63,7 @@
         "(⋟﹏⋞)",
         "(つ﹏⊂)",
         ""],
+
     "loves" : ["aww ❤️",
         "yay",
         "Love you",
@@ -91,8 +96,10 @@
         "😘",
         "❤️",
         "🥰"],
+
     "loveMes" : ["kiss me",
         "give me a kiss"],
+
     "loveMeReplies" : ["*kiss*",
         "*kiss* 💋",
         "*kiss* 😗",
@@ -101,6 +108,7 @@
         "💋",
         "😗",
         "😘"],
+
     "goodnights" : ["Goodnight",
         "Good night",
         "G'night",
@@ -111,14 +119,18 @@
         "Sleep tight, don't let the bedbugs bite",
         "Good night, sleep tight, don't let the bedbugs bite",
         "Sweet dreams"],
+
     "goodMornings" : ["Good morning",
         "Morning",
         "Mornin",
         "Mornin'"],
+
     "christmas" : ["Merry Christmas",
         "Happy Hearth's Warming"],
+
     "christmasEve" : ["Happy Christmas Eve",
         "Happy Hearth's Warming Eve"],
+        
     "newYear" : ["Happy New Year",
         "Happy Chinese New Year"]
 }
