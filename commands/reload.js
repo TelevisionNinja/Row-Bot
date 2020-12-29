@@ -1,4 +1,5 @@
 const { reload } = require('../config.json');
+const path = require('path');
 
 module.exports = {
     names: reload.names,
@@ -22,6 +23,9 @@ module.exports = {
         try {
             const newCommand = require(command.fileName);
             msg.client.commands.set(newCommand.names[0], newCommand);
+            if (path.parse(command.fileName).name === 'help') {
+                newCommand.loadCommands(msg.client.commands);
+            }
         }
         catch (error) {
             msg.channel.send('Reload failed');

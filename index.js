@@ -9,6 +9,7 @@ const {
     typingSpeed, // this is wpm
     reactionSpeed // this is ms
 } = require('./config.json');
+const help = require('./commands/help.js');
 
 /*
     wpm to ms per char formula
@@ -45,6 +46,8 @@ for (let i = 0, n = noncommandFiles.length; i < n; i++) {
 for (let i = 0, n = genMsgFiles.length; i < n; i++) {
     client.genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
 }
+
+help.loadCommands(client.commands);
 
 //--------------------------------------------------------------------------------
 // login bot

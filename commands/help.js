@@ -1,7 +1,20 @@
 const {
     prefix,
-    help
+    help,
+    icon
 } = require('../config.json');
+const Discord = require('discord.js');
+
+const helpCenter = new Discord.MessageEmbed()
+    .setTitle('Pinkie\'s Help Center')
+    .attachFiles(`./${icon}`)
+    .setThumbnail(`attachment://${icon}`);
+const specific = {
+    name: 'Specific Command Info',
+    value: `\nSend \`${prefix}help <command name>\` to get info on a specific command`
+};
+
+let called = false;
 
 module.exports = {
     names: help.names,
@@ -11,10 +24,8 @@ module.exports = {
     guildOnly: false,
     usage: '<command name>',
     cooldown: 0,
-    execute(msg, args) {
-        const data = [];
-		const { commands } = msg.client;
-
+    loadCommands,
+    async execute(msg, args) {
 		if (args.length) {
 			const userCommand = args[0];
             const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
@@ -24,20 +35,32 @@ module.exports = {
                 return;
             }
 
-            data.push(`Command: ${argCommand.names[0]}`);
-            data.push(`Aliases: ${argCommand.names.slice(1).join(', ')}`);
-            data.push(`Description: ${argCommand.description}`);
-            data.push(`Usage: \`${prefix}${argCommand.names[0]} ${argCommand.usage}\``);
-            data.push(`Cooldown: ${argCommand.cooldown} second(s)`);
+            const embed = new Discord.MessageEmbed()
+                .setTitle(argCommand.names[0])
+                .setDescription(argCommand.description)
+                .addFields(
+                    {
+                        name: 'Aliases',
+                        value: argCommand.names.slice(1).join(', ')
+                    },
+                    {
+                        name: 'Usage',
+                        value: `\`${prefix}${argCommand.names[0]} ${argCommand.usage}\``
+                    },
+                    {
+                        name: 'Server Only Command?',
+                        value: argCommand.guildOnly ? 'Can only be used in servers' : 'Can be used in DM\'s'
+                    },
+                    {
+                        name: 'Cooldown Time',
+                        value: `${argCommand.cooldown} second(s)`
+                    }
+                );
 
-            sendDm(msg, data);
+            sendDm(msg, embed);
         }
         else {
-            data.push('My commands:\n');
-			data.push(commands.map(cmd => cmd.names[0]).join('\n'));
-			data.push(`\nSend \`${prefix}help <command name>\` to get info on a specific command`);
-
-            sendDm(msg, data);
+            sendDm(msg, helpCenter);
         }
     }
 }
@@ -49,9 +72,9 @@ module.exports = {
  * @param {*} msg Discord.Message
  * @param {*} data message to be sent through DM's
  */
-function sendDm(msg, data) {
+async function sendDm(msg, data) {
     try {
-        msg.author.send(data, { split: true });
+        await msg.author.send(data);
 
         if (msg.channel.type === 'dm') {
             return;
@@ -63,4 +86,27 @@ function sendDm(msg, data) {
         console.log(error);
         msg.reply('I couldn\'t DM you 😢');
     }
+}
+
+/**
+ * This function is not meant to be used by the user.
+ * It has protection against multiple uses just incase it is.
+ * 
+ * @param {*} commands 
+ */
+function loadCommands(commands) {
+    if (called) {
+        helpCenter.spliceFields(0, 25);
+    }
+    else {
+        called = true;
+    }
+    
+    helpCenter.addFields(
+        {
+            name: 'My Commands',
+            value: commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
+        },
+        specific
+    );
 }
