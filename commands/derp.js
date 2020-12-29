@@ -43,8 +43,7 @@ module.exports = {
 async function getImage(tagArr) {
     // whitespace is replaced with '+'
     // tags are separated by '%2C'
-    const tags =
-        [
+    const tags = [
         ...new Set(
             tagArr
             .join(derp.whitespace)
