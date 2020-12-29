@@ -1,5 +1,4 @@
 const { tenor } = require('../config.json');
-const rand = require('../lib/randomFunctions.js');
 const axios = require('axios');
 
 const URL = `${tenor.API}${tenor.APIKey}&q=`;
