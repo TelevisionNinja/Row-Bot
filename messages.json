@@ -126,11 +126,16 @@
         "Mornin'"],
 
     "christmas" : ["Merry Christmas",
-        "Happy Hearth's Warming"],
+        "Happy Hearth's Warming",
+        "Happy Hearths Warming"],
 
     "christmasEve" : ["Happy Christmas Eve",
-        "Happy Hearth's Warming Eve"],
+        "Happy Hearth's Warming Eve",
+        "Happy Hearths Warming Eve"],
         
     "newYear" : ["Happy New Year",
-        "Happy Chinese New Year"]
+        "Happy Chinese New Year"],
+
+    "newYearsEve" : ["Happy New Year's Eve",
+        "Happy New Years Eve"]
 }
