@@ -9,16 +9,14 @@ module.exports = {
     usage: '<message>',
     cooldown: 0,
     async execute(msg, args) {
-        try {
-            await msg.delete();
-        }
-        catch (error) {
-            console.log(error);
-            return;
-        }
-
         if (args.length) {
             msg.channel.send(args.join(' '));
         }
+        
+        if (msg.attachments.size) {
+            await msg.channel.send(msg.attachments.map(img => img.url));
+        }
+        
+        await msg.delete();
     }
 }
