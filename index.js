@@ -28,6 +28,7 @@ const client = new Discord.Client();
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 const genMsgFiles = fileSys.readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
+const intervalMsgs = fileSys.readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
 
 const cooldowns = new Discord.Collection();
 client.commands = new Discord.Collection();
@@ -57,6 +58,10 @@ client.login(token);
 client.on('ready', () => {
     console.log('Row Bot is up');
     client.user.setActivity(activityStatus, { type: 'PLAYING' });
+
+    for (let i = 0, n = intervalMsgs.length; i < n; i++) {
+        require(`./intervalMessages/${intervalMsgs[i]}`).execute(client);
+    }
 });
 
 //--------------------------------------------------------------------------------

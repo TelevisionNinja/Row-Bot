@@ -10,6 +10,16 @@
 
     "tagSeparator" : "",
 
+    "askLateNight" : {
+        "channelID" : "",
+        "isDM" : false,
+        "description" : "",
+        "time" : "00:00",
+        "msg" : "",
+        "noReplyMsg" : "",
+        "timeOut" : 0
+    },
+
     "derp" : {
         "APIKey" : "",
         "names" : [""],
