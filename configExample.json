@@ -27,7 +27,14 @@
         "whitespace" : "",
         "separator" : "",
         "API" : "",
-        "URL" : ""
+        "URL" : "",
+
+        "intervalTagArr" : [""],
+        "intervalChannelID" : "",
+        "intervalIsDM" : false,
+        "intervalMsg" : "",
+        "intervalTime" : "",
+        "intervalWait" : 1
     },
 
     "tenor" : {

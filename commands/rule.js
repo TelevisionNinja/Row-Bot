@@ -1,4 +1,5 @@
 const rand = require('../lib/randomFunctions.js');
+const sendImg = require('../lib/img.js');
 const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
 const parseString = require('xml2js').parseString;
@@ -22,14 +23,9 @@ module.exports = {
             count
         } = await getRuleImage(args);
 
-        if (count) {
-            msg.channel.send(img);
-            msg.channel.send(`Source: <${source}>\nResults: ${count}`);
-        }
-        else {
-            msg.channel.send('Aww there\'s no results 😢');
-        }
-    }
+        sendImg.sendImg(msg.channel, img, source, count);
+    },
+    getRuleImage
 }
 
 /**

@@ -4,7 +4,7 @@ const interval = require('../lib/interval.js');
 module.exports = {
     description: askLateNight.description,
     execute(client) {
-        const time = askLateNight.time.split(':');
+        const time = askLateNight.time.split(':').map(i => parseInt(i));
 
         interval.execute24HrIntervalFunc(
             () => {
