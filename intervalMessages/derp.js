@@ -22,7 +22,7 @@ module.exports = {
                 recipient.send(`${derpConfig.intervalMsg}: ${derpConfig.intervalTagArr[randIndex]}`);
 
                 tagArr[randIndex] = tagArr[randIndex].substring(1);
-                tagArr.push('safe');
+                tagArr.push(`safe${tagSeparator}`);
                 tagArr.push('-oc');
 
                 const {
