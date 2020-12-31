@@ -2,7 +2,6 @@ const {
     derp,
     tagSeparator
 } = require('../config.json');
-const rand = require('../lib/randomFunctions.js');
 const sendMsg = require('../lib/msgUtils.js');
 const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
@@ -48,24 +47,15 @@ async function getImage(tagArr) {
     let results = 0;
 
     if (tags !== '') {
-        const searchURL = `${URL}${tags}`;
-
         try {
-            let response = await axios.get(searchURL);
-            const count = parseInt(response.data.total);
+            const response = await axios.get(`${URL}${tags}`);
+            const results = parseInt(response.data.total);
 
-            if (count) {
-                const pageNum = rand.randomMath(1, count + 1);
-
-                if (pageNum !== 1) {
-                    response = await axios.get(`${searchURL}&page=${pageNum}`);
-                }
-
+            if (results) {
                 const img = response.data.images[0];
 
                 imgURL = img.representations.full;
                 source = `${derp.URL}${img.id}`;
-                results = count;
             }
         }
         catch (error) {

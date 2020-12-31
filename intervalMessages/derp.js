@@ -14,7 +14,7 @@ module.exports = {
 
         const time = derpConfig.intervalTime.split(':').map(i => parseInt(i));
 
-        interval.executeIntervalFunc(
+        interval.execute24HrIntervalFunc(
             async () => {
                 let tagArr = derpConfig.intervalTagArr.map(t => `-${t}${tagSeparator}`);
                 const randIndex = rand.randomMath(tagArr.length);
@@ -32,13 +32,12 @@ module.exports = {
                 
                 sendMsg.sendImg(recipient, imgURL, source, results, false);
             },
-            derpConfig.intervalWait,
             time[0],
             time[1]
         );
 
         /*
-        interval.execute24HrIntervalFunc(
+        interval.executeIntervalFunc(
             async () => {
                 const {
                     imgURL,
@@ -46,8 +45,9 @@ module.exports = {
                     results
                 } = await derp.getImage(tagArr);
                 
-                sendImg.sendImg(recipient, imgURL, source, results, false);
+                sendMsg.sendImg(recipient, imgURL, source, results, false);
             },
+            derpConfig.intervalWait,
             time[0],
             time[1]
         );
