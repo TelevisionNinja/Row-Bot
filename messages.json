@@ -1,5 +1,6 @@
 {
-    "greetings" : ["Hi",
+    "greetings" : [
+        "Hi",
         "Hello",
         "Hiya",
         "Hey",
@@ -8,21 +9,25 @@
         "What's up",
         "Whats up",
         "What up",
-        "Sup"],
+        "Sup"
+    ],
 
-    "acknowledgements" : ["ok",
-        "okay",
-        "okie dokie",
-        "okey dokey",
-        "okie doke",
-        "okey doke",
-        "okie dokie artichokie",
-        "okey dokey artichokey",
-        "okie dokie lokie",
-        "okey dokey lokey",
-        "alright"],
+    "acknowledgements" : [
+        "Ok",
+        "Okay",
+        "Okie dokie",
+        "Okey dokey",
+        "Okie doke",
+        "Okey doke",
+        "Okie dokie artichokie",
+        "Okey dokey artichokey",
+        "Okie dokie lokie",
+        "Okey dokey lokey",
+        "Alright"
+    ],
 
-    "farewells" : ["Bye",
+    "farewells" : [
+        "Bye",
         "Goodbye",
         "Buh bye",
         "Tah tah~",
@@ -31,9 +36,11 @@
         "See ya",
         "See you soon",
         "Toodles",
-        "farewell"],
+        "farewell"
+    ],
 
-    "hate" : ["fuck you",
+    "hate" : [
+        "fuck you",
         "fuk you",
         "fuck u",
         "fuk u",
@@ -45,9 +52,11 @@
         "kill yourself",
         "shut up",
         "shut the fuck up",
-        "stfu"],
+        "stfu"
+    ],
 
-    "sadReplies" : ["aww :(",
+    "sadReplies" : [
+        "aww :(",
         "aww 😢",
         "*sniff sniff* 😢",
         "Wha- Why?",
@@ -62,10 +71,11 @@
     
         "╥﹏╥",
         "(⋟﹏⋞)",
-        "(つ﹏⊂)",
-        ""],
+        "(つ﹏⊂)"
+    ],
 
-    "loves" : ["aww ❤️",
+    "loves" : [
+        "aww ❤️",
         "yay",
         "Love you",
         "Love u",
@@ -96,21 +106,27 @@
         "😗",
         "😘",
         "❤️",
-        "🥰"],
+        "🥰"
+    ],
 
-    "loveMes" : ["kiss me",
-        "give me a kiss"],
+    "loveMes" : [
+        "kiss me",
+        "give me a kiss"
+    ],
 
-    "loveMeReplies" : ["*kiss*",
+    "loveMeReplies" : [
+        "*kiss*",
         "*kiss* 💋",
         "*kiss* 😗",
         "*kiss* 😘",
     
         "💋",
         "😗",
-        "😘"],
+        "😘"
+    ],
 
-    "goodnights" : ["Goodnight",
+    "goodnights" : [
+        "Goodnight",
         "Good night",
         "G'night",
         "Night",
@@ -119,24 +135,35 @@
         "Sleep tight",
         "Sleep tight, don't let the bedbugs bite",
         "Good night, sleep tight, don't let the bedbugs bite",
-        "Sweet dreams"],
+        "Sweet dreams"
+    ],
 
-    "goodMornings" : ["Good morning",
+    "goodMornings" : [
+        "Good morning",
         "Morning",
         "Mornin",
-        "Mornin'"],
+        "Mornin'"
+    ],
 
-    "christmas" : ["Merry Christmas",
+    "christmas" : [
+        "Merry Christmas",
         "Happy Hearth's Warming",
-        "Happy Hearths Warming"],
+        "Happy Hearths Warming"
+    ],
 
-    "christmasEve" : ["Happy Christmas Eve",
+    "christmasEve" : [
+        "Happy Christmas Eve",
         "Happy Hearth's Warming Eve",
-        "Happy Hearths Warming Eve"],
+        "Happy Hearths Warming Eve"
+    ],
         
-    "newYear" : ["Happy New Year",
-        "Happy Chinese New Year"],
+    "newYear" : [
+        "Happy New Year",
+        "Happy Chinese New Year"
+    ],
 
-    "newYearsEve" : ["Happy New Year's Eve",
-        "Happy New Years Eve"]
+    "newYearsEve" : [
+        "Happy New Year's Eve",
+        "Happy New Years Eve"
+    ]
 }

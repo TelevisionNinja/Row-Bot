@@ -1,4 +1,6 @@
 const { askLateNight } = require('../config.json');
+const { acknowledgements } = require('../messages.json');
+const rand = require('../lib/randomFunctions.js');
 const interval = require('../lib/interval.js');
 const sendMsg = require('../lib/msgUtils.js');
 
@@ -26,7 +28,7 @@ module.exports = {
 async function ask(client, ID, msg, noReplayMsg, timeOut) {
     const recipient = await sendMsg.getRecipient(client, ID);
 
-    recipient.send(msg);
+    sendMsg.sendTypingMsg(recipient, msg, '');
 
     const collector = recipient.createMessageCollector(m => m, { time: timeOut });
 
@@ -36,13 +38,13 @@ async function ask(client, ID, msg, noReplayMsg, timeOut) {
         const str = m.content.toLowerCase();
         
         if (str.includes('no')) {
-            recipient.send("aww");
+            sendMsg.sendTypingMsg(recipient, 'aww', str);
             stop = true;
             collector.stop();
             return;
         }
         if (str.includes('yes')) {
-            recipient.send("Yay!");
+            sendMsg.sendTypingMsg(recipient, acknowledgements[rand.randomMath(acknowledgements.length)], str);
             stop = true;
             collector.stop();
             return;
