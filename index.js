@@ -63,7 +63,7 @@ client.on('message', msg => {
     const msgStr = msg.content.toLowerCase();
 
     if (!msgStr.startsWith(prefix)) {
-        let botReplay = '';
+        let botReply = '';
         let replyBool = false;
 
         //--------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ client.on('message', msg => {
 
                     if (isNoncommand) {
                         replyBool = true;
-                        botReplay = replyStr;
+                        botReply = replyStr;
                         break;
                     }
                 }
@@ -105,7 +105,7 @@ client.on('message', msg => {
     
                 if (hasReply) {
                     replyBool = true;
-                    botReplay = replyStr;
+                    botReply = replyStr;
                     break;
                 }
             }
@@ -115,7 +115,7 @@ client.on('message', msg => {
         // reply
 
         if (replyBool) {
-            sendMsg.sendTypingMsg(msg.channel, botReplay, msgStr);
+            sendMsg.sendTypingMsg(msg.channel, botReply, msgStr);
         }
 
         return;
