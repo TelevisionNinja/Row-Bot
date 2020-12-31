@@ -10,12 +10,12 @@ const rand = require('../lib/randomFunctions.js');
 module.exports = {
     description: derpConfig.description,
     async execute(client) {
-        const recipient = await sendMsg.getRecipient(client, derpConfig.intervalChannelID);
-
         const time = derpConfig.intervalTime.split(':').map(i => parseInt(i));
 
         interval.execute24HrIntervalFunc(
             async () => {
+                const recipient = await sendMsg.getRecipient(client, derpConfig.intervalChannelID);
+
                 let tagArr = derpConfig.intervalTagArr.map(t => `-${t}${tagSeparator}`);
                 const randIndex = rand.randomMath(tagArr.length);
 
@@ -39,6 +39,8 @@ module.exports = {
 
         interval.executeIntervalFunc(
             async () => {
+                const recipient = await sendMsg.getRecipient(client, derpConfig.intervalWaitChannelID);
+
                 const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
 
                 const tagArr = derpConfig.intervalWaitTags[randIndex]

@@ -36,7 +36,8 @@
         "intervalWait" : 1,
         "intervalWaitTags" : [
             [""]
-        ]
+        ],
+        "intervalWaitChannelID" : ""
     },
 
     "tenor" : {
