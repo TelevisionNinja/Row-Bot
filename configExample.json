@@ -32,7 +32,11 @@
         "intervalChannelID" : "",
         "intervalMsg" : "",
         "intervalTime" : "",
-        "intervalWait" : 1
+
+        "intervalWait" : 1,
+        "intervalWaitTags" : [
+            [""]
+        ]
     },
 
     "tenor" : {

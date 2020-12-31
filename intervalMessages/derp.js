@@ -22,7 +22,7 @@ module.exports = {
                 recipient.send(`${derpConfig.intervalMsg}: ${derpConfig.intervalTagArr[randIndex]}`);
 
                 tagArr[randIndex] = tagArr[randIndex].substring(1);
-                tagArr.push("safe");
+                tagArr.push('safe');
 
                 const {
                     imgURL,
@@ -36,9 +36,14 @@ module.exports = {
             time[1]
         );
 
-        /*
         interval.executeIntervalFunc(
             async () => {
+                const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
+
+                const tagArr = derpConfig.intervalWaitTags[randIndex]
+                    .map(t => `${t}${tagSeparator}`)
+                    .push('');
+
                 const {
                     imgURL,
                     source,
@@ -48,9 +53,8 @@ module.exports = {
                 sendMsg.sendImg(recipient, imgURL, source, results, false);
             },
             derpConfig.intervalWait,
-            time[0],
-            time[1]
+            0,
+            0
         );
-        */
     }
 }
