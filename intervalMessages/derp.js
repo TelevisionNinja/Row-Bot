@@ -23,6 +23,7 @@ module.exports = {
 
                 tagArr[randIndex] = tagArr[randIndex].substring(1);
                 tagArr.push('safe');
+                tagArr.push('-oc');
 
                 const {
                     imgURL,
