@@ -4,20 +4,13 @@ const {
     tagSeparator
 } = require('../config.json');
 const interval = require('../lib/interval.js');
-const sendImg = require('../lib/img.js');
+const sendMsg = require('../lib/msgUtils.js');
 const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: derpConfig.description,
     async execute(client) {
-        let receiver;
-
-        if (derpConfig.intervalIsDM) {
-            receiver = await client.users.fetch(derpConfig.intervalChannelID);
-        }
-        else {
-            receiver = client.channels.cache.get(derpConfig.intervalChannelID);
-        }
+        const recipient = await sendMsg.getRecipient(client, derpConfig.intervalChannelID);
 
         const time = derpConfig.intervalTime.split(':').map(i => parseInt(i));
 
@@ -26,7 +19,7 @@ module.exports = {
                 let tagArr = derpConfig.intervalTagArr.map(t => `-${t}${tagSeparator}`);
                 const randIndex = rand.randomMath(tagArr.length);
 
-                receiver.send(`${derpConfig.intervalMsg}: ${derpConfig.intervalTagArr[randIndex]}`);
+                recipient.send(`${derpConfig.intervalMsg}: ${derpConfig.intervalTagArr[randIndex]}`);
 
                 tagArr[randIndex] = tagArr[randIndex].substring(1);
                 tagArr.push("safe");
@@ -37,12 +30,27 @@ module.exports = {
                     results
                 } = await derp.getImage(tagArr);
                 
-                sendImg.sendImg(receiver, imgURL, source, results, false);
+                sendMsg.sendImg(recipient, imgURL, source, results, false);
             },
             derpConfig.intervalWait,
             time[0],
             time[1]
         );
+
+        /*
+        interval.execute24HrIntervalFunc(
+            async () => {
+                const {
+                    imgURL,
+                    source,
+                    results
+                } = await derp.getImage(tagArr);
+                
+                sendImg.sendImg(recipient, imgURL, source, results, false);
+            },
+            time[0],
+            time[1]
+        );
+        */
     }
 }
-

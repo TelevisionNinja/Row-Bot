@@ -1,5 +1,5 @@
 const rand = require('../lib/randomFunctions.js');
-const sendImg = require('../lib/img.js');
+const sendMsg = require('../lib/msgUtils.js');
 const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
 const parseString = require('xml2js').parseString;
@@ -23,7 +23,7 @@ module.exports = {
             count
         } = await getRuleImage(args);
 
-        sendImg.sendImg(msg.channel, img, source, count);
+        sendMsg.sendImg(msg.channel, img, source, count);
     },
     getRuleImage
 }

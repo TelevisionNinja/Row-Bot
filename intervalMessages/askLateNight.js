@@ -1,5 +1,6 @@
 const { askLateNight } = require('../config.json');
 const interval = require('../lib/interval.js');
+const sendMsg = require('../lib/msgUtils.js');
 
 module.exports = {
     description: askLateNight.description,
@@ -11,7 +12,6 @@ module.exports = {
                 ask(
                     client,
                     askLateNight.channelID,
-                    askLateNight.isDM,
                     askLateNight.msg,
                     askLateNight.noReplyMsg,
                     askLateNight.timeOut
@@ -23,19 +23,12 @@ module.exports = {
     }
 }
 
-async function ask(client, ID, isDM, msg, noReplayMsg, timeOut) {
-    let receiver;
+async function ask(client, ID, msg, noReplayMsg, timeOut) {
+    const recipient = await sendMsg.getRecipient(client, ID);
 
-    if (isDM) {
-        receiver = await client.users.fetch(ID);
-    }
-    else {
-        receiver = client.channels.cache.get(ID);
-    }
+    recipient.send(msg);
 
-    receiver.send(msg);
-
-    const collector = receiver.createMessageCollector(m => m, { time: timeOut });
+    const collector = recipient.createMessageCollector(m => m, { time: timeOut });
 
     let stop = false;
 
@@ -43,13 +36,13 @@ async function ask(client, ID, isDM, msg, noReplayMsg, timeOut) {
         const str = m.content.toLowerCase();
         
         if (str.includes('no')) {
-            receiver.send("aww");
+            recipient.send("aww");
             stop = true;
             collector.stop();
             return;
         }
         if (str.includes('yes')) {
-            receiver.send("Yay!");
+            recipient.send("Yay!");
             stop = true;
             collector.stop();
             return;
@@ -58,7 +51,7 @@ async function ask(client, ID, isDM, msg, noReplayMsg, timeOut) {
 
     collector.on('end', () => {
         if (!stop) {
-            receiver.send(noReplayMsg);
+            recipient.send(noReplayMsg);
         }
     });
 }

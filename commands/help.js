@@ -4,6 +4,7 @@ const {
     icon
 } = require('../config.json');
 const Discord = require('discord.js');
+const sendMsg = require('../lib/msgUtils.js');
 
 const helpCenter = new Discord.MessageEmbed()
     .setTitle('Pinkie\'s Help Center')
@@ -31,7 +32,7 @@ module.exports = {
             const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
 
             if (!argCommand) {
-                sendDm(msg, 'That\'s not one of my commands');
+                sendMsg.sendDm(msg, 'That\'s not one of my commands');
                 return;
             }
 
@@ -57,34 +58,11 @@ module.exports = {
                     }
                 );
 
-            sendDm(msg, embed);
+            sendMsg.sendDm(msg, embed);
         }
         else {
-            sendDm(msg, helpCenter);
+            sendMsg.sendDm(msg, helpCenter);
         }
-    }
-}
-
-/**
- * Sends a message to the author's DM's.
- * Splits the message into multiple messages if it exceeds the discord char limit.
- * 
- * @param {*} msg Discord.Message
- * @param {*} data message to be sent through DM's
- */
-async function sendDm(msg, data) {
-    try {
-        await msg.author.send(data);
-
-        if (msg.channel.type === 'dm') {
-            return;
-        }
-        
-        msg.reply('I\'ve sent you a DM');
-    }
-    catch (error) {
-        console.log(error);
-        msg.reply('I couldn\'t DM you 😢');
     }
 }
 

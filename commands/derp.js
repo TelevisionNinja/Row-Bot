@@ -3,7 +3,7 @@ const {
     tagSeparator
 } = require('../config.json');
 const rand = require('../lib/randomFunctions.js');
-const sendImg = require('../lib/img.js');
+const sendMsg = require('../lib/msgUtils.js');
 const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
 
@@ -24,7 +24,7 @@ module.exports = {
             results
         } = await getImage(args);
         
-        sendImg.sendImg(msg.channel, imgURL, source, results);
+        sendMsg.sendImg(msg.channel, imgURL, source, results);
     },
     getImage
 }

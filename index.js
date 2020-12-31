@@ -5,20 +5,9 @@ const {
     token,
     activityStatus,
     aliases,
-    readingSpeed, // this is wpm
-    typingSpeed, // this is wpm
-    reactionSpeed // this is ms
 } = require('./config.json');
 const help = require('./commands/help.js');
-
-/*
-    wpm to ms per char formula
-    (1000 ms) / (wpm / (60 s) * (6 chars per word))
-    = (1000 ms) * (60 s) / (wpm * (6 chars per word))
-    = (1000 ms) * (10 s) / wpm
-*/
-const typingSpeedMs = 10000 / typingSpeed;
-const readingSpeedMs = 10000 / readingSpeed;
+const sendMsg = require('./lib/msgUtils.js');
 
 const client = new Discord.Client();
 
@@ -126,14 +115,7 @@ client.on('message', msg => {
         // reply
 
         if (replyBool) {
-            setTimeout(() => {
-                msg.channel.startTyping();
-    
-                setTimeout(() => {
-                    msg.channel.stopTyping();
-                    msg.channel.send(botReplay);
-                }, botReplay.length * typingSpeedMs + reactionSpeed); // time before sending
-            }, msgStr.length * readingSpeedMs + reactionSpeed); // time before typing
+            sendMsg.sendTypingMsg(msg.channel, botReplay, msgStr);
         }
 
         return;
