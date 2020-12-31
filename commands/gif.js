@@ -23,7 +23,8 @@ module.exports = {
         else {
             msg.channel.send('Aww there\'s no results 😢');
         }
-    }
+    },
+    getGif
 }
 
 /**
