@@ -49,7 +49,7 @@ async function getImage(tagArr) {
     if (tags !== '') {
         try {
             const response = await axios.get(`${URL}${tags}`);
-            const results = parseInt(response.data.total);
+            results = parseInt(response.data.total);
 
             if (results) {
                 const img = response.data.images[0];
