@@ -37,15 +37,17 @@ module.exports = {
             time[1]
         );
 
+        //-------------------------------------------------------------------
+
         interval.executeIntervalFunc(
             async () => {
                 const recipient = await sendMsg.getRecipient(client, derpConfig.intervalWaitChannelID);
 
                 const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
 
-                const tagArr = derpConfig.intervalWaitTags[randIndex]
-                    .map(t => `${t}${tagSeparator}`)
-                    .push('');
+                let tagArr = derpConfig.intervalWaitTags[randIndex]
+                    .map(t => `${t}${tagSeparator}`);
+                tagArr.push('');
 
                 const {
                     imgURL,
