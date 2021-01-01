@@ -21,7 +21,7 @@ module.exports = {
             img,
             source,
             count
-        } = await getRuleImage(args);
+        } = await getRuleImageExecute(args);
 
         sendMsg.sendImg(msg.channel, img, source, count);
     },
@@ -34,10 +34,10 @@ module.exports = {
  * 
  * @param {*} tagArr array of tags to be searched
  */
-async function getRuleImage(tagArr) {
+async function getRuleImageExecute(tagArr) {
     // whitespace is replaced with '_'
     // tags are separated by '+'
-    tagArr = stringUtils.tagsToArr(tagArr, rule.whitespace)
+    tagArr = stringUtils.tagsToParsedTagArr(tagArr, rule.whitespace)
 
     let randomSiteID = rand.randomMath(2);
 
@@ -78,7 +78,7 @@ async function getRuleImage(tagArr) {
         img,
         source: `${rule.sites[randomSiteID].URL}${id}`,
         count,
-    }
+    };
 }
 
 /**
@@ -211,5 +211,60 @@ async function getImageRule1(tagArr) {
         imgURL,
         imgID,
         results
+    };
+}
+
+//----------------------------------------------------------------------
+
+/**
+ * Returns an image from one of the rule sites, a source url, and the number of results.
+ * If no image is found, the count var is returned as zero.
+ * 
+ * @param {*} tagArr array of tags to be searched
+ */
+async function getRuleImage(tagArr) {
+    // whitespace is replaced with '_'
+    // tags are separated by '+'
+    tagArr = stringUtils.tagArrToParsedTagArr(tagArr, rule.whitespace)
+
+    let randomSiteID = rand.randomMath(2);
+
+    let img = '';
+    let id = '';
+    let count = 0;
+
+    let requestedImg;
+
+    if (randomSiteID) {
+        requestedImg = await getImageRule1(tagArr);
+    }
+    else {
+        requestedImg = await getImageRule0(tagArr);
+    }
+
+    img = requestedImg.imgURL;
+    id = requestedImg.imgID;
+    count = requestedImg.results;
+
+    if (!count) {
+        // this cycles between the number of sites (2)
+        randomSiteID = ++randomSiteID % 2;
+        
+        if (randomSiteID) {
+            requestedImg = await getImageRule1(tagArr);
+        }
+        else {
+            requestedImg = await getImageRule0(tagArr);
+        }
+    
+        img = requestedImg.imgURL;
+        id = requestedImg.imgID;
+        count = requestedImg.results;
+    }
+
+    return {
+        img,
+        source: `${rule.sites[randomSiteID].URL}${id}`,
+        count,
     };
 }
