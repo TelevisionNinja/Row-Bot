@@ -9,7 +9,7 @@ module.exports = {
     async execute(client) {
         const time = derpConfig.intervalTime.split(':').map(i => parseInt(i));
 
-        interval.executeIntervalFunc(
+        interval.startIntervalFunc(
             async () => {
                 const recipient = await sendMsg.getRecipient(client, derpConfig.intervalChannelID);
 
@@ -35,12 +35,13 @@ module.exports = {
             },
             1440, // 24 hrs in minutes
             time[0],
-            time[1]
+            time[1],
+            true
         );
 
         //-------------------------------------------------------------------
 
-        interval.executeIntervalFunc(
+        interval.startIntervalFunc(
             async () => {
                 const recipient = await sendMsg.getRecipient(client, derpConfig.intervalWaitChannelID);
 
@@ -56,7 +57,8 @@ module.exports = {
             },
             derpConfig.intervalWait,
             0,
-            0
+            0,
+            true
         );
     }
 }

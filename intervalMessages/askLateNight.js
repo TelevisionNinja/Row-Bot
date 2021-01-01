@@ -12,7 +12,7 @@ module.exports = {
     execute(client) {
         const time = askLateNight.time.split(':').map(i => parseInt(i));
 
-        interval.executeIntervalFunc(
+        interval.startIntervalFunc(
             () => {
                 ask(
                     client,
@@ -24,7 +24,8 @@ module.exports = {
             },
             1440, // 24 hrs in minutes
             time[0],
-            time[1]
+            time[1],
+            true
         );
     }
 }
