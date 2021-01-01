@@ -1,4 +1,7 @@
-const { askLateNight } = require('../config.json');
+const {
+    aliases,
+    askLateNight
+} = require('../config.json');
 const { acknowledgements } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
 const interval = require('../lib/interval.js');
@@ -9,16 +12,17 @@ module.exports = {
     execute(client) {
         const time = askLateNight.time.split(':').map(i => parseInt(i));
 
-        interval.execute24HrIntervalFunc(
+        interval.executeIntervalFunc(
             () => {
                 ask(
                     client,
                     askLateNight.channelID,
                     askLateNight.msg,
                     askLateNight.noReplyMsg,
-                    askLateNight.timeOut
+                    askLateNight.timeOut // time out is in ms
                 );
             },
+            1440, // 24 hrs in minutes
             time[0],
             time[1]
         );
@@ -28,9 +32,9 @@ module.exports = {
 async function ask(client, ID, msg, noReplayMsg, timeOut) {
     const recipient = await sendMsg.getRecipient(client, ID);
 
-    sendMsg.sendTypingMsg(recipient, msg, '');
+    await sendMsg.sendTypingMsg(recipient, msg, '');
 
-    const collector = recipient.createMessageCollector(m => m, { time: timeOut });
+    const collector = recipient.createMessageCollector(m => aliases.some(a => m.content.toLowerCase().includes(a)), { time: timeOut });
 
     let stop = false;
 
