@@ -6,7 +6,6 @@ const {
     activityStatus,
     aliases,
 } = require('./config.json');
-const help = require('./commands/help.js');
 const sendMsg = require('./lib/msgUtils.js');
 
 const client = new Discord.Client();
@@ -36,8 +35,6 @@ for (let i = 0, n = noncommandFiles.length; i < n; i++) {
 for (let i = 0, n = genMsgFiles.length; i < n; i++) {
     client.genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
 }
-
-help.loadCommands(client.commands);
 
 //--------------------------------------------------------------------------------
 // login bot

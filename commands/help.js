@@ -25,8 +25,19 @@ module.exports = {
     guildOnly: false,
     usage: '<command name>',
     cooldown: 0,
-    loadCommands,
     async execute(msg, args) {
+        // initialize embed 
+        if (!called) {
+            helpCenter.addFields(
+                {
+                    name: 'My Commands',
+                    value: commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
+                },
+                specific
+            );
+            called = true;
+        }
+        
 		if (args.length) {
 			const userCommand = args[0];
             const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
@@ -64,27 +75,4 @@ module.exports = {
             sendMsg.sendDm(msg, helpCenter);
         }
     }
-}
-
-/**
- * This function is not meant to be used by the user.
- * It has protection against multiple uses just incase it is.
- * 
- * @param {*} commands 
- */
-function loadCommands(commands) {
-    if (called) {
-        helpCenter.spliceFields(0, 25);
-    }
-    else {
-        called = true;
-    }
-    
-    helpCenter.addFields(
-        {
-            name: 'My Commands',
-            value: commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
-        },
-        specific
-    );
 }
