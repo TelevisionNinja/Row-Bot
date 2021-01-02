@@ -5,7 +5,7 @@ const {
 const { acknowledgements } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
 const interval = require('../lib/interval.js');
-const sendMsg = require('../lib/msgUtils.js');
+const msgUtils = require('../lib/msgUtils.js');
 
 module.exports = {
     description: askLateNight.description,
@@ -31,34 +31,48 @@ module.exports = {
 }
 
 async function ask(client, ID, msg, noReplayMsg, timeOut) {
-    const recipient = await sendMsg.getRecipient(client, ID);
+    const recipient = await msgUtils.getRecipient(client, ID);
 
-    await sendMsg.sendTypingMsg(recipient, msg, '');
+    await msgUtils.sendTypingMsg(recipient, msg, '');
 
-    const collector = recipient.createMessageCollector(m => aliases.some(a => m.content.toLowerCase().includes(a)), { time: timeOut });
+    const collector = recipient.createMessageCollector(m => {
+        const str = m.content.toLowerCase();
+        return aliases.some(a => str.includes(a));
+    }, { time: timeOut });
 
     let stop = false;
 
     collector.on('collect', m => {
-        const wordArr = m.content.toLowerCase().split(' ');
+        const str = m.content.toLowerCase();
+        const wordArr = str.split(' ');
         
         if (wordArr.includes('no')) {
-            sendMsg.sendTypingMsg(recipient, 'aww', str);
+            msgUtils.sendTypingMsg(recipient, 'aww', str);
             stop = true;
-            collector.stop();
-            return;
         }
-        if (wordArr.includes('yes')) {
-            sendMsg.sendTypingMsg(recipient, acknowledgements[rand.randomMath(acknowledgements.length)], str);
+        else if (wordArr.includes('yes')) {
+            msgUtils.sendTypingMsg(recipient, acknowledgements[rand.randomMath(acknowledgements.length)], str);
             stop = true;
+        }
+
+        if (stop) {
             collector.stop();
             return;
         }
     });
 
     collector.on('end', () => {
-        if (!stop) {
-            recipient.send(noReplayMsg);
+        if (stop) {
+            const memberArr = msgUtils.getUsersInChannelByChannelID(recipient.guild, '786111956527349821');
+
+            memberArr.forEach(async m => {
+                const currentRecipient = await msgUtils.getRecipient(client, m.id);
+
+                msgUtils.sendDirectDm(currentRecipient, askLateNight.successMsg, true);
+            });
+        }
+        else {
+            msgUtils.sendTypingMsg(recipient, noReplayMsg, '');
         }
     });
 }
