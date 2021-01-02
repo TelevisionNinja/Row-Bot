@@ -45,7 +45,8 @@ help.loadCommands(client.commands);
 client.login(token);
 
 client.on('ready', () => {
-    console.log('Row Bot is up');
+    const time = new Date();
+    console.log(`Row Bot is up at ${time.getHours()}:${time.getMinutes()}`);
     client.user.setActivity(activityStatus, { type: 'PLAYING' });
 
     for (let i = 0, n = intervalMsgs.length; i < n; i++) {
