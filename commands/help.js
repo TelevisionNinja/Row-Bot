@@ -4,7 +4,7 @@ const {
     icon
 } = require('../config.json');
 const Discord = require('discord.js');
-const sendMsg = require('../lib/msgUtils.js');
+const msgUtils = require('../lib/msgUtils.js');
 
 const helpCenter = new Discord.MessageEmbed()
     .setTitle('Pinkie\'s Help Center')
@@ -43,7 +43,7 @@ module.exports = {
             const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
 
             if (!argCommand) {
-                sendMsg.sendDm(msg, 'That\'s not one of my commands');
+                msgUtils.sendAuthorDm(msg, 'That\'s not one of my commands');
                 return;
             }
 
@@ -69,10 +69,10 @@ module.exports = {
                     }
                 );
 
-            sendMsg.sendDm(msg, embed);
+            msgUtils.sendAuthorDm(msg, embed);
         }
         else {
-            sendMsg.sendDm(msg, helpCenter);
+            msgUtils.sendAuthorDm(msg, helpCenter);
         }
     }
 }
