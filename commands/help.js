@@ -31,7 +31,7 @@ module.exports = {
             helpCenter.addFields(
                 {
                     name: 'My Commands',
-                    value: commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
+                    value: msg.client.commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
                 },
                 specific
             );
