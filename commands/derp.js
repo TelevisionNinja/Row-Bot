@@ -37,6 +37,7 @@ module.exports = {
 async function getImageExecute(tagArr) {
     // whitespace is replaced with '+'
     // tags are separated by '%2C'
+    // '-' infront of a tag means to exclude it
     const tags = stringUtils.tagsToStr(tagArr, derp.whitespace, derp.separator);
     
     let imgURL = '';
@@ -76,6 +77,7 @@ async function getImageExecute(tagArr) {
 async function getImage(tagArr) {
     // whitespace is replaced with '+'
     // tags are separated by '%2C'
+    // '-' infront of a tag means to exclude it
     const tags = stringUtils.tagArrToStr(tagArr, derp.whitespace, derp.separator);
     
     let imgURL = '';
