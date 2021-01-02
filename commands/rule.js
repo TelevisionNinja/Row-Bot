@@ -23,7 +23,7 @@ module.exports = {
             count
         } = await getRuleImageExecute(args);
 
-        msgUtils.sendAuthorDm(msg.channel, img, source, count);
+        msgUtils.sendImg(msg.channel, img, source, count);
     },
     getRuleImage
 }
