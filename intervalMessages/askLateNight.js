@@ -40,15 +40,15 @@ async function ask(client, ID, msg, noReplayMsg, timeOut) {
     let stop = false;
 
     collector.on('collect', m => {
-        const str = m.content.toLowerCase();
+        const wordArr = m.content.toLowerCase().split(' ');
         
-        if (str.includes('no')) {
+        if (wordArr.includes('no')) {
             sendMsg.sendTypingMsg(recipient, 'aww', str);
             stop = true;
             collector.stop();
             return;
         }
-        if (str.includes('yes')) {
+        if (wordArr.includes('yes')) {
             sendMsg.sendTypingMsg(recipient, acknowledgements[rand.randomMath(acknowledgements.length)], str);
             stop = true;
             collector.stop();
