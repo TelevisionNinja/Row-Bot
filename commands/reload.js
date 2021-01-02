@@ -1,5 +1,4 @@
 const { reload } = require('../config.json');
-const path = require('path');
 
 module.exports = {
     names: reload.names,

@@ -6,7 +6,7 @@ const {
     activityStatus,
     aliases,
 } = require('./config.json');
-const sendMsg = require('./lib/msgUtils.js');
+const msgUtils = require('./lib/msgUtils.js');
 
 const client = new Discord.Client();
 
@@ -113,7 +113,7 @@ client.on('message', msg => {
         // reply
 
         if (replyBool) {
-            sendMsg.sendTypingMsg(msg.channel, botReply, msgStr);
+            msgUtils.sendTypingMsg(msg.channel, botReply, msgStr);
         }
 
         return;

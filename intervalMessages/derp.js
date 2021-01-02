@@ -1,7 +1,7 @@
 const derp = require('../commands/derp.js');
 const { derp: derpConfig } = require('../config.json');
 const interval = require('../lib/interval.js');
-const sendMsg = require('../lib/msgUtils.js');
+const msgUtils = require('../lib/msgUtils.js');
 const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
 
         interval.startIntervalFunc(
             async () => {
-                const recipient = await sendMsg.getRecipient(client, derpConfig.intervalChannelID);
+                const recipient = await msgUtils.getRecipient(client, derpConfig.intervalChannelID);
 
                 // map was used bc tagArr was the exact same array taht was being used for every interval
                 let tagArr = derpConfig.intervalTagArr.map(t => `-${t}`);
@@ -31,7 +31,7 @@ module.exports = {
 
                 recipient.send(`${derpConfig.intervalMsg}${derpConfig.intervalTagArr[randIndex]}`);
 
-                sendMsg.sendImg(recipient, imgURL, source, results, false);
+                msgUtils.sendImg(recipient, imgURL, source, results, false);
             },
             1440, // 24 hrs in minutes
             time[0],
@@ -43,7 +43,7 @@ module.exports = {
 
         interval.startIntervalFunc(
             async () => {
-                const recipient = await sendMsg.getRecipient(client, derpConfig.intervalWaitChannelID);
+                const recipient = await msgUtils.getRecipient(client, derpConfig.intervalWaitChannelID);
 
                 const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
 
@@ -53,7 +53,7 @@ module.exports = {
                     results
                 } = await derp.getImage(derpConfig.intervalWaitTags[randIndex]);
                 
-                sendMsg.sendImg(recipient, imgURL, source, results, false);
+                msgUtils.sendImg(recipient, imgURL, source, results, false);
             },
             derpConfig.intervalWait,
             0,

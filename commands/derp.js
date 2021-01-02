@@ -2,7 +2,7 @@ const {
     derp,
     tagSeparator
 } = require('../config.json');
-const sendMsg = require('../lib/msgUtils.js');
+const msgUtils = require('../lib/msgUtils.js');
 const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
 
@@ -23,7 +23,7 @@ module.exports = {
             results
         } = await getImageExecute(args);
         
-        sendMsg.sendImg(msg.channel, imgURL, source, results);
+        msgUtils.sendImg(msg.channel, imgURL, source, results);
     },
     getImage
 }
