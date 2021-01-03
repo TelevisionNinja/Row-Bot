@@ -17,7 +17,11 @@
         "msg" : "",
         "noReplyMsg" : "",
         "successMsg" : "",
-        "timeOut" : 0
+        "timeOut" : 0,
+
+        "undecided" : "",
+        "confirmed" : "",
+        "denied" : ""
     },
 
     "derp" : {

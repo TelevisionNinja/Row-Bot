@@ -18,7 +18,12 @@ module.exports = {
             () => {
                 ask(
                     recipient,
-                    askLateNight.timeOut // time out is in ms
+                    askLateNight.timeOut, // time out is in ms
+                    askLateNight.msg,
+                    askLateNight.noReplyMsg,
+                    askLateNight.confirmed,
+                    askLateNight.undecided,
+                    askLateNight.denied
                 );
             },
             1440, // 24 hrs in minutes
@@ -29,16 +34,17 @@ module.exports = {
     }
 }
 
-async function ask(recipient, timeOut) {
+async function ask(recipient, timeOut, askingMsg, noReplyMsg, confirmed, undecided, denied) {
     await recipient.guild.members.fetch();
 
-    const memberMap = recipient.members.filter(m => !(m.user.bot));
-    memberMap.forEach(m => m.user.decision = askLateNight.undecided);
+    const memberMap = recipient.members.filter((value, key) => !(value.user.bot));
+    memberMap.forEach((value, key) => value.user.decision = undecided);
     const memberSize = memberMap.size;
 
     let numberOfReplies = 0;
+    let numberOfDenies = 0;
 
-    await msgUtils.sendTypingMsg(recipient, askLateNight.msg, '');
+    await msgUtils.sendTypingMsg(recipient, askingMsg, '');
 
     const collector = recipient.createMessageCollector(m => {
         const str = m.content.toLowerCase();
@@ -49,35 +55,45 @@ async function ask(recipient, timeOut) {
         const userID = m.author.id;
         const memberObj = memberMap.get(userID);
         
-        if (memberObj.user.decision !== askLateNight.undecided) {
+        if (memberObj.user.decision !== undecided) {
             return;
         }
 
         const str = m.content.toLowerCase();
         const wordArr = str.split(' ');
         const initial = numberOfReplies;
+        let reply = '';
 
         if (wordArr.includes('no')) {
-            msgUtils.sendTypingMsg(recipient, 'aww', str);
+            numberOfDenies++;
 
-            memberObj.user.decision = askLateNight.denied;
+            if (numberOfDenies === memberSize) {
+                reply = noReplyMsg;
+            }
+            else {
+                reply = 'aww';
+            }
+
+            memberObj.user.decision = denied;
 
             numberOfReplies++;
         }
         
         if (wordArr.includes('yes')) {
-            msgUtils.sendTypingMsg(recipient, acknowledgements[rand.randomMath(acknowledgements.length)], str);
+            reply = acknowledgements[rand.randomMath(acknowledgements.length)];
 
-            memberObj.user.decision = askLateNight.confirmed;
+            memberObj.user.decision = confirmed;
 
             numberOfReplies++;
         }
 
         if (initial !== numberOfReplies) {
+            msgUtils.sendTypingMsg(recipient, reply, str);
+
             memberMap.delete(userID);
             memberMap.set(userID, memberObj);
 
-            sendDms(memberMap);
+            sendDms(memberMap, askingMsg, denied);
         }
 
         if (numberOfReplies === memberSize) {
@@ -87,13 +103,13 @@ async function ask(recipient, timeOut) {
 
     collector.on('end', () => {
         if (!numberOfReplies) {
-            msgUtils.sendTypingMsg(recipient, askLateNight.noReplyMsg, '');
+            msgUtils.sendTypingMsg(recipient, noReplyMsg, '');
         }
     });
 }
 
-function buildMessage(memberMap, titleMsg) {
-    let msg = `${titleMsg}\n\n`;
+function buildMessage(memberMap, askingMsg) {
+    let msg = `${askingMsg}\n\n`;
 
     memberMap.forEach((value, key) => {
         msg = `${msg}${value.user.decision} `;
@@ -109,13 +125,13 @@ function buildMessage(memberMap, titleMsg) {
     return msg.substring(0, msg.length - 1);
 }
 
-function sendDms(memberMap) {
-    const reply = buildMessage(memberMap, askLateNight.msg);
+function sendDms(memberMap, askingMsg, denied) {
+    const reply = buildMessage(memberMap, askingMsg);
 
     memberMap.forEach((value, key) => {
         const userObj = value.user;
 
-        if (userObj.decision !== askLateNight.denied) {
+        if (userObj.decision !== denied) {
             msgUtils.sendDirectDm(userObj, reply, true);
         }
     });
