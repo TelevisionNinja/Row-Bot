@@ -9,10 +9,10 @@ module.exports = {
     async execute(client) {
         const time = derpConfig.intervalTime.split(':').map(i => parseInt(i));
 
+        const recipientDaily = await msgUtils.getRecipient(client, derpConfig.intervalChannelID);
+
         interval.startIntervalFunc(
             async () => {
-                const recipient = await msgUtils.getRecipient(client, derpConfig.intervalChannelID);
-
                 // map was used bc tagArr was the exact same array taht was being used for every interval
                 let tagArr = derpConfig.intervalTagArr.map(t => `-${t}`);
 
@@ -29,9 +29,9 @@ module.exports = {
                     results
                 } = await derp.getImage(tagArr);
 
-                recipient.send(`${derpConfig.intervalMsg}${derpConfig.intervalTagArr[randIndex]}`);
+                recipientDaily.send(`${derpConfig.intervalMsg}${derpConfig.intervalTagArr[randIndex]}`);
 
-                msgUtils.sendImg(recipient, imgURL, source, results, false);
+                msgUtils.sendImg(recipientDaily, imgURL, source, results, false);
             },
             1440, // 24 hrs in minutes
             time[0],
@@ -41,10 +41,10 @@ module.exports = {
 
         //-------------------------------------------------------------------
 
+        const recipientInterval = await msgUtils.getRecipient(client, derpConfig.intervalWaitChannelID);
+
         interval.startIntervalFunc(
             async () => {
-                const recipient = await msgUtils.getRecipient(client, derpConfig.intervalWaitChannelID);
-
                 const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
 
                 const {
@@ -53,7 +53,7 @@ module.exports = {
                     results
                 } = await derp.getImage(derpConfig.intervalWaitTags[randIndex]);
                 
-                msgUtils.sendImg(recipient, imgURL, source, results, false);
+                msgUtils.sendImg(recipientInterval, imgURL, source, results, false);
             },
             derpConfig.intervalWait,
             0,
