@@ -9,16 +9,15 @@ const msgUtils = require('../lib/msgUtils.js');
 
 module.exports = {
     description: askLateNight.description,
-    execute(client) {
+    async execute(client) {
         const time = askLateNight.time.split(':').map(i => parseInt(i));
+
+        const recipient = await msgUtils.getRecipient(client, askLateNight.channelID);
 
         interval.startIntervalFunc(
             () => {
                 ask(
-                    client,
-                    askLateNight.channelID,
-                    askLateNight.msg,
-                    askLateNight.noReplyMsg,
+                    recipient,
                     askLateNight.timeOut // time out is in ms
                 );
             },
@@ -30,49 +29,94 @@ module.exports = {
     }
 }
 
-async function ask(client, ID, msg, noReplayMsg, timeOut) {
-    const recipient = await msgUtils.getRecipient(client, ID);
+async function ask(recipient, timeOut) {
+    await recipient.guild.members.fetch();
 
-    await msgUtils.sendTypingMsg(recipient, msg, '');
+    const memberMap = recipient.members.filter(m => !(m.user.bot));
+    memberMap.forEach(m => m.user.decision = askLateNight.undecided);
+    const memberSize = memberMap.size;
+
+    let numberOfReplies = 0;
+
+    await msgUtils.sendTypingMsg(recipient, askLateNight.msg, '');
 
     const collector = recipient.createMessageCollector(m => {
         const str = m.content.toLowerCase();
         return aliases.some(a => str.includes(a));
     }, { time: timeOut });
 
-    let stop = false;
-
     collector.on('collect', m => {
+        const userID = m.author.id;
+        const memberObj = memberMap.get(userID);
+        
+        if (memberObj.user.decision !== askLateNight.undecided) {
+            return;
+        }
+
         const str = m.content.toLowerCase();
         const wordArr = str.split(' ');
-        
+        const initial = numberOfReplies;
+
         if (wordArr.includes('no')) {
             msgUtils.sendTypingMsg(recipient, 'aww', str);
-            stop = true;
+
+            memberObj.user.decision = askLateNight.denied;
+
+            numberOfReplies++;
         }
-        else if (wordArr.includes('yes')) {
+        
+        if (wordArr.includes('yes')) {
             msgUtils.sendTypingMsg(recipient, acknowledgements[rand.randomMath(acknowledgements.length)], str);
-            stop = true;
+
+            memberObj.user.decision = askLateNight.confirmed;
+
+            numberOfReplies++;
         }
 
-        if (stop) {
+        if (initial !== numberOfReplies) {
+            memberMap.delete(userID);
+            memberMap.set(userID, memberObj);
+
+            sendDms(memberMap);
+        }
+
+        if (numberOfReplies === memberSize) {
             collector.stop();
-            return;
         }
     });
 
     collector.on('end', () => {
-        if (stop) {
-            const memberArr = msgUtils.getUsersInChannelByChannelID(recipient.guild, '786111956527349821');
+        if (!numberOfReplies) {
+            msgUtils.sendTypingMsg(recipient, askLateNight.noReplyMsg, '');
+        }
+    });
+}
 
-            memberArr.forEach(async m => {
-                const currentRecipient = await msgUtils.getRecipient(client, m.id);
+function buildMessage(memberMap, titleMsg) {
+    let msg = `${titleMsg}\n\n`;
 
-                msgUtils.sendDirectDm(currentRecipient, askLateNight.successMsg, true);
-            });
+    memberMap.forEach((value, key) => {
+        msg = `${msg}${value.user.decision} `;
+
+        if (value.nickname === null) {
+            msg = `${msg}${value.user.username}\n`;
         }
         else {
-            msgUtils.sendTypingMsg(recipient, noReplayMsg, '');
+            msg = `${msg}${value.nickname}\n`;
+        }
+    });
+
+    return msg.substring(0, msg.length - 1);
+}
+
+function sendDms(memberMap) {
+    const reply = buildMessage(memberMap, askLateNight.msg);
+
+    memberMap.forEach((value, key) => {
+        const userObj = value.user;
+
+        if (userObj.decision !== askLateNight.denied) {
+            msgUtils.sendDirectDm(userObj, reply, true);
         }
     });
 }
