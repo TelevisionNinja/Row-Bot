@@ -17,7 +17,8 @@
         "msg" : "Are we getting on tonight?",
         "noReplyMsg" : "Aww, it looks like no one's getting on 😢",
         "allConfirmsMsg" : "Yay, we're all getting on tonight! 😃",
-        "timeOut" : 0,
+        "fewConfirmsMsg" : "It looks like only some people are getting on",
+        "timeOut" : 10800000,
 
         "undecided" : "❔",
         "confirmed" : "✅",

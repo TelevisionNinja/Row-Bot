@@ -20,6 +20,8 @@ module.exports = {
                     recipient,
                     askLateNight.timeOut, // time out is in ms
                     askLateNight.msg,
+                    askLateNight.allConfirmsMsg,
+                    askLateNight.fewConfirmsMsg,
                     askLateNight.noReplyMsg,
                     askLateNight.confirmed,
                     askLateNight.undecided,
@@ -34,7 +36,7 @@ module.exports = {
     }
 }
 
-async function ask(recipient, timeOut, askingMsg, noReplyMsg, confirmed, undecided, denied) {
+async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, noReplyMsg, confirmed, undecided, denied) {
     await recipient.guild.members.fetch();
 
     const memberMap = recipient.members.filter((value, key) => !(value.user.bot));
@@ -43,6 +45,7 @@ async function ask(recipient, timeOut, askingMsg, noReplyMsg, confirmed, undecid
 
     let numberOfReplies = 0;
     let numberOfDenies = 0;
+    let numberOfConfirms = 0;
 
     await msgUtils.sendTypingMsg(recipient, askingMsg, '');
 
@@ -53,6 +56,7 @@ async function ask(recipient, timeOut, askingMsg, noReplyMsg, confirmed, undecid
 
     collector.on('collect', m => {
         const userID = m.author.id;
+
         const memberObj = memberMap.get(userID);
         
         if (memberObj.user.decision !== undecided) {
@@ -78,9 +82,15 @@ async function ask(recipient, timeOut, askingMsg, noReplyMsg, confirmed, undecid
 
             numberOfReplies++;
         }
-        
-        if (wordArr.includes('yes')) {
-            reply = acknowledgements[rand.randomMath(acknowledgements.length)];
+        else if (wordArr.includes('yes')) {
+            numberOfConfirms++;
+
+            if (numberOfConfirms === memberSize) {
+                reply = allConfirmsMsg;
+            }
+            else {
+                reply = acknowledgements[rand.randomMath(acknowledgements.length)];
+            }
 
             memberObj.user.decision = confirmed;
 
@@ -89,9 +99,6 @@ async function ask(recipient, timeOut, askingMsg, noReplyMsg, confirmed, undecid
 
         if (initial !== numberOfReplies) {
             msgUtils.sendTypingMsg(recipient, reply, str);
-
-            memberMap.delete(userID);
-            memberMap.set(userID, memberObj);
 
             sendDms(memberMap, askingMsg, denied);
         }
@@ -104,6 +111,9 @@ async function ask(recipient, timeOut, askingMsg, noReplyMsg, confirmed, undecid
     collector.on('end', () => {
         if (!numberOfReplies) {
             msgUtils.sendTypingMsg(recipient, noReplyMsg, '');
+        }
+        else if (numberOfReplies < memberSize) {
+            msgUtils.sendTypingMsg(recipient, fewConfirmsMsg, '');
         }
     });
 }
