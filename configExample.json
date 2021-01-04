@@ -1,44 +1,44 @@
 {
-    "prefix" : "",
+    "prefix" : ".",
     "token" : "",
     "activityStatus" : "",
     "aliases" : [""],
-    "icon" : "",
-    "readingSpeed" : 0,
-    "typingSpeed" : 0,
-    "reactionSpeed" : 0,
+    "icon" : "icon_example.png",
+    "readingSpeed" : 300,
+    "typingSpeed" : 200,
+    "reactionSpeed" : 950,
 
-    "tagSeparator" : "",
+    "tagSeparator" : ",",
 
     "askLateNight" : {
         "channelID" : "",
-        "description" : "",
-        "time" : "00:00",
-        "msg" : "",
-        "noReplyMsg" : "",
-        "successMsg" : "",
+        "description" : "Ask the late night bois if they're going to get on",
+        "time" : "22:00",
+        "msg" : "Are we getting on tonight?",
+        "noReplyMsg" : "Aww, it looks like no one's getting on 😢",
+        "allConfirmsMsg" : "Yay, we're all getting on tonight! 😃",
         "timeOut" : 0,
 
-        "undecided" : "",
-        "confirmed" : "",
-        "denied" : ""
+        "undecided" : "❔",
+        "confirmed" : "✅",
+        "denied" : "❌"
     },
 
     "derp" : {
         "APIKey" : "",
         "names" : [""],
         "description" : "",
-        "whitespace" : "",
-        "separator" : "",
+        "whitespace" : "+",
+        "separator" : "%2C",
         "API" : "",
         "URL" : "",
 
         "intervalTagArr" : [""],
         "intervalChannelID" : "",
         "intervalMsg" : "",
-        "intervalTime" : "",
+        "intervalTime" : "12:0",
 
-        "intervalWait" : 1,
+        "intervalWait" : 240,
         "intervalWaitTags" : [
             [""]
         ],
@@ -47,31 +47,37 @@
 
     "tenor" : {
         "APIKey" : "",
-        "names" : [""],
-        "description" : "",
-        "API" : ""
+        "names" : ["gif"],
+        "description" : "Returns a gif",
+        "API" : "https://api.tenor.com/v1/random?&limit=1&media_filter=minimal&key="
     },
 
     "help" : {
-        "names" : [""],
-        "description" : ""
+        "names" : [
+            "help",
+            "commands"
+        ],
+        "description" : "Lists all commands or gives more info about a specific command"
     },
 
     "random" : {
-        "names" : [""],
-        "description" : ""
+        "names" : [
+            "random",
+            "randomInt"
+        ],
+        "description" : "Returns a random value within a given range"
     },
 
     "reload" : {
-        "names" : [""],
-        "description" : ""
+        "names" : ["reload"],
+        "description" : "Reloads a command"
     },
 
     "rule" : {
         "names" : [""],
         "description" : "",
-        "whitespace" : "",
-        "separator" : "",
+        "whitespace" : "_",
+        "separator" : "+",
         "sites" : [
             {
                 "URL": "",
