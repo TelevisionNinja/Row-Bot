@@ -15,7 +15,7 @@ const specific = {
     value: `\nSend \`${prefix}help <command name>\` to get info on a specific command`
 };
 
-let called = false;
+let notCalled = true;
 
 module.exports = {
     names: help.names,
@@ -27,7 +27,7 @@ module.exports = {
     cooldown: 0,
     async execute(msg, args) {
         // initialize embed 
-        if (!called) {
+        if (notCalled) {
             helpCenter.addFields(
                 {
                     name: 'My Commands',
@@ -35,7 +35,7 @@ module.exports = {
                 },
                 specific
             );
-            called = true;
+            notCalled = false;
         }
         
 		if (args.length) {
