@@ -13,7 +13,7 @@ module.exports = {
 
         interval.startIntervalFunc(
             async () => {
-                // map was used bc tagArr was the exact same array taht was being used for every interval
+                // map was used bc tagArr was the exact same array that was being used for every interval
                 let tagArr = derpConfig.intervalTagArr.map(t => `-${t}`);
 
                 const randIndex = rand.randomMath(tagArr.length);
