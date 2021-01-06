@@ -61,6 +61,12 @@
         "intervalWaitChannelID" : ""
     },
 
+    "fifty" : {
+        "names" : [""],
+        "description" : "",
+        "URL" : ""
+    },
+
     "tenor" : {
         "APIKey" : "",
         "names" : ["gif"],
