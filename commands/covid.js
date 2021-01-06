@@ -104,7 +104,7 @@ function dataToStrArr(state, data) {
     stringArr.push(`Deaths: ${deaths}`);
     stringArr.push(`Recoveries: ${recovered}`);
     stringArr.push(`Active Cases: ${active}`);
-    stringArr.push(`Incident Rate: ${incidentRate}`);
+    stringArr.push(`Incident Rate: ${incidentRate}%`);
     stringArr.push(`Total Tests: ${totalTestResults}`);
     stringArr.push(`Fatality: ${fatalityRatio}%`);
     stringArr.push(`Testing Rate: ${testingRate}%`);
