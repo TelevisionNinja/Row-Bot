@@ -62,6 +62,10 @@ function getUrl(nthDayAgo) {
 }
 
 function dataToStrArr(state, data) {
+    if (data.length === 0) {
+        return ['Aww there\'s no results 😢'];
+    }
+    
     const states = data.split('\n');
 
     state = state.toLowerCase();
@@ -82,6 +86,10 @@ function dataToStrArr(state, data) {
     const deaths = dataArr[6];
     const recovered	= parseInt(dataArr[7]);
     const active = parseInt(dataArr[8]);
+
+    // per 100,000 people
+    const incidentRate = (parseFloat(dataArr[10]) / 100000 * 100).toFixed(2);
+
     const totalTestResults = parseInt(dataArr[11]);
     const fatalityRatio = parseFloat(dataArr[13]).toFixed(2);
 
@@ -96,6 +104,7 @@ function dataToStrArr(state, data) {
     stringArr.push(`Deaths: ${deaths}`);
     stringArr.push(`Recoveries: ${recovered}`);
     stringArr.push(`Active Cases: ${active}`);
+    stringArr.push(`Incident Rate: ${incidentRate}`);
     stringArr.push(`Total Tests: ${totalTestResults}`);
     stringArr.push(`Fatality: ${fatalityRatio}%`);
     stringArr.push(`Testing Rate: ${testingRate}%`);
