@@ -17,21 +17,20 @@ module.exports = {
     dataToStrArr
 }
 
-async function getData() {
+async function getData(nthDay = 0) {
+    if (nthDay === 3) {
+        return '';
+    }
+    
+    let response;
     let results;
 
     try {
-        const response = await axios.get(getUrl(1));
+        response = await axios.get(getUrl(nthDay));
         results = response.data;
     }
     catch {
-        try {
-            const response = await axios.get(getUrl(2));
-            results = response.data;
-        }
-        catch (error) {
-            console.log(error);
-        }
+        results = await getData(nthDay + 1);
     }
 
     return results;
@@ -44,19 +43,19 @@ function getUrl(nthDayAgo) {
 
     let dateStr = '';
 
-    let month = (dateObj.getMonth() + 1).toString();
+    let month = (dateObj.getUTCMonth() + 1).toString();
 
     if (month.length < 2) {
         month = `0${month}`;
     }
 
-    let day = dateObj.getDate().toString();
+    let day = dateObj.getUTCDate().toString();
 
     if (day.length < 2) {
         day = `0${day}`;
     }
 
-    dateStr = `${month}-${day}-${dateObj.getFullYear()}`;
+    dateStr = `${month}-${day}-${dateObj.getUTCFullYear()}`;
 
     return `${covid.dataURL}${dateStr}.csv`;
 }
@@ -99,7 +98,7 @@ function dataToStrArr(state, data) {
     let stringArr = [];
 
     stringArr.push(dataArr[0]);
-    stringArr.push(`Last Update: ${lastUpdate}`);
+    stringArr.push(`Last Update: ${lastUpdate} UTC`);
     stringArr.push(`Confirmed Cases: ${confirmed}`);
     stringArr.push(`Deaths: ${deaths}`);
     stringArr.push(`Recoveries: ${recovered}`);
