@@ -25,6 +25,21 @@
         "denied" : "❌"
     },
 
+    "covid" : {
+        "names" : [
+            "covid",
+            "covid-19",
+            "covid19",
+            "coronavirus"
+        ],
+        "description" : "Returns a state's current covid information",
+        "dataURL" : "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports_us/",
+
+        "intervalChannel" : "",
+        "intervalState" : "",
+        "intervalTime" : "12:00"
+    },
+
     "derp" : {
         "APIKey" : "",
         "names" : [""],
