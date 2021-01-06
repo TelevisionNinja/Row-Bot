@@ -11,7 +11,7 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         const data = await getData();
-        msg.channel.send(dataToStrArr(args[0], data));
+        msg.channel.send(dataToStrArr(args.join(' '), data));
     },
     getData,
     dataToStrArr
