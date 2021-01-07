@@ -52,7 +52,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
     const collector = recipient.createMessageCollector(m => {
         const str = m.content.toLowerCase();
-        return !(str.startsWith(prefix)) && aliases.some(a => str.includes(a));
+        return !(str.startsWith(prefix)) && !(m.author.bot) && aliases.some(a => str.includes(a));
     }, { time: timeOut });
 
     collector.on('collect', m => {
