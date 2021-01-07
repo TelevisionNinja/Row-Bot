@@ -62,7 +62,7 @@ function getUrl(nthDayAgo) {
     return `${covid.dataURL}${dateStr}.csv`;
 }
 
-function dataEntryToData(state, data) {
+function dataEntryToData(state, data, precision = 2) {
     if (data.length === 0) {
         return ['Aww there\'s no results 😢'];
     }
@@ -84,19 +84,19 @@ function dataEntryToData(state, data) {
 
     const stateName = dataArr[0];
     const lastUpdate = dataArr[2].split(' ').join(' at ');
-    const confirmed	= dataArr[5];
-    const deaths = dataArr[6];
+    const confirmed	= parseInt(dataArr[5]);
+    const deaths = parseInt(dataArr[6]);
     const recovered	= parseInt(dataArr[7]);
     const active = parseInt(dataArr[8]);
 
     // per 100,000 people
-    const incidentRate = (parseFloat(dataArr[10]) / 100000 * 100).toFixed(2);
+    const incidentRate = (parseFloat(dataArr[10]) / 1000).toFixed(precision);
 
     const totalTestResults = parseInt(dataArr[11]);
-    const fatalityRatio = parseFloat(dataArr[13]).toFixed(2);
+    const fatalityRatio = parseFloat(dataArr[13]).toFixed(precision);
 
     // per 100,000 people
-    const testingRate =  (parseFloat(dataArr[16]) / 100000 * 100).toFixed(2);
+    const testingRate =  (parseFloat(dataArr[16]) / 1000).toFixed(precision);
 
     const source = 'Data from Johns Hopkins University';
 
@@ -169,35 +169,43 @@ function dataToEmbed(state, data) {
         .addFields(
             {
                 name: 'Confirmed Cases',
-                value: confirmed
+                value: confirmed,
+                inline: true
             },
             {
                 name: 'Deaths',
-                value: deaths
+                value: deaths,
+                inline: true
             },
             {
                 name: 'Recoveries',
-                value: recovered
+                value: recovered,
+                inline: true
             },
             {
                 name: 'Active Cases',
-                value: active
+                value: active,
+                inline: true
             },
             {
                 name: 'Incident Rate',
-                value: `${incidentRate}%`
+                value: `${incidentRate}%`,
+                inline: true
             },
             {
                 name: 'Total Tests',
-                value: totalTestResults
+                value: totalTestResults,
+                inline: true
             },
             {
                 name: 'Fatality Percentage',
-                value: `${fatalityRatio}%`
+                value: `${fatalityRatio}%`,
+                inline: true
             },
             {
                 name: 'Testing Rate',
-                value: `${testingRate}%`
+                value: `${testingRate}%`,
+                inline: true
             }
         );
 

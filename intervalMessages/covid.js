@@ -15,7 +15,7 @@ module.exports = {
                 const data = await covid.getData();
                 let embed = covid.dataToEmbed(covidConfig.intervalState, data);
 
-                embed.setTitle(`Daily Covid Report: ${covidConfig.intervalState}`);
+                embed.setAuthor('Daily Covid Report');
                 recipient.send(embed);
             },
             1440,
