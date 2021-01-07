@@ -13,10 +13,10 @@ module.exports = {
         interval.startIntervalFunc(
             async () => {
                 const data = await covid.getData();
-                let stringArr = covid.dataToStrArr(covidConfig.intervalState, data);
+                let embed = covid.dataToEmbed(covidConfig.intervalState, data);
 
-                stringArr.unshift('Daily Covid Report');
-                recipient.send(stringArr);
+                embed.setTitle(`Daily Covid Report: ${covidConfig.intervalState}`);
+                recipient.send(embed);
             },
             1440,
             time[0],

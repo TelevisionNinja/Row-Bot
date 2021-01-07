@@ -1,5 +1,6 @@
 const { covid } = require('../config.json');
 const axios = require('axios');
+const Discord = require('discord.js');
 
 module.exports = {
     names: covid.names,
@@ -11,10 +12,11 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         const data = await getData();
-        msg.channel.send(dataToStrArr(args.join(' '), data));
+        msg.channel.send(dataToEmbed(args.join(' '), data));
     },
     getData,
-    dataToStrArr
+    dataToStrArr,
+    dataToEmbed
 }
 
 async function getData(nthDay = 0) {
@@ -60,7 +62,7 @@ function getUrl(nthDayAgo) {
     return `${covid.dataURL}${dateStr}.csv`;
 }
 
-function dataToStrArr(state, data) {
+function dataEntryToData(state, data) {
     if (data.length === 0) {
         return ['Aww there\'s no results 😢'];
     }
@@ -80,6 +82,7 @@ function dataToStrArr(state, data) {
 
     const dataArr = stateData.split(',');
 
+    const stateName = dataArr[0];
     const lastUpdate = dataArr[2].split(' ').join(' at ');
     const confirmed	= dataArr[5];
     const deaths = dataArr[6];
@@ -95,9 +98,41 @@ function dataToStrArr(state, data) {
     // per 100,000 people
     const testingRate =  (parseFloat(dataArr[16]) / 100000 * 100).toFixed(2);
 
+    const source = 'Data from Johns Hopkins University';
+
+    return {
+        stateName,
+        lastUpdate,
+        confirmed,
+        deaths,
+        recovered,
+        active,
+        incidentRate,
+        totalTestResults,
+        fatalityRatio,
+        testingRate,
+        source
+    };
+}
+
+function dataToStrArr(state, data) {
+    const {
+        stateName,
+        lastUpdate,
+        confirmed,
+        deaths,
+        recovered,
+        active,
+        incidentRate,
+        totalTestResults,
+        fatalityRatio,
+        testingRate,
+        source
+    } = dataEntryToData(state, data);
+
     let stringArr = [];
 
-    stringArr.push(dataArr[0]);
+    stringArr.push(stateName);
     stringArr.push(`Last Update: ${lastUpdate} UTC`);
     stringArr.push(`Confirmed Cases: ${confirmed}`);
     stringArr.push(`Deaths: ${deaths}`);
@@ -107,7 +142,64 @@ function dataToStrArr(state, data) {
     stringArr.push(`Total Tests: ${totalTestResults}`);
     stringArr.push(`Fatality: ${fatalityRatio}%`);
     stringArr.push(`Testing Rate: ${testingRate}%`);
-    stringArr.push('Data from Johns Hopkins University');
+    stringArr.push(source);
 
     return stringArr;
+}
+
+function dataToEmbed(state, data) {
+    const {
+        stateName,
+        lastUpdate,
+        confirmed,
+        deaths,
+        recovered,
+        active,
+        incidentRate,
+        totalTestResults,
+        fatalityRatio,
+        testingRate,
+        source
+    } = dataEntryToData(state, data);
+
+    const embed = new Discord.MessageEmbed()
+        .setTitle(stateName)
+        .setDescription(`Latest updated on ${lastUpdate} UTC`)
+        .setFooter(source)
+        .addFields(
+            {
+                name: 'Confirmed Cases',
+                value: confirmed
+            },
+            {
+                name: 'Deaths',
+                value: deaths
+            },
+            {
+                name: 'Recoveries',
+                value: recovered
+            },
+            {
+                name: 'Active Cases',
+                value: active
+            },
+            {
+                name: 'Incident Rate',
+                value: `${incidentRate}%`
+            },
+            {
+                name: 'Total Tests',
+                value: totalTestResults
+            },
+            {
+                name: 'Fatality Percentage',
+                value: `${fatalityRatio}%`
+            },
+            {
+                name: 'Testing Rate',
+                value: `${testingRate}%`
+            }
+        );
+
+    return embed;
 }
