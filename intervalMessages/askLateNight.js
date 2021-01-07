@@ -1,6 +1,7 @@
 const {
     aliases,
-    askLateNight
+    askLateNight,
+    prefix
 } = require('../config.json');
 const { acknowledgements } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
@@ -51,7 +52,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
     const collector = recipient.createMessageCollector(m => {
         const str = m.content.toLowerCase();
-        return aliases.some(a => str.includes(a));
+        return !(str.startsWith(prefix)) && aliases.some(a => str.includes(a));
     }, { time: timeOut });
 
     collector.on('collect', m => {
