@@ -63,8 +63,41 @@ function getUrl(nthDayAgo) {
 }
 
 function dataEntryToData(state, data, precision = 2) {
+    let stateName = '';
+    let lastUpdate = '';
+    let confirmed = 0;
+    let deaths = 0;
+    let recovered = 0;
+    let active = 0;
+
+    // per 100,000 people
+    let incidentRate = 0.0;
+
+    let totalTestResults = 0;
+    let fatalityRatio = 0.0;
+
+    // per 100,000 people
+    let testingRate = 0.0;
+
+    let source = '';
+
+    let stateFound = false;
+
     if (data.length === 0) {
-        return ['Aww there\'s no results 😢'];
+        return {
+            stateFound,
+            stateName,
+            lastUpdate,
+            confirmed,
+            deaths,
+            recovered,
+            active,
+            incidentRate,
+            totalTestResults,
+            fatalityRatio,
+            testingRate,
+            source
+        };
     }
     
     const states = data.split('\n');
@@ -76,31 +109,50 @@ function dataEntryToData(state, data, precision = 2) {
     for (let i = 0, n = states.length; i < n; i++) {
         if (states[i].toLowerCase().startsWith(state)) {
             stateData = states[i];
+            stateFound = true;
             break;
         }
     }
 
+    if (!stateFound) {
+        return {
+            stateFound,
+            stateName,
+            lastUpdate,
+            confirmed,
+            deaths,
+            recovered,
+            active,
+            incidentRate,
+            totalTestResults,
+            fatalityRatio,
+            testingRate,
+            source
+        };
+    }
+
     const dataArr = stateData.split(',');
 
-    const stateName = dataArr[0];
-    const lastUpdate = dataArr[2].split(' ').join(' at ');
-    const confirmed	= parseInt(dataArr[5]);
-    const deaths = parseInt(dataArr[6]);
-    const recovered	= parseInt(dataArr[7]);
-    const active = parseInt(dataArr[8]);
+    stateName = dataArr[0];
+    lastUpdate = dataArr[2].split(' ').join(' at ');
+    confirmed = parseInt(dataArr[5]);
+    deaths = parseInt(dataArr[6]);
+    recovered = parseInt(dataArr[7]);
+    active = parseInt(dataArr[8]);
 
     // per 100,000 people
-    const incidentRate = (parseFloat(dataArr[10]) / 1000).toFixed(precision);
+    incidentRate = (parseFloat(dataArr[10]) / 1000).toFixed(precision);
 
-    const totalTestResults = parseInt(dataArr[11]);
-    const fatalityRatio = parseFloat(dataArr[13]).toFixed(precision);
+    totalTestResults = parseInt(dataArr[11]);
+    fatalityRatio = parseFloat(dataArr[13]).toFixed(precision);
 
     // per 100,000 people
-    const testingRate =  (parseFloat(dataArr[16]) / 1000).toFixed(precision);
+    testingRate = (parseFloat(dataArr[16]) / 1000).toFixed(precision);
 
-    const source = 'Data from Johns Hopkins University';
+    source = 'Data from Johns Hopkins University';
 
     return {
+        stateFound,
         stateName,
         lastUpdate,
         confirmed,
@@ -117,6 +169,7 @@ function dataEntryToData(state, data, precision = 2) {
 
 function dataToStrArr(state, data) {
     const {
+        stateFound,
         stateName,
         lastUpdate,
         confirmed,
@@ -131,6 +184,11 @@ function dataToStrArr(state, data) {
     } = dataEntryToData(state, data);
 
     let stringArr = [];
+
+    if (!stateFound) {
+        stringArr.push('Aww there\'s no results 😢');
+        return stringArr;
+    }
 
     stringArr.push(stateName);
     stringArr.push(`Last Update: ${lastUpdate} UTC`);
@@ -149,6 +207,7 @@ function dataToStrArr(state, data) {
 
 function dataToEmbed(state, data) {
     const {
+        stateFound,
         stateName,
         lastUpdate,
         confirmed,
@@ -162,8 +221,15 @@ function dataToEmbed(state, data) {
         source
     } = dataEntryToData(state, data);
 
-    const embed = new Discord.MessageEmbed()
-        .setTitle(stateName)
+    const embed = new Discord.MessageEmbed();
+
+    if (!stateFound) {
+        embed.setTitle(state)
+            .setDescription('Aww there\'s no results 😢');
+        return embed;
+    }
+
+    embed.setTitle(stateName)
         .setDescription(`Latest updated on ${lastUpdate} UTC`)
         .setFooter(source)
         .addFields(
