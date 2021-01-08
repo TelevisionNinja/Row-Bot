@@ -7,6 +7,7 @@ module.exports = {
     fileName: __filename,
     description: fifty.description,
     args: false,
+    permittedCharsOnly: false,
     guildOnly: false,
     usage: '',
     cooldown: 1,

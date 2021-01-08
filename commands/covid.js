@@ -7,6 +7,7 @@ module.exports = {
     fileName: __filename,
     description: covid.description,
     args: true,
+    permittedCharsOnly: false,
     guildOnly: false,
     usage: `<state>`,
     cooldown: 1,

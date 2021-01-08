@@ -22,6 +22,7 @@ module.exports = {
     fileName: __filename,
     description: help.description,
     args: false,
+    permittedCharsOnly: false,
     guildOnly: false,
     usage: '<command name>',
     cooldown: 0,

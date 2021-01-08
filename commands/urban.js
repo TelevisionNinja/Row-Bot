@@ -10,6 +10,7 @@ module.exports = {
     fileName: __filename,
     description: urban.description,
     args: true,
+    permittedCharsOnly: false,
     guildOnly: false,
     usage: '<word>',
     cooldown: 1,

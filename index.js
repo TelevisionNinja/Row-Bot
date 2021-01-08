@@ -7,6 +7,7 @@ const {
     aliases,
 } = require('./config.json');
 const msgUtils = require('./lib/msgUtils.js');
+const stringUtils = require('./lib/stringUtils.js');
 
 const client = new Discord.Client();
 
@@ -122,7 +123,7 @@ client.on('message', msg => {
     //--------------------------------------------------------------------------------
     // split command and arguments
 
-    const args = msgStr.slice(prefix.length).trim().split(' ');
+    let args = msgStr.slice(prefix.length).trim().split(' ');
     const userCommand = args.shift();
 
     //--------------------------------------------------------------------------------
@@ -137,6 +138,18 @@ client.on('message', msg => {
     if (command.guildOnly && msg.channel.type === 'dm') {
         msg.channel.send('I can\'t execute that command in DM\'s');
         return;
+    }
+
+    if (command.permittedCharsOnly) {
+        let argStr = args.join(' ');
+        argStr = stringUtils.removeProhibitedChars(argStr);
+
+        if (argStr.length) {
+            args = argStr.split(' ');
+        }
+        else {
+            args = [];
+        }
     }
 
     if (command.args && !args.length) {

@@ -8,6 +8,7 @@ module.exports = {
     fileName: __filename,
     description: tenor.description,
     args: true,
+    permittedCharsOnly: true,
     guildOnly: false,
     usage: '<search terms>',
     cooldown: 1,

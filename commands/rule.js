@@ -13,6 +13,7 @@ module.exports = {
     fileName: __filename,
     description: rule.description,
     args: true,
+    permittedCharsOnly: true,
     guildOnly: false,
     usage: `<tags separated by a "${tagSeparator}">`,
     cooldown: 1,

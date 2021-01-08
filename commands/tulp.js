@@ -5,6 +5,7 @@ module.exports = {
     fileName: __filename,
     description: tulp.description,
     args: false,
+    permittedCharsOnly: false,
     guildOnly: true,
     usage: '<message>',
     cooldown: 0,

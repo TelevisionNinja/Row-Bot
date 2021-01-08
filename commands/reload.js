@@ -5,6 +5,7 @@ module.exports = {
     fileName: __filename,
     description: reload.description,
     args: true,
+    permittedCharsOnly: false,
     guildOnly: false,
     usage:'<command>',
     cooldown: 0,

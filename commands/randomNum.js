@@ -6,6 +6,7 @@ module.exports = {
     fileName: __filename,
     description: random.description,
     args: true,
+    permittedCharsOnly: false,
     guildOnly: false,
     usage: '<max> or <min> <max>',
     cooldown: 0,
