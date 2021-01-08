@@ -224,8 +224,7 @@ function dataToEmbed(state, data) {
     const embed = new Discord.MessageEmbed();
 
     if (!stateFound) {
-        embed.setTitle(state)
-            .setDescription('Aww there\'s no results 😢');
+        embed.setTitle('Aww there\'s no results 😢');
         return embed;
     }
 
