@@ -101,7 +101,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
         if (initial !== numberOfReplies) {
             msgUtils.sendTypingMsg(recipient, reply, str);
 
-            sendDms(memberMap, askingMsg, denied);
+            sendDms(memberMap, askingMsg, denied, str);
         }
 
         if (numberOfReplies === memberSize) {
@@ -136,14 +136,14 @@ function buildMessage(memberMap, askingMsg) {
     return msg.substring(0, msg.length - 1);
 }
 
-function sendDms(memberMap, askingMsg, denied) {
+function sendDms(memberMap, askingMsg, denied, readingMsg) {
     const reply = buildMessage(memberMap, askingMsg);
 
     memberMap.forEach((value, key) => {
         const userObj = value.user;
 
         if (userObj.decision !== denied) {
-            msgUtils.sendDirectDm(userObj, reply, true);
+            msgUtils.sendDirectDm(userObj, reply, true, readingMsg);
         }
     });
 }
