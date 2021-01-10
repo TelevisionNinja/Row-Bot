@@ -43,13 +43,42 @@ for (let i = 0, n = genMsgFiles.length; i < n; i++) {
 client.login(token);
 
 client.on('ready', () => {
-    const time = new Date();
-    console.log(`Row Bot is up at ${time.getHours()}:${time.getMinutes()}`);
-    client.user.setActivity(activityStatus, { type: 'PLAYING' });
-
     for (let i = 0, n = intervalMsgs.length; i < n; i++) {
         require(`./intervalMessages/${intervalMsgs[i]}`).execute(client);
     }
+
+    //--------------------------------------------------------------------------------
+
+    const time = new Date();
+
+    let milliSeconds = time.getMilliseconds().toString();
+    if (milliSeconds.length < 3) {
+        milliSeconds = `0${milliSeconds}`;
+    }
+    if (milliSeconds.length < 3) {
+        milliSeconds = `0${milliSeconds}`;
+    }
+
+    let seconds = time.getSeconds().toString();
+    if (seconds.length === 1) {
+        seconds = `0${seconds}`;
+    }
+
+    let minutes = time.getMinutes().toString();
+    if (minutes.length === 1) {
+        minutes = `0${minutes}`;
+    }
+
+    let hours = time.getHours().toString();
+    if (hours.length === 1) {
+        hours = `0${hours}`;
+    }
+
+    console.log(`Row Bot is up ${time.getMonth() + 1}/${time.getDate()}/${time.getFullYear()} ${hours}:${minutes}:${seconds}.${milliSeconds}`);
+    
+    //--------------------------------------------------------------------------------
+
+    client.user.setActivity(activityStatus, { type: 'PLAYING' });
 });
 
 //--------------------------------------------------------------------------------
