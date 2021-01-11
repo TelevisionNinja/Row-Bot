@@ -39,7 +39,7 @@ async function getRuleImageExecute(tagArr) {
     // whitespace is replaced with '_'
     // tags are separated by '+'
     // '-' infront of a tag means to exclude it
-    tagArr = stringUtils.tagsToParsedTagArr(tagArr, rule.whitespace)
+    tagArr = stringUtils.tagsToParsedTagArr(tagArr, rule.whitespace);
 
     let randomSiteID = rand.randomMath(2);
 
@@ -228,7 +228,7 @@ async function getRuleImage(tagArr) {
     // whitespace is replaced with '_'
     // tags are separated by '+'
     // '-' infront of a tag means to exclude it
-    tagArr = stringUtils.tagArrToParsedTagArr(tagArr, rule.whitespace)
+    tagArr = stringUtils.tagArrToParsedTagArr(tagArr, rule.whitespace);
 
     let randomSiteID = rand.randomMath(2);
 
