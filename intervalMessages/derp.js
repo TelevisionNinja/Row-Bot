@@ -17,7 +17,9 @@ module.exports = {
 
                 const randIndex = rand.randomMath(derpConfig.intervalTagArr.length);
 
-                tagArr.push(derpConfig.intervalTagArr[randIndex]);
+                const selection = derpConfig.intervalTagArr[randIndex];
+
+                tagArr.push(selection);
                 tagArr.push('safe');
                 tagArr.push('solo');
                 tagArr.push('-oc');
@@ -32,7 +34,7 @@ module.exports = {
                     results
                 } = await derp.getImage(tagArr);
 
-                recipientDaily.send(`${derpConfig.intervalMsg}${derpConfig.intervalTagArr[randIndex]}`);
+                recipientDaily.send(`${derpConfig.intervalMsg}${selection}`);
 
                 msgUtils.sendImg(recipientDaily, imgURL, source, results, false);
             },
