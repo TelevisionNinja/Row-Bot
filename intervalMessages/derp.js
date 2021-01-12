@@ -13,15 +13,18 @@ module.exports = {
 
         interval.startIntervalFunc(
             async () => {
-                // map was used bc tagArr was the exact same array that was being used for every interval
-                let tagArr = derpConfig.intervalTagArr.map(t => `-${t}`);
+                let tagArr = [];
 
-                const randIndex = rand.randomMath(tagArr.length);
+                const randIndex = rand.randomMath(derpConfig.intervalTagArr.length);
 
-                tagArr[randIndex] = tagArr[randIndex].substring(1);
+                tagArr.push(derpConfig.intervalTagArr[randIndex]);
                 tagArr.push('safe');
+                tagArr.push('solo');
                 tagArr.push('-oc');
                 tagArr.push('-crossover');
+                tagArr.push('-cosplay');
+                tagArr.push('-irl');
+                tagArr.push('-irl human');
 
                 const {
                     imgURL,
