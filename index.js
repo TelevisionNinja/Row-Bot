@@ -125,11 +125,13 @@ client.on('message', msg => {
         // general message
 
         if (!nonCommandBool) {
+            const words = msgStr.split(' ');
+
             for (let i = 0, n = client.genMsg.length; i < n; i++) {
                 const {
                     hasReply,
                     replyStr
-                } = client.genMsg[i].execute(msgStr);
+                } = client.genMsg[i].execute(words);
     
                 if (hasReply) {
                     replyBool = true;

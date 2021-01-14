@@ -1,14 +1,15 @@
 const { goodnights } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
+const arrayUtils = require('../lib/arrayUtils.js');
 
 module.exports = {
     description: 'Say goodnight',
-    execute(msg) {
+    execute(words) {
         let hasReply = false;
         let replyStr = '';
 
         for (let i = 0, n = goodnights.length; i < n; i++) {
-            if (msg === goodnights[i].toLowerCase()) {
+            if (arrayUtils.isSubArrInOrder(words, goodnights[i].toLowerCase().split(' '))) {
                 return {
                     hasReply: true,
                     replyStr: goodnights[rand.randomMath(goodnights.length)]
