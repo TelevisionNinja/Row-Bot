@@ -1,6 +1,7 @@
 {
     "prefix" : ".",
     "token" : "",
+    "clientID" : "",
     "activityStatus" : "",
     "aliases" : [""],
     "icon" : "icon_example.png",
