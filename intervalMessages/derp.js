@@ -27,6 +27,7 @@ module.exports = {
                 tagArr.push('-cosplay');
                 tagArr.push('-irl');
                 tagArr.push('-irl human');
+                tagArr.push('-game screencap');
 
                 const {
                     imgURL,
