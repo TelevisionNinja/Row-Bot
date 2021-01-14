@@ -23,6 +23,11 @@ module.exports = {
             max = parseInt(args[1]);
         }
 
+        if (isNaN(min) || isNaN(max)) {
+            msg.channel.send('Use numbers please');
+            return;
+        }
+
         if (min > max) {
             const temp = max;
             max = min;
