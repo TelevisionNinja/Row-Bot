@@ -15,7 +15,7 @@ module.exports = {
             if (msg.includes(loves[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
-                    replyStr: loves[rand.randomCrypto(loves.length)]
+                    replyStr: loves[rand.randomMath(loves.length)]
                 };
             }
         }
