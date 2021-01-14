@@ -5,6 +5,7 @@ const {
     token,
     activityStatus,
     aliases,
+    clientID
 } = require('./config.json');
 const msgUtils = require('./lib/msgUtils.js');
 const stringUtils = require('./lib/stringUtils.js');
@@ -48,6 +49,7 @@ client.on('ready', () => {
     }
 
     //--------------------------------------------------------------------------------
+    // console log the start up time
 
     const time = new Date();
 
@@ -77,6 +79,7 @@ client.on('ready', () => {
     console.log(`Row Bot is up ${time.getMonth() + 1}/${time.getDate()}/${time.getFullYear()} ${hours}:${minutes}:${seconds}.${milliSeconds}`);
     
     //--------------------------------------------------------------------------------
+    // set activity
 
     client.user.setActivity(activityStatus, { type: 'PLAYING' });
 });
@@ -90,7 +93,17 @@ client.on('message', msg => {
 
     const msgStr = msg.content.toLowerCase();
 
-    if (!msgStr.startsWith(prefix)) {
+    //--------------------------------------------------------------------------------
+    // check if there are no mentions or the bot itself is mentioned
+
+    const mentionArr = [...msg.mentions.users.values()];
+    const mentionLength = mentionArr.length;
+
+    const isNotReplyToUser = !mentionLength || (mentionLength === 1 && mentionArr[0].id === clientID);
+
+    //--------------------------------------------------------------------------------
+
+    if (!msgStr.startsWith(prefix) && isNotReplyToUser) {
         let botReply = '';
         let replyBool = false;
 
