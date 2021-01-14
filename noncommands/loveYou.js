@@ -1,5 +1,6 @@
 const {
     loves,
+    loveReplies,
     loveMes,
     loveMeReplies
 } = require('../messages.json');
@@ -15,7 +16,7 @@ module.exports = {
             if (msg.includes(loves[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
-                    replyStr: loves[rand.randomMath(loves.length)]
+                    replyStr: loveReplies[rand.randomMath(loveReplies.length)]
                 };
             }
         }

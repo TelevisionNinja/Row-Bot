@@ -68,18 +68,36 @@
         "💔",
         "I... I'm sorry",
         "I... I'm sorry 😢",
-    
+
         "╥﹏╥",
         "(⋟﹏⋞)",
         "(つ﹏⊂)"
     ],
 
     "loves" : [
-        "aww ❤️",
-        "yay",
         "Love you",
         "Love u",
         "Luv u",
+
+        "Love you 😘",
+        "Love u 😘",
+        "Luv u 😘",
+
+        "*kiss*",
+        "*kiss* 💋",
+        "*kiss* 😗",
+        "*kiss* 😘",
+
+        "💋",
+        "😗",
+        "😘",
+        "❤️",
+        "🥰"
+    ],
+
+    "loveReplies" : [
+        "aww ❤️",
+        "yay",
         "Love you too",
         "Love u too",
         "Luv u too",
@@ -87,9 +105,6 @@
         "I love u too",
         "I luv u too",
 
-        "Love you 😘",
-        "Love u 😘",
-        "Luv u 😘",
         "Love you too 😘",
         "Love u too 😘",
         "Luv u too 😘",
@@ -101,7 +116,7 @@
         "*kiss* 💋",
         "*kiss* 😗",
         "*kiss* 😘",
-    
+
         "💋",
         "😗",
         "😘",
@@ -119,7 +134,7 @@
         "*kiss* 💋",
         "*kiss* 😗",
         "*kiss* 😘",
-    
+
         "💋",
         "😗",
         "😘"
