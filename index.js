@@ -93,17 +93,7 @@ client.on('message', msg => {
 
     const msgStr = msg.content.toLowerCase();
 
-    //--------------------------------------------------------------------------------
-    // check if there are no mentions or the bot itself is mentioned
-
-    const mentionArr = [...msg.mentions.users.values()];
-    const mentionLength = mentionArr.length;
-
-    const isNotReplyToUser = !mentionLength || (mentionLength === 1 && mentionArr[0].id === clientID);
-
-    //--------------------------------------------------------------------------------
-
-    if (!msgStr.startsWith(prefix) && isNotReplyToUser) {
+    if (!(msgStr.startsWith(prefix)) && (!(msgUtils.hasMentions(msg)) || msgUtils.hasBotMention(msg))) {
         let botReply = '';
         let replyBool = false;
 
