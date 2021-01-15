@@ -4,8 +4,7 @@ const {
     prefix,
     token,
     activityStatus,
-    aliases,
-    clientID
+    aliases
 } = require('./config.json');
 const msgUtils = require('./lib/msgUtils.js');
 const stringUtils = require('./lib/stringUtils.js');
@@ -93,41 +92,41 @@ client.on('message', msg => {
 
     const msgStr = msg.content.toLowerCase();
 
-    if (!(msgStr.startsWith(prefix)) && (!(msgUtils.hasMentions(msg)) || msgUtils.hasBotMention(msg))) {
+    if (!(msgStr.startsWith(prefix))) {
         let botReply = '';
         let replyBool = false;
 
         //--------------------------------------------------------------------------------
         // noncommands
 
-        let nonCommandBool = false;
+        let hasAlias = false;
 
         for (let i = 0, n = aliases.length; i < n; i++) {
             if (msgStr.includes(aliases[i].toLowerCase())) {
-                nonCommandBool = true;
-
-                for (let j = 0, m = client.noncommands.length; j < m; j++) {
-                    const {
-                        isNoncommand,
-                        replyStr
-                    } = client.noncommands[j].execute(msgStr);
-
-                    if (isNoncommand) {
-                        replyBool = true;
-                        botReply = replyStr;
-                        break;
-                    }
-                }
-
-                nonCommandBool = false;
+                hasAlias = true;
                 break;
+            }
+        }
+
+        if (hasAlias || msgUtils.hasBotMention(msg, false, true, false)) {
+            for (let i = 0, n = client.noncommands.length; i < n; i++) {
+                const {
+                    isNoncommand,
+                    replyStr
+                } = client.noncommands[i].execute(msgStr);
+    
+                if (isNoncommand) {
+                    replyBool = true;
+                    botReply = replyStr;
+                    break;
+                }
             }
         }
 
         //--------------------------------------------------------------------------------
         // general message
 
-        if (!nonCommandBool) {
+        if (!replyBool && (!(msgUtils.hasMentions(msg)) || msgUtils.hasBotMention(msg))) {
             const words = msgStr.split(' ');
 
             for (let i = 0, n = client.genMsg.length; i < n; i++) {
@@ -135,7 +134,7 @@ client.on('message', msg => {
                     hasReply,
                     replyStr
                 } = client.genMsg[i].execute(words);
-    
+
                 if (hasReply) {
                     replyBool = true;
                     botReply = replyStr;
