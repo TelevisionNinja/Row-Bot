@@ -39,9 +39,14 @@ module.exports = {
                 }
 
                 if (typeof tulpWebhook === 'undefined') {
-                    tulpWebhook = await msgCopy.channel.createWebhook(authorTulp.username, {
-                        avatar: authorTulp.avatar
-                    });
+                    try {
+                        tulpWebhook = await msgCopy.channel.createWebhook(authorTulp.username, {
+                            avatar: authorTulp.avatar
+                        });
+                    }
+                    catch (error) {
+                        msgCopy.channel.send('I couldn\'t create a webhook because there\'s too many in here 😢');
+                    }
                 }
                 else {
                     await tulpWebhook.edit({
