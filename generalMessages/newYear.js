@@ -23,7 +23,7 @@ module.exports = {
             if (arrayUtils.isSubArrInOrder(words, newYearsEve[i].toLowerCase().split(' '))) {
                 return {
                     hasReply: true,
-                    replyStr: newYearsEve[i]
+                    replyStr: newYearsEve[rand.randomMath(n)]
                 };
             }
         }

@@ -15,7 +15,7 @@ module.exports = {
             if (arrayUtils.isSubArrInOrder(words, christmas[i].toLowerCase().split(' '))) {
                 return {
                     hasReply: true,
-                    replyStr: christmas[rand.randomMath(christmas.length)]
+                    replyStr: christmas[rand.randomMath(n)]
                 };
             }
         }
@@ -24,7 +24,7 @@ module.exports = {
             if (arrayUtils.isSubArrInOrder(words, christmasEve[i].toLowerCase().split(' '))) {
                 return {
                     hasReply: true,
-                    replyStr: christmasEve[rand.randomMath(christmasEve.length)]
+                    replyStr: christmasEve[rand.randomMath(n)]
                 };
             }
         }

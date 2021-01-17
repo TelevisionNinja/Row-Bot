@@ -12,7 +12,7 @@ module.exports = {
             if (arrayUtils.isSubArrInOrder(words, goodMornings[i].toLowerCase().split(' '))) {
                 return {
                     hasReply: true,
-                    replyStr: goodMornings[rand.randomMath(goodMornings.length)]
+                    replyStr: goodMornings[rand.randomMath(n)]
                 };
             }
         }

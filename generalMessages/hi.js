@@ -8,12 +8,13 @@ module.exports = {
     execute(words) {
         let hasReply = false;
         let replyStr = '';
+        const numOfGreetings = greetings.length;
 
-        for (let i = 0, n = greetings.length; i < n; i++) {
+        for (let i = 0; i < numOfGreetings; i++) {
             if (arrayUtils.isSubArrInOrder(words, greetings[i].toLowerCase().split(' '))) {
                 return {
                     hasReply: true,
-                    replyStr: greetings[rand.randomMath(greetings.length)]
+                    replyStr: greetings[rand.randomMath(numOfGreetings)]
                 };
             }
         }
@@ -24,7 +25,7 @@ module.exports = {
             if (wordStr === aliases[i].toLowerCase()) {
                 return {
                     hasReply: true,
-                    replyStr: greetings[rand.randomMath(greetings.length)]
+                    replyStr: greetings[rand.randomMath(numOfGreetings)]
                 };
             }
         }
