@@ -1,4 +1,8 @@
-const { tulp } = require('../config.json');
+const {
+    tulp,
+    prefix,
+    clientID
+} = require('../config.json');
 
 module.exports = {
     names: tulp.names,
@@ -10,26 +14,44 @@ module.exports = {
     usage: '<message>',
     cooldown: 0,
     async execute(msg, args) {
-        if (args.length) {
-            const strArr = msg.content.split(' ');
-            strArr.shift();
-            const str = strArr.join(' ');
+        const msgCopy = msg;
+        msg.delete();
 
-            const authorID = msg.author.id;
+        if (args.length) {
+            let str = msgCopy.content.slice(prefix.length).trim();
+            str = str.slice(str.indexOf(' '));
+
+            const authorID = msgCopy.author.id;
             const authorTulp = tulp.tulpsData.find(t => t.id === authorID);
 
             if (typeof authorTulp === 'undefined') {
-                msg.channel.send(str);
-                return;
+                msgCopy.channel.send(str);
             }
+            else {
+                const guildWebhooks = await msgCopy.channel.fetchWebhooks();
+                let tulpWebhook = undefined;
 
-            const tulpWebhook = await msg.channel.createWebhook(authorTulp.username, {
-                avatar: authorTulp.avatar,
-            });
+                for (const webhook of guildWebhooks.values()) {
+                    if (webhook.owner.id === clientID) {
+                        tulpWebhook = webhook;
+                        break;
+                    }
+                }
 
-            tulpWebhook.send(str, { files: msg.attachments.map(img => img.url) });
+                if (typeof tulpWebhook === 'undefined') {
+                    tulpWebhook = await msgCopy.channel.createWebhook(authorTulp.username, {
+                        avatar: authorTulp.avatar
+                    });
+                }
+                else {
+                    await tulpWebhook.edit({
+                        name: authorTulp.username,
+                        avatar: authorTulp.avatar
+                    });
+                }
+
+                tulpWebhook.send(str);
+            }
         }
-
-        await msg.delete();
     }
 }
