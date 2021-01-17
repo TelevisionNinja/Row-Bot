@@ -83,6 +83,17 @@
         "description" : "Lists all commands or gives more info about a specific command"
     },
 
+    "memes" : {
+        "description" : "Posts memes",
+        "channelID" : "",
+        "URLs" : [
+            "https://www.reddit.com/r/memes.json?sort=hot&t=week",
+            "https://www.reddit.com/r/dankmemes.json?sort=hot&t=week",
+            "https://www.reddit.com/r/goodanimemes.json?sort=hot&t=week",
+            "https://www.reddit.com/r/Animemes.json?sort=hot&t=week"
+        ]
+    },
+
     "random" : {
         "names" : [
             "random",
