@@ -126,7 +126,19 @@
 
     "tulp" : {
         "names" : [""],
-        "description" : ""
+        "description" : "",
+        "tulpsData" : [
+            {
+                "id" : "",
+                "username" : "",
+                "avatar" : ""
+            },
+            {
+                "id" : "",
+                "username" : "",
+                "avatar" : ""
+            }
+        ]
     },
 
     "urban" : {

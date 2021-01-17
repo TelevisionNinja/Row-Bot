@@ -11,13 +11,25 @@ module.exports = {
     cooldown: 0,
     async execute(msg, args) {
         if (args.length) {
-            msg.channel.send(args.join(' '));
+            const strArr = msg.content.split(' ');
+            strArr.shift();
+            const str = strArr.join(' ');
+
+            const authorID = msg.author.id;
+            const authorTulp = tulp.tulpsData.find(t => t.id === authorID);
+
+            if (typeof authorTulp === 'undefined') {
+                msg.channel.send(str);
+                return;
+            }
+
+            const tulpWebhook = await msg.channel.createWebhook(authorTulp.username, {
+                avatar: authorTulp.avatar,
+            });
+
+            tulpWebhook.send(str, { files: msg.attachments.map(img => img.url) });
         }
-        
-        if (msg.attachments.size) {
-            await msg.channel.send(msg.attachments.map(img => img.url));
-        }
-        
+
         await msg.delete();
     }
 }
