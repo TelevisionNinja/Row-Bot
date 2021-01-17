@@ -69,21 +69,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
         const initial = numberOfReplies;
         let reply = '';
 
-        if (wordArr.includes('no')) {
-            numberOfDenies++;
-
-            if (numberOfDenies === memberSize) {
-                reply = noReplyMsg;
-            }
-            else {
-                reply = 'aww';
-            }
-
-            memberObj.user.decision = denied;
-
-            numberOfReplies++;
-        }
-        else if (wordArr.includes('yes')) {
+        if (wordArr.includes('yes')) {
             numberOfConfirms++;
 
             if (numberOfConfirms === memberSize) {
@@ -94,6 +80,20 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
             }
 
             memberObj.user.decision = confirmed;
+
+            numberOfReplies++;
+        }
+        else if (wordArr.includes('no')) {
+            numberOfDenies++;
+
+            if (numberOfDenies === memberSize) {
+                reply = noReplyMsg;
+            }
+            else {
+                reply = 'aww';
+            }
+
+            memberObj.user.decision = denied;
 
             numberOfReplies++;
         }
