@@ -38,9 +38,7 @@ for (let i = 0, n = genMsgFiles.length; i < n; i++) {
 }
 
 //--------------------------------------------------------------------------------
-// login bot
-
-client.login(token);
+// login actions
 
 client.on('ready', () => {
     for (let i = 0, n = intervalMsgs.length; i < n; i++) {
@@ -84,6 +82,7 @@ client.on('ready', () => {
 });
 
 //--------------------------------------------------------------------------------
+// message actions
 
 client.on('message', msg => {
     if (msg.author.bot) {
@@ -225,3 +224,5 @@ client.on('message', msg => {
         console.log(error);
     }
 });
+
+client.login(token);
