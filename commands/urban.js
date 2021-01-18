@@ -7,7 +7,6 @@ const Discord = require('discord.js');
 
 module.exports = {
     names: urban.names,
-    fileName: __filename,
     description: urban.description,
     args: true,
     permittedCharsOnly: false,

@@ -10,7 +10,6 @@ const {
 
 module.exports = {
     names: rule.names,
-    fileName: __filename,
     description: rule.description,
     args: true,
     permittedCharsOnly: true,

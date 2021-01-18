@@ -10,7 +10,6 @@ const URL = `${derp.API}${derp.APIKey}&q=`;
 
 module.exports = {
     names: derp.names,
-    fileName: __filename,
     description: derp.description,
     args: true,
     permittedCharsOnly: true,

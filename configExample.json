@@ -3,7 +3,7 @@
     "token" : "",
     "clientID" : "",
     "activityStatus" : "",
-    "aliases" : [""],
+    "names" : [""],
     "icon" : "icon_example.png",
     "readingSpeed" : 300,
     "typingSpeed" : 200,

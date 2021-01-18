@@ -4,7 +4,6 @@ const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     names: fifty.names,
-    fileName: __filename,
     description: fifty.description,
     args: false,
     permittedCharsOnly: false,

@@ -3,7 +3,6 @@ const { random } = require('../config.json');
 
 module.exports = {
     names: random.names,
-    fileName: __filename,
     description: random.description,
     args: true,
     permittedCharsOnly: false,

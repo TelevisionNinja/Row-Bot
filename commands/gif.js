@@ -5,7 +5,6 @@ const URL = `${tenor.API}${tenor.APIKey}&q=`;
 
 module.exports = {
     names: tenor.names,
-    fileName: __filename,
     description: tenor.description,
     args: true,
     permittedCharsOnly: true,

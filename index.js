@@ -4,7 +4,7 @@ const {
     prefix,
     token,
     activityStatus,
-    aliases
+    names
 } = require('./config.json');
 const msgUtils = require('./lib/msgUtils.js');
 const stringUtils = require('./lib/stringUtils.js');
@@ -19,14 +19,13 @@ const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aF
 const genMsgFiles = fileSys.readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
 const intervalMsgs = fileSys.readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
 
-const cooldowns = new Discord.Collection();
-client.commands = new Discord.Collection();
+const cooldowns = new Map();
+client.commands = [];
 client.noncommands = [];
 client.genMsg = [];
 
 for (let i = 0, n = commandFiles.length; i < n; i++) {
-    const command = require(`./commands/${commandFiles[i]}`);
-    client.commands.set(command.names[0], command);
+    client.commands[i] = require(`./commands/${commandFiles[i]}`);
 }
 
 for (let i = 0, n = noncommandFiles.length; i < n; i++) {
@@ -100,8 +99,8 @@ client.on('message', msg => {
 
         let hasAlias = false;
 
-        for (let i = 0, n = aliases.length; i < n; i++) {
-            if (msgStr.includes(aliases[i].toLowerCase())) {
+        for (let i = 0, n = names.length; i < n; i++) {
+            if (msgStr.includes(names[i].toLowerCase())) {
                 hasAlias = true;
                 break;
             }
@@ -193,7 +192,7 @@ client.on('message', msg => {
     // cooldown
 
     if (!cooldowns.has(command.names[0])) {
-        cooldowns.set(command.names[0], new Discord.Collection());
+        cooldowns.set(command.names[0], new Map());
     }
     
     const timestamps = cooldowns.get(command.names[0]);

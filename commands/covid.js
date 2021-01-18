@@ -4,7 +4,6 @@ const Discord = require('discord.js');
 
 module.exports = {
     names: covid.names,
-    fileName: __filename,
     description: covid.description,
     args: true,
     permittedCharsOnly: false,

@@ -1,13 +1,14 @@
 const {
     prefix,
     help,
-    icon
+    icon,
+    names
 } = require('../config.json');
 const Discord = require('discord.js');
 const msgUtils = require('../lib/msgUtils.js');
 
 const helpCenter = new Discord.MessageEmbed()
-    .setTitle('Pinkie\'s Help Center')
+    .setTitle(`${names[0]}\'s Help Center`)
     .attachFiles(`./${icon}`)
     .setThumbnail(`attachment://${icon}`);
 const specific = {
@@ -19,7 +20,6 @@ let notCalled = true;
 
 module.exports = {
     names: help.names,
-    fileName: __filename,
     description: help.description,
     args: false,
     permittedCharsOnly: false,
