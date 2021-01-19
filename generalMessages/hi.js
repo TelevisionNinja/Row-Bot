@@ -1,7 +1,7 @@
 const { greetings } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
 const arrayUtils = require('../lib/arrayUtils.js');
-const { aliases } = require('../config.json');
+const { names } = require('../config.json');
 
 module.exports = {
     description: 'Say hi',
@@ -21,8 +21,8 @@ module.exports = {
 
         const wordStr = words.join(' ').replace(/[^a-zA-Z0-9 ]/g, '');
 
-        for (let i = 0, n = aliases.length; i < n; i++) {
-            if (wordStr === aliases[i].toLowerCase()) {
+        for (let i = 0, n = names.length; i < n; i++) {
+            if (wordStr === names[i].toLowerCase()) {
                 return {
                     hasReply: true,
                     replyStr: greetings[rand.randomMath(numOfGreetings)]

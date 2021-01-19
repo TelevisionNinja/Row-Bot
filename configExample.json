@@ -4,7 +4,7 @@
     "clientID" : "",
     "activityStatus" : "",
     "names" : [""],
-    "icon" : "icon_example.png",
+    "icon" : "iconExample.png",
     "readingSpeed" : 300,
     "typingSpeed" : 200,
     "reactionSpeed" : 950,

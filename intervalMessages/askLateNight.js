@@ -1,5 +1,5 @@
 const {
-    aliases,
+    names,
     askLateNight,
     prefix
 } = require('../config.json');
@@ -52,7 +52,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
     const collector = recipient.createMessageCollector(m => {
         const str = m.content.toLowerCase();
-        return !(str.startsWith(prefix)) && !(m.author.bot) && (aliases.some(a => str.includes(a)) || msgUtils.hasBotMention(m, false, true, false));
+        return !(str.startsWith(prefix)) && !(m.author.bot) && (names.some(a => str.includes(a)) || msgUtils.hasBotMention(m, false, true, false));
     }, { time: timeOut });
 
     collector.on('collect', m => {
