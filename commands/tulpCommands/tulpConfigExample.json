@@ -1,0 +1,57 @@
+{
+    "create" : {
+        "names" : [
+            "create"
+        ],
+        "description" : ""
+    },
+
+    "deleteTulp" : {
+        "names" : [
+            "delete"
+        ],
+        "description" : ""
+    },
+
+    "editAvatar" : {
+        "names" : [
+            "editavatar",
+            "edit_avatar",
+            "edit-avatar"
+        ],
+        "description" : ""
+    },
+
+    "editName" : {
+        "names" : [
+            "editname",
+            "edit_name",
+            "edit-name"
+        ],
+        "description" : ""
+    },
+
+    "help" : {
+        "names" : ["help"],
+        "description" : "Lists all commands or gives more info about a specific command"
+    },
+
+    "list" : {
+        "names" : [
+            "list"
+        ],
+        "description" : ""
+    },
+
+    "sendMsg" : {
+        "names" : [
+            "msg",
+            "message",
+            "send",
+            "talk",
+            "speak",
+            "say"
+        ],
+        "description" : ""
+    }
+}

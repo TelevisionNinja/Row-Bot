@@ -11,6 +11,8 @@
 
     "tagSeparator" : ",",
 
+    "mongodbURI" : "mongodb://localhost/",
+
     "askLateNight" : {
         "channelID" : "",
         "description" : "Ask the late night bois if they're going to get on",
@@ -102,11 +104,6 @@
         "description" : "Returns a random value within a given range"
     },
 
-    "reload" : {
-        "names" : ["reload"],
-        "description" : "Reloads a command"
-    },
-
     "rule" : {
         "names" : [""],
         "description" : "",
@@ -126,27 +123,7 @@
 
     "tulp" : {
         "names" : [""],
-        "description" : "",
-        "tulpsData" : [
-            {
-                "id" : "",
-                "tulps" : [
-                    {
-                        "username" : "",
-                        "avatar" : ""
-                    }
-                ]
-            },
-            {
-                "id" : "",
-                "tulps" : [
-                    {
-                        "username" : "",
-                        "avatar" : ""
-                    }
-                ]
-            }
-        ]
+        "description" : ""
     },
 
     "urban" : {
