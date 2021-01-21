@@ -125,13 +125,11 @@ client.on('message', msg => {
         // general message
 
         if (!replyBool && (!(msgUtils.hasMentions(msg)) || msgUtils.hasBotMention(msg))) {
-            const words = msgStr.split(' ');
-
             for (let i = 0, n = client.genMsg.length; i < n; i++) {
                 const {
                     hasReply,
                     replyStr
-                } = client.genMsg[i].execute(words);
+                } = client.genMsg[i].execute(msgStr);
 
                 if (hasReply) {
                     replyBool = true;

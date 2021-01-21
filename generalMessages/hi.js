@@ -1,17 +1,16 @@
 const { greetings } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
-const arrayUtils = require('../lib/arrayUtils.js');
 const { names } = require('../config.json');
 
 module.exports = {
     description: 'Say hi',
-    execute(words) {
+    execute(msg) {
         let hasReply = false;
         let replyStr = '';
         const numOfGreetings = greetings.length;
 
         for (let i = 0; i < numOfGreetings; i++) {
-            if (arrayUtils.isSubArrInOrder(words, greetings[i].toLowerCase().split(' '))) {
+            if (msg === greetings[i].toLowerCase()) {
                 return {
                     hasReply: true,
                     replyStr: greetings[rand.randomMath(numOfGreetings)]
@@ -19,10 +18,10 @@ module.exports = {
             }
         }
 
-        const wordStr = words.join(' ').replace(/[^a-zA-Z0-9 ]/g, '');
+        const removedChars = msg.replace(/[^a-zA-Z0-9 ]/g, '');
 
         for (let i = 0, n = names.length; i < n; i++) {
-            if (wordStr === names[i].toLowerCase()) {
+            if (removedChars === names[i].toLowerCase()) {
                 return {
                     hasReply: true,
                     replyStr: greetings[rand.randomMath(numOfGreetings)]
