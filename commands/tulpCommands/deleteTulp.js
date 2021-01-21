@@ -34,13 +34,18 @@ module.exports = {
                 return;
             }
 
-            const updateDoc = {
-                $set: {
-                    tulps: newTulpArr
-                }
-            };
+            if (newTulpArr.length) {
+                const updateDoc = {
+                    $set: {
+                        tulps: newTulpArr
+                    }
+                };
 
-            await collection.updateOne(query, updateDoc, { upsert: false });
+                await collection.updateOne(query, updateDoc, { upsert: false });
+            }
+            else {
+                await collection.deleteOne(query);
+            }
 
             msg.channel.send('Tulpa deleted!');
         }
