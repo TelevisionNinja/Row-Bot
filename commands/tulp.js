@@ -26,52 +26,46 @@ module.exports = {
     usage: '<command>',
     cooldown: 0,
     async execute(msg, args) {
-        commandHandler(msg, args);
-    }
-}
+        // get command
+        const userCommand = args.shift();
+        const command = commands.find(cmd => cmd.names.includes(userCommand));
 
-//--------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------
 
-function commandHandler(msg, args) {
-    // get command
-    const userCommand = args.shift();
-    const command = commands.find(cmd => cmd.names.includes(userCommand));
+        if (!command) {
+            return;
+        }
 
-    //--------------------------------------------------------------------------------
+        if (command.guildOnly && msg.channel.type === 'dm') {
+            msg.channel.send('I can\'t execute that command in DM\'s');
+            return;
+        }
 
-    if (!command) {
-        return;
-    }
+        if (command.args && !args.length) {
+            msg.channel.send(`Please provide arguments\nex: \`${prefix}${tulp.names[0]} ${command.names[0]} ${command.usage}\``);
+            return;
+        }
 
-    if (command.guildOnly && msg.channel.type === 'dm') {
-        msg.channel.send('I can\'t execute that command in DM\'s');
-        return;
-    }
+        //--------------------------------------------------------------------------------
 
-    if (command.args && !args.length) {
-        msg.channel.send(`Please provide arguments\nex: \`${prefix}${tulp.names[0]} ${command.names[0]} ${command.usage}\``);
-        return;
-    }
+        const tulpArgs = msg.content.slice(prefix.length).trim().split(' ');
+        tulpArgs.shift();
+        tulpArgs.shift();
 
-    //--------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------
+        // make commands available for the help command
 
-    const tulpArgs = msg.content.slice(prefix.length).trim().split(' ');
-    tulpArgs.shift();
-    tulpArgs.shift();
+        msg.tulpCommands = commands;
 
-    //--------------------------------------------------------------------------------
-    // make commands available for the help command
+        //--------------------------------------------------------------------------------
+        // execute command
 
-    msg.tulpCommands = commands;
-
-    //--------------------------------------------------------------------------------
-    // execute command
-
-    try {
-        command.execute(msg, tulpArgs);
-    }
-    catch (error) {
-        msg.channel.send('I couldn\'t do that command for some reason 😢');
-        console.log(error);
+        try {
+            command.execute(msg, tulpArgs);
+        }
+        catch (error) {
+            msg.channel.send('I couldn\'t do that command for some reason 😢');
+            console.log(error);
+        }
     }
 }

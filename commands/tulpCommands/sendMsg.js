@@ -5,15 +5,19 @@ const {
 const { sendMsg } = require('./tulpConfig.json');
 const { MongoClient } = require('mongodb');
 const { mongodbURI } = require('../../config.json');
+const Discord = require('discord.js');
 
 module.exports = {
     names: sendMsg.names,
     description: sendMsg.description,
     args: true,
-    guildOnly: true,
+    guildOnly: false,
     usage: '<name>, <message>',
     async execute(msg, args) {
-        msg.delete();
+        const isDM = msg.channel.type === 'dm';
+        if (!isDM) {
+            msg.delete();
+        }
 
         // discord trims the initial message, so there's no need to trim it here
         const str = args.join(' ');
@@ -63,6 +67,19 @@ module.exports = {
             client.close();
         }
 
+        const tulpMsg = str.slice(index + 1).trim();
+
+        //-------------------------------------------------------------------------------------
+
+        if (isDM) {
+            const simulatedMsg = new Discord.MessageEmbed()
+                .setAuthor(authorTulp.username, authorTulp.avatar)
+                .setDescription(tulpMsg);
+            
+            msg.channel.send(simulatedMsg);
+            return;
+        }
+
         //-------------------------------------------------------------------------------------
 
         const guildWebhooks = await msg.channel.fetchWebhooks();
@@ -94,6 +111,6 @@ module.exports = {
             }
         }
 
-        tulpWebhook.send(str.slice(index + 1).trim());
+        tulpWebhook.send(tulpMsg);
     }
 }
