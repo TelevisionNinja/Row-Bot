@@ -1,14 +1,16 @@
 {
     "create" : {
         "names" : [
-            "create"
+            "create",
+            "make"
         ],
         "description" : ""
     },
 
     "deleteTulp" : {
         "names" : [
-            "delete"
+            "delete",
+            "remove"
         ],
         "description" : ""
     },
@@ -17,7 +19,31 @@
         "names" : [
             "editavatar",
             "edit_avatar",
-            "edit-avatar"
+            "edit-avatar",
+            "changeavatar",
+            "change_avatar",
+            "change-avatar",
+
+            "editpfp",
+            "edit_pfp",
+            "edit-pfp",
+            "changepfp",
+            "change_pfp",
+            "change-pfp",
+
+            "editpic",
+            "edit_pic",
+            "edit-pic",
+            "changepic",
+            "change_pic",
+            "change-pic",
+
+            "editpicture",
+            "edit_picture",
+            "edit-picture",
+            "changepicture",
+            "change_picture",
+            "change-picture"
         ],
         "description" : ""
     },
@@ -26,7 +52,10 @@
         "names" : [
             "editname",
             "edit_name",
-            "edit-name"
+            "edit-name",
+            "changename",
+            "change_name",
+            "change-name"
         ],
         "description" : ""
     },
