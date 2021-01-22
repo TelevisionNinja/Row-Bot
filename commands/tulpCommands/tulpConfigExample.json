@@ -55,7 +55,8 @@
             "edit-name",
             "changename",
             "change_name",
-            "change-name"
+            "change-name",
+            "rename"
         ],
         "description" : ""
     },
