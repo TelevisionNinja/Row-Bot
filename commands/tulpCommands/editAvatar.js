@@ -19,7 +19,7 @@ module.exports = {
             return;
         }
 
-        let tulpName = args.join(' ').trim();
+        const tulpName = args.join(' ').trim();
 
         const query = { id: msg.author.id };
 
@@ -49,7 +49,7 @@ module.exports = {
             });
 
             if (userData.tulps.length === newTulpArr.length) {
-                msg.channel.send('I couldn\'t find that tulpa');
+                msg.channel.send(tulp.noDataMsg);
                 return;
             }
 
@@ -63,14 +63,15 @@ module.exports = {
             };
 
             await collection.updateOne(query, updateDoc, { upsert: false });
-
-            msg.channel.send('Avatar changed!');
         }
         catch (error) {
             console.log(error);
+            return;
         }
         finally {
             await client.close();
         }
+
+        msg.channel.send(editAvatar.confirmMsg);
     }
 }

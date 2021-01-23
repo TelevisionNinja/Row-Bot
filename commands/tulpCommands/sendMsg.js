@@ -54,8 +54,7 @@ module.exports = {
             authorTulp = userData.tulps.find(t => t.username === tulpName);
 
             if (typeof authorTulp === 'undefined') {
-                // tell the use to speel the name right or make or rename the character
-                msg.author.send('Please use the right spelling, or create or rename a tulpa with that name');
+                msg.author.send(tulp.noDataMsg);
                 return;
             }
         }
@@ -82,10 +81,10 @@ module.exports = {
 
         //-------------------------------------------------------------------------------------
 
-        const guildWebhooks = await msg.channel.fetchWebhooks();
+        const channelWebhooks = await msg.channel.fetchWebhooks();
         let tulpWebhook = undefined;
 
-        for (const webhook of guildWebhooks.values()) {
+        for (const webhook of channelWebhooks.values()) {
             if (webhook.owner.id === clientID) {
                 tulpWebhook = webhook;
                 break;

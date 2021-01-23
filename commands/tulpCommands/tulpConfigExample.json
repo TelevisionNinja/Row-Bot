@@ -4,7 +4,9 @@
             "create",
             "make"
         ],
-        "description" : ""
+        "description" : "",
+        "confirmMsg" : "",
+        "existingMsg" : ""
     },
 
     "deleteTulp" : {
@@ -12,7 +14,8 @@
             "delete",
             "remove"
         ],
-        "description" : ""
+        "description" : "",
+        "confirmMsg" : ""
     },
 
     "editAvatar" : {
@@ -45,7 +48,8 @@
             "change_picture",
             "change-picture"
         ],
-        "description" : ""
+        "description" : "",
+        "confirmMsg" : ""
     },
 
     "editName" : {
@@ -58,7 +62,8 @@
             "change-name",
             "rename"
         ],
-        "description" : ""
+        "description" : "",
+        "confirmMsg" : ""
     },
 
     "help" : {
@@ -70,7 +75,8 @@
         "names" : [
             "list"
         ],
-        "description" : ""
+        "description" : "",
+        "noTulpsMsg" : ""
     },
 
     "sendMsg" : {

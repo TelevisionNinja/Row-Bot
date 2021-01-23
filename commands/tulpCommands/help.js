@@ -8,7 +8,7 @@ const {
 const Discord = require('discord.js');
 const msgUtils = require('../../lib/msgUtils.js');
 
-const helpCenter = new Discord.MessageEmbed()
+let helpCenter = new Discord.MessageEmbed()
     .setTitle(`${names[0]}\'s Tulp Help Center`)
     .attachFiles(`./${icon}`)
     .setThumbnail(`attachment://${icon}`);
@@ -37,7 +37,9 @@ module.exports = {
             );
             notCalled = false;
         }
-        
+
+        let embed;
+
 		if (args.length) {
 			const userCommand = args[0];
             const argCommand = msg.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
@@ -47,7 +49,7 @@ module.exports = {
                 return;
             }
 
-            const embed = new Discord.MessageEmbed()
+            embed = new Discord.MessageEmbed()
                 .setTitle(argCommand.names[0])
                 .setDescription(argCommand.description)
                 .addFields(
@@ -64,11 +66,11 @@ module.exports = {
                         value: argCommand.guildOnly ? 'Can only be used in servers' : 'Can be used in DM\'s'
                     }
                 );
-
-            msgUtils.sendAuthorDm(msg, embed);
         }
         else {
-            msgUtils.sendAuthorDm(msg, helpCenter);
+            embed = helpCenter
         }
+
+        msgUtils.sendAuthorDm(msg, embed);
     }
 }

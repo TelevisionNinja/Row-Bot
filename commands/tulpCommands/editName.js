@@ -36,7 +36,6 @@ module.exports = {
                 return;
             }
 
-            const newName = namesArr[1];
             let existingTulp;
 
             let newTulpArr = userData.tulps.filter(t => {
@@ -48,11 +47,11 @@ module.exports = {
             });
 
             if (userData.tulps.length === newTulpArr.length) {
-                msg.channel.send('I couldn\'t find that tulpa');
+                msg.channel.send(tulp.noDataMsg);
                 return;
             }
 
-            existingTulp.username = newName;
+            existingTulp.username = namesArr[1];
             newTulpArr.push(existingTulp);
 
             const updateDoc = {
@@ -62,14 +61,15 @@ module.exports = {
             };
 
             await collection.updateOne(query, updateDoc, { upsert: false });
-
-            msg.channel.send('Name changed!');
         }
         catch (error) {
             console.log(error);
+            return;
         }
         finally {
             await client.close();
         }
+
+        msg.channel.send(editName.confirmMsg);
     }
 }

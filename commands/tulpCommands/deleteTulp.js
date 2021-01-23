@@ -1,6 +1,9 @@
 const { deleteTulp } = require('./tulpConfig.json');
 const { MongoClient } = require('mongodb');
-const { mongodbURI } = require('../../config.json');
+const {
+    mongodbURI,
+    tulp
+} = require('../../config.json');
 
 module.exports = {
     names: deleteTulp.names,
@@ -9,6 +12,8 @@ module.exports = {
     guildOnly: false,
     usage: '<name>',
     async execute(msg, args) {
+        const tulpName = args.join(' ').trim();
+
         const query = { id: msg.author.id };
 
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
@@ -22,15 +27,14 @@ module.exports = {
             const userData = await collection.findOne(query);
 
             if (userData === null) {
-                msg.channel.send('I couldn\'t find that tulpa');
+                msg.channel.send(tulp.noDataMsg);
                 return;
             }
 
-            const tulpName = args.join(' ').trim();
-            let newTulpArr = userData.tulps.filter(t => t.username !== tulpName);
+            const newTulpArr = userData.tulps.filter(t => t.username !== tulpName);
 
             if (userData.tulps.length === newTulpArr.length) {
-                msg.channel.send('I couldn\'t find that tulpa');
+                msg.channel.send(tulp.noDataMsg);
                 return;
             }
 
@@ -46,14 +50,15 @@ module.exports = {
             else {
                 await collection.deleteOne(query);
             }
-
-            msg.channel.send('Tulpa deleted!');
         }
         catch (error) {
             console.log(error);
+            return;
         }
         finally {
             await client.close();
         }
+
+        msg.channel.send(deleteTulp.confirmMsg);
     }
 }

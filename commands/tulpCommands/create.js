@@ -16,7 +16,7 @@ module.exports = {
             return;
         }
 
-        let tulpName = args.join(' ').trim();
+        const tulpName = args.join(' ').trim();
 
         const query = { id: msg.author.id };
 
@@ -42,11 +42,11 @@ module.exports = {
                 };
 
                 await collection.insertOne(tulp);
-                msg.channel.send('Tulpa created!');
+                msg.channel.send(create.confirmMsg);
                 return;
             }
 
-            let existingTulp = userData.tulps.find(t => t.username === tulpName);
+            const existingTulp = userData.tulps.find(t => t.username === tulpName);
 
             if (typeof existingTulp === 'undefined') {
                 userData.tulps.push({
@@ -61,17 +61,18 @@ module.exports = {
                 };
 
                 await collection.updateOne(query, updateDoc, { upsert: false });
-                msg.channel.send('Tulpa created!');
+                msg.channel.send(create.confirmMsg);
                 return;
             }
-
-            msg.channel.send('You already have a tulpa with that name');
         }
         catch (error) {
             console.log(error);
+            return;
         }
         finally {
             await client.close();
         }
+
+        msg.channel.send(create.existingMsg);
     }
 }

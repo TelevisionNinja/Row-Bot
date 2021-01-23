@@ -1,11 +1,11 @@
-const { list } = require('./tulpConfig.json');
+const { list: listConfig } = require('./tulpConfig.json');
 const { MongoClient } = require('mongodb');
 const { mongodbURI } = require('../../config.json');
 const Discord = require('discord.js');
 
 module.exports = {
-    names: list.names,
-    description: list.description,
+    names: listConfig.names,
+    description: listConfig.description,
     args: false,
     guildOnly: false,
     usage: '',
@@ -14,33 +14,40 @@ module.exports = {
 
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
 
+        let userData;
+
         try {
             await client.connect();
 
             const database = client.db('tulps');
             const collection = database.collection("users");
 
-            const userData = await collection.findOne(query);
-
-            if (userData === null) {
-                // tell user to use the create command
-                msg.author.send(tulp.noDataWarning);
-                return;
-            }
-
-            const tulpArr = userData.tulps.map(t => `• ${t.username}`);
-
-            const list = new Discord.MessageEmbed()
-                .setTitle('Your tulps')
-                .setDescription(tulpArr);
-
-            msg.channel.send(list);
+            userData = await collection.findOne(query);
         }
         catch (error) {
             console.log(error);
+            return;
         }
         finally {
             await client.close();
         }
+
+        if (userData === null) {
+            msg.author.send(listConfig.noTulpsMsg);
+            return;
+        }
+
+        const tulpArr = userData.tulps.map(t => `• ${t.username}`);
+
+        if (typeof tulpArr === 'undefined') {
+            msg.author.send(listConfig.noTulpsMsg);
+            return;
+        }
+
+        const list = new Discord.MessageEmbed()
+            .setTitle('Your tulps')
+            .setDescription(tulpArr);
+
+        msg.channel.send(list);
     }
 }
