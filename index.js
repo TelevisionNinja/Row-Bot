@@ -18,11 +18,13 @@ const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.en
 const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 const genMsgFiles = fileSys.readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
 const intervalMsgs = fileSys.readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
+const tulpCommandFiles = fileSys.readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
 
 const cooldowns = new Map();
 client.commands = [];
 client.noncommands = [];
 client.genMsg = [];
+client.tulpCommands = [];
 
 for (let i = 0, n = commandFiles.length; i < n; i++) {
     client.commands[i] = require(`./commands/${commandFiles[i]}`);
@@ -34,6 +36,10 @@ for (let i = 0, n = noncommandFiles.length; i < n; i++) {
 
 for (let i = 0, n = genMsgFiles.length; i < n; i++) {
     client.genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
+}
+
+for (let i = 0, n = tulpCommandFiles.length; i < n; i++) {
+    client.tulpCommands[i] = require(`./commands/tulpCommands/${tulpCommandFiles[i]}`);
 }
 
 //--------------------------------------------------------------------------------

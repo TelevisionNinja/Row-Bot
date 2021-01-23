@@ -2,20 +2,6 @@ const {
     tulp,
     prefix
 } = require('../config.json');
-const fileSys = require('fs');
-
-//--------------------------------------------------------------------------------
-// load commands
-
-const commandFiles = fileSys.readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
-
-let commands = [];
-
-for (let i = 0, n = commandFiles.length; i < n; i++) {
-    commands[i] = require(`./tulpCommands/${commandFiles[i]}`);
-}
-
-//--------------------------------------------------------------------------------
 
 module.exports = {
     names: tulp.names,
@@ -28,7 +14,7 @@ module.exports = {
     async execute(msg, args) {
         // get command
         const userCommand = args.shift();
-        const command = commands.find(cmd => cmd.names.includes(userCommand));
+        const command = msg.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
 
         //--------------------------------------------------------------------------------
 
@@ -49,13 +35,8 @@ module.exports = {
         //--------------------------------------------------------------------------------
 
         const tulpArgs = msg.content.slice(prefix.length).trim().split(' ');
-        tulpArgs.shift();
-        tulpArgs.shift();
-
-        //--------------------------------------------------------------------------------
-        // make commands available for the help command
-
-        msg.tulpCommands = commands;
+        tulpArgs.shift(); // remove first command
+        tulpArgs.shift(); // remove second command
 
         //--------------------------------------------------------------------------------
         // execute command

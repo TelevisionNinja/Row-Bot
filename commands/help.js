@@ -38,7 +38,7 @@ module.exports = {
             );
             notCalled = false;
         }
-        
+
 		if (args.length) {
 			const userCommand = args[0];
             const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));

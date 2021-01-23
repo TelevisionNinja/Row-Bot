@@ -31,7 +31,7 @@ module.exports = {
             helpCenter.addFields(
                 {
                     name: 'My Tulp Commands',
-                    value: msg.tulpCommands.map(cmd => `• ${cmd.names[0]}`).join('\n')
+                    value: msg.client.tulpCommands.map(cmd => `• ${cmd.names[0]}`).join('\n')
                 },
                 specific
             );
@@ -40,7 +40,7 @@ module.exports = {
         
 		if (args.length) {
 			const userCommand = args[0];
-            const argCommand = msg.tulpCommands.find(cmd => cmd.names.includes(userCommand));
+            const argCommand = msg.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
 
             if (!argCommand) {
                 msgUtils.sendAuthorDm(msg, 'That\'s not one of my tulp commands');
