@@ -1,6 +1,7 @@
 const { fifty } = require('../config.json');
 const axios = require('axios');
 const rand = require('../lib/randomFunctions.js');
+const stringUtils = require('../lib/stringUtils.js');
 
 module.exports = {
     names: fifty.names,
@@ -29,10 +30,12 @@ async function getRandomFifty() {
         const response = await axios.get(fifty.URL);
         const postArr = response.data.data.children;
 
-        const post = postArr[rand.randomMath(postArr.length)];
+        const post = postArr[rand.randomMath(1, postArr.length)];
 
         title = post.data.title;
         link = post.data.url;
+
+        link = stringUtils.replaceHTMLEntities(link);
     }
     catch (error) {
         console.log(error);

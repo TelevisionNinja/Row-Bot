@@ -3,6 +3,7 @@ const msgUtils = require('../lib/msgUtils.js');
 const { memes } = require('../config.json');
 const axios = require('axios');
 const rand = require('../lib/randomFunctions.js');
+const stringUtils = require('../lib/stringUtils.js');
 
 module.exports = {
     description: memes.description,
@@ -16,9 +17,9 @@ module.exports = {
                     const response = await axios.get(URL);
                     const postArr = response.data.data.children;
 
-                    const post = postArr[rand.randomMath(postArr.length)];
+                    const post = postArr[rand.randomMath(1, postArr.length)];
 
-                    recipient.send(post.data.url);
+                    recipient.send(stringUtils.replaceHTMLEntities(post.data.url));
                 }
                 catch (error) {
                     console.log(error);
