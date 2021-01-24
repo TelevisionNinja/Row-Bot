@@ -17,6 +17,7 @@ module.exports = {
                     const response = await axios.get(URL);
                     const postArr = response.data.data.children;
 
+                    // the first post is usually a post about rules, so index 0 is unused
                     const post = postArr[rand.randomMath(1, postArr.length)];
 
                     recipient.send(stringUtils.replaceHTMLEntities(post.data.url));
