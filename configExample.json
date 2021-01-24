@@ -89,10 +89,10 @@
         "description" : "Posts memes",
         "channelID" : "",
         "URLs" : [
-            "https://www.reddit.com/r/memes.json?sort=hot&t=week",
-            "https://www.reddit.com/r/dankmemes.json?sort=hot&t=week",
-            "https://www.reddit.com/r/goodanimemes.json?sort=hot&t=week",
-            "https://www.reddit.com/r/Animemes.json?sort=hot&t=week"
+            "https://www.reddit.com/r/memes/top.json?raw_json=1&t=week",
+            "https://www.reddit.com/r/dankmemes/top.json?raw_json=1&t=week",
+            "https://www.reddit.com/r/goodanimemes/top.json?raw_json=1&t=week",
+            "https://www.reddit.com/r/Animemes/top.json?raw_json=1&t=week"
         ]
     },
 

@@ -1,6 +1,5 @@
 const { fifty } = require('../config.json');
 const axios = require('axios');
-const rand = require('../lib/randomFunctions.js');
 const stringUtils = require('../lib/stringUtils.js');
 
 module.exports = {
@@ -28,15 +27,10 @@ async function getRandomFifty() {
 
     try {
         const response = await axios.get(fifty.URL);
-        const postArr = response.data.data.children;
+        const post = response.data[0].data.children[0].data;
 
-        // the first post is usually a post about rules, so index 0 is unused
-        const post = postArr[rand.randomMath(1, postArr.length)];
-
-        title = post.data.title;
-        link = post.data.url;
-
-        link = stringUtils.replaceHTMLEntities(link);
+        title = post.title;
+        link = stringUtils.replaceHTMLEntities(post.url);
     }
     catch (error) {
         console.log(error);

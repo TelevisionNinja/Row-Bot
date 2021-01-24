@@ -3,7 +3,6 @@ const msgUtils = require('../lib/msgUtils.js');
 const { memes } = require('../config.json');
 const axios = require('axios');
 const rand = require('../lib/randomFunctions.js');
-const stringUtils = require('../lib/stringUtils.js');
 
 module.exports = {
     description: memes.description,
@@ -20,7 +19,7 @@ module.exports = {
                     // the first post is usually a post about rules, so index 0 is unused
                     const post = postArr[rand.randomMath(1, postArr.length)];
 
-                    recipient.send(stringUtils.replaceHTMLEntities(post.data.url));
+                    recipient.send(encodeURI(post.data.url));
                 }
                 catch (error) {
                     console.log(error);
