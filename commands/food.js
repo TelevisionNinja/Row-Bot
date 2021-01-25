@@ -16,8 +16,14 @@ module.exports = {
             placeArr = placeArr.filter(p => p.type.toLowerCase() === args[0]);
         }
 
-        const result = placeArr[rand.randomMath(placeArr.length)].name;
-        
-        msg.channel.send(`Your random restaurant is ${result}`);
+        const len = placeArr.length;
+
+        if (len) {
+            const result = placeArr[rand.randomMath(len)].name;
+            msg.channel.send(`Your random restaurant is ${result}`);
+        }
+        else {
+            msg.channel.send('I don\'t have any restaurants of that type');
+        }
     }
 }
