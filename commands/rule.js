@@ -163,8 +163,6 @@ async function getImageRule1(tagArr) {
     };
 }
 
-//----------------------------------------------------------------------
-
 /**
  * Returns an image from one of the rule sites, a source url, and the number of results.
  * If no image is found, the count var is returned as zero.

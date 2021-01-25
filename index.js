@@ -103,16 +103,16 @@ client.on('message', msg => {
         //--------------------------------------------------------------------------------
         // noncommands
 
-        let hasAlias = false;
+        let hasName = false;
 
         for (let i = 0, n = names.length; i < n; i++) {
             if (msgStr.includes(names[i].toLowerCase())) {
-                hasAlias = true;
+                hasName = true;
                 break;
             }
         }
 
-        if (hasAlias || msgUtils.hasBotMention(msg, false, true, false)) {
+        if (hasName || msgUtils.hasBotMention(msg, false, true, false)) {
             for (let i = 0, n = client.noncommands.length; i < n; i++) {
                 const {
                     isNoncommand,

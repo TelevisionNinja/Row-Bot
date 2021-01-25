@@ -27,7 +27,7 @@ module.exports = {
     usage: '<command name>',
     cooldown: 0,
     async execute(msg, args) {
-        // initialize embed 
+        // initialize embed
         if (notCalled) {
             helpCenter.addFields(
                 {
