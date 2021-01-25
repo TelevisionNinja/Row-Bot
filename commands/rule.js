@@ -17,69 +17,17 @@ module.exports = {
     usage: `<tags separated by a "${tagSeparator}">`,
     cooldown: 1,
     async execute(msg, args) {
+        args = args.join(' ').split(tagSeparator);
+
         const {
             img,
             source,
             count
-        } = await getRuleImageExecute(args);
+        } = await getRuleImage(args);
 
         msgUtils.sendImg(msg.channel, img, source, count);
     },
     getRuleImage
-}
-
-/**
- * Returns an image from one of the rule sites, a source url, and the number of results.
- * If no image is found, the count var is returned as zero.
- * 
- * @param {*} tagArr array of tags to be searched
- */
-async function getRuleImageExecute(tagArr) {
-    // whitespace is replaced with '_'
-    // tags are separated by '+'
-    // '-' infront of a tag means to exclude it
-    tagArr = stringUtils.tagsToParsedTagArr(tagArr, rule.whitespace);
-
-    let randomSiteID = rand.randomMath(2);
-
-    let img = '';
-    let id = '';
-    let count = 0;
-
-    let requestedImg;
-
-    if (randomSiteID) {
-        requestedImg = await getImageRule1(tagArr);
-    }
-    else {
-        requestedImg = await getImageRule0(tagArr);
-    }
-
-    img = requestedImg.imgURL;
-    id = requestedImg.imgID;
-    count = requestedImg.results;
-
-    if (!count) {
-        // this cycles between the number of sites (2)
-        randomSiteID = ++randomSiteID % 2;
-        
-        if (randomSiteID) {
-            requestedImg = await getImageRule1(tagArr);
-        }
-        else {
-            requestedImg = await getImageRule0(tagArr);
-        }
-    
-        img = requestedImg.imgURL;
-        id = requestedImg.imgID;
-        count = requestedImg.results;
-    }
-
-    return {
-        img,
-        source: `${rule.sites[randomSiteID].URL}${id}`,
-        count,
-    };
 }
 
 /**

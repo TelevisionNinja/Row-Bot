@@ -7,7 +7,7 @@ module.exports = {
     names: tenor.names,
     description: tenor.description,
     args: true,
-    permittedCharsOnly: true,
+    permittedCharsOnly: false,
     guildOnly: false,
     usage: '<search terms>',
     cooldown: 1,
@@ -34,7 +34,7 @@ module.exports = {
  * @param {*} tagArr array of tags to be searched
  */
 async function getGif(tagArr) {
-    const searchTerms = tagArr.join(' ');
+    const searchTerms = encodeURIComponent(tagArr.join(' '));
     const searchURL = `${URL}${searchTerms}`;
 
     let gif = '';

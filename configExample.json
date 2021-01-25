@@ -88,7 +88,10 @@
 
     "tenor" : {
         "APIKey" : "",
-        "names" : ["gif"],
+        "names" : [
+            "gif",
+            "gifs"
+        ],
         "description" : "Returns a gif",
         "API" : "https://api.tenor.com/v1/random?&limit=1&media_filter=minimal&key="
     },

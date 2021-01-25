@@ -19,6 +19,11 @@ module.exports = {
     dataToEmbed
 }
 
+/**
+ * returns a csv of the latest us state covid data
+ * 
+ * @param {*} nthDay 
+ */
 async function getData(nthDay = 0) {
     if (nthDay === 3) {
         return '';
@@ -38,6 +43,11 @@ async function getData(nthDay = 0) {
     return results;
 }
 
+/**
+ * creates a url to get covid data
+ * 
+ * @param {*} nthDayAgo 
+ */
 function getUrl(nthDayAgo) {
     let dateObj = new Date();
     // previous day shows today's data
@@ -62,7 +72,14 @@ function getUrl(nthDayAgo) {
     return `${covid.dataURL}${dateStr}.csv`;
 }
 
-function dataEntryToData(state, data, precision = 2) {
+/**
+ * gets a states data from the csv
+ * 
+ * @param {*} state 
+ * @param {*} data 
+ * @param {*} precision 
+ */
+function dataToStateData(state, data, precision = 2) {
     let stateName = '';
     let lastUpdate = '';
     let confirmed = 0;
@@ -167,6 +184,12 @@ function dataEntryToData(state, data, precision = 2) {
     };
 }
 
+/**
+ * puts a state's data into a string array
+ * 
+ * @param {*} state 
+ * @param {*} data 
+ */
 function dataToStrArr(state, data) {
     const {
         stateFound,
@@ -181,7 +204,7 @@ function dataToStrArr(state, data) {
         fatalityRatio,
         testingRate,
         source
-    } = dataEntryToData(state, data);
+    } = dataToStateData(state, data);
 
     let stringArr = [];
 
@@ -205,6 +228,12 @@ function dataToStrArr(state, data) {
     return stringArr;
 }
 
+/**
+ * puts a state's data into a discord embed
+ * 
+ * @param {*} state 
+ * @param {*} data 
+ */
 function dataToEmbed(state, data) {
     const {
         stateFound,
@@ -219,7 +248,7 @@ function dataToEmbed(state, data) {
         fatalityRatio,
         testingRate,
         source
-    } = dataEntryToData(state, data);
+    } = dataToStateData(state, data);
 
     const embed = new Discord.MessageEmbed();
 

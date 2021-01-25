@@ -17,13 +17,16 @@ module.exports = {
         }
 
         const len = placeArr.length;
+        let message = '';
 
         if (len) {
             const result = placeArr[rand.randomMath(len)].name;
-            msg.channel.send(`Your random restaurant is ${result}`);
+            message = `Your random restaurant is ${result}`;
         }
         else {
-            msg.channel.send('I don\'t have any restaurants of that type');
+            message = 'I don\'t have any restaurants of that type';
         }
+
+        msg.channel.send(message);
     }
 }
