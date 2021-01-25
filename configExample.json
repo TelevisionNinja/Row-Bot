@@ -70,6 +70,22 @@
         "URL" : ""
     },
 
+    "food" : {
+        "names" : [
+            "food",
+            "eat",
+            "restaurant",
+            "restaurants"
+        ],
+        "description" : "Returns a random place to eat",
+        "places" : [
+            {
+                "name" : "",
+                "type" : ""
+            }
+        ]
+    },
+
     "tenor" : {
         "APIKey" : "",
         "names" : ["gif"],
