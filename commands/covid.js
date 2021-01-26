@@ -1,4 +1,7 @@
-const { covid } = require('../config.json');
+const {
+    covid,
+    noResultsMsg
+} = require('../config.json');
 const axios = require('axios');
 const Discord = require('discord.js');
 
@@ -209,7 +212,7 @@ function dataToStrArr(state, data) {
     let stringArr = [];
 
     if (!stateFound) {
-        stringArr.push('Aww there\'s no results 😢');
+        stringArr.push(noResultsMsg);
         return stringArr;
     }
 
@@ -253,7 +256,7 @@ function dataToEmbed(state, data) {
     const embed = new Discord.MessageEmbed();
 
     if (!stateFound) {
-        embed.setTitle('Aww there\'s no results 😢');
+        embed.setTitle(noResultsMsg);
         return embed;
     }
 

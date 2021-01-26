@@ -1,4 +1,7 @@
-const { urban } = require('../config.json');
+const {
+    urban,
+    noResultsMsg
+} = require('../config.json');
 const rand = require('../lib/randomFunctions.js');
 const stringUtils = require('../lib/stringUtils.js');
 const querystring = require('querystring');
@@ -45,11 +48,11 @@ module.exports = {
                 msg.channel.send(embed);
             }
             else {
-                msg.channel.send('Aww there\'s no results 😢');
+                msg.channel.send(noResultsMsg);
             }
         }
-        catch (error) {
-            console.log(error);
+        catch {
+            msg.channel.send(noResultsMsg);
         }
     }
 }

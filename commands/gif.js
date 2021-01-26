@@ -1,4 +1,7 @@
-const { tenor } = require('../config.json');
+const {
+    tenor,
+    noResultsMsg
+} = require('../config.json');
 const axios = require('axios');
 
 const URL = `${tenor.API}${tenor.APIKey}&q=`;
@@ -21,7 +24,7 @@ module.exports = {
             msg.channel.send(gif);
         }
         else {
-            msg.channel.send('Aww there\'s no results 😢');
+            msg.channel.send(noResultsMsg);
         }
     },
     getGif

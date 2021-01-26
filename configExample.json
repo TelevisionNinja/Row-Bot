@@ -13,6 +13,8 @@
 
     "mongodbURI" : "mongodb://localhost/",
 
+    "noResultsMsg" : "Aww there's no results 😢",
+
     "askLateNight" : {
         "channelID" : "",
         "description" : "Ask the late night bois if they're going to get on",
