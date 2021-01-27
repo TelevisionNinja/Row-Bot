@@ -6,7 +6,7 @@ const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: 'Reply to hate',
-    execute(msg) {
+    execute(msg, words) {
         let isNoncommand = false;
         let replyStr = '';
 

@@ -5,7 +5,7 @@ const {
 
 module.exports = {
     description: 'Wish a happy new year',
-    execute(msg) {
+    execute(msg, words) {
         let hasReply = false;
         let replyStr = '';
 

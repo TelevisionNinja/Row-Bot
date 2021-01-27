@@ -4,6 +4,8 @@ const interval = require('../lib/interval.js');
 const msgUtils = require('../lib/msgUtils.js');
 const rand = require('../lib/randomFunctions.js');
 
+const filter = derpConfig.filterTags.map(t => `-${t}`);
+
 module.exports = {
     description: derpConfig.description,
     async execute(client) {
@@ -13,21 +15,13 @@ module.exports = {
 
         interval.startIntervalFunc(
             async () => {
-                let tagArr = [];
+                const randIndex = rand.randomMath(derpConfig.intervalTags.length);
 
-                const randIndex = rand.randomMath(derpConfig.intervalTagArr.length);
+                const selection = derpConfig.intervalTags[randIndex];
 
-                const selection = derpConfig.intervalTagArr[randIndex];
-
-                tagArr.push(selection);
+                let tagArr = [selection, ...filter];
                 tagArr.push('safe');
                 tagArr.push('solo');
-                tagArr.push('-oc');
-                tagArr.push('-crossover');
-                tagArr.push('-cosplay');
-                tagArr.push('-irl');
-                tagArr.push('-irl human');
-                tagArr.push('-game screencap');
 
                 const {
                     imgURL,
@@ -53,11 +47,15 @@ module.exports = {
             async () => {
                 const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
 
+                const selection = derpConfig.intervalWaitTags[randIndex];
+
+                const tagArr = [selection, ...filter];
+
                 const {
                     imgURL,
                     source,
                     results
-                } = await derp.getImage(derpConfig.intervalWaitTags[randIndex]);
+                } = await derp.getImage(tagArr);
                 
                 msgUtils.sendImg(recipientInterval, imgURL, source, results, false);
             },

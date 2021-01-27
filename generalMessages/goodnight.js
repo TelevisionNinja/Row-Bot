@@ -3,7 +3,7 @@ const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: 'Say goodnight',
-    execute(msg) {
+    execute(msg, words) {
         let hasReply = false;
         let replyStr = '';
 

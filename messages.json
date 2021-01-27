@@ -180,5 +180,21 @@
     "newYearsEve" : [
         "Happy New Year's Eve",
         "Happy New Years Eve"
+    ],
+
+    "yeses" : [
+        "yes",
+        "yep",
+        "yup",
+        "yeah",
+        "yea",
+        "si"
+    ],
+
+    "nos" : [
+        "no",
+        "nope",
+        "nah",
+        "naw"
     ]
 }

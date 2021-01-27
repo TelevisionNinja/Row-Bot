@@ -94,11 +94,14 @@ client.on('message', msg => {
         return;
     }
 
-    const msgStr = msg.content.toLowerCase();
+    let msgStr = msg.content.toLowerCase();
 
     if (!(msgStr.startsWith(prefix))) {
         let botReply = '';
         let replyBool = false;
+
+        msgStr = stringUtils.removeAllSpecialChars(msgStr);
+        const words = msgStr.split(' ');
 
         //--------------------------------------------------------------------------------
         // noncommands
@@ -117,7 +120,7 @@ client.on('message', msg => {
                 const {
                     isNoncommand,
                     replyStr
-                } = client.noncommands[i].execute(msgStr);
+                } = client.noncommands[i].execute(msgStr, words);
     
                 if (isNoncommand) {
                     replyBool = true;
@@ -135,7 +138,7 @@ client.on('message', msg => {
                 const {
                     hasReply,
                     replyStr
-                } = client.genMsg[i].execute(msgStr);
+                } = client.genMsg[i].execute(msgStr, words);
 
                 if (hasReply) {
                     replyBool = true;

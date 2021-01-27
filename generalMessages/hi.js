@@ -4,7 +4,7 @@ const { names } = require('../config.json');
 
 module.exports = {
     description: 'Say hi',
-    execute(msg) {
+    execute(msg, words) {
         let hasReply = false;
         let replyStr = '';
         const numOfGreetings = greetings.length;
@@ -18,10 +18,8 @@ module.exports = {
             }
         }
 
-        const removedChars = msg.replace(/[^a-zA-Z0-9 ]/g, '');
-
         for (let i = 0, n = names.length; i < n; i++) {
-            if (removedChars === names[i].toLowerCase()) {
+            if (msg === names[i].toLowerCase()) {
                 return {
                     hasReply: true,
                     replyStr: greetings[rand.randomMath(numOfGreetings)]

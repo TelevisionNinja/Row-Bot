@@ -3,7 +3,11 @@ const {
     askLateNight,
     prefix
 } = require('../config.json');
-const { acknowledgements } = require('../messages.json');
+const {
+    acknowledgements,
+    yeses,
+    nos
+} = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
 const interval = require('../lib/interval.js');
 const msgUtils = require('../lib/msgUtils.js');
@@ -69,7 +73,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
         const initial = numberOfReplies;
         let reply = '';
 
-        if (wordArr.includes('yes')) {
+        if (yeses.some(y => wordArr.includes(y.toLowerCase()))) {
             numberOfConfirms++;
 
             if (numberOfConfirms === memberSize) {
@@ -83,7 +87,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
             numberOfReplies++;
         }
-        else if (wordArr.includes('no')) {
+        else if (nos.some(n => wordArr.includes(n.toLowerCase()))) {
             numberOfDenies++;
 
             if (numberOfDenies === memberSize) {

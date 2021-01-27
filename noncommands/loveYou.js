@@ -8,7 +8,7 @@ const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: 'Reply to love you\'s',
-    execute(msg) {
+    execute(msg, words) {
         let isNoncommand = false;
         let replyStr = '';
 

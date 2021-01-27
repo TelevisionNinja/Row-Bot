@@ -6,7 +6,7 @@ const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: 'Wish a merry christmas',
-    execute(msg) {
+    execute(msg, words) {
         let hasReply = false;
         let replyStr = '';
 
