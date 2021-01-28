@@ -74,7 +74,7 @@ module.exports = {
             const simulatedMsg = new Discord.MessageEmbed()
                 .setAuthor(authorTulp.username, authorTulp.avatar)
                 .setDescription(tulpMsg);
-            
+
             msg.channel.send(simulatedMsg);
             return;
         }
@@ -99,6 +99,7 @@ module.exports = {
             }
             catch (error) {
                 msg.channel.send('I couldn\'t create a webhook because there\'s too many in here 😢');
+                return;
             }
         }
         else {
