@@ -12,8 +12,10 @@ module.exports = {
     execute(msg, args) {
         let placeArr = food.places;
 
+        const foodType = args.join(' ');
+
         if (args.length) {
-            placeArr = placeArr.filter(p => p.type.toLowerCase() === args.join(' '));
+            placeArr = placeArr.filter(p => p.type.toLowerCase() === foodType);
         }
 
         const len = placeArr.length;
