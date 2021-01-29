@@ -13,7 +13,7 @@ module.exports = {
         let placeArr = food.places;
 
         if (args.length) {
-            placeArr = placeArr.filter(p => p.type.toLowerCase() === args[0]);
+            placeArr = placeArr.filter(p => p.type.toLowerCase() === args.join(' '));
         }
 
         const len = placeArr.length;
