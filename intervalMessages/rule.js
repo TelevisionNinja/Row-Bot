@@ -2,6 +2,7 @@ const rule = require('../commands/rule.js');
 const { rule: ruleConfig } = require('../config.json');
 const interval = require('../lib/interval.js');
 const msgUtils = require('../lib/msgUtils.js');
+const stringUtils = require('../lib/stringUtils.js');
 const rand = require('../lib/randomFunctions.js');
 
 const filter = ruleConfig.filterTags.map(t => `-${t}`);
@@ -17,15 +18,17 @@ module.exports = {
 
                 const selection = ruleConfig.intervalTags[randIndex];
 
-                const tagArr = [selection, ...filter];
+                let tagArr = [selection, ...filter];
+
+                tagArr = stringUtils.tagArrToParsedTagArr(tagArr, ruleConfig.whitespace);
 
                 const {
-                    img,
+                    imgURL,
                     source,
-                    count
-                } = await rule.getRuleImage(tagArr);
-                
-                msgUtils.sendImg(recipient, img, source, count, false);
+                    results
+                } = await rule.getImageRule0(tagArr);
+
+                msgUtils.sendImg(recipient, imgURL, source, results, false);
             },
             ruleConfig.intervalWait,
             0,

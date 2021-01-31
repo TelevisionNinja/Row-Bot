@@ -44,7 +44,7 @@ async function getImageRule0(tagArr) {
     const URL = `${rule.sites[0].API}${tagArr.join(rule.separator)}&limit=`;
 
     let imgURL = '';
-    let imgID = '';
+    let source = '';
     let results = 0;
 
     try {
@@ -79,7 +79,7 @@ async function getImageRule0(tagArr) {
             });
 
             imgURL = img.file_url;
-            imgID = img.id;
+            source = `${rule.sites[0].URL}${img.id}`;
         }
     }
     catch (error) {
@@ -88,7 +88,7 @@ async function getImageRule0(tagArr) {
 
     return {
         imgURL,
-        imgID,
+        source,
         results
     };
 }
@@ -106,7 +106,7 @@ async function getImageRule1(tagArr) {
     const URL = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}&limit=`;
 
     let imgURL = '';
-    let imgID = '';
+    let source = '';
     let results = 0;
 
     try {
@@ -137,7 +137,7 @@ async function getImageRule1(tagArr) {
             });
 
             imgURL = img.file_url;
-            imgID = img.id;
+            source = `${rule.sites[1].URL}${img.id}`;
         }
     }
     catch (error) {
@@ -146,7 +146,7 @@ async function getImageRule1(tagArr) {
 
     return {
         imgURL,
-        imgID,
+        source,
         results
     };
 }
@@ -166,7 +166,7 @@ async function getRuleImage(tagArr) {
     let randomSiteID = rand.randomMath(2);
 
     let img = '';
-    let id = '';
+    let source = '';
     let count = 0;
 
     let requestedImg;
@@ -178,8 +178,6 @@ async function getRuleImage(tagArr) {
         requestedImg = await getImageRule0(tagArr);
     }
 
-    img = requestedImg.imgURL;
-    id = requestedImg.imgID;
     count = requestedImg.results;
 
     if (!count) {
@@ -194,13 +192,17 @@ async function getRuleImage(tagArr) {
         }
     
         img = requestedImg.imgURL;
-        id = requestedImg.imgID;
+        source = requestedImg.source;
         count = requestedImg.results;
+    }
+    else {
+        img = requestedImg.imgURL;
+        source = requestedImg.source;
     }
 
     return {
         img,
-        source: `${rule.sites[randomSiteID].URL}${id}`,
+        source,
         count,
     };
 }
