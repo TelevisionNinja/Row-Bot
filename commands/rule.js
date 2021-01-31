@@ -64,8 +64,9 @@ async function getImageRule0(tagArr) {
 
             // (max # images) / (limit per request) = pid max
             // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
-            // pid max is exclusive unless results > 200000
-            // the limit per request is set to 1 in this implementation
+            if (results > 200000) {
+                results = 200000;
+            }
             const pid = rand.randomMath(results);
 
             response = await axios.get(`${URL}1&pid=${pid}`);
@@ -123,8 +124,7 @@ async function getImageRule1(tagArr) {
             // pid range: zero to count / (limit per request)
 
             // (max # images) / (limit per request) = pid max
-            // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0 meaning pid max is exclusive
-            // the limit per request is set to 1 in this implementation
+            // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
             const pid = rand.randomMath(results);
 
             response = await axios.get(`${URL}1&pid=${pid}`);
