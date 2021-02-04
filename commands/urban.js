@@ -27,17 +27,20 @@ module.exports = {
             if (defs.length) {
                 const result = defs[rand.randomMath(defs.length)];
 
+                const definition = result.definition.replaceAll(/[\[\]]/g, '');
+                const example = result.example.replaceAll(/[\[\]]/g, '');
+
                 const embed = new Discord.MessageEmbed()
                     .setTitle(result.word)
                     .setURL(result.permalink)
                     .addFields(
                         {
                             name: 'Definition',
-                            value: stringUtils.cutOff(result.definition, 1024)
+                            value: stringUtils.cutOff(definition, 1024)
                         },
                         {
                             name: 'Example',
-                            value: stringUtils.cutOff(result.example, 1024)
+                            value: stringUtils.cutOff(example, 1024)
                         },
                         {
                             name: 'Rating',
