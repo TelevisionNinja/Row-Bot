@@ -35,8 +35,7 @@ module.exports = {
             },
             1440, // 24 hrs in minutes
             time[0],
-            time[1],
-            true
+            time[1]
         );
 
         //-------------------------------------------------------------------
@@ -61,8 +60,7 @@ module.exports = {
             },
             derpConfig.intervalWait,
             0,
-            0,
-            true
+            0
         );
     }
 }

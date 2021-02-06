@@ -32,8 +32,7 @@ module.exports = {
             },
             ruleConfig.intervalWait,
             0,
-            0,
-            true
+            0
         );
     }
 }

@@ -20,8 +20,7 @@ module.exports = {
             },
             1440,
             time[0],
-            time[1],
-            true
+            time[1]
         );
     }
 }

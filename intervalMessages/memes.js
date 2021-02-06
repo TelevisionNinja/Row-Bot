@@ -26,8 +26,7 @@ module.exports = {
             },
             180,
             0,
-            0,
-            true
+            0
         );
     }
 }
