@@ -121,7 +121,7 @@ client.on('message', msg => {
                     isNoncommand,
                     replyStr
                 } = client.noncommands[i].execute(msgStr, words);
-    
+
                 if (isNoncommand) {
                     replyBool = true;
                     botReply = replyStr;
@@ -201,11 +201,11 @@ client.on('message', msg => {
     if (!cooldowns.has(command.names[0])) {
         cooldowns.set(command.names[0], new Map());
     }
-    
+
     const timestamps = cooldowns.get(command.names[0]);
     const cooldownAmount = command.cooldown * 1000;
     const now = Date.now();
-    
+
     if (timestamps.has(msg.author.id)) {
         const expirationTime = timestamps.get(msg.author.id) + cooldownAmount;
 
