@@ -126,6 +126,16 @@
         "description" : "Returns a random value within a given range"
     },
 
+    "rps" : {
+        "names" : [
+            "rps",
+            "rockpaperscissors",
+            "rock-paper-scissors",
+            "rock_paper_scissors"
+        ],
+        "description" : "Play rock paper scissors"
+    },
+
     "rule" : {
         "names" : [""],
         "description" : "",
