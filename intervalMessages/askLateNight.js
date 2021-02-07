@@ -9,17 +9,15 @@ const {
     nos
 } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
-const interval = require('../lib/interval.js');
+const Interval = require('../lib/interval.js');
 const msgUtils = require('../lib/msgUtils.js');
 
 module.exports = {
     description: askLateNight.description,
     async execute(client) {
-        const time = askLateNight.time.split(':').map(i => parseInt(i));
-
         const recipient = await msgUtils.getRecipient(client, askLateNight.channelID);
 
-        interval.startIntervalFunc(
+        let interval = new Interval(
             () => {
                 ask(
                     recipient,
@@ -33,10 +31,11 @@ module.exports = {
                     askLateNight.denied
                 );
             },
+            askLateNight.time,
             1440, // 24 hrs in minutes
-            time[0],
-            time[1]
         );
+
+        interval.start();
     }
 }
 

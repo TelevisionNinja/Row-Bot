@@ -1,6 +1,6 @@
 const derp = require('../commands/derp.js');
 const { derp: derpConfig } = require('../config.json');
-const interval = require('../lib/interval.js');
+const Interval = require('../lib/interval.js');
 const msgUtils = require('../lib/msgUtils.js');
 const rand = require('../lib/randomFunctions.js');
 
@@ -9,11 +9,9 @@ const filter = derpConfig.filterTags.map(t => `-${t}`);
 module.exports = {
     description: derpConfig.description,
     async execute(client) {
-        const time = derpConfig.intervalTime.split(':').map(i => parseInt(i));
-
         const recipientDaily = await msgUtils.getRecipient(client, derpConfig.intervalChannelID);
 
-        interval.startIntervalFunc(
+        let interval1 = new Interval(
             async () => {
                 const randIndex = rand.randomMath(derpConfig.intervalTags.length);
 
@@ -33,16 +31,15 @@ module.exports = {
 
                 msgUtils.sendImg(recipientDaily, imgURL, source, results, false);
             },
+            derpConfig.intervalTime,
             1440, // 24 hrs in minutes
-            time[0],
-            time[1]
         );
 
         //-------------------------------------------------------------------
 
         const recipientInterval = await msgUtils.getRecipient(client, derpConfig.intervalWaitChannelID);
 
-        interval.startIntervalFunc(
+        let interval2 = new Interval(
             async () => {
                 const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
 
@@ -58,9 +55,13 @@ module.exports = {
                 
                 msgUtils.sendImg(recipientInterval, imgURL, source, results, false);
             },
-            derpConfig.intervalWait,
-            0,
-            0
+            '0:0',
+            derpConfig.intervalWait
         );
+
+        //-------------------------------------------------------------------
+
+        interval1.start();
+        interval2.start();
     }
 }

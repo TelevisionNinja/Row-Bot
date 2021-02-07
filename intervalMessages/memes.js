@@ -1,4 +1,4 @@
-const interval = require('../lib/interval.js');
+const Interval = require('../lib/interval.js');
 const msgUtils = require('../lib/msgUtils.js');
 const { memes } = require('../config.json');
 const axios = require('axios');
@@ -9,7 +9,7 @@ module.exports = {
     async execute(client) {
         const recipient = await msgUtils.getRecipient(client, memes.channelID);
 
-        interval.startIntervalFunc(
+        let interval = new Interval(
             async () => {
                 try {
                     const URL = memes.URLs[rand.randomMath(memes.URLs.length)];
@@ -24,9 +24,10 @@ module.exports = {
                     console.log(error);
                 }
             },
+            '0:0',
             180,
-            0,
-            0
         );
+
+        interval.start();
     }
 }
