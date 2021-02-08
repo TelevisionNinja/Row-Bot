@@ -15,6 +15,7 @@ module.exports = {
     usage: '<name>, <message>',
     async execute(msg, args) {
         const isDM = msg.channel.type === 'dm';
+
         if (!isDM) {
             msg.delete();
         }
@@ -34,6 +35,7 @@ module.exports = {
 
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
 
+        let userData;
         let selectedTulp;
 
         try {
@@ -42,21 +44,7 @@ module.exports = {
             const database = client.db('tulps');
             const collection = database.collection("users");
 
-            const userData = await collection.findOne(query);
-
-            if (userData === null) {
-                // tell user to use the create command
-                msg.author.send(tulp.noDataMsg);
-                return;
-            }
-
-            // get specific tulp using tulpName
-            selectedTulp = userData.tulps.find(t => t.username === tulpName);
-
-            if (typeof selectedTulp === 'undefined') {
-                msg.author.send(tulp.noDataMsg);
-                return;
-            }
+            userData = await collection.findOne(query);
         }
         catch (error) {
             console.log(error);
@@ -64,6 +52,20 @@ module.exports = {
         }
         finally {
             client.close();
+        }
+
+        if (userData === null) {
+            // tell user to use the create command
+            msg.author.send(tulp.noDataMsg);
+            return;
+        }
+
+        // get specific tulp using tulpName
+        selectedTulp = userData.tulps.find(t => t.username === tulpName);
+
+        if (typeof selectedTulp === 'undefined') {
+            msg.author.send(tulp.noDataMsg);
+            return;
         }
 
         const tulpMsg = str.slice(index + 1).trim();

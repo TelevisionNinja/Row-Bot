@@ -39,11 +39,6 @@ module.exports = {
 
         const tulpArr = userData.tulps.map(t => `• ${t.username}`);
 
-        if (typeof tulpArr === 'undefined') {
-            msg.author.send(listConfig.noTulpsMsg);
-            return;
-        }
-
         const list = new Discord.MessageEmbed()
             .setTitle('Your tulps')
             .setDescription(tulpArr);
