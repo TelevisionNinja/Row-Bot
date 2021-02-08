@@ -10,13 +10,12 @@ module.exports = {
     usage: '<name> <avatar <-- this must be sent as an image>',
     async execute(msg, args) {
         const imgLink = msg.attachments.map(img => img.url)[0];
+        const tulpName = args.join(' ').split(',')[0].trim();
 
-        if (typeof imgLink === 'undefined') {
+        if (typeof imgLink === 'undefined' || !tulpName.length) {
             msg.channel.send('I need a name and a profile picture');
             return;
         }
-
-        const tulpName = args.join(' ').split(',')[0].trim();
 
         const query = { id: msg.author.id };
 
