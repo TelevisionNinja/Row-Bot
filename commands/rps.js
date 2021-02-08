@@ -15,7 +15,12 @@ module.exports = {
     usage: '<rock, paper, or scissors>',
     cooldown: 0,
     execute(msg, args) {
-        const playerChoice = args[0];
+        const valueOfPlayer = choices.get(args[0]);
+
+        if (typeof valueOfPlayer === 'undefined') {
+            msg.channel.send('Hey! That\'s not rock, paper, or scissors!');
+            return;
+        }
 
         const choiceArr = [...choices.keys()];
         const botChoice = choiceArr[rand.randomMath(choices.size)];
@@ -23,7 +28,6 @@ module.exports = {
         let winnerMsg = `${botChoice}\n`;
 
         const valueOfBot = choices.get(botChoice);
-        const valueOfPlayer = choices.get(playerChoice);
 
         if (valueOfBot === valueOfPlayer) {
             winnerMsg = `${winnerMsg}Come on! It\'s a tie!`;
