@@ -12,9 +12,24 @@ module.exports = {
     guildOnly: false,
     usage: '<name>, <new name>',
     async execute(msg, args) {
-        const namesArr = args.join(' ').split(',').map(name => name.trim());
+        let namesArr = args.join(' ').split(',');
+        namesArr[0] = namesArr[0].trim();
 
-        if (namesArr.length === 1) {
+        let needParameters = false;
+        const namesArrLen = namesArr.length;
+
+        if (namesArrLen === 1) {
+            needParameters = true;
+        }
+        else {
+            namesArr[1] = namesArr[1].trim();
+        }
+
+        if (!needParameters && (!namesArr[0].length || !namesArr[1].length)) {
+            needParameters = true;
+        }
+
+        if (needParameters) {
             msg.channel.send('Please provide the old name and the new name spearated by a comma');
             return;
         }

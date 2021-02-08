@@ -16,7 +16,7 @@ module.exports = {
             return;
         }
 
-        const tulpName = args.join(' ').trim();
+        const tulpName = args.join(' ').split(',')[0].trim();
 
         const query = { id: msg.author.id };
 
