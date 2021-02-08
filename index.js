@@ -179,8 +179,7 @@ client.on('message', msg => {
     }
 
     if (command.permittedCharsOnly) {
-        let argStr = args.join(' ');
-        argStr = stringUtils.removeProhibitedChars(argStr);
+        let argStr = stringUtils.removeProhibitedChars(args.join(' '));
 
         if (argStr.length) {
             args = argStr.split(' ');

@@ -34,7 +34,7 @@ module.exports = {
 
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
 
-        let authorTulp;
+        let selectedTulp;
 
         try {
             await client.connect();
@@ -51,9 +51,9 @@ module.exports = {
             }
 
             // get specific tulp using tulpName
-            authorTulp = userData.tulps.find(t => t.username === tulpName);
+            selectedTulp = userData.tulps.find(t => t.username === tulpName);
 
-            if (typeof authorTulp === 'undefined') {
+            if (typeof selectedTulp === 'undefined') {
                 msg.author.send(tulp.noDataMsg);
                 return;
             }
@@ -72,7 +72,7 @@ module.exports = {
 
         if (isDM) {
             const simulatedMsg = new Discord.MessageEmbed()
-                .setAuthor(authorTulp.username, authorTulp.avatar)
+                .setAuthor(selectedTulp.username, selectedTulp.avatar)
                 .setDescription(tulpMsg);
 
             msg.channel.send(simulatedMsg);
@@ -93,8 +93,8 @@ module.exports = {
 
         if (typeof tulpWebhook === 'undefined') {
             try {
-                tulpWebhook = await msg.channel.createWebhook(authorTulp.username, {
-                    avatar: authorTulp.avatar
+                tulpWebhook = await msg.channel.createWebhook(selectedTulp.username, {
+                    avatar: selectedTulp.avatar
                 });
             }
             catch (error) {
@@ -103,10 +103,10 @@ module.exports = {
             }
         }
         else {
-            if (tulpWebhook.name !== authorTulp.username || tulpWebhook.avatar !== authorTulp.avatar) {
+            if (tulpWebhook.name !== selectedTulp.username || tulpWebhook.avatar !== selectedTulp.avatar) {
                 await tulpWebhook.edit({
-                    name: authorTulp.username,
-                    avatar: authorTulp.avatar
+                    name: selectedTulp.username,
+                    avatar: selectedTulp.avatar
                 });
             }
         }

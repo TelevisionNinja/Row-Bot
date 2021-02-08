@@ -10,9 +10,9 @@ module.exports = {
     usage: '<max> or <min> <max>',
     cooldown: 0,
     execute(msg, args) {
-        let min = 0,
-            max = 0,
-            result = 0;
+        let min = 0;
+        let max = 0;
+        let result = 0;
 
         if (args.length === 1) {
             max = parseInt(args[0]);

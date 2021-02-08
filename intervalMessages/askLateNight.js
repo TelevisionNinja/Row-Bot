@@ -17,7 +17,7 @@ module.exports = {
     async execute(client) {
         const recipient = await msgUtils.getRecipient(client, askLateNight.channelID);
 
-        let interval = new Interval(
+        const interval = new Interval(
             () => {
                 ask(
                     recipient,
@@ -32,7 +32,7 @@ module.exports = {
                 );
             },
             askLateNight.time,
-            1440, // 24 hrs in minutes
+            1440 // 24 hrs in minutes
         );
 
         interval.start();

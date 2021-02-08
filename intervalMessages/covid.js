@@ -8,7 +8,7 @@ module.exports = {
     async execute(client) {
         const recipient = await msgUtils.getRecipient(client, covidConfig.intervalChannel);
 
-        let interval = new Interval(
+        const interval = new Interval(
             async () => {
                 const data = await covid.getData();
                 let embed = covid.dataToEmbed(covidConfig.intervalState, data);
@@ -17,7 +17,7 @@ module.exports = {
                 recipient.send(embed);
             },
             covidConfig.intervalTime,
-            1440,  // 24 hrs in minutes
+            1440 // 24 hrs in minutes
         );
 
         interval.start();

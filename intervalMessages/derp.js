@@ -11,7 +11,7 @@ module.exports = {
     async execute(client) {
         const recipientDaily = await msgUtils.getRecipient(client, derpConfig.intervalChannelID);
 
-        let interval1 = new Interval(
+        const interval1 = new Interval(
             async () => {
                 const randIndex = rand.randomMath(derpConfig.intervalTags.length);
 
@@ -32,14 +32,14 @@ module.exports = {
                 msgUtils.sendImg(recipientDaily, imgURL, source, results, false);
             },
             derpConfig.intervalTime,
-            1440, // 24 hrs in minutes
+            1440 // 24 hrs in minutes
         );
 
         //-------------------------------------------------------------------
 
         const recipientInterval = await msgUtils.getRecipient(client, derpConfig.intervalWaitChannelID);
 
-        let interval2 = new Interval(
+        const interval2 = new Interval(
             async () => {
                 const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
 

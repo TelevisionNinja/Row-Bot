@@ -12,7 +12,7 @@ module.exports = {
     async execute(client) {
         const recipient = await msgUtils.getRecipient(client, ruleConfig.intervalChannelID);
 
-        let interval = new Interval(
+        const interval = new Interval(
             async () => {
                 const randIndex = rand.randomMath(ruleConfig.intervalTags.length);
 

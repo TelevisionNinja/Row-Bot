@@ -9,7 +9,7 @@ module.exports = {
     async execute(client) {
         const recipient = await msgUtils.getRecipient(client, memes.channelID);
 
-        let interval = new Interval(
+        const interval = new Interval(
             async () => {
                 try {
                     const URL = memes.URLs[rand.randomMath(memes.URLs.length)];
@@ -25,7 +25,7 @@ module.exports = {
                 }
             },
             '0:0',
-            180,
+            180
         );
 
         interval.start();
