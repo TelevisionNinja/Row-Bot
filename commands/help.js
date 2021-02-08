@@ -26,7 +26,7 @@ module.exports = {
     guildOnly: false,
     usage: '<command name>',
     cooldown: 0,
-    async execute(msg, args) {
+    execute(msg, args) {
         // initialize embed
         if (notCalled) {
             helpCenter.addFields(

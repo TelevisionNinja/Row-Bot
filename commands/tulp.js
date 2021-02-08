@@ -11,7 +11,7 @@ module.exports = {
     guildOnly: false,
     usage: '<command>',
     cooldown: 0,
-    async execute(msg, args) {
+    execute(msg, args) {
         // get command
         const userCommand = args.shift();
         const command = msg.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
