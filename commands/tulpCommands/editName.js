@@ -29,34 +29,30 @@ module.exports = {
             const database = client.db('tulps');
             const collection = database.collection("users");
 
-            const userData = await collection.findOne(query);
+            let userData = await collection.findOne(query);
 
             if (userData === null) {
                 msg.channel.send(tulp.noDataMsg);
                 return;
             }
 
-            let existingTulp;
+            let i = 0;
+            const n = userData.tulps.length;
 
-            let newTulpArr = userData.tulps.filter(t => {
-                const isTulp = t.username === namesArr[0];
-                if (isTulp) {
-                    existingTulp = t;
-                }
-                return !isTulp;
-            });
+            while (i < n && userData.tulps[i].username !== namesArr[0]) {
+                i++;
+            }
 
-            if (userData.tulps.length === newTulpArr.length) {
+            if (i === n) {
                 msg.channel.send(tulp.noDataMsg);
                 return;
             }
 
-            existingTulp.username = namesArr[1];
-            newTulpArr.push(existingTulp);
+            userData.tulps[i].username = namesArr[1];
 
             const updateDoc = {
                 $set: {
-                    tulps: newTulpArr
+                    tulps: userData.tulps
                 }
             };
 
