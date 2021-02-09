@@ -112,7 +112,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
     });
 
     collector.on('end', () => {
-        if (!numberOfReplies) {
+        if (!numberOfReplies || !numberOfConfirms) {
             msgUtils.sendTypingMsg(recipient, noReplyMsg, '');
         }
         else if (numberOfReplies < memberSize) {
