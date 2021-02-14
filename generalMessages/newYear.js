@@ -2,6 +2,7 @@ const {
     newYear,
     newYearsEve
 } = require('../messages.json');
+const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: 'Wish a happy new year',
