@@ -59,7 +59,7 @@ module.exports = {
                     },
                     {
                         name: 'Usage',
-                        value: `\`${prefix}${argCommand.names[0]} ${argCommand.usage}\``
+                        value: `\`${prefix}${tulp.names[0]} ${argCommand.names[0]} ${argCommand.usage}\``
                     },
                     {
                         name: 'Server Only Command?',
