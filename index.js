@@ -51,6 +51,11 @@ client.on('ready', () => {
     }
 
     //--------------------------------------------------------------------------------
+    // set activity
+
+    client.user.setActivity(activityStatus, { type: 'PLAYING' });
+
+    //--------------------------------------------------------------------------------
     // console log the start up time
 
     const time = new Date();
@@ -79,11 +84,6 @@ client.on('ready', () => {
     }
 
     console.log(`Row Bot is up ${time.getMonth() + 1}/${time.getDate()}/${time.getFullYear()} ${hours}:${minutes}:${seconds}.${milliSeconds}`);
-    
-    //--------------------------------------------------------------------------------
-    // set activity
-
-    client.user.setActivity(activityStatus, { type: 'PLAYING' });
 });
 
 //--------------------------------------------------------------------------------
