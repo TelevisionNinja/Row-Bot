@@ -61,11 +61,11 @@ client.on('ready', () => {
     const time = new Date();
 
     let milliSeconds = time.getMilliseconds().toString();
-    if (milliSeconds.length < 3) {
+    if (milliSeconds.length === 2) {
         milliSeconds = `0${milliSeconds}`;
     }
-    if (milliSeconds.length < 3) {
-        milliSeconds = `0${milliSeconds}`;
+    else if (milliSeconds.length === 1) {
+        milliSeconds = `00${milliSeconds}`;
     }
 
     let seconds = time.getSeconds().toString();
