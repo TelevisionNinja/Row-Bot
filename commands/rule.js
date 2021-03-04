@@ -163,7 +163,9 @@ async function getRuleImage(tagArr) {
     // '-' infront of a tag means to exclude it
     tagArr = stringUtils.tagArrToParsedTagArr(tagArr, rule.whitespace);
 
-    let randomSiteID = rand.randomMath(2);
+    const numOfSites = rule.sites.length;
+
+    let randomSiteID = rand.randomMath(numOfSites);
 
     let img = '';
     let source = '';
@@ -181,24 +183,21 @@ async function getRuleImage(tagArr) {
     count = requestedImg.results;
 
     if (!count) {
-        // this cycles between the number of sites (2)
-        randomSiteID = ++randomSiteID % 2;
-        
+        // this cycles through the all of the sites
+        randomSiteID = ++randomSiteID % numOfSites;
+
         if (randomSiteID) {
             requestedImg = await getImageRule1(tagArr);
         }
         else {
             requestedImg = await getImageRule0(tagArr);
         }
-    
-        img = requestedImg.imgURL;
-        source = requestedImg.source;
+
         count = requestedImg.results;
     }
-    else {
-        img = requestedImg.imgURL;
-        source = requestedImg.source;
-    }
+    
+    img = requestedImg.imgURL;
+    source = requestedImg.source;
 
     return {
         img,
