@@ -34,7 +34,7 @@ module.exports = {
         }
 
         result = rand.randomMath(min, max + 1);
-        
+
         msg.channel.send(`Your random number is ${result}`);
     }
 }
