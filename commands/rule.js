@@ -50,24 +50,27 @@ async function getImageRule0(tagArr) {
     try {
         let response = await axios.get(`${URL}0`);
         let XMLStr = response.data;
+        let count = 0;
 
         parseString(XMLStr, (err, result) => {
             // obj's are named '$'
             // 'count' is # of images for the provided tags
-            results = parseInt(result.posts['$'].count);
+            count = parseInt(result.posts['$'].count);
         });
 
-        if (results) {
+        results = count;
+
+        if (count) {
             // the max number of images for the rule0 api is 200001 images (0-200000)
             // the site has a max of 100 posts per request
             // pid range: zero to count / (limit per request)
 
             // (max # images) / (limit per request) = pid max
             // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
-            if (results > 200000) {
-                results = 200000;
+            if (count > 200000) {
+                count = 200000;
             }
-            const pid = rand.randomMath(results);
+            const pid = rand.randomMath(count);
 
             response = await axios.get(`${URL}1&pid=${pid}`);
             XMLStr = response.data;

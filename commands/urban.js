@@ -23,9 +23,10 @@ module.exports = {
         try {
             const response = await axios.get(URL);
             const defs = response.data.list;
+            const count = defs.length;
 
-            if (defs.length) {
-                const result = defs[rand.randomMath(defs.length)];
+            if (count) {
+                const result = defs[rand.randomMath(count)];
 
                 const definition = result.definition.replaceAll(/[\[\]]/g, '');
                 const example = result.example.replaceAll(/[\[\]]/g, '');
@@ -45,7 +46,11 @@ module.exports = {
                         {
                             name: 'Rating',
                             value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
-                        }
+                        },
+                        {
+                            name: 'Results',
+                            value: count
+                        },
                     );
 
                 msg.channel.send(embed);
