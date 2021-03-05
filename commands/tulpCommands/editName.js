@@ -2,17 +2,19 @@ const { editName } = require('./tulpConfig.json');
 const { MongoClient } = require('mongodb');
 const {
     mongodbURI,
-    tulp
+    tulp,
+    tagSeparator
 } = require('../../config.json');
 
 module.exports = {
     names: editName.names,
     description: editName.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     guildOnly: false,
-    usage: '<name>, <new name>',
+    usage: `<name>${tagSeparator} <new name>`,
     async execute(msg, args) {
-        let namesArr = args.join(' ').split(',');
+        let namesArr = args.join(' ').split(tagSeparator);
         namesArr[0] = namesArr[0].trim();
 
         let needParameters = false;
@@ -30,7 +32,12 @@ module.exports = {
         }
 
         if (needParameters) {
-            msg.channel.send('Please provide the old name and the new name spearated by a comma');
+            msg.channel.send(`Please provide the old name and the new name spearated by a "${tagSeparator}"`);
+            return;
+        }
+
+        if (namesArr[0] === namesArr[1]) {
+            msg.channel.send('Please provide a different name to change to');
             return;
         }
 

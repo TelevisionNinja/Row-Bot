@@ -1,18 +1,20 @@
 const {
     tulp,
-    clientID
+    clientID,
+    tagSeparator,
+    mongodbURI
 } = require('../../config.json');
 const { sendMsg } = require('./tulpConfig.json');
 const { MongoClient } = require('mongodb');
-const { mongodbURI } = require('../../config.json');
 const Discord = require('discord.js');
 
 module.exports = {
     names: sendMsg.names,
     description: sendMsg.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     guildOnly: false,
-    usage: '<name>, <message>',
+    usage: `<name>${tagSeparator} <message>`,
     async execute(msg, args) {
         const isDM = msg.channel.type === 'dm';
 
@@ -23,7 +25,7 @@ module.exports = {
         // discord trims the initial message, so there's no need to trim it here
         const str = args.join(' ');
 
-        const index = str.indexOf(',');
+        const index = str.indexOf(tagSeparator);
 
         if (index === -1 || index === str.length - 1) {
             return;
