@@ -8,7 +8,8 @@ const {
 module.exports = {
     names: deleteTulp.names,
     description: deleteTulp.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     guildOnly: false,
     usage: '<name>',
     async execute(msg, args) {

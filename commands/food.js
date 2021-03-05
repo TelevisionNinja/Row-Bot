@@ -4,7 +4,8 @@ const { food } = require('../config.json');
 module.exports = {
     names: food.names,
     description: food.description,
-    args: false,
+    argsRequired: false,
+    argsOptional: true,
     permittedCharsOnly: false,
     guildOnly: false,
     usage: '<type of food>',

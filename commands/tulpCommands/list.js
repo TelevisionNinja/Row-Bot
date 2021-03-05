@@ -6,7 +6,8 @@ const Discord = require('discord.js');
 module.exports = {
     names: listConfig.names,
     description: listConfig.description,
-    args: false,
+    argsRequired: false,
+    argsOptional: false,
     guildOnly: false,
     usage: '',
     async execute(msg, args) {

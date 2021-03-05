@@ -11,10 +11,11 @@ const Discord = require('discord.js');
 module.exports = {
     names: urban.names,
     description: urban.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     permittedCharsOnly: false,
     guildOnly: false,
-    usage: '<word>',
+    usage: '<search term>',
     cooldown: 1,
     async execute(msg, args) {
         const searchWord = querystring.stringify({ term: args.join(' ') });

@@ -21,7 +21,8 @@ let notCalled = true;
 module.exports = {
     names: help.names,
     description: help.description,
-    args: false,
+    argsRequired: false,
+    argsOptional: true,
     permittedCharsOnly: false,
     guildOnly: false,
     usage: '<command name>',
@@ -50,6 +51,15 @@ module.exports = {
                 return;
             }
 
+            let usageStr = `\`${prefix}${argCommand.names[0]}`;
+
+            if (argCommand.argsRequired) {
+                usageStr = `${usageStr} ${argCommand.usage}\``;
+            }
+            else if (argCommand.argsOptional) {
+                usageStr = `${usageStr}\` or ${usageStr} ${argCommand.usage}\``;
+            }
+
             embed = new Discord.MessageEmbed()
                 .setTitle(argCommand.names[0])
                 .setDescription(argCommand.description)
@@ -60,7 +70,7 @@ module.exports = {
                     },
                     {
                         name: 'Usage',
-                        value: `\`${prefix}${argCommand.names[0]} ${argCommand.usage}\``
+                        value: usageStr
                     },
                     {
                         name: 'Server Only Command?',

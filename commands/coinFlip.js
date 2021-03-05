@@ -4,7 +4,8 @@ const { coin } = require('../config.json');
 module.exports = {
     names: coin.names,
     description: coin.description,
-    args: false,
+    argsRequired: false,
+    argsOptional: false,
     permittedCharsOnly: false,
     guildOnly: false,
     usage: '',

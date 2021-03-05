@@ -11,7 +11,8 @@ const {
 module.exports = {
     names: rule.names,
     description: rule.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     permittedCharsOnly: true,
     guildOnly: false,
     usage: `<tags separated by a "${tagSeparator}">`,

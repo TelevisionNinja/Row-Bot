@@ -9,7 +9,8 @@ choices.set('scissors', 2);
 module.exports = {
     names: rps.names,
     description: rps.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     permittedCharsOnly: false,
     guildOnly: false,
     usage: '<rock, paper, or scissors>',

@@ -1,13 +1,17 @@
 const rand = require('../lib/randomFunctions.js');
-const { random } = require('../config.json');
+const {
+    random,
+    prefix
+} = require('../config.json');
 
 module.exports = {
     names: random.names,
     description: random.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     permittedCharsOnly: false,
     guildOnly: false,
-    usage: '<max> or <min> <max>',
+    usage: `<max>\` or \`${prefix}${random.names[0]} <min> <max>`,
     cooldown: 0,
     execute(msg, args) {
         let min = 0;

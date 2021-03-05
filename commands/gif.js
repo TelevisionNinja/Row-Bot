@@ -9,10 +9,11 @@ const URL = `${tenor.API}${tenor.APIKey}&q=`;
 module.exports = {
     names: tenor.names,
     description: tenor.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     permittedCharsOnly: false,
     guildOnly: false,
-    usage: '<search terms>',
+    usage: '<search terms separated by a space>',
     cooldown: 1,
     async execute(msg, args) {
         const {

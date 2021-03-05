@@ -5,7 +5,8 @@ const stringUtils = require('../lib/stringUtils.js');
 module.exports = {
     names: fifty.names,
     description: fifty.description,
-    args: false,
+    argsRequired: false,
+    argsOptional: false,
     permittedCharsOnly: false,
     guildOnly: false,
     usage: '',

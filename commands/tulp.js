@@ -6,7 +6,8 @@ const {
 module.exports = {
     names: tulp.names,
     description: tulp.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     permittedCharsOnly: false,
     guildOnly: false,
     usage: '<command>',

@@ -11,7 +11,8 @@ const URL = `${derp.API}${derp.APIKey}&q=`;
 module.exports = {
     names: derp.names,
     description: derp.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     permittedCharsOnly: true,
     guildOnly: false,
     usage: `<tags separated by a "${tagSeparator}">`,

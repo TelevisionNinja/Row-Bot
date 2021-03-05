@@ -189,7 +189,7 @@ client.on('message', msg => {
         }
     }
 
-    if (command.args && !args.length) {
+    if (command.argsRequired && !args.length) {
         msg.channel.send(`Please provide arguments\nex: \`${prefix}${command.names[0]} ${command.usage}\``);
         return;
     }
