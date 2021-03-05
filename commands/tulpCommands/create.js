@@ -1,19 +1,33 @@
 const { create } = require('./tulpConfig.json');
 const { MongoClient } = require('mongodb');
-const { mongodbURI } = require('../../config.json');
+const {
+    mongodbURI,
+    tagSeparator
+} = require('../../config.json');
+const msgUtils = require('../../lib/msgUtils.js');
 
 module.exports = {
     names: create.names,
     description: create.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     guildOnly: false,
-    usage: '<name> <avatar <-- this must be sent as an image>',
+    usage: `<name>${tagSeparator} <image link or image upload>`,
     async execute(msg, args) {
-        const imgLink = msg.attachments.map(img => img.url)[0];
-        const tulpName = args.join(' ').split(',')[0].trim();
+        const {
+            fail,
+            validURL,
+            username,
+            avatarLink
+        } = msgUtils.extractNameAndAvatar(msg, args);
 
-        if (typeof imgLink === 'undefined' || !tulpName.length) {
+        if (fail) {
             msg.channel.send('I need a name and a profile picture');
+            return;
+        }
+
+        if (!validURL) {
+            msg.channel.send('I need a valid URL for the avatar');
             return;
         }
 
@@ -34,8 +48,8 @@ module.exports = {
                     id: msg.author.id,
                     tulps: [
                         {
-                            username: tulpName,
-                            avatar: imgLink
+                            username: username,
+                            avatar: avatarLink
                         }
                     ]
                 };
@@ -45,12 +59,12 @@ module.exports = {
                 return;
             }
 
-            const existingTulp = userData.tulps.find(t => t.username === tulpName);
+            const existingTulp = userData.tulps.find(t => t.username === username);
 
             if (typeof existingTulp === 'undefined') {
                 userData.tulps.push({
-                    username: tulpName,
-                    avatar: imgLink
+                    username: username,
+                    avatar: avatarLink
                 });
 
                 const updateDoc = {

@@ -2,24 +2,35 @@ const { editAvatar } = require('./tulpConfig.json');
 const { MongoClient } = require('mongodb');
 const {
     mongodbURI,
-    tulp
+    tulp,
+    tagSeparator
 } = require('../../config.json');
+const msgUtils = require('../../lib/msgUtils.js');
 
 module.exports = {
     names: editAvatar.names,
     description: editAvatar.description,
-    args: true,
+    argsRequired: true,
+    argsOptional: false,
     guildOnly: false,
-    usage: '<name> <new avatar <-- this must be sent as an image>',
+    usage: `<name>${tagSeparator} <image link or image upload>`,
     async execute(msg, args) {
-        const imgLink = msg.attachments.map(img => img.url)[0];
+        const {
+            fail,
+            validURL,
+            username,
+            avatarLink
+        } = msgUtils.extractNameAndAvatar(msg, args);
 
-        if (typeof imgLink === 'undefined') {
+        if (fail) {
             msg.channel.send('I need a name and a profile picture');
             return;
         }
 
-        const tulpName = args.join(' ').trim();
+        if (!validURL) {
+            msg.channel.send('I need a valid URL for the avatar');
+            return;
+        }
 
         const query = { id: msg.author.id };
 
@@ -41,7 +52,7 @@ module.exports = {
             let i = 0;
             const n = userData.tulps.length;
 
-            while (i < n && userData.tulps[i].username !== tulpName) {
+            while (i < n && userData.tulps[i].username !== username) {
                 i++;
             }
 
@@ -50,7 +61,12 @@ module.exports = {
                 return;
             }
 
-            userData.tulps[i].avatar = imgLink;
+            if (userData.tulps[i].avatar === avatarLink) {
+                msg.channel.send('Pleave provide a different profile picture to change to');
+                return;
+            }
+
+            userData.tulps[i].avatar = avatarLink;
 
             const updateDoc = {
                 $set: {
