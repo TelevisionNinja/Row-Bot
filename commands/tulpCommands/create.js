@@ -22,12 +22,12 @@ module.exports = {
         } = msgUtils.extractNameAndAvatar(msg, args);
 
         if (!success) {
-            msg.channel.send('Pleave provide a name and a profile picture');
+            msg.channel.send('Please provide a name and a profile picture');
             return;
         }
 
         if (!validURL) {
-            msg.channel.send('Pleave provide a valid URL for the avatar');
+            msg.channel.send('Please provide a valid URL for the avatar');
             return;
         }
 
