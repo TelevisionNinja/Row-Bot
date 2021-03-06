@@ -28,7 +28,7 @@ module.exports = {
             return;
         }
 
-        if (command.args && !args.length) {
+        if (command.argsRequired && !args.length) {
             msg.channel.send(`Please provide arguments\nex: \`${prefix}${tulp.names[0]} ${command.names[0]} ${command.usage}\``);
             return;
         }
