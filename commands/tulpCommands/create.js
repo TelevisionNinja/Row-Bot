@@ -15,13 +15,13 @@ module.exports = {
     usage: `<name>${tagSeparator} <image link or image upload>`,
     async execute(msg, args) {
         const {
-            fail,
+            success,
             validURL,
             username,
             avatarLink
         } = msgUtils.extractNameAndAvatar(msg, args);
 
-        if (fail) {
+        if (!success) {
             msg.channel.send('Pleave provide a name and a profile picture');
             return;
         }
