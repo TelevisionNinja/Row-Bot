@@ -17,7 +17,7 @@ module.exports = {
             link
         } = await getRandomFifty();
 
-        msg.channel.send([title, `<${link}>`]);
+        msg.channel.send(`${title}\n<${link}>`);
     },
     getRandomFifty
 }
