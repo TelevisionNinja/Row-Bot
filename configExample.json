@@ -118,11 +118,12 @@
     "memes" : {
         "description" : "Posts memes",
         "channelID" : "",
+        "postCount" : 10,
         "URLs" : [
-            "https://www.reddit.com/r/memes/top.json?raw_json=1&t=day&limit=5",
-            "https://www.reddit.com/r/dankmemes/top.json?raw_json=1&t=day&limit=5",
-            "https://www.reddit.com/r/goodanimemes/top.json?raw_json=1&t=day&limit=5",
-            "https://www.reddit.com/r/Animemes/top.json?raw_json=1&t=day&limit=5"
+            "https://www.reddit.com/r/memes/top.json?raw_json=1&t=day&limit=",
+            "https://www.reddit.com/r/dankmemes/top.json?raw_json=1&t=day&limit=",
+            "https://www.reddit.com/r/goodanimemes/top.json?raw_json=1&t=day&limit=",
+            "https://www.reddit.com/r/Animemes/top.json?raw_json=1&t=day&limit="
         ]
     },
 

@@ -12,11 +12,11 @@ module.exports = {
         const interval = new Interval(
             async () => {
                 try {
-                    const URL = memes.URLs[rand.randomMath(memes.URLs.length)];
+                    const URL = `${memes.URLs[rand.randomMath(memes.URLs.length)]}${memes.postCount}`;
                     const response = await axios.get(URL);
                     const postArr = response.data.data.children;
 
-                    const post = postArr[rand.randomMath(postArr.length)];
+                    const post = postArr[rand.randomMath(memes.postCount)];
 
                     recipient.send(encodeURI(post.data.url));
                 }
