@@ -16,7 +16,13 @@ module.exports = {
     cooldown: 1,
     async execute(msg, args) {
         const data = await getData();
-        msg.channel.send(dataToEmbed(args.join(' '), data));
+
+        if (data === '') {
+            msg.channel.send('I couldn\'t get any data for some reason');
+        }
+        else {
+            msg.channel.send(dataToEmbed(args.join(' '), data));
+        }
     },
     getData,
     dataToStrArr,
