@@ -46,6 +46,7 @@ for (let i = 0, n = tulpCommandFiles.length; i < n; i++) {
 // login actions
 
 client.on('ready', () => {
+    // start interval messages
     for (let i = 0, n = intervalMsgs.length; i < n; i++) {
         require(`./intervalMessages/${intervalMsgs[i]}`).execute(client);
     }
