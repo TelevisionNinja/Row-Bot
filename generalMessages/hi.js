@@ -1,6 +1,7 @@
 const { greetings } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
 const { names } = require('../config.json');
+const stringUtils = require('../lib/stringUtils.js');
 
 module.exports = {
     description: 'Say hi',
@@ -8,6 +9,8 @@ module.exports = {
         let hasReply = false;
         let replyStr = '';
         const numOfGreetings = greetings.length;
+
+        msg = stringUtils.removeAllSpecialChars(msg);
 
         for (let i = 0; i < numOfGreetings; i++) {
             if (msg === greetings[i].toLowerCase()) {

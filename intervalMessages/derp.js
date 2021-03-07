@@ -17,9 +17,7 @@ module.exports = {
 
                 const selection = derpConfig.intervalTags[randIndex];
 
-                let tagArr = [selection, ...filter];
-                tagArr.push('safe');
-                tagArr.push('solo');
+                const tagArr = [selection, 'safe', 'solo', ...filter];
 
                 const {
                     imgURL,

@@ -78,7 +78,7 @@
         "(つ﹏⊂)"
     ],
 
-    "loves" : [
+    "loveYous" : [
         "Love you",
         "Love u",
         "Luv u",
@@ -87,19 +87,11 @@
         "Love u 😘",
         "Luv u 😘",
 
-        "*kiss*",
-        "*kiss* 💋",
-        "*kiss* 😗",
-        "*kiss* 😘",
-
-        "💋",
-        "😗",
-        "😘",
         "❤️",
         "🥰"
     ],
 
-    "loveReplies" : [
+    "loveYouReplies" : [
         "aww ❤️",
         "yay",
         "Love you too",
@@ -116,24 +108,16 @@
         "I love u too 😘",
         "I luv u too 😘",
 
-        "*kiss*",
-        "*kiss* 💋",
-        "*kiss* 😗",
-        "*kiss* 😘",
-
-        "💋",
-        "😗",
-        "😘",
         "❤️",
         "🥰"
     ],
 
-    "loveMes" : [
+    "kissMes" : [
         "kiss me",
         "give me a kiss"
     ],
 
-    "loveMeReplies" : [
+    "kissMeReplies" : [
         "*kiss*",
         "*kiss* 💋",
         "*kiss* 😗",

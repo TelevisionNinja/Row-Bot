@@ -1,10 +1,13 @@
 const {
-    loves,
-    loveReplies,
-    loveMes,
-    loveMeReplies
+    loveYous,
+    loveYouReplies,
+    kissMes,
+    kissMeReplies
 } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
+
+loveYous.push(...kissMeReplies);
+loveYouReplies.push(...kissMeReplies);
 
 module.exports = {
     description: 'Reply to love you\'s',
@@ -12,20 +15,21 @@ module.exports = {
         let isNoncommand = false;
         let replyStr = '';
 
-        for (let i = 0, n = loves.length; i < n; i++) {
-            if (msg.includes(loves[i].toLowerCase())) {
+        for (let i = 0, n = loveYous.length; i < n; i++) {
+            if (msg.includes(loveYous[i].toLowerCase())) {
+
                 return {
                     isNoncommand: true,
-                    replyStr: loveReplies[rand.randomMath(loveReplies.length)]
+                    replyStr: loveYouReplies[rand.randomMath(loveYouReplies.length)]
                 };
             }
         }
 
-        for (let i = 0, n = loveMes.length; i < n; i++) {
-            if (msg.includes(loveMes[i].toLowerCase())) {
+        for (let i = 0, n = kissMes.length; i < n; i++) {
+            if (msg.includes(kissMes[i].toLowerCase())) {
                 return {
                     isNoncommand: true,
-                    replyStr: loveMeReplies[rand.randomMath(loveMeReplies.length)]
+                    replyStr: kissMeReplies[rand.randomMath(kissMeReplies.length)]
                 };
             }
         }

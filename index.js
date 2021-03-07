@@ -101,7 +101,7 @@ client.on('message', msg => {
         let botReply = '';
         let replyBool = false;
 
-        msgStr = stringUtils.removeAllSpecialChars(msgStr);
+        //msgStr = stringUtils.removeAllSpecialChars(msgStr);
         const words = msgStr.split(' ');
 
         //--------------------------------------------------------------------------------
