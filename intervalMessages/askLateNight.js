@@ -9,7 +9,7 @@ const {
     nos
 } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
-const Interval = require('../lib/interval.js');
+const DailyInterval = require('daily-intervals');
 const msgUtils = require('../lib/msgUtils.js');
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
     async execute(client) {
         const recipient = await msgUtils.getRecipient(client, askLateNight.channelID);
 
-        const interval = new Interval(
+        const interval = new DailyInterval(
             () => {
                 ask(
                     recipient,
@@ -32,7 +32,8 @@ module.exports = {
                 );
             },
             askLateNight.time,
-            1440 // 24 hrs in minutes
+            1440, // 24 hrs in minutes
+            5000 // 5 second offset
         );
 
         interval.start();

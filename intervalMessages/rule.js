@@ -1,6 +1,6 @@
 const rule = require('../commands/rule.js');
 const { rule: ruleConfig } = require('../config.json');
-const Interval = require('../lib/interval.js');
+const DailyInterval = require('daily-intervals');
 const msgUtils = require('../lib/msgUtils.js');
 const stringUtils = require('../lib/stringUtils.js');
 const rand = require('../lib/randomFunctions.js');
@@ -12,7 +12,7 @@ module.exports = {
     async execute(client) {
         const recipient = await msgUtils.getRecipient(client, ruleConfig.intervalChannelID);
 
-        const interval = new Interval(
+        const interval = new DailyInterval(
             async () => {
                 const randIndex = rand.randomMath(ruleConfig.intervalTags.length);
 
@@ -31,7 +31,8 @@ module.exports = {
                 msgUtils.sendImg(recipient, imgURL, source, results, false);
             },
             '0:0',
-            ruleConfig.intervalWait
+            ruleConfig.intervalWait,
+            5000 // 5 second offset
         );
 
         interval.start();

@@ -1,6 +1,6 @@
 const derp = require('../commands/derp.js');
 const { derp: derpConfig } = require('../config.json');
-const Interval = require('../lib/interval.js');
+const DailyInterval = require('daily-intervals');
 const msgUtils = require('../lib/msgUtils.js');
 const rand = require('../lib/randomFunctions.js');
 
@@ -11,7 +11,7 @@ module.exports = {
     async execute(client) {
         const recipientDaily = await msgUtils.getRecipient(client, derpConfig.intervalChannelID);
 
-        const interval1 = new Interval(
+        const interval1 = new DailyInterval(
             async () => {
                 const randIndex = rand.randomMath(derpConfig.intervalTags.length);
 
@@ -30,14 +30,15 @@ module.exports = {
                 msgUtils.sendImg(recipientDaily, imgURL, source, results, false);
             },
             derpConfig.intervalTime,
-            1440 // 24 hrs in minutes
+            1440, // 24 hrs in minutes
+            5000 // 5 second offset
         );
 
         //-------------------------------------------------------------------
 
         const recipientInterval = await msgUtils.getRecipient(client, derpConfig.intervalWaitChannelID);
 
-        const interval2 = new Interval(
+        const interval2 = new DailyInterval(
             async () => {
                 const randIndex = rand.randomMath(derpConfig.intervalWaitTags.length);
 
@@ -54,7 +55,8 @@ module.exports = {
                 msgUtils.sendImg(recipientInterval, imgURL, source, results, false);
             },
             '0:0',
-            derpConfig.intervalWait
+            derpConfig.intervalWait,
+            5000 // 5 second offset
         );
 
         //-------------------------------------------------------------------
