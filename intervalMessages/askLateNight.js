@@ -67,7 +67,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
             return;
         }
 
-        const str = m.content.toLowerCase();
+        const str = m.content.toLowerCase().replaceAll('\n', ' ');
         const wordArr = str.split(' ');
         const initial = numberOfReplies;
         let reply = '';
