@@ -24,11 +24,11 @@ module.exports = {
             img,
             source,
             count
-        } = await getRuleImage(args);
+        } = await getImage(args);
 
         msgUtils.sendImg(msg.channel, img, source, count);
     },
-    getRuleImage,
+    getImage,
     getImageRule0,
     getImageRule1
 }
@@ -107,7 +107,11 @@ async function getImageRule0(tagArr) {
  */
 async function getImageRule1(tagArr) {
     // this api has a max of 3 tags
-    const URL = `${rule.sites[1].API}${tagArr.slice(0, 3).join(rule.separator)}&limit=`;
+    if (tagArr.length > 3) {
+        tagArr = tagArr.slice(0, 3);
+    }
+
+    const URL = `${rule.sites[1].API}${tagArr.join(rule.separator)}&limit=`;
 
     let imgURL = '';
     let source = '';
@@ -161,7 +165,7 @@ async function getImageRule1(tagArr) {
  * 
  * @param {*} tagArr array of tags to be searched
  */
-async function getRuleImage(tagArr) {
+async function getImage(tagArr) {
     // whitespace is replaced with '_'
     // tags are separated by '+'
     // '-' infront of a tag means to exclude it
