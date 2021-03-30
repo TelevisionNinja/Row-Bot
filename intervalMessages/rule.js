@@ -26,7 +26,7 @@ module.exports = {
                     imgURL,
                     source,
                     results
-                } = await rule.getImage(tagArr);
+                } = await rule.getImageRule0(tagArr);
 
                 msgUtils.sendImg(recipient, imgURL, source, results, false);
             },
