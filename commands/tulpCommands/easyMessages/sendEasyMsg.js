@@ -12,7 +12,7 @@ module.exports = {
     argsRequired: false,
     argsOptional: false,
     guildOnly: false,
-    usage: `<custom_bracket><message><custom_bracket>`,
+    usage: `<custom bracket><message><custom bracket>`,
     async execute(msg) {
         const query = { id: msg.author.id };
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
