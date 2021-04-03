@@ -62,22 +62,31 @@ module.exports = {
             }
 
             let i = 0;
-            const n = userData.tulps.length;
+            let selectedTulp = undefined;
 
-            while (i < n && userData.tulps[i].username !== name) {
-                i++;
+            for (let j = 0, n = userData.tulps.length; j < n; j++) {
+                const currentTulp = userData.tulps[j];
+
+                // check for existing brackets
+                if (currentTulp.startBracket === startBracket && currentTulp.endBracket === endBracket) {
+                    msg.channel.send('These brackets are already being used');
+                    return;
+                }
+
+                // find tulp
+                if (currentTulp.username === name) {
+                    selectedTulp = currentTulp;
+                    i = j;
+                }
             }
 
-            if (i === n) {
+            if (typeof selectedTulp === 'undefined') {
                 msg.channel.send(tulp.noDataMsg);
                 return;
             }
 
-            const selectedTulp = userData.tulps[i];
-
             selectedTulp.startBracket = startBracket;
             selectedTulp.endBracket = endBracket;
-
             userData.tulps[i] = selectedTulp;
 
             const updateDoc = {
