@@ -44,7 +44,7 @@ module.exports = {
             await client.connect();
 
             const database = client.db('tulps');
-            const collection = database.collection("users");
+            const collection = database.collection('users');
 
             userData = await collection.findOne(query);
         }
