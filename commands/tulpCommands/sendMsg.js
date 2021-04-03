@@ -7,6 +7,7 @@ const {
 const { sendMsg } = require('./tulpConfig.json');
 const { MongoClient } = require('mongodb');
 const Discord = require('discord.js');
+const { usage: easyUsage } = require('./easyMessages/sendEasyMsg.js');
 
 module.exports = {
     names: sendMsg.names,
@@ -14,7 +15,7 @@ module.exports = {
     argsRequired: true,
     argsOptional: false,
     guildOnly: false,
-    usage: `<name>${tagSeparator} <message>`,
+    usage: `<name>${tagSeparator} <message>\`\nor the easier way:\n\`${easyUsage}`,
     async execute(msg, args) {
         const isDM = msg.channel.type === 'dm';
 
