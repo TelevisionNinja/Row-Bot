@@ -1,34 +1,19 @@
 const {
-    tulp,
     clientID,
-    tagSeparator,
     mongodbURI
-} = require('../../config.json');
-const { sendMsg } = require('./tulpConfig.json');
+} = require('../../../config.json');
+const { sendMsg } = require('../tulpConfig.json');
 const { MongoClient } = require('mongodb');
 const Discord = require('discord.js');
 
 module.exports = {
-    names: sendMsg.names,
+    names: 'send messages easily',
     description: sendMsg.description,
-    argsRequired: true,
+    argsRequired: false,
     argsOptional: false,
     guildOnly: false,
-    usage: `<name>${tagSeparator} <message>`,
-    async execute(msg, args) {
-        const isDM = msg.channel.type === 'dm';
-
-        if (!isDM) {
-            msg.delete();
-        }
-
-        const str = args.join(' ');
-        const index = str.indexOf(tagSeparator);
-
-        if (index === -1 || index === str.length - 1) {
-            return;
-        }
-
+    usage: `<custom_bracket><message><custom_bracket>`,
+    async execute(msg) {
         const query = { id: msg.author.id };
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
 
@@ -44,41 +29,46 @@ module.exports = {
         }
         catch (error) {
             console.log(error);
-            return;
+            return false;
         }
         finally {
             client.close();
         }
 
         if (userData === null) {
-            // tell user to use the create command
-            msg.author.send(tulp.noDataMsg);
-            return;
+            return false;
         }
 
-        // get specific tulp using tulpName
-        const tulpName = str.substring(0, index).trim();
-        const selectedTulp = userData.tulps.find(t => t.username === tulpName);
+        // get specific tulp
+        const userMessage = msg.content;
+        const selectedTulp = userData.tulps.find(t => userMessage.startsWith(t.startBracket) && userMessage.endsWith(t.endBracket));
 
         if (typeof selectedTulp === 'undefined') {
-            msg.author.send(tulp.noDataMsg);
-            return;
+            return false;
         }
 
-        const tulpMsg = str.substring(index + 1).trim();
+        const tulpMsg = userMessage.substring(selectedTulp.startBracket.length, userMessage.length - selectedTulp.endBracket.length);
 
         //-------------------------------------------------------------------------------------
+        // detect dm channel
 
-        if (isDM) {
+        if (msg.channel.type === 'dm') {
             const simulatedMsg = new Discord.MessageEmbed()
                 .setAuthor(selectedTulp.username, selectedTulp.avatar)
                 .setDescription(tulpMsg);
 
             msg.channel.send(simulatedMsg);
-            return;
+            return true;
+        }
+        
+        msg.delete();
+
+        if (!tulpMsg.length) {
+            return false;
         }
 
         //-------------------------------------------------------------------------------------
+        // webhook
 
         const channelWebhooks = await msg.channel.fetchWebhooks();
         let tulpWebhook = undefined;
@@ -97,8 +87,7 @@ module.exports = {
                 });
             }
             catch (error) {
-                msg.channel.send('I couldn\'t create a webhook because there\'s too many in here 😢');
-                return;
+                return false;
             }
         }
         else {
@@ -111,5 +100,6 @@ module.exports = {
         }
 
         tulpWebhook.send(tulpMsg);
+        return true;
     }
 }

@@ -8,6 +8,7 @@ const {
 } = require('./config.json');
 const msgUtils = require('./lib/msgUtils.js');
 const stringUtils = require('./lib/stringUtils.js');
+const { execute: easyTulpMsg } = require('./commands/tulpCommands/easyMessages/sendEasyMsg.js');
 
 const client = new Discord.Client();
 
@@ -90,7 +91,7 @@ client.on('ready', () => {
 //--------------------------------------------------------------------------------
 // message actions
 
-client.on('message', msg => {
+client.on('message', async msg => {
     if (msg.author.bot) {
         return;
     }
@@ -98,6 +99,13 @@ client.on('message', msg => {
     let msgStr = msg.content.toLowerCase();
 
     if (!(msgStr.startsWith(prefix))) {
+        // send tulp messages easily
+        if (await easyTulpMsg(msg)) {
+            return;
+        }
+
+        //--------------------------------------------------------------------------------
+
         let botReply = '';
         let replyBool = false;
 

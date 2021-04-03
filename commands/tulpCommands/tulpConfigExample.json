@@ -49,7 +49,27 @@
             "change-picture"
         ],
         "description" : "",
-        "confirmMsg" : ""
+        "confirmMsg" : "Avatar changed!"
+    },
+
+    "editBrackets" : {
+        "names" : [
+            "editbrackets",
+            "edit_brackets",
+            "edit-brackets",
+            "changebrackets",
+            "change_brackets",
+            "change-brackets",
+            
+            "editbraces",
+            "edit_braces",
+            "edit-braces",
+            "changebraces",
+            "change_braces",
+            "change-braces"
+        ],
+        "description" : "",
+        "confirmMsg" : "Brackets changed!"
     },
 
     "editName" : {
@@ -63,12 +83,21 @@
             "rename"
         ],
         "description" : "",
-        "confirmMsg" : ""
+        "confirmMsg" : "Name changed!"
     },
 
     "help" : {
         "names" : ["help"],
         "description" : "Lists all commands or gives more info about a specific command"
+    },
+
+    "info" : {
+        "names" : [
+            "info",
+            "information",
+            "about"
+        ],
+        "description" : ""
     },
 
     "list" : {

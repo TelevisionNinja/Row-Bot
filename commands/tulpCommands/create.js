@@ -39,19 +39,21 @@ module.exports = {
             await client.connect();
 
             const database = client.db('tulps');
-            const collection = database.collection("users");
+            const collection = database.collection('users');
 
             const userData = await collection.findOne(query);
+
+            const newTulp = {
+                username: username,
+                avatar: avatarLink,
+                startBracket: `${username}:`,
+                endBracket: ''
+            };
 
             if (userData === null) {
                 const tulp = {
                     id: msg.author.id,
-                    tulps: [
-                        {
-                            username: username,
-                            avatar: avatarLink
-                        }
-                    ]
+                    tulps: [newTulp]
                 };
 
                 await collection.insertOne(tulp);
@@ -62,10 +64,7 @@ module.exports = {
             const existingTulp = userData.tulps.find(t => t.username === username);
 
             if (typeof existingTulp === 'undefined') {
-                userData.tulps.push({
-                    username: username,
-                    avatar: avatarLink
-                });
+                userData.tulps.push(newTulp);
 
                 const updateDoc = {
                     $set: {
