@@ -6,17 +6,19 @@ const {
     tagSeparator
 } = require('../../config.json');
 
+const enclosingText = 'text';
+
 module.exports = {
     names: editBrackets.names,
     description: editBrackets.description,
     argsRequired: true,
     argsOptional: false,
     guildOnly: false,
-    usage: `<name>${tagSeparator} <new_bracket>text<new_bracket>`,
+    usage: `<name>${tagSeparator} <new_bracket>${enclosingText}<new_bracket>`,
     async execute(msg, args) {
         args = args.join(' ').split(tagSeparator).map(s => s.trim());
 
-        const errorMessage = `Please provide a name followed by a "${tagSeparator}" and then the new brackets enclosing the word "text". "${tagSeparator}" are not allow in brackets`;
+        const errorMessage = `Please provide a name followed by a "${tagSeparator}" and then the new brackets enclosing the word "${enclosingText}". "${tagSeparator}" are not allowed in brackets`;
 
         if (args.length < 2) {
             msg.channel.send(errorMessage);
@@ -26,12 +28,12 @@ module.exports = {
         const name = args[0];
         const unparsedBrackets = args[1];
 
-        if (unparsedBrackets.indexOf('text') === -1) {
+        if (unparsedBrackets.indexOf(enclosingText) === -1) {
             msg.channel.send(errorMessage);
             return;
         }
 
-        const bracketArr = unparsedBrackets.split('text');
+        const bracketArr = unparsedBrackets.split(enclosingText).map(b => b.trim());
 
         if (!bracketArr.length) {
             msg.channel.send(errorMessage);
