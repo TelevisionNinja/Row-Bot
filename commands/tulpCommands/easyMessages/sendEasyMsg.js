@@ -47,7 +47,7 @@ module.exports = {
             return false;
         }
 
-        const tulpMsg = userMessage.substring(selectedTulp.startBracket.length, userMessage.length - selectedTulp.endBracket.length);
+        const tulpMsg = userMessage.substring(selectedTulp.startBracket.length, userMessage.length - selectedTulp.endBracket.length).trim();
 
         //-------------------------------------------------------------------------------------
         // detect dm channel
