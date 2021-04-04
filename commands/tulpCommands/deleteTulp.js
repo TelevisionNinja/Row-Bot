@@ -28,7 +28,7 @@ module.exports = {
             const userData = await collection.findOne(query);
 
             if (userData === null) {
-                msg.channel.send(tulp.noDataMsg);
+                msg.channel.send(tulp.notUserMsg);
                 return;
             }
 

@@ -53,7 +53,7 @@ module.exports = {
 
         if (userData === null) {
             // tell user to use the create command
-            msg.author.send(tulp.noDataMsg);
+            msg.author.send(tulp.notUserMsg);
             return;
         }
 

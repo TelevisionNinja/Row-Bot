@@ -54,18 +54,19 @@ module.exports = {
             const database = client.db('tulps');
             const collection = database.collection("users");
 
-            let userData = await collection.findOne(query);
+            const userData = await collection.findOne(query);
 
             if (userData === null) {
-                msg.channel.send(tulp.noDataMsg);
+                msg.channel.send(tulp.notUserMsg);
                 return;
             }
 
             let i = 0;
             let selectedTulp = undefined;
+            let tulpArr = userData.tulps;
 
-            for (let j = 0, n = userData.tulps.length; j < n; j++) {
-                const currentTulp = userData.tulps[j];
+            for (let j = 0, n = tulpArr.length; j < n; j++) {
+                const currentTulp = tulpArr[j];
 
                 // check for existing brackets
                 if (currentTulp.startBracket === startBracket && currentTulp.endBracket === endBracket) {
@@ -87,11 +88,11 @@ module.exports = {
 
             selectedTulp.startBracket = startBracket;
             selectedTulp.endBracket = endBracket;
-            userData.tulps[i] = selectedTulp;
+            tulpArr[i] = selectedTulp;
 
             const updateDoc = {
                 $set: {
-                    tulps: userData.tulps
+                    tulps: tulpArr
                 }
             };
 

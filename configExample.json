@@ -170,7 +170,8 @@
     "tulp" : {
         "names" : [""],
         "description" : "",
-        "noDataMsg" : ""
+        "noDataMsg" : "",
+        "notUserMsg" : ""
     },
 
     "urban" : {

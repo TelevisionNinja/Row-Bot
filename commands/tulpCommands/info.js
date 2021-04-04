@@ -36,12 +36,17 @@ module.exports = {
         }
 
         if (userData === null) {
-            msg.author.send(tulp.noDataMsg);
+            msg.author.send(tulp.notUserMsg);
             return;
         }
 
         const tulpName = args[0].trim();
         const selectedTulp = userData.tulps.find(t => t.username === tulpName);
+
+        if (typeof selectedTulp === 'undefined') {
+            msg.channel.send(tulp.noDataMsg);
+            return;
+        }
 
         const info = new Discord.MessageEmbed()
             .setThumbnail(selectedTulp.avatar)

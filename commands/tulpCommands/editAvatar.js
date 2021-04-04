@@ -42,17 +42,18 @@ module.exports = {
             const database = client.db('tulps');
             const collection = database.collection('users');
 
-            let userData = await collection.findOne(query);
+            const userData = await collection.findOne(query);
 
             if (userData === null) {
-                msg.channel.send(tulp.noDataMsg);
+                msg.channel.send(tulp.notUserMsg);
                 return;
             }
 
             let i = 0;
-            const n = userData.tulps.length;
+            let tulpArr = userData.tulps;
+            const n = tulpArr.length;
 
-            while (i < n && userData.tulps[i].username !== username) {
+            while (i < n && tulpArr[i].username !== username) {
                 i++;
             }
 
@@ -61,16 +62,19 @@ module.exports = {
                 return;
             }
 
-            if (userData.tulps[i].avatar === avatarLink) {
+            let selectedTulp = tulpArr[i];
+
+            if (selectedTulp.avatar === avatarLink) {
                 msg.channel.send('Pleave provide a different profile picture to change to');
                 return;
             }
 
-            userData.tulps[i].avatar = avatarLink;
+            selectedTulp.avatar = avatarLink;
+            tulpArr[i] = selectedTulp;
 
             const updateDoc = {
                 $set: {
-                    tulps: userData.tulps
+                    tulps: tulpArr
                 }
             };
 

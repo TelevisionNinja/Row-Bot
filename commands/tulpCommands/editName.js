@@ -46,10 +46,10 @@ module.exports = {
             const database = client.db('tulps');
             const collection = database.collection('users');
 
-            let userData = await collection.findOne(query);
+            const userData = await collection.findOne(query);
 
             if (userData === null) {
-                msg.channel.send(tulp.noDataMsg);
+                msg.channel.send(tulp.notUserMsg);
                 return;
             }
 
