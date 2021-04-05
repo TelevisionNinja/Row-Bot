@@ -14,7 +14,7 @@ module.exports = {
         const userData = await tulpCollection.findOne(query);
 
         if (userData === null) {
-            msg.author.send(listConfig.noTulpsMsg);
+            msg.channel.send(listConfig.noTulpsMsg);
             return;
         }
 
