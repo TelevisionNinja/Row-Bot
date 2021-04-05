@@ -14,9 +14,26 @@ module.exports = {
 
         // get specific tulp
         const userMessage = msg.content;
-        const selectedTulp = userData.tulps.find(t => userMessage.startsWith(t.startBracket) && userMessage.endsWith(t.endBracket));
+        const tulpArr = userData.tulps;
+        let selectedTulp = {
+            startBracket: '',
+            endBracket: ''
+        };
+        let hasTulp = false;
 
-        if (typeof selectedTulp === 'undefined') {
+        for (let i = 0, n = tulpArr.length; i < n; i++) {
+            const currentTulp = tulpArr[i];
+
+            if (userMessage.startsWith(currentTulp.startBracket) &&
+                userMessage.endsWith(currentTulp.endBracket) &&
+                currentTulp.startBracket.length >= selectedTulp.startBracket.length &&
+                currentTulp.endBracket.length >= selectedTulp.endBracket.length) {
+                selectedTulp = currentTulp;
+                hasTulp = true;
+            }
+        }
+
+        if (hasTulp) {
             return false;
         }
 
