@@ -40,10 +40,11 @@ module.exports = {
         }
 
         const startBracket = bracketArr[0];
-        let endBracket = '';
+        const endBracket = bracketArr[1];
 
-        if (bracketArr.length > 1) {
-            endBracket = bracketArr[1];
+        if (!startBracket.length && !endBracket.length) {
+            msg.channel.send('Brackets can\'t be empty');
+            return;
         }
 
         const query = { _id: msg.author.id };
