@@ -89,7 +89,7 @@ module.exports = {
             }
         };
 
-        await tulpCollection.updateOne(query, updateDoc, { upsert: false });
+        await tulpCollection.updateOne(query, updateDoc);
 
         msg.channel.send(editBrackets.confirmMsg);
     }

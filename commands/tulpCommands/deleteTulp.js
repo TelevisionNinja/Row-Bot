@@ -33,7 +33,7 @@ module.exports = {
                 }
             };
 
-            await tulpCollection.updateOne(query, updateDoc, { upsert: false });
+            await tulpCollection.updateOne(query, updateDoc);
         }
         else {
             await tulpCollection.deleteOne(query);
