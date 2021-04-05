@@ -14,7 +14,7 @@ module.exports = {
     guildOnly: false,
     usage: `<custom bracket><message><custom bracket>`,
     async execute(msg) {
-        const query = { id: msg.author.id };
+        const query = { _id: msg.author.id };
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
 
         let userData;

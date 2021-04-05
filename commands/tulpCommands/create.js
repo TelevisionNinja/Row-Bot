@@ -31,7 +31,7 @@ module.exports = {
             return;
         }
 
-        const query = { id: msg.author.id };
+        const query = { _id: msg.author.id };
 
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
 
@@ -51,12 +51,12 @@ module.exports = {
             };
 
             if (userData === null) {
-                const tulp = {
-                    id: msg.author.id,
+                const user = {
+                    _id: msg.author.id,
                     tulps: [newTulp]
                 };
 
-                await collection.insertOne(tulp);
+                await collection.insertOne(user);
                 msg.channel.send(create.confirmMsg);
                 return;
             }

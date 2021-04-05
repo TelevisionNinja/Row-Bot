@@ -47,7 +47,7 @@ module.exports = {
             endBracket = bracketArr[1];
         }
 
-        const query = { id: msg.author.id };
+        const query = { _id: msg.author.id };
         const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
 
         try {
