@@ -1,13 +1,12 @@
 const {
-    tulp,
+    tulp: tulpConfig,
     clientID,
-    tagSeparator,
-    mongodbURI
+    tagSeparator
 } = require('../../config.json');
 const { sendMsg } = require('./tulpConfig.json');
-const { MongoClient } = require('mongodb');
 const Discord = require('discord.js');
 const { usage: easyUsage } = require('./easyMessages/sendEasyMsg.js');
+const { tulp: tulpCollection } = require('../../lib/database.js');
 
 module.exports = {
     names: sendMsg.names,
@@ -31,29 +30,11 @@ module.exports = {
         }
 
         const query = { _id: msg.author.id };
-        const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
-
-        let userData;
-
-        try {
-            await client.connect();
-
-            const database = client.db('tulps');
-            const collection = database.collection('users');
-
-            userData = await collection.findOne(query);
-        }
-        catch (error) {
-            console.log(error);
-            return;
-        }
-        finally {
-            client.close();
-        }
+        const userData = await tulpCollection.findOne(query);
 
         if (userData === null) {
             // tell user to use the create command
-            msg.author.send(tulp.notUserMsg);
+            msg.author.send(tulpConfig.notUserMsg);
             return;
         }
 
@@ -62,13 +43,14 @@ module.exports = {
         const selectedTulp = userData.tulps.find(t => t.username === tulpName);
 
         if (typeof selectedTulp === 'undefined') {
-            msg.author.send(tulp.noDataMsg);
+            msg.author.send(tulpConfig.noDataMsg);
             return;
         }
 
         const tulpMsg = str.substring(index + 1).trim();
 
         //-------------------------------------------------------------------------------------
+        // detect dm channel
 
         if (isDM) {
             const simulatedMsg = new Discord.MessageEmbed()
@@ -80,6 +62,7 @@ module.exports = {
         }
 
         //-------------------------------------------------------------------------------------
+        // webhook
 
         const channelWebhooks = await msg.channel.fetchWebhooks();
         let tulpWebhook = undefined;

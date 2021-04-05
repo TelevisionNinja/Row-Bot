@@ -1,10 +1,7 @@
 const { create } = require('./tulpConfig.json');
-const { MongoClient } = require('mongodb');
-const {
-    mongodbURI,
-    tagSeparator
-} = require('../../config.json');
+const { tagSeparator } = require('../../config.json');
 const msgUtils = require('../../lib/msgUtils.js');
+const { tulp: tulpCollection } = require('../../lib/database.js');
 
 module.exports = {
     names: create.names,
@@ -32,59 +29,41 @@ module.exports = {
         }
 
         const query = { _id: msg.author.id };
+        const newTulp = {
+            username: username,
+            avatar: avatarLink,
+            startBracket: `${username}:`,
+            endBracket: ''
+        };
+        const userData = await tulpCollection.findOne(query);
 
-        const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
-
-        try {
-            await client.connect();
-
-            const database = client.db('tulps');
-            const collection = database.collection('users');
-
-            const userData = await collection.findOne(query);
-
-            const newTulp = {
-                username: username,
-                avatar: avatarLink,
-                startBracket: `${username}:`,
-                endBracket: ''
+        if (userData === null) {
+            const user = {
+                _id: msg.author.id,
+                tulps: [newTulp]
             };
 
-            if (userData === null) {
-                const user = {
-                    _id: msg.author.id,
-                    tulps: [newTulp]
-                };
-
-                await collection.insertOne(user);
-                msg.channel.send(create.confirmMsg);
-                return;
-            }
-
-            const existingTulp = userData.tulps.find(t => t.username === username);
-
-            if (typeof existingTulp === 'undefined') {
-                userData.tulps.push(newTulp);
-
-                const updateDoc = {
-                    $set: {
-                        tulps: userData.tulps
-                    }
-                };
-
-                await collection.updateOne(query, updateDoc, { upsert: false });
-                msg.channel.send(create.confirmMsg);
-                return;
-            }
-        }
-        catch (error) {
-            console.log(error);
+            await tulpCollection.insertOne(user);
+            msg.channel.send(create.confirmMsg);
             return;
         }
-        finally {
-            await client.close();
-        }
 
-        msg.channel.send(create.existingMsg);
+        const existingTulp = userData.tulps.find(t => t.username === username);
+
+        if (typeof existingTulp === 'undefined') {
+            userData.tulps.push(newTulp);
+
+            const updateDoc = {
+                $set: {
+                    tulps: userData.tulps
+                }
+            };
+
+            await tulpCollection.updateOne(query, updateDoc, { upsert: false });
+            msg.channel.send(create.confirmMsg);
+        }
+        else {
+            msg.channel.send(create.existingMsg);
+        }
     }
 }

@@ -8,7 +8,7 @@ const {
 } = require('./config.json');
 const msgUtils = require('./lib/msgUtils.js');
 const stringUtils = require('./lib/stringUtils.js');
-const { execute: easyTulpMsg } = require('./commands/tulpCommands/easyMessages/sendEasyMsg.js');
+const { sendEasyMsg } = require('./commands/tulpCommands/easyMessages/sendEasyMsg.js');
 
 const client = new Discord.Client();
 
@@ -100,7 +100,7 @@ client.on('message', async msg => {
 
     if (!(msgStr.startsWith(prefix))) {
         // send tulp messages easily
-        if (await easyTulpMsg(msg)) {
+        if (await sendEasyMsg(msg)) {
             return;
         }
 

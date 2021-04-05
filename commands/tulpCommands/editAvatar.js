@@ -1,11 +1,10 @@
 const { editAvatar } = require('./tulpConfig.json');
-const { MongoClient } = require('mongodb');
 const {
-    mongodbURI,
-    tulp,
+    tulp: tulpConfig,
     tagSeparator
 } = require('../../config.json');
 const msgUtils = require('../../lib/msgUtils.js');
+const { tulp: tulpCollection } = require('../../lib/database.js');
 
 module.exports = {
     names: editAvatar.names,
@@ -33,60 +32,43 @@ module.exports = {
         }
 
         const query = { _id: msg.author.id };
+        const userData = await tulpCollection.findOne(query);
 
-        const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
-
-        try {
-            await client.connect();
-
-            const database = client.db('tulps');
-            const collection = database.collection('users');
-
-            const userData = await collection.findOne(query);
-
-            if (userData === null) {
-                msg.channel.send(tulp.notUserMsg);
-                return;
-            }
-
-            let i = 0;
-            let tulpArr = userData.tulps;
-            const n = tulpArr.length;
-
-            while (i < n && tulpArr[i].username !== username) {
-                i++;
-            }
-
-            if (i === n) {
-                msg.channel.send(tulp.noDataMsg);
-                return;
-            }
-
-            let selectedTulp = tulpArr[i];
-
-            if (selectedTulp.avatar === avatarLink) {
-                msg.channel.send('Pleave provide a different profile picture to change to');
-                return;
-            }
-
-            selectedTulp.avatar = avatarLink;
-            tulpArr[i] = selectedTulp;
-
-            const updateDoc = {
-                $set: {
-                    tulps: tulpArr
-                }
-            };
-
-            await collection.updateOne(query, updateDoc, { upsert: false });
-        }
-        catch (error) {
-            console.log(error);
+        if (userData === null) {
+            msg.channel.send(tulpConfig.notUserMsg);
             return;
         }
-        finally {
-            await client.close();
+
+        let i = 0;
+        let tulpArr = userData.tulps;
+        const n = tulpArr.length;
+
+        while (i < n && tulpArr[i].username !== username) {
+            i++;
         }
+
+        if (i === n) {
+            msg.channel.send(tulpConfig.noDataMsg);
+            return;
+        }
+
+        let selectedTulp = tulpArr[i];
+
+        if (selectedTulp.avatar === avatarLink) {
+            msg.channel.send('Pleave provide a different profile picture to change to');
+            return;
+        }
+
+        selectedTulp.avatar = avatarLink;
+        tulpArr[i] = selectedTulp;
+
+        const updateDoc = {
+            $set: {
+                tulps: tulpArr
+            }
+        };
+
+        await tulpCollection.updateOne(query, updateDoc, { upsert: false });
 
         msg.channel.send(editAvatar.confirmMsg);
     }

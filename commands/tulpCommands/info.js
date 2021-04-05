@@ -1,10 +1,7 @@
 const { info } = require('./tulpConfig.json');
-const { MongoClient } = require('mongodb');
-const {
-    mongodbURI,
-    tulp
-} = require('../../config.json');
+const { tulp: tulpConfig } = require('../../config.json');
 const Discord = require('discord.js');
+const { tulp: tulpCollection } = require('../../lib/database.js');
 
 module.exports = {
     names: info.names,
@@ -15,28 +12,10 @@ module.exports = {
     usage: '<name>',
     async execute(msg, args) {
         const query = { _id: msg.author.id };
-        const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
-
-        let userData;
-
-        try {
-            await client.connect();
-
-            const database = client.db('tulps');
-            const collection = database.collection('users');
-
-            userData = await collection.findOne(query);
-        }
-        catch (error) {
-            console.log(error);
-            return;
-        }
-        finally {
-            await client.close();
-        }
+        const userData = await tulpCollection.findOne(query);
 
         if (userData === null) {
-            msg.author.send(tulp.notUserMsg);
+            msg.author.send(tulpConfig.notUserMsg);
             return;
         }
 
@@ -44,7 +23,7 @@ module.exports = {
         const selectedTulp = userData.tulps.find(t => t.username === tulpName);
 
         if (typeof selectedTulp === 'undefined') {
-            msg.channel.send(tulp.noDataMsg);
+            msg.channel.send(tulpConfig.noDataMsg);
             return;
         }
 

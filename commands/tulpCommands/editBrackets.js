@@ -1,10 +1,9 @@
 const { editBrackets } = require('./tulpConfig.json');
-const { MongoClient } = require('mongodb');
 const {
-    mongodbURI,
-    tulp,
+    tulp: tulpConfig,
     tagSeparator
 } = require('../../config.json');
+const { tulp: tulpCollection } = require('../../lib/database.js');
 
 const enclosingText = 'text';
 
@@ -48,65 +47,49 @@ module.exports = {
         }
 
         const query = { _id: msg.author.id };
-        const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
+        const userData = await tulpCollection.findOne(query);
 
-        try {
-            await client.connect();
-
-            const database = client.db('tulps');
-            const collection = database.collection("users");
-
-            const userData = await collection.findOne(query);
-
-            if (userData === null) {
-                msg.channel.send(tulp.notUserMsg);
-                return;
-            }
-
-            let i = 0;
-            let selectedTulp = undefined;
-            let tulpArr = userData.tulps;
-
-            for (let j = 0, n = tulpArr.length; j < n; j++) {
-                const currentTulp = tulpArr[j];
-
-                // check for existing brackets
-                if (currentTulp.startBracket === startBracket && currentTulp.endBracket === endBracket) {
-                    msg.channel.send('These brackets are already being used');
-                    return;
-                }
-
-                // find tulp
-                if (currentTulp.username === name) {
-                    selectedTulp = currentTulp;
-                    i = j;
-                }
-            }
-
-            if (typeof selectedTulp === 'undefined') {
-                msg.channel.send(tulp.noDataMsg);
-                return;
-            }
-
-            selectedTulp.startBracket = startBracket;
-            selectedTulp.endBracket = endBracket;
-            tulpArr[i] = selectedTulp;
-
-            const updateDoc = {
-                $set: {
-                    tulps: tulpArr
-                }
-            };
-
-            await collection.updateOne(query, updateDoc, { upsert: false });
-        }
-        catch (error) {
-            console.log(error);
+        if (userData === null) {
+            msg.channel.send(tulpConfig.notUserMsg);
             return;
         }
-        finally {
-            await client.close();
+
+        let i = 0;
+        let selectedTulp = undefined;
+        let tulpArr = userData.tulps;
+
+        for (let j = 0, n = tulpArr.length; j < n; j++) {
+            const currentTulp = tulpArr[j];
+
+            // check for existing brackets
+            if (currentTulp.startBracket === startBracket && currentTulp.endBracket === endBracket) {
+                msg.channel.send('These brackets are already being used');
+                return;
+            }
+
+            // find tulp
+            if (currentTulp.username === name) {
+                selectedTulp = currentTulp;
+                i = j;
+            }
         }
+
+        if (typeof selectedTulp === 'undefined') {
+            msg.channel.send(tulpConfig.noDataMsg);
+            return;
+        }
+
+        selectedTulp.startBracket = startBracket;
+        selectedTulp.endBracket = endBracket;
+        tulpArr[i] = selectedTulp;
+
+        const updateDoc = {
+            $set: {
+                tulps: tulpArr
+            }
+        };
+
+        await tulpCollection.updateOne(query, updateDoc, { upsert: false });
 
         msg.channel.send(editBrackets.confirmMsg);
     }

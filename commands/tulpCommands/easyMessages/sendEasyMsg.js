@@ -1,39 +1,12 @@
-const {
-    clientID,
-    mongodbURI
-} = require('../../../config.json');
-const { sendMsg } = require('../tulpConfig.json');
-const { MongoClient } = require('mongodb');
+const { clientID } = require('../../../config.json');
 const Discord = require('discord.js');
+const { tulp: tulpCollection } = require('../../../lib/database.js');
 
 module.exports = {
-    names: 'send messages easily',
-    description: sendMsg.description,
-    argsRequired: false,
-    argsOptional: false,
-    guildOnly: false,
     usage: `<custom bracket><message><custom bracket>`,
-    async execute(msg) {
+    async sendEasyMsg(msg) {
         const query = { _id: msg.author.id };
-        const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
-
-        let userData;
-
-        try {
-            await client.connect();
-
-            const database = client.db('tulps');
-            const collection = database.collection('users');
-
-            userData = await collection.findOne(query);
-        }
-        catch (error) {
-            console.log(error);
-            return false;
-        }
-        finally {
-            client.close();
-        }
+        const userData = await tulpCollection.findOne(query);
 
         if (userData === null) {
             return false;
@@ -100,6 +73,7 @@ module.exports = {
         }
 
         tulpWebhook.send(tulpMsg);
+
         return true;
     }
 }

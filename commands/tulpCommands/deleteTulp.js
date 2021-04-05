@@ -1,9 +1,6 @@
 const { deleteTulp } = require('./tulpConfig.json');
-const { MongoClient } = require('mongodb');
-const {
-    mongodbURI,
-    tulp
-} = require('../../config.json');
+const { tulp: tulpConfig } = require('../../config.json');
+const { tulp: tulpCollection } = require('../../lib/database.js');
 
 module.exports = {
     names: deleteTulp.names,
@@ -14,50 +11,32 @@ module.exports = {
     usage: '<name>',
     async execute(msg, args) {
         const tulpName = args.join(' ').trim();
-
         const query = { _id: msg.author.id };
+        const userData = await tulpCollection.findOne(query);
 
-        const client = new MongoClient(mongodbURI, { useUnifiedTopology: true });
-
-        try {
-            await client.connect();
-
-            const database = client.db('tulps');
-            const collection = database.collection('users');
-
-            const userData = await collection.findOne(query);
-
-            if (userData === null) {
-                msg.channel.send(tulp.notUserMsg);
-                return;
-            }
-
-            const newTulpArr = userData.tulps.filter(t => t.username !== tulpName);
-
-            if (userData.tulps.length === newTulpArr.length) {
-                msg.channel.send(tulp.noDataMsg);
-                return;
-            }
-
-            if (newTulpArr.length) {
-                const updateDoc = {
-                    $set: {
-                        tulps: newTulpArr
-                    }
-                };
-
-                await collection.updateOne(query, updateDoc, { upsert: false });
-            }
-            else {
-                await collection.deleteOne(query);
-            }
-        }
-        catch (error) {
-            console.log(error);
+        if (userData === null) {
+            msg.channel.send(tulpConfig.notUserMsg);
             return;
         }
-        finally {
-            await client.close();
+
+        const newTulpArr = userData.tulps.filter(t => t.username !== tulpName);
+
+        if (userData.tulps.length === newTulpArr.length) {
+            msg.channel.send(tulpConfig.noDataMsg);
+            return;
+        }
+
+        if (newTulpArr.length) {
+            const updateDoc = {
+                $set: {
+                    tulps: newTulpArr
+                }
+            };
+
+            await tulpCollection.updateOne(query, updateDoc, { upsert: false });
+        }
+        else {
+            await tulpCollection.deleteOne(query);
         }
 
         msg.channel.send(deleteTulp.confirmMsg);
