@@ -15,10 +15,7 @@ module.exports = {
         // get specific tulp
         const userMessage = msg.content;
         const tulpArr = userData.tulps;
-        let selectedTulp = {
-            startBracket: '',
-            endBracket: ''
-        };
+        let selectedTulp = tulpArr[0];
         let hasTulp = false;
 
         for (let i = 0, n = tulpArr.length; i < n; i++) {
@@ -33,7 +30,7 @@ module.exports = {
             }
         }
 
-        if (hasTulp) {
+        if (!hasTulp) {
             return false;
         }
 
