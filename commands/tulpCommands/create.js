@@ -28,42 +28,46 @@ module.exports = {
             return;
         }
 
-        const query = { _id: msg.author.id };
-        const newTulp = {
-            username: username,
-            avatar: avatarLink,
-            startBracket: `${username}:`,
-            endBracket: ''
-        };
-        const userData = await tulpCollection.findOne(query);
+        const checkQuery = { _id: msg.author.id };
+        const isUser = await tulpCollection.countDocuments(checkQuery, { limit: 1 });
 
-        if (userData === null) {
-            const user = {
+        if (isUser) {
+            const updateQuery = {
                 _id: msg.author.id,
-                tulps: [newTulp]
+                'tulps.username': { $ne: username },
             };
-
-            await tulpCollection.insertOne(user);
-            msg.channel.send(create.confirmMsg);
-            return;
-        }
-
-        const existingTulp = userData.tulps.find(t => t.username === username);
-
-        if (typeof existingTulp === 'undefined') {
-            userData.tulps.push(newTulp);
-
-            const updateDoc = {
-                $set: {
-                    tulps: userData.tulps
+            const update = {
+                $push: {
+                    tulps: {
+                        username: username,
+                        avatar: avatarLink,
+                        startBracket: `${username}:`,
+                        endBracket: ''
+                    }
                 }
             };
+            const result = await tulpCollection.updateOne(updateQuery, update);
 
-            await tulpCollection.updateOne(query, updateDoc);
-            msg.channel.send(create.confirmMsg);
+            if (result.result.n) {
+                msg.channel.send(create.confirmMsg);
+            }
+            else {
+                msg.channel.send(create.existingMsg);
+            }
         }
         else {
-            msg.channel.send(create.existingMsg);
+            const newUser = {
+                _id: msg.author.id,
+                tulps: [{
+                    username: username,
+                    avatar: avatarLink,
+                    startBracket: `${username}:`,
+                    endBracket: ''
+                }]
+            };
+
+            await tulpCollection.insertOne(newUser);
+            msg.channel.send(create.confirmMsg);
         }
     }
 }

@@ -14,7 +14,7 @@ module.exports = {
     usage: `<name>${tagSeparator} <new name>`,
     async execute(msg, args) {
         let namesArr = args.join(' ').split(tagSeparator).map(n => n.trim());
-        const name = namesArr[0];
+        const oldName = namesArr[0];
         let newName = '';
         let needParameters = false;
 
@@ -25,65 +25,84 @@ module.exports = {
             newName = namesArr[1];
         }
 
-        if (needParameters || !name.length || !newName.length) {
-            msg.channel.send(`Please provide the old name and the new name spearated by a "${tagSeparator}"`);
+        if (needParameters || !oldName.length || !newName.length || oldName === newName) {
+            msg.channel.send(`Please provide the current name and a new name spearated by a "${tagSeparator}"`);
             return;
         }
 
-        if (name === newName) {
-            msg.channel.send('Please provide a different name to change to');
-            return;
-        }
+        //-----------------------------------------------------------
+        // get user
 
-        const query = { _id: msg.author.id };
-        const userData = await tulpCollection.findOne(query);
+        const userQuery = { _id: msg.author.id };
+        const options = {
+            projection: {
+                tulps: {
+                    $elemMatch: {
+                        username: oldName
+                    }
+                }
+            }
+        }
+        const userData = await tulpCollection.findOne(userQuery, options);
 
         if (userData === null) {
             msg.channel.send(tulpConfig.notUserMsg);
             return;
         }
 
-        let i = 0;
-        let tulpArr = userData.tulps;
-        const n = tulpArr.length;
-
-        while (i < n && tulpArr[i].username !== newName) {
-            i++;
-        }
-
-        if (i !== n) {
-            msg.channel.send('That new name is already being used');
-            return;
-        }
-
-        i = 0;
-
-        while (i < n && tulpArr[i].username !== name) {
-            i++;
-        }
-
-        if (i === n) {
+        if (typeof userData.tulps === 'undefined') {
             msg.channel.send(tulpConfig.noDataMsg);
             return;
         }
 
-        let selectedTulp = tulpArr[i];
+        //-----------------------------------------------------------
+        // check for existing username
 
-        if (!selectedTulp.endBracket.length && selectedTulp.startBracket.substring(0, selectedTulp.startBracket.length - 1) === name) {
-            selectedTulp.startBracket = `${newName}:`;
+        const checkUsernameQuery = {
+            _id: msg.author.id,
+            'tulps.username': newName
+        };
+        const existingUsername = await tulpCollection.countDocuments(checkUsernameQuery, { limit: 1 });
+
+        if (existingUsername) {
+            msg.channel.send('That new name is already being used');
+            return;
         }
 
-        selectedTulp.username = newName;
-        tulpArr[i] = selectedTulp;
+        //-----------------------------------------------------------
+        // set new brackets
 
-        const updateDoc = {
+        let selectedTulp = userData.tulps[0];
+        const newStartBracket = `${newName}:`;
+        const checkBracketsQuery = {
+            _id: msg.author.id,
+            'tulps.startBracket': newStartBracket,
+            'tulps.endBracket': ''
+        };
+        const existingBrackets = await tulpCollection.countDocuments(checkBracketsQuery, { limit: 1 });
+
+        if (!existingBrackets && !selectedTulp.endBracket.length && selectedTulp.startBracket.substring(0, selectedTulp.startBracket.length - 1) === oldName) {
+            selectedTulp.startBracket = newStartBracket;
+        }
+
+        //-----------------------------------------------------------
+        // update
+
+        const updateQuery = {
+            _id: msg.author.id,
+            tulps: {
+                $elemMatch: { username: oldName }
+            }
+        };
+        const update = {
             $set: {
-                tulps: tulpArr
+                'tulps.$.username': newName,
+                'tulps.$.startBracket': selectedTulp.startBracket,
+                'tulps.$.endBracket': selectedTulp.endBracket
             }
         };
 
-        await tulpCollection.updateOne(query, updateDoc);
-
+        await tulpCollection.updateOne(updateQuery, update);
         msg.channel.send(editName.confirmMsg);
     }
 }

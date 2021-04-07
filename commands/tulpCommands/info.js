@@ -11,22 +11,30 @@ module.exports = {
     guildOnly: false,
     usage: '<name>',
     async execute(msg, args) {
+        const username = args.join(' ').trim();
         const query = { _id: msg.author.id };
-        const userData = await tulpCollection.findOne(query);
+        const options = {
+            projection: {
+                tulps: {
+                    $elemMatch: {
+                        username: username
+                    }
+                }
+            }
+        }
+        const userData = await tulpCollection.findOne(query, options);
 
         if (userData === null) {
             msg.channel.send(tulpConfig.notUserMsg);
             return;
         }
 
-        const tulpName = args[0].trim();
-        const selectedTulp = userData.tulps.find(t => t.username === tulpName);
-
-        if (typeof selectedTulp === 'undefined') {
+        if (typeof userData.tulps === 'undefined') {
             msg.channel.send(tulpConfig.noDataMsg);
             return;
         }
 
+        const selectedTulp = userData.tulps[0];
         const info = new Discord.MessageEmbed()
             .setThumbnail(selectedTulp.avatar)
             .setTitle(selectedTulp.username)

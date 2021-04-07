@@ -31,45 +31,22 @@ module.exports = {
             return;
         }
 
-        const query = { _id: msg.author.id };
-        const userData = await tulpCollection.findOne(query);
-
-        if (userData === null) {
-            msg.channel.send(tulpConfig.notUserMsg);
-            return;
-        }
-
-        let i = 0;
-        let tulpArr = userData.tulps;
-        const n = tulpArr.length;
-
-        while (i < n && tulpArr[i].username !== username) {
-            i++;
-        }
-
-        if (i === n) {
-            msg.channel.send(tulpConfig.noDataMsg);
-            return;
-        }
-
-        let selectedTulp = tulpArr[i];
-
-        if (selectedTulp.avatar === avatarLink) {
-            msg.channel.send('Pleave provide a different profile picture to change to');
-            return;
-        }
-
-        selectedTulp.avatar = avatarLink;
-        tulpArr[i] = selectedTulp;
-
-        const updateDoc = {
+        const query = {
+            _id: msg.author.id,
+            'tulps.username': username
+        };
+        const update = {
             $set: {
-                tulps: tulpArr
+                'tulps.$.avatar': avatarLink
             }
         };
+        const result = await tulpCollection.updateOne(query, update);
 
-        await tulpCollection.updateOne(query, updateDoc);
-
-        msg.channel.send(editAvatar.confirmMsg);
+        if (result.result.n) {
+            msg.channel.send(editAvatar.confirmMsg);
+        }
+        else {
+            msg.channel.send(tulpConfig.noDataMsg);
+        }
     }
 }

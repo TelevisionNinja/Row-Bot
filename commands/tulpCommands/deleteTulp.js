@@ -10,35 +10,34 @@ module.exports = {
     guildOnly: false,
     usage: '<name>',
     async execute(msg, args) {
-        const tulpName = args.join(' ').trim();
-        const query = { _id: msg.author.id };
-        const userData = await tulpCollection.findOne(query);
+        const username = args.join(' ').trim();
+        const query = {
+            _id: msg.author.id,
+            'tulps.username': username
+        };
+        const update = {
+            $pull: {
+                tulps: {
+                    username: username
+                }
+            }
+        };
+        const result = await tulpCollection.updateOne(query, update);
 
-        if (userData === null) {
-            msg.channel.send(tulpConfig.notUserMsg);
-            return;
-        }
+        if (result.result.n) {
+            msg.channel.send(deleteTulp.confirmMsg);
 
-        const newTulpArr = userData.tulps.filter(t => t.username !== tulpName);
-
-        if (userData.tulps.length === newTulpArr.length) {
-            msg.channel.send(tulpConfig.noDataMsg);
-            return;
-        }
-
-        if (newTulpArr.length) {
-            const updateDoc = {
-                $set: {
-                    tulps: newTulpArr
+            const deleteQuery = {
+                _id: msg.author.id,
+                tulps: {
+                    $size: 0
                 }
             };
-
-            await tulpCollection.updateOne(query, updateDoc);
+    
+            await tulpCollection.deleteOne(deleteQuery);
         }
         else {
-            await tulpCollection.deleteOne(query);
+            msg.channel.send(tulpConfig.noDataMsg);
         }
-
-        msg.channel.send(deleteTulp.confirmMsg);
     }
 }

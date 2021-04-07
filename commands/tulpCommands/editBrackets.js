@@ -15,17 +15,15 @@ module.exports = {
     guildOnly: false,
     usage: `<name>${tagSeparator} <new_bracket>${enclosingText}<new_bracket>`,
     async execute(msg, args) {
-        args = args.join(' ').split(tagSeparator).map(s => s.trim());
-
+        const params = args.join(' ').split(tagSeparator).map(s => s.trim());
         const errorMessage = `Please provide a name followed by a "${tagSeparator}" and then the new brackets enclosing the word "${enclosingText}". "${tagSeparator}" are not allowed in brackets`;
 
-        if (args.length < 2) {
+        if (params.length < 2) {
             msg.channel.send(errorMessage);
             return;
         }
 
-        const name = args[0];
-        const unparsedBrackets = args[1];
+        const unparsedBrackets = params[1];
 
         if (unparsedBrackets.indexOf(enclosingText) === -1) {
             msg.channel.send(errorMessage);
@@ -47,51 +45,36 @@ module.exports = {
             return;
         }
 
-        const query = { _id: msg.author.id };
-        const userData = await tulpCollection.findOne(query);
+        const checkQuery = {
+            _id: msg.author.id,
+            'tulps.startBracket': startBracket,
+            'tulps.endBracket': endBracket
+        };
+        const existing = await tulpCollection.countDocuments(checkQuery, { limit: 1 });
 
-        if (userData === null) {
-            msg.channel.send(tulpConfig.notUserMsg);
+        if (existing) {
+            msg.channel.send('These brackets are already being used');
             return;
         }
 
-        let i = 0;
-        let selectedTulp = undefined;
-        let tulpArr = userData.tulps;
-
-        for (let j = 0, n = tulpArr.length; j < n; j++) {
-            const currentTulp = tulpArr[j];
-
-            // check for existing brackets
-            if (currentTulp.startBracket === startBracket && currentTulp.endBracket === endBracket) {
-                msg.channel.send('These brackets are already being used');
-                return;
-            }
-
-            // find tulp
-            if (currentTulp.username === name) {
-                selectedTulp = currentTulp;
-                i = j;
-            }
-        }
-
-        if (typeof selectedTulp === 'undefined') {
-            msg.channel.send(tulpConfig.noDataMsg);
-            return;
-        }
-
-        selectedTulp.startBracket = startBracket;
-        selectedTulp.endBracket = endBracket;
-        tulpArr[i] = selectedTulp;
-
-        const updateDoc = {
+        const username = params[0];
+        const updateQuery = {
+            _id: msg.author.id,
+            'tulps.username': username
+        };
+        const update = {
             $set: {
-                tulps: tulpArr
+                'tulps.$.startBracket': startBracket,
+                'tulps.$.endBracket': endBracket
             }
         };
+        const result = await tulpCollection.updateOne(updateQuery, update);
 
-        await tulpCollection.updateOne(query, updateDoc);
-
-        msg.channel.send(editBrackets.confirmMsg);
+        if (result.result.n) {
+            msg.channel.send(editBrackets.confirmMsg);
+        }
+        else {
+            msg.channel.send(tulpConfig.noDataMsg);
+        }
     }
 }
