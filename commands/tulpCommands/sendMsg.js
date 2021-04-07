@@ -29,25 +29,37 @@ module.exports = {
             return;
         }
 
+        const tulpMsg = str.substring(index + 1).trim();
+
+        if (!tulpMsg.length) {
+            return;
+        }
+
+        // get specific tulp using username
+        const username = str.substring(0, index).trim();
         const query = { _id: msg.author.id };
-        const userData = await tulpCollection.findOne(query);
+        const options = {
+            projection: {
+                tulps: {
+                    $elemMatch: {
+                        username: username
+                    }
+                }
+            }
+        }
+        const userData = await tulpCollection.findOne(query, options);//-----------------
 
         if (userData === null) {
-            // tell user to use the create command
-            msg.author.send(tulpConfig.notUserMsg);
+            msg.channel.send(tulpConfig.notUserMsg);
             return;
         }
 
-        // get specific tulp using tulpName
-        const tulpName = str.substring(0, index).trim();
-        const selectedTulp = userData.tulps.find(t => t.username === tulpName);
-
-        if (typeof selectedTulp === 'undefined') {
-            msg.author.send(tulpConfig.noDataMsg);
+        if (typeof userData.tulps === 'undefined') {
+            msg.channel.send(tulpConfig.noDataMsg);
             return;
         }
 
-        const tulpMsg = str.substring(index + 1).trim();
+        const selectedTulp = userData.tulps[0];
 
         //-------------------------------------------------------------------------------------
         // detect dm channel
@@ -65,9 +77,12 @@ module.exports = {
         // webhook
 
         const channelWebhooks = await msg.channel.fetchWebhooks();
+        const webhookArr = channelWebhooks.values();
         let tulpWebhook = undefined;
 
-        for (const webhook of channelWebhooks.values()) {
+        for (let i = 0, n = webhookArr.length; i < n; i++) {
+            const webhook = webhookArr[i];
+
             if (webhook.owner.id === clientID) {
                 tulpWebhook = webhook;
                 break;

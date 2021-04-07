@@ -15,7 +15,10 @@ module.exports = {
         // get specific tulp
         const userMessage = msg.content;
         const tulpArr = userData.tulps;
-        let selectedTulp = tulpArr[0];
+        let selectedTulp = {
+            startBracket: '',
+            endBracket: ''
+        };
         let hasTulp = false;
 
         for (let i = 0, n = tulpArr.length; i < n; i++) {
@@ -36,6 +39,10 @@ module.exports = {
 
         const tulpMsg = userMessage.substring(selectedTulp.startBracket.length, userMessage.length - selectedTulp.endBracket.length).trim();
 
+        if (!tulpMsg.length) {
+            return false;
+        }
+
         //-------------------------------------------------------------------------------------
         // detect dm channel
 
@@ -47,20 +54,19 @@ module.exports = {
             msg.channel.send(simulatedMsg);
             return true;
         }
-        
-        msg.delete();
 
-        if (!tulpMsg.length) {
-            return false;
-        }
+        msg.delete();
 
         //-------------------------------------------------------------------------------------
         // webhook
 
         const channelWebhooks = await msg.channel.fetchWebhooks();
+        const webhookArr = channelWebhooks.values();
         let tulpWebhook = undefined;
 
-        for (const webhook of channelWebhooks.values()) {
+        for (let i = 0, n = webhookArr.length; i < n; i++) {
+            const webhook = webhookArr[i];
+
             if (webhook.owner.id === clientID) {
                 tulpWebhook = webhook;
                 break;
