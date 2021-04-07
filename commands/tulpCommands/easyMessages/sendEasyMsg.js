@@ -61,17 +61,7 @@ module.exports = {
         // webhook
 
         const channelWebhooks = await msg.channel.fetchWebhooks();
-        const webhookArr = channelWebhooks.values();
-        let tulpWebhook = undefined;
-
-        for (let i = 0, n = webhookArr.length; i < n; i++) {
-            const webhook = webhookArr[i];
-
-            if (webhook.owner.id === clientID) {
-                tulpWebhook = webhook;
-                break;
-            }
-        }
+        let tulpWebhook = channelWebhooks.get(clientID);
 
         if (typeof tulpWebhook === 'undefined') {
             try {
@@ -85,7 +75,7 @@ module.exports = {
         }
         else {
             if (tulpWebhook.name !== selectedTulp.username || tulpWebhook.avatar !== selectedTulp.avatar) {
-                await tulpWebhook.edit({
+                tulpWebhook.edit({
                     name: selectedTulp.username,
                     avatar: selectedTulp.avatar
                 });
@@ -93,7 +83,6 @@ module.exports = {
         }
 
         tulpWebhook.send(tulpMsg);
-
         return true;
     }
 }
