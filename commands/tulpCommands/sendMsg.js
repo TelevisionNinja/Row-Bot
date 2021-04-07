@@ -47,7 +47,7 @@ module.exports = {
                 }
             }
         }
-        const userData = await tulpCollection.findOne(query, options);//-----------------
+        const userData = await tulpCollection.findOne(query, options);
 
         if (userData === null) {
             msg.channel.send(tulpConfig.notUserMsg);
