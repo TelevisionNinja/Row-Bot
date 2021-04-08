@@ -1,6 +1,6 @@
-const { clientID } = require('../../../config.json');
 const Discord = require('discord.js');
 const { tulp: tulpCollection } = require('../../../lib/database.js');
+const webhookUtils = require('../lib/webhookUtils.js');
 
 module.exports = {
     usage: `<custom bracket><message><custom bracket>`,
@@ -24,10 +24,10 @@ module.exports = {
         for (let i = 0, n = tulpArr.length; i < n; i++) {
             const currentTulp = tulpArr[i];
 
-            if (userMessage.startsWith(currentTulp.startBracket) &&
-                userMessage.endsWith(currentTulp.endBracket) &&
-                currentTulp.startBracket.length >= selectedTulp.startBracket.length &&
-                currentTulp.endBracket.length >= selectedTulp.endBracket.length) {
+            if (currentTulp.startBracket.length >= selectedTulp.startBracket.length &&
+                currentTulp.endBracket.length >= selectedTulp.endBracket.length &&
+                userMessage.startsWith(currentTulp.startBracket) &&
+                userMessage.endsWith(currentTulp.endBracket)) {
                 selectedTulp = currentTulp;
                 hasTulp = true;
             }
@@ -52,37 +52,13 @@ module.exports = {
                 .setDescription(tulpMsg);
 
             msg.channel.send(simulatedMsg);
-            return true;
-        }
-
-        msg.delete();
-
-        //-------------------------------------------------------------------------------------
-        // webhook
-
-        const channelWebhooks = await msg.channel.fetchWebhooks();
-        let tulpWebhook = channelWebhooks.get(clientID);
-
-        if (typeof tulpWebhook === 'undefined') {
-            try {
-                tulpWebhook = await msg.channel.createWebhook(selectedTulp.username, {
-                    avatar: selectedTulp.avatar
-                });
-            }
-            catch (error) {
-                return false;
-            }
         }
         else {
-            if (tulpWebhook.name !== selectedTulp.username || tulpWebhook.avatar !== selectedTulp.avatar) {
-                tulpWebhook.edit({
-                    name: selectedTulp.username,
-                    avatar: selectedTulp.avatar
-                });
-            }
+            // send webhook message
+            msg.delete();
+            webhookUtils.sendMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
         }
 
-        tulpWebhook.send(tulpMsg);
         return true;
     }
 }

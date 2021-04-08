@@ -1,12 +1,12 @@
 const {
     tulp: tulpConfig,
-    clientID,
     tagSeparator
 } = require('../../config.json');
 const { sendMsg } = require('./tulpConfig.json');
 const Discord = require('discord.js');
 const { usage: easyUsage } = require('./easyMessages/sendEasyMsg.js');
 const { tulp: tulpCollection } = require('../../lib/database.js');
+const webhookUtils = require('./lib/webhookUtils.js');
 
 module.exports = {
     names: sendMsg.names,
@@ -76,29 +76,6 @@ module.exports = {
         //-------------------------------------------------------------------------------------
         // webhook
 
-        const channelWebhooks = await msg.channel.fetchWebhooks();
-        let tulpWebhook = channelWebhooks.get(clientID);
-
-        if (typeof tulpWebhook === 'undefined') {
-            try {
-                tulpWebhook = await msg.channel.createWebhook(selectedTulp.username, {
-                    avatar: selectedTulp.avatar
-                });
-            }
-            catch (error) {
-                msg.channel.send('I couldn\'t create a webhook because there\'s too many in here 😢');
-                return;
-            }
-        }
-        else {
-            if (tulpWebhook.name !== selectedTulp.username || tulpWebhook.avatar !== selectedTulp.avatar) {
-                tulpWebhook.edit({
-                    name: selectedTulp.username,
-                    avatar: selectedTulp.avatar
-                });
-            }
-        }
-
-        tulpWebhook.send(tulpMsg);
+        webhookUtils.sendMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
     }
 }
