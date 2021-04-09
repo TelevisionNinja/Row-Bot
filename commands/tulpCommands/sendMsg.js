@@ -70,12 +70,10 @@ module.exports = {
                 .setDescription(tulpMsg);
 
             msg.channel.send(simulatedMsg);
-            return;
         }
-
-        //-------------------------------------------------------------------------------------
-        // webhook
-
-        webhookUtils.sendMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
+        else {
+            // webhook
+            webhookUtils.sendMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
+        }
     }
 }

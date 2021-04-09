@@ -51,7 +51,7 @@ module.exports = {
                         {
                             name: 'Results',
                             value: count
-                        },
+                        }
                     );
 
                 msg.channel.send(embed);
