@@ -6,7 +6,7 @@ const { sendMsg } = require('./tulpConfig.json');
 const Discord = require('discord.js');
 const { usage: easyUsage } = require('./easyMessages/sendEasyMsg.js');
 const { tulp: tulpCollection } = require('../../lib/database.js');
-const webhookUtils = require('../../lib/webhookUtils.js');
+const msgUtils = require('../../lib/msgUtils.js');
 
 module.exports = {
     names: sendMsg.names,
@@ -73,7 +73,7 @@ module.exports = {
         }
         else {
             // webhook
-            webhookUtils.sendMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
+            msgUtils.sendWebhookMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
         }
     }
 }

@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const { tulp: tulpCollection } = require('../../../lib/database.js');
-const webhookUtils = require('../../../lib/webhookUtils.js');
+const msgUtils = require('../../../lib/msgUtils.js');
 
 module.exports = {
     usage: `<custom bracket><message><custom bracket>`,
@@ -56,7 +56,7 @@ module.exports = {
         else {
             // send webhook message
             msg.delete();
-            webhookUtils.sendMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
+            msgUtils.sendWebhookMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
         }
 
         return true;
