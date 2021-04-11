@@ -6,7 +6,7 @@ const { sendMsg } = require('./tulpConfig.json');
 const Discord = require('discord.js');
 const { usage: easyUsage } = require('./easyMessages/sendEasyMsg.js');
 const { tulp: tulpCollection } = require('../../lib/database.js');
-const webhookUtils = require('./lib/webhookUtils.js');
+const webhookUtils = require('../../lib/webhookUtils.js');
 
 module.exports = {
     names: sendMsg.names,
