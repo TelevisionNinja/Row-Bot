@@ -215,6 +215,11 @@ client.on('message', async msg => {
 });
 
 //--------------------------------------------------------------------------------
+// disconnect
+
+client.on('disconnect', () => console.log(`Row Bot disconnected ${new Date().toString()}`));
+
+//--------------------------------------------------------------------------------
 // login
 
 client.login(token);
