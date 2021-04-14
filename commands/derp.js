@@ -34,7 +34,7 @@ module.exports = {
             source,
             results
         } = await getImage(args);
-        
+
         msgUtils.sendImg(msg.channel, imgURL, source, results);
     },
     getImage
