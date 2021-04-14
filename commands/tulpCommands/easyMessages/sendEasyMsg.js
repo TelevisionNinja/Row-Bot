@@ -37,10 +37,24 @@ module.exports = {
             return false;
         }
 
-        const tulpMsg = userMessage.substring(selectedTulp.startBracket.length, userMessage.length - selectedTulp.endBracket.length).trim();
+        let tulpMsg = userMessage.substring(selectedTulp.startBracket.length, userMessage.length - selectedTulp.endBracket.length).trim();
 
         if (!tulpMsg.length) {
             return false;
+        }
+
+        //-------------------------------------------------------------------------------------
+        // referenced msg
+
+        const reference = msg.referencedMessage;
+
+        if (typeof reference !== 'undefined') {
+            let referenceMsg = reference.content;
+
+            // put the referenced msg in a quote
+            referenceMsg = referenceMsg.replaceAll('\n', '\n> ');
+
+            tulpMsg = `> ${referenceMsg}\n<@${reference.author.id}>\n\n${tulpMsg}`;
         }
 
         //-------------------------------------------------------------------------------------
