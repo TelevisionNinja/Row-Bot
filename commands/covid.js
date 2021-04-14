@@ -4,6 +4,16 @@ const {
 } = require('../config.json');
 const axios = require('axios');
 const Discord = require('discord.js');
+const {
+    RateLimiterMemory,
+    RateLimiterQueue
+} = require('rate-limiter-flexible');
+
+const limit = new RateLimiterMemory({
+    points: 10,
+    duration: 1,
+  });
+const rateLimiter = new RateLimiterQueue(limit);
 
 module.exports = {
     names: covid.names,
@@ -35,6 +45,8 @@ module.exports = {
  * @param {*} nthDay 
  */
 async function getData(nthDay = 0) {
+    await rateLimiter.removeTokens(1);
+
     if (nthDay === 3) {
         return '';
     }

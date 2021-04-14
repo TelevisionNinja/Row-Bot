@@ -7,6 +7,17 @@ const {
     rule,
     tagSeparator
 } = require('../config.json');
+const {
+    RateLimiterMemory,
+    RateLimiterQueue
+} = require('rate-limiter-flexible');
+
+const limit = new RateLimiterMemory({
+    points: 10,
+    duration: 1,
+  });
+const rule0RateLimiter = new RateLimiterQueue(limit);
+const rule1RateLimiter = new RateLimiterQueue(limit);
 
 module.exports = {
     names: rule.names,
@@ -42,6 +53,8 @@ module.exports = {
  * @param {*} tagArr array of tags that are already formatted
  */
 async function getImageRule0(tagArr) {
+    await rule0RateLimiter.removeTokens(1);
+
     const URL = `${rule.sites[0].API}${tagArr.join(rule.separator)}&limit=`;
 
     let imgURL = '';
@@ -106,6 +119,8 @@ async function getImageRule0(tagArr) {
  * @param {*} tagArr array of tags that are already formatted
  */
 async function getImageRule1(tagArr) {
+    await rule1RateLimiter.removeTokens(1);
+
     // this api has a max of 3 tags
     if (tagArr.length > 3) {
         tagArr = tagArr.slice(0, 3);

@@ -5,7 +5,16 @@ const {
 const msgUtils = require('../lib/msgUtils.js');
 const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
+const {
+    RateLimiterMemory,
+    RateLimiterQueue
+} = require('rate-limiter-flexible');
 
+const limit = new RateLimiterMemory({
+    points: 10,
+    duration: 1,
+  });
+const rateLimiter = new RateLimiterQueue(limit);
 const URL = `${derp.API}${derp.APIKey}&q=`;
 
 module.exports = {
@@ -38,6 +47,8 @@ module.exports = {
  * @param {*} tagArr array of tags to be searched
  */
 async function getImage(tagArr) {
+    await rateLimiter.removeTokens(1);
+
     // whitespace is replaced with '+'
     // tags are separated by '%2C'
     // '-' infront of a tag means to exclude it

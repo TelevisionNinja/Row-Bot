@@ -1,6 +1,16 @@
 const { fifty } = require('../config.json');
 const axios = require('axios');
 const stringUtils = require('../lib/stringUtils.js');
+const {
+    RateLimiterMemory,
+    RateLimiterQueue
+} = require('rate-limiter-flexible');
+
+const limit = new RateLimiterMemory({
+    points: 10,
+    duration: 1,
+  });
+const rateLimiter = new RateLimiterQueue(limit);
 
 module.exports = {
     names: fifty.names,
@@ -23,6 +33,8 @@ module.exports = {
 }
 
 async function getRandomFifty() {
+    await rateLimiter.removeTokens(1);
+
     let title = '';
     let link = '';
 

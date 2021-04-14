@@ -3,7 +3,16 @@ const {
     noResultsMsg
 } = require('../config.json');
 const axios = require('axios');
+const {
+    RateLimiterMemory,
+    RateLimiterQueue
+} = require('rate-limiter-flexible');
 
+const limit = new RateLimiterMemory({
+    points: 10,
+    duration: 1,
+  });
+const rateLimiter = new RateLimiterQueue(limit);
 const URL = `${tenor.API}${tenor.APIKey}&q=`;
 
 module.exports = {
@@ -38,6 +47,8 @@ module.exports = {
  * @param {*} tagArr array of tags to be searched
  */
 async function getGif(tagArr) {
+    await rateLimiter.removeTokens(1);
+
     const searchTerms = encodeURIComponent(tagArr.join(' '));
     const searchURL = `${URL}${searchTerms}`;
 

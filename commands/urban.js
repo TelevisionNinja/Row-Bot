@@ -7,6 +7,16 @@ const stringUtils = require('../lib/stringUtils.js');
 const querystring = require('querystring');
 const axios = require('axios');
 const Discord = require('discord.js');
+const {
+    RateLimiterMemory,
+    RateLimiterQueue
+} = require('rate-limiter-flexible');
+
+const limit = new RateLimiterMemory({
+    points: 10,
+    duration: 1,
+  });
+const rateLimiter = new RateLimiterQueue(limit);
 
 module.exports = {
     names: urban.names,
@@ -18,6 +28,8 @@ module.exports = {
     usage: '<search term>',
     cooldown: 1,
     async execute(msg, args) {
+        await rateLimiter.removeTokens(1);
+
         const searchWord = querystring.stringify({ term: args.join(' ') });
         const URL = `${urban.API}${searchWord}`;
 
