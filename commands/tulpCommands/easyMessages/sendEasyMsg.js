@@ -49,11 +49,8 @@ module.exports = {
         const reference = msg.referencedMessage;
 
         if (typeof reference !== 'undefined') {
-            let referenceMsg = reference.content;
-
             // put the referenced msg in a quote
-            referenceMsg = referenceMsg.replaceAll('\n', '\n> ');
-
+            const referenceMsg = reference.content.replaceAll('\n', '\n> ');
             tulpMsg = `> ${referenceMsg}\n<@${reference.author.id}>\n\n${tulpMsg}`;
         }
 
