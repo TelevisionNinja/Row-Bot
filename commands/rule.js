@@ -187,13 +187,10 @@ async function getImage(tagArr) {
     tagArr = stringUtils.tagArrToParsedTagArr(tagArr, rule.whitespace);
 
     const numOfSites = rule.sites.length;
-
     let randomSiteID = rand.randomMath(numOfSites);
-
     let img = '';
     let source = '';
     let count = 0;
-
     let requestedImg;
 
     if (randomSiteID) {
@@ -218,7 +215,7 @@ async function getImage(tagArr) {
 
         count = requestedImg.results;
     }
-    
+
     img = requestedImg.imgURL;
     source = requestedImg.source;
 

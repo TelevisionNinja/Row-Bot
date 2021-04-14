@@ -58,21 +58,19 @@ async function getImage(tagArr) {
     let source = '';
     let results = 0;
 
-    if (tags !== '') {
-        try {
-            const response = await axios.get(`${URL}${tags}`);
-            results = parseInt(response.data.total);
+    try {
+        const response = await axios.get(`${URL}${tags}`);
+        results = parseInt(response.data.total);
 
-            if (results) {
-                const img = response.data.images[0];
+        if (results) {
+            const img = response.data.images[0];
 
-                imgURL = img.representations.full;
-                source = `${derp.URL}${img.id}`;
-            }
+            imgURL = img.representations.full;
+            source = `${derp.URL}${img.id}`;
         }
-        catch (error) {
-            console.log(error);
-        }
+    }
+    catch (error) {
+        console.log(error);
     }
 
     return {
