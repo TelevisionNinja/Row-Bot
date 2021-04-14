@@ -61,7 +61,7 @@ module.exports = {
             }
 
             embed = new Discord.MessageEmbed()
-                .setTitle(argCommand.names[0])
+                .setTitle(`Command: ${argCommand.names[0]}`)
                 .setDescription(argCommand.description)
                 .addFields(
                     {
