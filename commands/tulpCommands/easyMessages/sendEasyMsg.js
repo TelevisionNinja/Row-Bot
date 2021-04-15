@@ -70,6 +70,11 @@ module.exports = {
                 mention = `<@${reference.author.id}> - [jump](${reference.jumpLink})`;
             }
 
+            // check for embed
+            if (!referenceMsg.length) {
+                referenceMsg = `[*Select to see attachment*](${reference.jumpLink})`;
+            }
+
             // put the referenced msg in a quote
             referenceMsg = referenceMsg.replaceAll('\n', '\n> ');
             tulpMsg = `> ${referenceMsg}\n${mention}\n\n${tulpMsg}`;
