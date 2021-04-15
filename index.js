@@ -83,8 +83,6 @@ client.on('message', async msg => {
 
         let botReply = '';
         let replyBool = false;
-
-        //msgStr = stringUtils.removeAllSpecialChars(msgStr);
         const words = msgStr.split(' ');
 
         //--------------------------------------------------------------------------------
