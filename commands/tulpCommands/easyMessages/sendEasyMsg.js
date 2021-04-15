@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const { tulp: tulpCollection } = require('../../../lib/database.js');
 const msgUtils = require('../../../lib/msgUtils.js');
+const stringUtils = require('../../../lib/stringUtils.js');
 
 module.exports = {
     usage: `<custom bracket><message><custom bracket>`,
@@ -61,7 +62,7 @@ module.exports = {
                     const middleIndex = referenceMsg.indexOf('](https://discord.com/channels/');
                     const endIndex = referenceMsg.indexOf(')\n\n');
 
-                    if (referenceMsg.indexOf('[') < middleIndex && middleIndex < endIndex) {
+                    if ((referenceMsg.indexOf('[') < middleIndex && middleIndex < endIndex)) {
                         referenceMsg = referenceMsg.substring(endIndex + 3);
                     }
                 }
@@ -70,14 +71,19 @@ module.exports = {
                 mention = `<@${reference.author.id}> - [jump](${reference.jumpLink})`;
             }
 
-            // check for embed
-            if (!referenceMsg.length) {
+            // detect embed or prevent embed from showing
+            if (!referenceMsg.length || stringUtils.containsURL(referenceMsg)) {
                 referenceMsg = `[*Select to see attachment*](${reference.jumpLink})`;
             }
 
             // put the referenced msg in a quote
             referenceMsg = referenceMsg.replaceAll('\n', '\n> ');
             tulpMsg = `> ${referenceMsg}\n${mention}\n\n${tulpMsg}`;
+
+            // check if the msg is over the discord char limit
+            if (tulpMsg.length > 2000) {
+                tulpMsg = stringUtils.cutOff(tulpMsg);
+            }
         }
 
         //-------------------------------------------------------------------------------------
