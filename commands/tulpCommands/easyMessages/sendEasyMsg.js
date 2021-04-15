@@ -49,18 +49,25 @@ module.exports = {
         const reference = msg.referencedMessage;
 
         if (reference) {
-            // put the referenced msg in a quote
-            const referenceMsg = reference.content.replaceAll('\n', '\n> ');
+            let referenceMsg = reference.content;
             let mention;
 
             // format mention and jump link
             if (reference.webhookID === reference.author.id) {
                 mention = `[@${reference.author.username}](${reference.jumpLink})`;
+
+                // remove reference inside of reference
+                if (referenceMsg.startsWith('> ') && referenceMsg.includes('](https://discord.com/channels/')) {
+                    // + 3  bc )\n\n is 3 chars
+                    referenceMsg = referenceMsg.substring(referenceMsg.indexOf(')') + 3);
+                }
             }
             else {
                 mention = `<@${reference.author.id}> - [jump](${reference.jumpLink})`;
             }
 
+            // put the referenced msg in a quote
+            referenceMsg = referenceMsg.replaceAll('\n', '\n> ');
             tulpMsg = `> ${referenceMsg}\n${mention}\n\n${tulpMsg}`;
         }
 
