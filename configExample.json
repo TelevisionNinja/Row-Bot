@@ -61,6 +61,8 @@
         "separator" : "%2C",
         "API" : "",
         "URL" : "",
+        "websiteName" : "",
+        "embedColor" : "",
 
         "intervalTags" : [""],
         "intervalChannelID" : "",
@@ -150,6 +152,8 @@
         "description" : "",
         "whitespace" : "_",
         "separator" : "+",
+        "websiteName" : "",
+        "embedColor" : "",
         "sites" : [
             {
                 "URL": "",
