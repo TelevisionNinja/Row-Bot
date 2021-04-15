@@ -51,7 +51,17 @@ module.exports = {
         if (reference) {
             // put the referenced msg in a quote
             const referenceMsg = reference.content.replaceAll('\n', '\n> ');
-            tulpMsg = `> ${referenceMsg}\n<@${reference.author.id}>\n\n${tulpMsg}`;
+            let mention;
+
+            // format mention and jump link
+            if (reference.webhookID === reference.author.id) {
+                mention = `[@${reference.author.username}](${reference.jumpLink})`;
+            }
+            else {
+                mention = `<@${reference.author.id}> - [jump](${reference.jumpLink})`;
+            }
+
+            tulpMsg = `> ${referenceMsg}\n${mention}\n\n${tulpMsg}`;
         }
 
         //-------------------------------------------------------------------------------------
