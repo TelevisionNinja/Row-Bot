@@ -49,7 +49,7 @@ module.exports = {
 
         if (msg.reference) {
             const reference = await msg.channel.messages.fetch(msg.reference.messageID);
-            let referenceMsg = reference.content;
+            let referenceMsg = reference.cleanContent;
             let mention;
 
             // format mention and jump link
