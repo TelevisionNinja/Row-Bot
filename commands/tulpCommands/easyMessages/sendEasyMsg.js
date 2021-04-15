@@ -57,9 +57,13 @@ module.exports = {
                 mention = `[@${reference.author.username}](${reference.jumpLink})`;
 
                 // remove reference inside of reference
-                if (referenceMsg.startsWith('> ') && referenceMsg.includes('](https://discord.com/channels/')) {
-                    // + 3  bc )\n\n is 3 chars
-                    referenceMsg = referenceMsg.substring(referenceMsg.indexOf(')') + 3);
+                if (referenceMsg.startsWith('> ')) {
+                    const middleIndex = referenceMsg.indexOf('](https://discord.com/channels/');
+                    const endIndex = referenceMsg.indexOf(')\n\n');
+
+                    if (referenceMsg.indexOf('[') < middleIndex && middleIndex < endIndex) {
+                        referenceMsg = referenceMsg.substring(endIndex + 3);
+                    }
                 }
             }
             else {
