@@ -47,15 +47,14 @@ module.exports = {
         //-------------------------------------------------------------------------------------
         // referenced msg
 
-        const reference = msg.referencedMessage;
-
-        if (reference) {
+        if (msg.reference) {
+            const reference = await msg.channel.messages.fetch(msg.reference.messageID);
             let referenceMsg = reference.content;
             let mention;
 
             // format mention and jump link
             if (reference.webhookID === reference.author.id) {
-                mention = `[@${reference.author.username}](${reference.jumpLink})`;
+                mention = `[@${reference.author.username}](${reference.url})`;
 
                 // remove reference inside of reference
                 if (referenceMsg.startsWith('> ')) {
@@ -68,12 +67,12 @@ module.exports = {
                 }
             }
             else {
-                mention = `<@${reference.author.id}> - [jump](${reference.jumpLink})`;
+                mention = `<@${reference.author.id}> - [jump](${reference.url})`;
             }
 
             // detect embed or prevent embed from showing
             if (!referenceMsg.length || stringUtils.containsURL(referenceMsg)) {
-                referenceMsg = `[*Select to see attachment*](${reference.jumpLink})`;
+                referenceMsg = `[*Select to see attachment*](${reference.url})`;
             }
 
             // put the referenced msg in a quote
