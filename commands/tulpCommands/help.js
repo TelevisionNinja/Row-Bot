@@ -58,6 +58,9 @@ module.exports = {
             else if (argCommand.argsOptional) {
                 usageStr = `${usageStr}\` or ${usageStr} ${argCommand.usage}\``;
             }
+            else {
+                usageStr = `${usageStr}\``;
+            }
 
             embed = new Discord.MessageEmbed()
                 .setTitle(`Tulp Command: ${argCommand.names[0]}`)
