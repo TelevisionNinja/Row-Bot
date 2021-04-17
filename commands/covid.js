@@ -275,13 +275,16 @@ function dataToEmbed(state, data) {
     const embed = new Discord.MessageEmbed();
 
     if (!stateFound) {
-        embed.setTitle(noResultsMsg);
+        embed.setTitle(noResultsMsg)
+            .setColor(covid.embedColor);
+
         return embed;
     }
 
     embed.setTitle(stateName)
         .setDescription(`Latest updated on ${lastUpdate} UTC`)
         .setFooter(source)
+        .setColor(covid.embedColor)
         .addFields(
             {
                 name: 'Confirmed Cases',
