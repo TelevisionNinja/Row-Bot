@@ -2,7 +2,7 @@ const rand = require('../lib/randomFunctions.js');
 const msgUtils = require('../lib/msgUtils.js');
 const stringUtils = require('../lib/stringUtils.js');
 const axios = require('axios');
-const parseString = require('xml2js').parseString;
+const { parseString } = require('xml2js');
 const {
     rule,
     tagSeparator
@@ -14,8 +14,8 @@ const {
 
 const limit = new RateLimiterMemory({
     points: 10,
-    duration: 1,
-  });
+    duration: 1
+});
 const rule0RateLimiter = new RateLimiterQueue(limit);
 const rule1RateLimiter = new RateLimiterQueue(limit);
 
@@ -187,7 +187,7 @@ async function getImage(tagArr) {
     tagArr = stringUtils.tagArrToParsedTagArr(tagArr, rule.whitespace);
 
     const numOfSites = rule.sites.length;
-    let randomSiteID = rand.randomMath(numOfSites);
+    const randomSiteID = rand.randomMath(numOfSites);
     let img = '';
     let source = '';
     let count = 0;
@@ -203,10 +203,8 @@ async function getImage(tagArr) {
     count = requestedImg.results;
 
     if (!count) {
-        // this cycles through the all of the sites
-        randomSiteID = ++randomSiteID % numOfSites;
-
-        if (randomSiteID) {
+        // cycle through the sites
+        if ((randomSiteID + 1) % numOfSites) {
             requestedImg = await getImageRule1(tagArr);
         }
         else {

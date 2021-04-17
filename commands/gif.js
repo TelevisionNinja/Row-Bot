@@ -10,8 +10,8 @@ const {
 
 const limit = new RateLimiterMemory({
     points: 10,
-    duration: 1,
-  });
+    duration: 1
+});
 const rateLimiter = new RateLimiterQueue(limit);
 const URL = `${tenor.API}${tenor.APIKey}&q=`;
 
