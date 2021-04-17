@@ -117,6 +117,15 @@
         "description" : "Lists all commands or gives more info about a specific command"
     },
 
+    "invite" : {
+        "names" : [
+            "invite",
+            "invitelink"
+        ],
+        "description" : "Gives an invite link for the bot",
+        "link" : ""
+    },
+
     "memes" : {
         "description" : "Posts memes",
         "channelID" : "",
