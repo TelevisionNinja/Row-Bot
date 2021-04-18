@@ -72,7 +72,7 @@ module.exports = {
                 msg.channel.send(noResultsMsg);
             }
         }
-        catch {
+        catch (error) {
             msg.channel.send(noResultsMsg);
         }
     }

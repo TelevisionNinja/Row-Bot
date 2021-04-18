@@ -58,7 +58,7 @@ async function getData(nthDay = 0) {
         response = await axios.get(getUrl(nthDay));
         results = response.data;
     }
-    catch {
+    catch (error) {
         results = await getData(nthDay + 1);
     }
 
