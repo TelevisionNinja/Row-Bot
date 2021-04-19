@@ -3,22 +3,13 @@ const rand = require('../lib/randomFunctions.js');
 
 module.exports = {
     description: 'Say goodbye',
-    execute(msg, words) {
-        let hasReply = false;
-        let replyStr = '';
-
+    execute(msg, filteredMsg) {
         for (let i = 0, n = farewells.length; i < n; i++) {
-            if (msg === farewells[i].toLowerCase()) {
-                return {
-                    hasReply: true,
-                    replyStr: farewells[rand.randomMath(n)]
-                };
+            if (filteredMsg === farewells[i].toLowerCase()) {
+                return farewells[rand.randomMath(n)];
             }
         }
 
-        return {
-            hasReply,
-            replyStr
-        };
+        return '';
     }
 }

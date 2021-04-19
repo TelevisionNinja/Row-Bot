@@ -1,38 +1,26 @@
 const { greetings } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
-const { names } = require('../config.json');
-const stringUtils = require('../lib/stringUtils.js');
+let { names } = require('../config.json');
+
+names = names.map(n => n.toLowerCase());
 
 module.exports = {
     description: 'Say hi',
-    execute(msg, words) {
-        let hasReply = false;
-        let replyStr = '';
+    execute(msg, filteredMsg) {
         const numOfGreetings = greetings.length;
 
-        msg = stringUtils.removeAllSpecialChars(msg);
-
         for (let i = 0; i < numOfGreetings; i++) {
-            if (msg === greetings[i].toLowerCase()) {
-                return {
-                    hasReply: true,
-                    replyStr: greetings[rand.randomMath(numOfGreetings)]
-                };
+            if (filteredMsg === greetings[i].toLowerCase()) {
+                return greetings[rand.randomMath(numOfGreetings)];
             }
         }
 
         for (let i = 0, n = names.length; i < n; i++) {
-            if (msg === names[i].toLowerCase()) {
-                return {
-                    hasReply: true,
-                    replyStr: greetings[rand.randomMath(numOfGreetings)]
-                };
+            if (filteredMsg === names[i]) {
+                return greetings[rand.randomMath(numOfGreetings)];
             }
         }
 
-        return {
-            hasReply,
-            replyStr
-        };
+        return '';
     }
 }

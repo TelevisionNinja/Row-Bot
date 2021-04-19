@@ -1,27 +1,23 @@
-const {
-    hate,
-    sadReplies
-} = require('../messages.json');
+const { greetings } = require('../messages.json');
 const rand = require('../lib/randomFunctions.js');
 
-module.exports = {
-    description: 'Reply to hate',
-    execute(msg, words) {
-        let isNoncommand = false;
-        let replyStr = '';
+const greetingsLowerCase = greetings.map(g => g.toLowerCase());
 
-        for (let i = 0, n = hate.length; i < n; i++) {
-            if (msg.includes(hate[i].toLowerCase())) {
-                return {
-                    isNoncommand: true,
-                    replyStr: sadReplies[rand.randomMath(sadReplies.length)]
-                };
+module.exports = {
+    description: 'Say hi',
+    execute(msg, filteredMsg) {
+        const numOfGreetings = greetings.length;
+
+        if (!filteredMsg.length) {
+            return greetings[rand.randomMath(numOfGreetings)];
+        }
+
+        for (let i = 0; i < numOfGreetings; i++) {
+            if (filteredMsg === greetingsLowerCase[i]) {
+                return greetings[rand.randomMath(numOfGreetings)];
             }
         }
 
-        return {
-            isNoncommand,
-            replyStr
-        };
+        return '';
     }
 }
