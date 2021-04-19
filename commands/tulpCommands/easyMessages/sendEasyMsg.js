@@ -3,6 +3,8 @@ const { tulp: tulpCollection } = require('../../../lib/database.js');
 const msgUtils = require('../../../lib/msgUtils.js');
 const stringUtils = require('../../../lib/stringUtils.js');
 
+const regex = new RegExp(/^(> )(.|\n){0,}(\[.{0,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n\n)/i);
+
 module.exports = {
     usage: `<custom bracket><message><custom bracket>`,
     async sendEasyMsg(msg) {
@@ -57,14 +59,7 @@ module.exports = {
                 mention = `[@${reference.author.username}](${reference.url})`;
 
                 // remove reference inside of reference
-                if (referenceMsg.startsWith('> ')) {
-                    const middleIndex = referenceMsg.indexOf('](https://discord.com/channels/');
-                    const endIndex = referenceMsg.indexOf(')\n\n');
-
-                    if ((referenceMsg.indexOf('[') < middleIndex && middleIndex < endIndex)) {
-                        referenceMsg = referenceMsg.substring(endIndex + 3);
-                    }
-                }
+                referenceMsg = referenceMsg.replace(regex, '');
             }
             else {
                 mention = `<@${reference.author.id}> - [jump](${reference.url})`;
@@ -76,13 +71,10 @@ module.exports = {
             }
 
             // put the referenced msg in a quote
-            referenceMsg = referenceMsg.replaceAll('\n', '\n> ');
-            tulpMsg = `> ${referenceMsg}\n${mention}\n\n${tulpMsg}`;
+            referenceMsg = stringUtils.cutOff(referenceMsg.replaceAll('\n', '\n> '), 64);
 
             // check if the msg is over the discord char limit
-            if (tulpMsg.length > 2000) {
-                tulpMsg = stringUtils.cutOff(tulpMsg);
-            }
+            tulpMsg = stringUtils.cutOff(`> ${referenceMsg}\n${mention}\n\n${tulpMsg}`, 2000);
         }
 
         //-------------------------------------------------------------------------------------
