@@ -71,144 +71,144 @@ client.on('message', async msg => {
         return;
     }
 
-    let msgStr = msg.content.toLowerCase();
+    const msgStr = msg.content.toLowerCase();
 
-    if (!(msgStr.startsWith(prefix))) {
-        // send tulp messages easily
-        if (await sendEasyMsg(msg)) {
+    if (msgStr.startsWith(prefix)) {
+        //--------------------------------------------------------------------------------
+        // split command and arguments
+
+        let args = msgStr.slice(prefix.length).trim().split(' ');
+        const userCommand = args.shift();
+
+        //--------------------------------------------------------------------------------
+        // get command
+
+        const command = client.commands.find(cmd => cmd.names.includes(userCommand));
+
+        if (!command) {
+            return;
+        }
+
+        if (command.guildOnly && msg.channel.type === 'dm') {
+            msg.channel.send('I can\'t execute that command in DM\'s');
+            return;
+        }
+
+        if (command.permittedCharsOnly) {
+            let argStr = stringUtils.removeProhibitedChars(args.join(' '));
+
+            if (argStr.length) {
+                args = argStr.split(' ');
+            }
+            else {
+                args = [];
+            }
+        }
+
+        if (command.argsRequired && !args.length) {
+            msg.channel.send(`Please provide arguments\nex: \`${prefix}${command.names[0]} ${command.usage}\``);
             return;
         }
 
         //--------------------------------------------------------------------------------
+        // cooldown
 
-        let botReply = '';
-        let replyBool = false;
-        const words = msgStr.split(' ');
+        if (!cooldowns.has(command.names[0])) {
+            cooldowns.set(command.names[0], new Map());
+        }
+
+        const timestamps = cooldowns.get(command.names[0]);
+        const cooldownAmount = command.cooldown * 1000;
+        const now = Date.now();
+
+        if (timestamps.has(msg.author.id)) {
+            const expirationTime = timestamps.get(msg.author.id) + cooldownAmount;
+
+            if (now < expirationTime) {
+                const timeLeft = (expirationTime - now) / 1000;
+                msg.channel.send(`Please let me cooldown for ${timeLeft.toFixed(1)} second(s)`);
+                return;
+            }
+        }
+
+        timestamps.set(msg.author.id, now);
+        setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
 
         //--------------------------------------------------------------------------------
-        // noncommands
+        // execute command
 
-        let hasName = false;
+        try {
+            command.execute(msg, args);
+        }
+        catch (error) {
+            msg.channel.send('I couldn\'t do that command for some reason 😢');
+            console.log(error);
+        }
 
-        for (let i = 0, n = names.length; i < n; i++) {
-            if (msgStr.includes(names[i].toLowerCase())) {
-                hasName = true;
+        return;
+    }
+
+    // send tulp messages easily
+    if (await sendEasyMsg(msg)) {
+        return;
+    }
+
+    //--------------------------------------------------------------------------------
+
+    let botReply = '';
+    let replyBool = false;
+    const words = msgStr.split(' ');
+
+    //--------------------------------------------------------------------------------
+    // noncommands
+
+    let hasName = false;
+
+    for (let i = 0, n = names.length; i < n; i++) {
+        if (msgStr.includes(names[i].toLowerCase())) {
+            hasName = true;
+            break;
+        }
+    }
+
+    if (hasName || msgUtils.hasBotMention(msg, false, true, false)) {
+        for (let i = 0, n = client.noncommands.length; i < n; i++) {
+            const {
+                isNoncommand,
+                replyStr
+            } = client.noncommands[i].execute(msgStr, words);
+
+            if (isNoncommand) {
+                replyBool = true;
+                botReply = replyStr;
                 break;
             }
         }
+    }
 
-        if (hasName || msgUtils.hasBotMention(msg, false, true, false)) {
-            for (let i = 0, n = client.noncommands.length; i < n; i++) {
-                const {
-                    isNoncommand,
-                    replyStr
-                } = client.noncommands[i].execute(msgStr, words);
+    //--------------------------------------------------------------------------------
+    // general message
 
-                if (isNoncommand) {
-                    replyBool = true;
-                    botReply = replyStr;
-                    break;
-                }
+    if (!replyBool && (msgUtils.hasBotMention(msg) || !msgUtils.hasMentions(msg, false))) {
+        for (let i = 0, n = client.genMsg.length; i < n; i++) {
+            const {
+                hasReply,
+                replyStr
+            } = client.genMsg[i].execute(msgStr, words);
+
+            if (hasReply) {
+                replyBool = true;
+                botReply = replyStr;
+                break;
             }
         }
-
-        //--------------------------------------------------------------------------------
-        // general message
-
-        if (!replyBool && (!(msgUtils.hasMentions(msg)) || msgUtils.hasBotMention(msg))) {
-            for (let i = 0, n = client.genMsg.length; i < n; i++) {
-                const {
-                    hasReply,
-                    replyStr
-                } = client.genMsg[i].execute(msgStr, words);
-
-                if (hasReply) {
-                    replyBool = true;
-                    botReply = replyStr;
-                    break;
-                }
-            }
-        }
-
-        //--------------------------------------------------------------------------------
-        // reply
-
-        if (replyBool) {
-            msgUtils.sendTypingMsg(msg.channel, botReply, msgStr);
-        }
-
-        return;
     }
 
     //--------------------------------------------------------------------------------
-    // split command and arguments
+    // reply
 
-    let args = msgStr.slice(prefix.length).trim().split(' ');
-    const userCommand = args.shift();
-
-    //--------------------------------------------------------------------------------
-    // get command
-
-    const command = client.commands.find(cmd => cmd.names.includes(userCommand));
-
-    if (!command) {
-        return;
-    }
-
-    if (command.guildOnly && msg.channel.type === 'dm') {
-        msg.channel.send('I can\'t execute that command in DM\'s');
-        return;
-    }
-
-    if (command.permittedCharsOnly) {
-        let argStr = stringUtils.removeProhibitedChars(args.join(' '));
-
-        if (argStr.length) {
-            args = argStr.split(' ');
-        }
-        else {
-            args = [];
-        }
-    }
-
-    if (command.argsRequired && !args.length) {
-        msg.channel.send(`Please provide arguments\nex: \`${prefix}${command.names[0]} ${command.usage}\``);
-        return;
-    }
-
-    //--------------------------------------------------------------------------------
-    // cooldown
-
-    if (!cooldowns.has(command.names[0])) {
-        cooldowns.set(command.names[0], new Map());
-    }
-
-    const timestamps = cooldowns.get(command.names[0]);
-    const cooldownAmount = command.cooldown * 1000;
-    const now = Date.now();
-
-    if (timestamps.has(msg.author.id)) {
-        const expirationTime = timestamps.get(msg.author.id) + cooldownAmount;
-
-        if (now < expirationTime) {
-            const timeLeft = (expirationTime - now) / 1000;
-            msg.channel.send(`Please let me cooldown for ${timeLeft.toFixed(1)} second(s)`);
-            return;
-        }
-    }
-
-    timestamps.set(msg.author.id, now);
-    setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
-
-    //--------------------------------------------------------------------------------
-    // execute command
-
-    try {
-        command.execute(msg, args);
-    }
-    catch (error) {
-        msg.channel.send('I couldn\'t do that command for some reason 😢');
-        console.log(error);
+    if (replyBool) {
+        msgUtils.sendTypingMsg(msg.channel, botReply, msgStr);
     }
 });
 
