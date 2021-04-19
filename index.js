@@ -11,7 +11,7 @@ const stringUtils = require('./lib/stringUtils.js');
 const { sendEasyMsg } = require('./commands/tulpCommands/easyMessages/sendEasyMsg.js');
 
 const client = new Discord.Client();
-const mentionRegex = new RegExp(/(<@(\d|!|&){0,}\d>)/g);
+const mentionRegex = new RegExp(/<@(\d|!|&){0,}>/g);
 names = names.map(n => n.toLowerCase());
 
 //--------------------------------------------------------------------------------
