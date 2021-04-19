@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const fileSys = require('fs');
-const {
+let {
     prefix,
     token,
     activityStatus,
@@ -11,6 +11,8 @@ const stringUtils = require('./lib/stringUtils.js');
 const { sendEasyMsg } = require('./commands/tulpCommands/easyMessages/sendEasyMsg.js');
 
 const client = new Discord.Client();
+const mentionRegex = new RegExp(/(<@(\d|!|&){0,}\d>)/g);
+names = names.map(n => n.toLowerCase());
 
 //--------------------------------------------------------------------------------
 // load commands, noncommands, and general messages
@@ -67,7 +69,7 @@ client.on('ready', () => {
 // message actions
 
 client.on('message', async msg => {
-    if (msg.author.bot) {
+    if (msg.author.bot || !msg.content.length) {
         return;
     }
 
@@ -154,52 +156,57 @@ client.on('message', async msg => {
     }
 
     //--------------------------------------------------------------------------------
+    // set up vars for noncommands and general messages
 
     let botReply = '';
-    let replyBool = false;
-    const words = msgStr.split(' ');
+    let botMention = msgUtils.hasBotMention(msg);
+    let selectedName = '';
 
     //--------------------------------------------------------------------------------
-    // noncommands
+    // detect any mentions
 
-    let hasName = false;
+    if (!botMention) {
+        for (let i = 0, n = names.length; i < n; i++) {
+            const currentName = names[i];
 
-    for (let i = 0, n = names.length; i < n; i++) {
-        if (msgStr.includes(names[i].toLowerCase())) {
-            hasName = true;
-            break;
+            if (currentName.length > selectedName.length &&
+                stringUtils.includesPhrase(msgStr, currentName, false)) {
+                botMention = true;
+                selectedName = currentName;
+            }
         }
     }
 
-    if (hasName || msgUtils.hasBotMention(msg, false, true, false)) {
-        for (let i = 0, n = client.noncommands.length; i < n; i++) {
-            const {
-                isNoncommand,
-                replyStr
-            } = client.noncommands[i].execute(msgStr, words);
+    // remove mentions or name from message
+    const noMentionsMsg = stringUtils.removeAllSpecialChars(msgStr.replaceAll(mentionRegex, ''))
+        .replace(selectedName, '')
+        .trim();
 
-            if (isNoncommand) {
-                replyBool = true;
+    if (botMention) {
+        //--------------------------------------------------------------------------------
+        // noncommands
+
+        for (let i = 0, n = noncommands.length; i < n; i++) {
+            const replyStr = noncommands[i].execute(msg, noMentionsMsg);
+
+            if (replyStr.length) {
                 botReply = replyStr;
                 break;
             }
         }
     }
+    else {
+        //--------------------------------------------------------------------------------
+        // general message
 
-    //--------------------------------------------------------------------------------
-    // general message
+        if (!msgUtils.hasMentions(msg, false)) {
+            for (let i = 0, n = genMsg.length; i < n; i++) {
+                const replyStr = genMsg[i].execute(msg, noMentionsMsg);
 
-    if (!replyBool && (msgUtils.hasBotMention(msg) || !msgUtils.hasMentions(msg, false))) {
-        for (let i = 0, n = client.genMsg.length; i < n; i++) {
-            const {
-                hasReply,
-                replyStr
-            } = client.genMsg[i].execute(msgStr, words);
-
-            if (hasReply) {
-                replyBool = true;
-                botReply = replyStr;
-                break;
+                if (replyStr.length) {
+                    botReply = replyStr;
+                    break;
+                }
             }
         }
     }
@@ -207,7 +214,7 @@ client.on('message', async msg => {
     //--------------------------------------------------------------------------------
     // reply
 
-    if (replyBool) {
+    if (botReply.length) {
         msgUtils.sendTypingMsg(msg.channel, botReply, msgStr);
     }
 });
