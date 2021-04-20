@@ -11,7 +11,6 @@ const stringUtils = require('./lib/stringUtils.js');
 const { sendEasyMsg } = require('./commands/tulpCommands/easyMessages/sendEasyMsg.js');
 
 const client = new Discord.Client();
-const mentionRegex = new RegExp(/<@(\d|!|&){0,}>/g);
 names = names.map(n => n.toLowerCase());
 
 //--------------------------------------------------------------------------------
@@ -20,7 +19,7 @@ names = names.map(n => n.toLowerCase());
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 const genMsgFiles = fileSys.readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
-const intervalMsgs = fileSys.readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
+const intervalMsgFiles = fileSys.readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
 const tulpCommandFiles = fileSys.readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
 
 const cooldowns = new Map();
@@ -28,6 +27,7 @@ client.commands = [];
 client.noncommands = [];
 client.genMsg = [];
 client.tulpCommands = [];
+let intervalMsgs = [];
 
 for (let i = 0, n = commandFiles.length; i < n; i++) {
     client.commands[i] = require(`./commands/${commandFiles[i]}`);
@@ -45,13 +45,17 @@ for (let i = 0, n = tulpCommandFiles.length; i < n; i++) {
     client.tulpCommands[i] = require(`./commands/tulpCommands/${tulpCommandFiles[i]}`);
 }
 
+for (let i = 0, n = intervalMsgFiles.length; i < n; i++) {
+    intervalMsgs[i] = require(`./intervalMessages/${intervalMsgFiles[i]}`);
+}
+
 //--------------------------------------------------------------------------------
 // login actions
 
 client.on('ready', () => {
     // start interval messages
     for (let i = 0, n = intervalMsgs.length; i < n; i++) {
-        require(`./intervalMessages/${intervalMsgs[i]}`).execute(client);
+        intervalMsgs[i].execute(client);
     }
 
     //--------------------------------------------------------------------------------
@@ -158,7 +162,6 @@ client.on('message', async msg => {
     //--------------------------------------------------------------------------------
     // set up vars for noncommands and general messages
 
-    let botReply = '';
     let botMention = msgUtils.hasBotMention(msg);
     let selectedName = '';
 
@@ -177,45 +180,39 @@ client.on('message', async msg => {
         }
     }
 
-    // remove mentions or name from message
-    const noMentionsMsg = stringUtils.removeAllSpecialChars(msgStr.replaceAll(mentionRegex, ''))
-        .replace(selectedName, '')
-        .trim();
-
     if (botMention) {
         //--------------------------------------------------------------------------------
         // noncommands
 
+        // remove mentions or name from message
+        const noMentionsMsg = stringUtils.removeMentions(msgStr, selectedName);
+
         for (let i = 0, n = noncommands.length; i < n; i++) {
             const replyStr = noncommands[i].execute(msg, noMentionsMsg);
 
+            // reply
             if (replyStr.length) {
-                botReply = replyStr;
-                break;
+                msgUtils.sendTypingMsg(msg.channel, replyStr, msgStr);
+                return;
             }
         }
     }
-    else {
+    else if (!msgUtils.hasMentions(msg, false)) {
         //--------------------------------------------------------------------------------
         // general message
 
-        if (!msgUtils.hasMentions(msg, false)) {
-            for (let i = 0, n = genMsg.length; i < n; i++) {
-                const replyStr = genMsg[i].execute(msg, noMentionsMsg);
+        // remove mentions or name from message
+        const noMentionsMsg = stringUtils.removeMentions(msgStr, selectedName);
 
-                if (replyStr.length) {
-                    botReply = replyStr;
-                    break;
-                }
+        for (let i = 0, n = genMsg.length; i < n; i++) {
+            const replyStr = genMsg[i].execute(msg, noMentionsMsg);
+
+            // reply
+            if (replyStr.length) {
+                msgUtils.sendTypingMsg(msg.channel, replyStr, msgStr);
+                return;
             }
         }
-    }
-
-    //--------------------------------------------------------------------------------
-    // reply
-
-    if (botReply.length) {
-        msgUtils.sendTypingMsg(msg.channel, botReply, msgStr);
     }
 });
 
