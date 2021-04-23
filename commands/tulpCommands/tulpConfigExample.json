@@ -69,7 +69,8 @@
             "change-braces"
         ],
         "description" : "",
-        "confirmMsg" : "Brackets changed!"
+        "confirmMsg" : "Brackets changed!",
+        "enclosingText" : "text"
     },
 
     "editName" : {

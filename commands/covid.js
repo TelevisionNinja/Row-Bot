@@ -27,11 +27,11 @@ module.exports = {
     async execute(msg, args) {
         const data = await getData();
 
-        if (data === '') {
-            msg.channel.send('I couldn\'t get any data for some reason');
+        if (data.length) {
+            msg.channel.send(dataToEmbed(args.join(' '), data));
         }
         else {
-            msg.channel.send(dataToEmbed(args.join(' '), data));
+            msg.channel.send('I couldn\'t get any data for some reason');
         }
     },
     getData,
