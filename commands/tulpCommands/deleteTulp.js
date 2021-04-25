@@ -34,7 +34,7 @@ module.exports = {
                 }
             };
     
-            await tulpCollection.deleteOne(deleteQuery);
+            tulpCollection.deleteOne(deleteQuery);
         }
         else {
             msg.channel.send(tulpConfig.noDataMsg);
