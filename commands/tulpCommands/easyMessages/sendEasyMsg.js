@@ -3,8 +3,6 @@ const { tulp: tulpCollection } = require('../../../lib/database.js');
 const msgUtils = require('../../../lib/msgUtils.js');
 const stringUtils = require('../../../lib/stringUtils.js');
 
-const regex = new RegExp(/^(> )(.|\n){0,}(\[.{0,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n\n)/i);
-
 module.exports = {
     usage: `<custom bracket><message><custom bracket>`,
     async sendEasyMsg(msg) {
@@ -59,7 +57,7 @@ module.exports = {
                 mention = `[@${reference.author.username}](${reference.url})`;
 
                 // remove reference inside of reference
-                referenceMsg = referenceMsg.replace(regex, '');
+                referenceMsg = referenceMsg.replace(/^(> )(.|\n){0,}(\[.{0,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n\n)/i, '');
             }
             else {
                 mention = `<@${reference.author.id}> - [jump](${reference.url})`;
@@ -69,9 +67,10 @@ module.exports = {
             if (!referenceMsg.length || stringUtils.containsURL(referenceMsg)) {
                 referenceMsg = `[*Select to see attachment*](${reference.url})`;
             }
-
-            // put the referenced msg in a quote
-            referenceMsg = stringUtils.cutOff(referenceMsg.replaceAll('\n', '\n> '), 64);
+            else {
+                // put the referenced msg in a quote
+                referenceMsg = stringUtils.cutOff(referenceMsg.replaceAll('\n', '\n> '), 64);
+            }
 
             // check if the msg is over the discord char limit
             tulpMsg = stringUtils.cutOff(`> ${referenceMsg}\n${mention}\n\n${tulpMsg}`, 2000);
