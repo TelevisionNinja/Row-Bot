@@ -81,7 +81,7 @@ module.exports = {
         };
         const existingBrackets = await tulpCollection.countDocuments(checkBracketsQuery, { limit: 1 });
 
-        if (!existingBrackets && !selectedTulp.endBracket.length && selectedTulp.startBracket.substring(0, selectedTulp.startBracket.length - 1) === oldName) {
+        if (!existingBrackets && !selectedTulp.endBracket.length && selectedTulp.startBracket === `${oldName}:`) {
             selectedTulp.startBracket = newStartBracket;
         }
 
@@ -102,7 +102,7 @@ module.exports = {
             }
         };
 
-        await tulpCollection.updateOne(updateQuery, update);
+        tulpCollection.updateOne(updateQuery, update);
         msg.channel.send(editName.confirmMsg);
     }
 }

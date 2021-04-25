@@ -34,7 +34,7 @@ module.exports = {
         if (isUser) {
             const updateQuery = {
                 _id: msg.author.id,
-                'tulps.username': { $ne: username },
+                'tulps.username': { $ne: username }
             };
             const update = {
                 $push: {
@@ -66,7 +66,7 @@ module.exports = {
                 }]
             };
 
-            await tulpCollection.insertOne(newUser);
+            tulpCollection.insertOne(newUser);
             msg.channel.send(create.confirmMsg);
         }
     }
