@@ -3,7 +3,7 @@ const {
     tagSeparator
 } = require('../../config.json');
 const { sendMsg } = require('./tulpConfig.json');
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const { usage: easyUsage } = require('./easyMessages/sendEasyMsg.js');
 const { tulp: tulpCollection } = require('../../lib/database.js');
 const msgUtils = require('../../lib/msgUtils.js');
@@ -65,7 +65,7 @@ module.exports = {
         // detect dm channel
 
         if (isDM) {
-            const simulatedMsg = new Discord.MessageEmbed()
+            const simulatedMsg = new MessageEmbed()
                 .setAuthor(selectedTulp.username, selectedTulp.avatar)
                 .setDescription(tulpMsg);
 

@@ -6,7 +6,7 @@ const rand = require('../lib/randomFunctions.js');
 const stringUtils = require('../lib/stringUtils.js');
 const querystring = require('querystring');
 const axios = require('axios');
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const {
     RateLimiterMemory,
     RateLimiterQueue
@@ -44,7 +44,7 @@ module.exports = {
                 const definition = result.definition.replaceAll(/[\[\]]/g, '');
                 const example = result.example.replaceAll(/[\[\]]/g, '');
 
-                const embed = new Discord.MessageEmbed()
+                const embed = new MessageEmbed()
                     .setTitle(result.word)
                     .setURL(result.permalink)
                     .addFields(

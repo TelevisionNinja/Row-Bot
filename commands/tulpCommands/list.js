@@ -1,5 +1,5 @@
 const { list: listConfig } = require('./tulpConfig.json');
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const { tulp: tulpCollection } = require('../../lib/database.js');
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
         }
 
         const tulpArr = userData.tulps.map(t => `• ${t.username}`);
-        const tulpList = new Discord.MessageEmbed()
+        const tulpList = new MessageEmbed()
             .setTitle('Your tulps')
             .setDescription(tulpArr);
 

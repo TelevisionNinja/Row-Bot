@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const { tulp: tulpCollection } = require('../../../lib/database.js');
 const msgUtils = require('../../../lib/msgUtils.js');
 const stringUtils = require('../../../lib/stringUtils.js');
@@ -80,7 +80,7 @@ module.exports = {
         // detect dm channel
 
         if (msg.channel.type === 'dm') {
-            const simulatedMsg = new Discord.MessageEmbed()
+            const simulatedMsg = new MessageEmbed()
                 .setAuthor(selectedTulp.username, selectedTulp.avatar)
                 .setDescription(tulpMsg);
 

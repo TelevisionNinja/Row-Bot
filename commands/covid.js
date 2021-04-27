@@ -3,7 +3,7 @@ const {
     noResultsMsg
 } = require('../config.json');
 const axios = require('axios');
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const {
     RateLimiterMemory,
     RateLimiterQueue
@@ -272,7 +272,7 @@ function dataToEmbed(state, data) {
         source
     } = dataToStateData(state, data);
 
-    const embed = new Discord.MessageEmbed();
+    const embed = new MessageEmbed();
 
     if (!stateFound) {
         embed.setTitle(noResultsMsg)

@@ -4,10 +4,10 @@ const {
     icon,
     names
 } = require('../config.json');
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const msgUtils = require('../lib/msgUtils.js');
 
-let helpCenter = new Discord.MessageEmbed()
+let helpCenter = new MessageEmbed()
     .setTitle(`${names[0]}\'s Help Center`)
     .attachFiles(`./${icon}`)
     .setThumbnail(`attachment://${icon}`);
@@ -63,7 +63,7 @@ module.exports = {
                 usageStr = `${usageStr}\``;
             }
 
-            embed = new Discord.MessageEmbed()
+            embed = new MessageEmbed()
                 .setTitle(`Command: ${argCommand.names[0]}`)
                 .setDescription(argCommand.description)
                 .addFields(

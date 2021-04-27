@@ -1,6 +1,6 @@
 const { info } = require('./tulpConfig.json');
 const { tulp: tulpConfig } = require('../../config.json');
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const { tulp: tulpCollection } = require('../../lib/database.js');
 
 module.exports = {
@@ -35,7 +35,7 @@ module.exports = {
         }
 
         const selectedTulp = userData.tulps[0];
-        const info = new Discord.MessageEmbed()
+        const info = new MessageEmbed()
             .setThumbnail(selectedTulp.avatar)
             .setTitle(selectedTulp.username)
             .addFields(
