@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const { Client } = require('discord.js');
 const fileSys = require('fs');
 let {
     prefix,
@@ -10,11 +10,21 @@ const msgUtils = require('./lib/msgUtils.js');
 const stringUtils = require('./lib/stringUtils.js');
 const { sendEasyMsg } = require('./commands/tulpCommands/easyMessages/sendEasyMsg.js');
 
-const client = new Discord.Client();
+//--------------------------------------------------------------------------------
+
 names = names.map(n => n.toLowerCase());
 
+const client = new Client();
+const cooldowns = new Map();
+client.commands = [];
+client.tulpCommands = [];
+let noncommands = [];
+let genMsg = [];
+let intervalMsgs = [];
+const minimumPermissions = ['MANAGE_WEBHOOKS', 'MANAGE_MESSAGES', 'SEND_MESSAGES'];
+
 //--------------------------------------------------------------------------------
-// load commands, noncommands, and general messages
+// load commands, tulp commands, noncommands, general messages, and interval messages
 
 const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
@@ -22,23 +32,16 @@ const genMsgFiles = fileSys.readdirSync('./generalMessages/').filter(aFile => aF
 const intervalMsgFiles = fileSys.readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
 const tulpCommandFiles = fileSys.readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
 
-const cooldowns = new Map();
-client.commands = [];
-client.noncommands = [];
-client.genMsg = [];
-client.tulpCommands = [];
-let intervalMsgs = [];
-
 for (let i = 0, n = commandFiles.length; i < n; i++) {
     client.commands[i] = require(`./commands/${commandFiles[i]}`);
 }
 
 for (let i = 0, n = noncommandFiles.length; i < n; i++) {
-    client.noncommands[i] = require(`./noncommands/${noncommandFiles[i]}`);
+    noncommands[i] = require(`./noncommands/${noncommandFiles[i]}`);
 }
 
 for (let i = 0, n = genMsgFiles.length; i < n; i++) {
-    client.genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
+    genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
 }
 
 for (let i = 0, n = tulpCommandFiles.length; i < n; i++) {
@@ -73,7 +76,14 @@ client.on('ready', () => {
 // message actions
 
 client.on('message', async msg => {
-    if (msg.author.bot || !msg.content.length) {
+    const guildMemberClient = msg.guild.me;
+    const notBot = !msg.author.bot;
+    const hasLength = msg.content.length;
+    const isAdmin = guildMemberClient.hasPermission('ADMINISTRATOR');
+    const hasMinimumPerms = guildMemberClient.hasPermission(minimumPermissions);
+    const meetsConditions = (notBot && hasLength) && (isAdmin || hasMinimumPerms);
+
+    if (!meetsConditions) {
         return;
     }
 
