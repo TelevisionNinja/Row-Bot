@@ -1,23 +1,24 @@
-const { greetings } = require('../messages.json');
-const rand = require('../lib/randomFunctions.js');
-let { names } = require('../config.json');
+import { default as messages } from '../messages.json';
+import { randomMath } from '../lib/randomFunctions.js';
+import { default as config } from '../config.json';
 
-names = names.map(n => n.toLowerCase());
+const names = config.names.map(n => n.toLowerCase()),
+    greetings = messages.greetings;
 
-module.exports = {
+export default {
     description: 'Say hi',
     execute(msg, filteredMsg) {
         const numOfGreetings = greetings.length;
 
         for (let i = 0; i < numOfGreetings; i++) {
             if (filteredMsg === greetings[i].toLowerCase()) {
-                return greetings[rand.randomMath(numOfGreetings)];
+                return greetings[randomMath(numOfGreetings)];
             }
         }
 
         for (let i = 0, n = names.length; i < n; i++) {
             if (filteredMsg === names[i]) {
-                return greetings[rand.randomMath(numOfGreetings)];
+                return greetings[randomMath(numOfGreetings)];
             }
         }
 

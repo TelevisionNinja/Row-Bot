@@ -1,13 +1,13 @@
-const { editBrackets } = require('./tulpConfig.json');
-const {
-    tulp: tulpConfig,
-    tagSeparator
-} = require('../../config.json');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfigFile } from './tulpConfig.json';
+import { default as config } from '../../config.json';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-const enclosingText = 'text';
+const editBrackets = tulpConfigFile.editBrackets,
+    enclosingText = editBrackets.enclosingText,
+    tulpConfig = config.tulp,
+    tagSeparator = config.tagSeparator;
 
-module.exports = {
+export default {
     names: editBrackets.names,
     description: editBrackets.description,
     argsRequired: true,
@@ -19,21 +19,21 @@ module.exports = {
         const errorMessage = `Please provide a name followed by a "${tagSeparator}" and then the new brackets enclosing the word "${enclosingText}". "${tagSeparator}" are not allowed in brackets`;
 
         if (params.length < 2) {
-            msg.channel.send(errorMessage);
+            msg.channel.createMessage(errorMessage);
             return;
         }
 
         const unparsedBrackets = params[1];
 
         if (unparsedBrackets.indexOf(enclosingText) === -1) {
-            msg.channel.send(errorMessage);
+            msg.channel.createMessage(errorMessage);
             return;
         }
 
         const bracketArr = unparsedBrackets.split(enclosingText).map(b => b.trim());
 
         if (!bracketArr.length) {
-            msg.channel.send(errorMessage);
+            msg.channel.createMessage(errorMessage);
             return;
         }
 
@@ -41,7 +41,7 @@ module.exports = {
         const endBracket = bracketArr[1];
 
         if (!startBracket.length && !endBracket.length) {
-            msg.channel.send('Brackets can\'t be empty');
+            msg.channel.createMessage('Brackets can\'t be empty');
             return;
         }
 
@@ -53,7 +53,7 @@ module.exports = {
         const existing = await tulpCollection.countDocuments(checkQuery, { limit: 1 });
 
         if (existing) {
-            msg.channel.send('These brackets are already being used');
+            msg.channel.createMessage('These brackets are already being used');
             return;
         }
 
@@ -71,10 +71,10 @@ module.exports = {
         const result = await tulpCollection.updateOne(updateQuery, update);
 
         if (result.result.n) {
-            msg.channel.send(editBrackets.confirmMsg);
+            msg.channel.createMessage(editBrackets.confirmMsg);
         }
         else {
-            msg.channel.send(tulpConfig.noDataMsg);
+            msg.channel.createMessage(tulpConfig.noDataMsg);
         }
     }
 }

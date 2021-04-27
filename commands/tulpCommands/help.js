@@ -1,17 +1,23 @@
-const {
-    prefix,
-    help,
-    icon,
-    names,
-    tulp
-} = require('../../config.json');
-const Discord = require('discord.js');
-const msgUtils = require('../../lib/msgUtils.js');
+import { default as config } from '../../config.json';
+import { sendAuthorDm } from '../../lib/msgUtils.js';
+import { readFileSync } from 'fs';
 
-let helpCenter = new Discord.MessageEmbed()
-    .setTitle(`${names[0]}\'s Tulp Help Center`)
-    .attachFiles(`./${icon}`)
-    .setThumbnail(`attachment://${icon}`);
+const prefix = config.prefix,
+    help = config.help,
+    icon = config.icon,
+    names = config.names,
+    tulp = config.tulp;
+
+let helpCenter = {
+    embed: {
+        title: `${names[0]}\'s Tulp Help Center`,
+        thumbnail: { url: `attachment://${icon}` }
+    }
+};
+const file = {
+    file: readFileSync(`./${icon}`),
+    name: icon
+}
 const specific = {
     name: 'Specific Command Info',
     value: `\nSend \`${prefix}${tulp.names[0]} help <command name>\` to get info on a specific command`
@@ -19,7 +25,7 @@ const specific = {
 
 let notCalled = true;
 
-module.exports = {
+export default {
     names: help.names,
     description: help.description,
     argsRequired: false,
@@ -29,24 +35,22 @@ module.exports = {
     execute(msg, args) {
         // initialize embed 
         if (notCalled) {
-            helpCenter.addFields(
+            notCalled = false;
+            helpCenter.embed.fields = [
                 {
                     name: 'My Tulp Commands',
-                    value: msg.client.tulpCommands.map(cmd => `• ${cmd.names[0]}`).join('\n')
+                    value: msg.channel.client.tulpCommands.map(cmd => `• ${cmd.names[0]}`).join('\n')
                 },
                 specific
-            );
-            notCalled = false;
+            ];
         }
-
-        let embed;
 
 		if (args.length) {
 			const userCommand = args[0];
-            const argCommand = msg.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
+            const argCommand = msg.channel.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
 
             if (!argCommand) {
-                msgUtils.sendAuthorDm(msg, 'That\'s not one of my tulp commands');
+                sendAuthorDm(msg, 'That\'s not one of my tulp commands');
                 return;
             }
 
@@ -62,28 +66,31 @@ module.exports = {
                 usageStr = `${usageStr}\``;
             }
 
-            embed = new Discord.MessageEmbed()
-                .setTitle(`Tulp Command: ${argCommand.names[0]}`)
-                .setDescription(argCommand.description)
-                .addFields(
-                    {
-                        name: 'Aliases',
-                        value: argCommand.names.slice(1).join(', ')
-                    },
-                    {
-                        name: 'Usage',
-                        value: usageStr
-                    },
-                    {
-                        name: 'Server Only Command?',
-                        value: argCommand.guildOnly ? 'Can only be used in servers' : 'Can be used in DM\'s'
-                    }
-                );
+            const embed = {
+                embed: {
+                    title: `Tulp Command: ${argCommand.names[0]}`,
+                    description: argCommand.description,
+                    fields: [
+                        {
+                            name: 'Aliases',
+                            value: argCommand.names.slice(1).join(', ')
+                        },
+                        {
+                            name: 'Usage',
+                            value: usageStr
+                        },
+                        {
+                            name: 'Server Only Command?',
+                            value: argCommand.guildOnly ? 'Can only be used in servers' : 'Can be used in DM\'s'
+                        }
+                    ]
+                }
+            };
+
+            sendAuthorDm(msg, embed);
         }
         else {
-            embed = helpCenter
+            sendAuthorDm(msg, helpCenter, file);
         }
-
-        msgUtils.sendAuthorDm(msg, embed);
     }
 }

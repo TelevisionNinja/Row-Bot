@@ -1,20 +1,16 @@
-const { greetings } = require('../messages.json');
-const rand = require('../lib/randomFunctions.js');
+import { default as messages } from '../messages.json';
+import { randomMath } from '../lib/randomFunctions.js';
+import { includesPhrase } from '../lib/stringUtils.js';
 
-const greetingsLowerCase = greetings.map(g => g.toLowerCase());
+const hate = messages.hate,
+    sadReplies = messages.sadReplies;
 
-module.exports = {
-    description: 'Say hi',
+export default {
+    description: 'Reply to hate',
     execute(msg, filteredMsg) {
-        const numOfGreetings = greetings.length;
-
-        if (!filteredMsg.length) {
-            return greetings[rand.randomMath(numOfGreetings)];
-        }
-
-        for (let i = 0; i < numOfGreetings; i++) {
-            if (filteredMsg === greetingsLowerCase[i]) {
-                return greetings[rand.randomMath(numOfGreetings)];
+        for (let i = 0, n = hate.length; i < n; i++) {
+            if (includesPhrase(filteredMsg, hate[i], false)) {
+                return sadReplies[randomMath(sadReplies.length)];
             }
         }
 

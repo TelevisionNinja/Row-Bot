@@ -1,9 +1,9 @@
-const {
-    tulp,
-    prefix
-} = require('../config.json');
+import { default as config } from '../config.json';
 
-module.exports = {
+const tulp = config.tulp,
+    prefix = config.prefix;
+
+export default {
     names: tulp.names,
     description: tulp.description,
     argsRequired: true,
@@ -15,7 +15,7 @@ module.exports = {
     execute(msg, args) {
         // get command
         const userCommand = args.shift();
-        const command = msg.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
+        const command = msg.channel.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
 
         //--------------------------------------------------------------------------------
 
@@ -24,12 +24,12 @@ module.exports = {
         }
 
         if (command.guildOnly && msg.channel.type === 'dm') {
-            msg.channel.send('I can\'t execute that command in DM\'s');
+            msg.channel.createMessage('I can\'t execute that command in DM\'s');
             return;
         }
 
         if (command.argsRequired && !args.length) {
-            msg.channel.send(`Please provide arguments\nex: \`${prefix}${tulp.names[0]} ${command.names[0]} ${command.usage}\``);
+            msg.channel.createMessage(`Please provide arguments\nex: \`${prefix}${tulp.names[0]} ${command.names[0]} ${command.usage}\``);
             return;
         }
 
@@ -46,7 +46,7 @@ module.exports = {
             command.execute(msg, tulpArgs);
         }
         catch (error) {
-            msg.channel.send('I couldn\'t do that command for some reason 😢');
+            msg.channel.createMessage('I couldn\'t do that command for some reason 😢');
             console.log(error);
         }
     }

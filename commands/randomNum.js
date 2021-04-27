@@ -1,10 +1,10 @@
-const rand = require('../lib/randomFunctions.js');
-const {
-    random,
-    prefix
-} = require('../config.json');
+import { randomMath } from '../lib/randomFunctions.js';
+import { default as config } from '../config.json';
 
-module.exports = {
+const random = config.random,
+    prefix = config.prefix;
+
+export default {
     names: random.names,
     description: random.description,
     argsRequired: true,
@@ -27,7 +27,7 @@ module.exports = {
         }
 
         if (isNaN(min) || isNaN(max)) {
-            msg.channel.send('Use numbers please');
+            msg.channel.createMessage('Use numbers please');
             return;
         }
 
@@ -37,8 +37,8 @@ module.exports = {
             min = temp;
         }
 
-        result = rand.randomMath(min, max + 1);
+        result = randomMath(min, max + 1);
 
-        msg.channel.send(`Your random number is ${result}`);
+        msg.channel.createMessage(`Your random number is ${result}`);
     }
 }

@@ -1,12 +1,14 @@
-const { farewells } = require('../messages.json');
-const rand = require('../lib/randomFunctions.js');
+import { default as messages } from '../messages.json';
+import { randomMath } from '../lib/randomFunctions.js';
 
-module.exports = {
+const farewells = messages.farewells;
+
+export default {
     description: 'Say goodbye',
     execute(msg, filteredMsg) {
         for (let i = 0, n = farewells.length; i < n; i++) {
             if (filteredMsg === farewells[i].toLowerCase()) {
-                return farewells[rand.randomMath(n)];
+                return farewells[randomMath(n)];
             }
         }
 

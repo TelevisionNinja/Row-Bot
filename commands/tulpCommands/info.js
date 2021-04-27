@@ -1,9 +1,11 @@
-const { info } = require('./tulpConfig.json');
-const { tulp: tulpConfig } = require('../../config.json');
-const Discord = require('discord.js');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfigFile } from './tulpConfig.json';
+import { default as config } from '../../config.json';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const info = tulpConfigFile.info,
+    tulpConfig = config.tulp;
+
+export default {
     names: info.names,
     description: info.description,
     argsRequired: true,
@@ -25,26 +27,28 @@ module.exports = {
         const userData = await tulpCollection.findOne(query, options);
 
         if (userData === null) {
-            msg.channel.send(tulpConfig.notUserMsg);
+            msg.channel.createMessage(tulpConfig.notUserMsg);
             return;
         }
 
         if (typeof userData.tulps === 'undefined') {
-            msg.channel.send(tulpConfig.noDataMsg);
+            msg.channel.createMessage(tulpConfig.noDataMsg);
             return;
         }
 
         const selectedTulp = userData.tulps[0];
-        const info = new Discord.MessageEmbed()
-            .setThumbnail(selectedTulp.avatar)
-            .setTitle(selectedTulp.username)
-            .addFields(
-                {
-                    name: 'Brackets',
-                    value: `${selectedTulp.startBracket}text${selectedTulp.endBracket}`
-                }
-            );
 
-        msg.channel.send(info);
+        msg.channel.createMessage({
+            embed: {
+                title: selectedTulp.username,
+                thumbnail: { url: selectedTulp.avatar },
+                fields: [
+                    {
+                        name: 'Brackets',
+                        value: `${selectedTulp.startBracket}text${selectedTulp.endBracket}`
+                    }
+                ]
+            }
+        });
     }
 }

@@ -1,7 +1,9 @@
-const rand = require('../lib/randomFunctions.js');
-const { food } = require('../config.json');
+import { randomMath } from '../lib/randomFunctions.js';
+import { default as config } from '../config.json';
 
-module.exports = {
+const food = config.food;
+
+export default {
     names: food.names,
     description: food.description,
     argsRequired: false,
@@ -23,13 +25,13 @@ module.exports = {
         let message = '';
 
         if (len) {
-            const result = placeArr[rand.randomMath(len)].name;
+            const result = placeArr[randomMath(len)].name;
             message = `Your random restaurant is ${result}`;
         }
         else {
             message = 'I don\'t have any restaurants of that type';
         }
 
-        msg.channel.send(message);
+        msg.channel.createMessage(message);
     }
 }

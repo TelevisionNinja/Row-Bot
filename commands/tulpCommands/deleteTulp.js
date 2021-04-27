@@ -1,8 +1,11 @@
-const { deleteTulp } = require('./tulpConfig.json');
-const { tulp: tulpConfig } = require('../../config.json');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfig } from './tulpConfig.json';
+import { default as config } from '../../config.json';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const deleteTulp = tulpConfig.deleteTulp,
+    tulpConfigObj = config.tulp;
+
+export default {
     names: deleteTulp.names,
     description: deleteTulp.description,
     argsRequired: true,
@@ -25,7 +28,7 @@ module.exports = {
         const result = await tulpCollection.updateOne(query, update);
 
         if (result.result.n) {
-            msg.channel.send(deleteTulp.confirmMsg);
+            msg.channel.createMessage(deleteTulp.confirmMsg);
 
             const deleteQuery = {
                 _id: msg.author.id,
@@ -37,7 +40,7 @@ module.exports = {
             tulpCollection.deleteOne(deleteQuery);
         }
         else {
-            msg.channel.send(tulpConfig.noDataMsg);
+            msg.channel.createMessage(tulpConfigObj.noDataMsg);
         }
     }
 }

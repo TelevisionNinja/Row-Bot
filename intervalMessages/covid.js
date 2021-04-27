@@ -1,20 +1,23 @@
-const DailyInterval = require('daily-intervals');
-const msgUtils = require('../lib/msgUtils.js');
-const { covid: covidConfig } = require('../config.json');
-const covid = require('../commands/covid.js');
+import DailyInterval from 'daily-intervals';
+import { default as config } from '../config.json';
+import {
+    getData,
+    dataToEmbed
+} from '../commands/covid.js';
 
-module.exports = {
+const covidConfig = config.covid;
+
+export default {
     description: covidConfig.description,
     async execute(client) {
-        const recipient = await msgUtils.getRecipient(client, covidConfig.intervalChannel);
-
         const interval = new DailyInterval(
             async () => {
-                const data = await covid.getData();
-                let embed = covid.dataToEmbed(covidConfig.intervalState, data);
+                const data = await getData();
+                let embed = dataToEmbed(covidConfig.intervalState, data);
 
-                embed.setAuthor('Daily Covid Report');
-                recipient.send(embed);
+                embed.embed.author = { name: 'Daily Covid Report' };
+
+                client.createMessage(covidConfig.intervalChannel, embed);
             },
             covidConfig.intervalTime,
             1440, // 24 hrs in minutes

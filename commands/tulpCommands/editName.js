@@ -1,11 +1,12 @@
-const { editName } = require('./tulpConfig.json');
-const {
-    tulp: tulpConfig,
-    tagSeparator
-} = require('../../config.json');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfigFile } from'./tulpConfig.json';
+import { default as config } from '../../config.json';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const editName = tulpConfigFile.editName,
+    tulpConfig = config.tulp,
+    tagSeparator = config.tagSeparator;
+
+export default {
     names: editName.names,
     description: editName.description,
     argsRequired: true,
@@ -26,7 +27,7 @@ module.exports = {
         }
 
         if (needParameters || !oldName.length || !newName.length || oldName === newName) {
-            msg.channel.send(`Please provide the current name and a new name spearated by a "${tagSeparator}"`);
+            msg.channel.createMessage(`Please provide the current name and a new name spearated by a "${tagSeparator}"`);
             return;
         }
 
@@ -46,12 +47,12 @@ module.exports = {
         const userData = await tulpCollection.findOne(userQuery, options);
 
         if (userData === null) {
-            msg.channel.send(tulpConfig.notUserMsg);
+            msg.channel.createMessage(tulpConfig.notUserMsg);
             return;
         }
 
         if (typeof userData.tulps === 'undefined') {
-            msg.channel.send(tulpConfig.noDataMsg);
+            msg.channel.createMessage(tulpConfig.noDataMsg);
             return;
         }
 
@@ -65,7 +66,7 @@ module.exports = {
         const existingUsername = await tulpCollection.countDocuments(checkUsernameQuery, { limit: 1 });
 
         if (existingUsername) {
-            msg.channel.send('That new name is already being used');
+            msg.channel.createMessage('That new name is already being used');
             return;
         }
 
@@ -103,6 +104,6 @@ module.exports = {
         };
 
         tulpCollection.updateOne(updateQuery, update);
-        msg.channel.send(editName.confirmMsg);
+        msg.channel.createMessage(editName.confirmMsg);
     }
 }

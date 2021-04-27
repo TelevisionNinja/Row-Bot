@@ -1,24 +1,26 @@
-const DailyInterval = require('daily-intervals');
-const msgUtils = require('../lib/msgUtils.js');
-const { memes } = require('../config.json');
-const axios = require('axios');
-const rand = require('../lib/randomFunctions.js');
+import DailyInterval from 'daily-intervals';
+import { getRecipient } from '../lib/msgUtils.js';
+import { default as config } from '../config.json';
+import axios from 'axios';
+import { randomMath } from '../lib/randomFunctions.js';
 
-module.exports = {
+const memes = config.memes;
+
+export default {
     description: memes.description,
     async execute(client) {
-        const recipient = await msgUtils.getRecipient(client, memes.channelID);
+        const recipient = await getRecipient(client, memes.channelID);
 
         const interval = new DailyInterval(
             async () => {
                 try {
-                    const URL = `${memes.URLs[rand.randomMath(memes.URLs.length)]}${memes.postCount}`;
+                    const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.postCount}`;
                     const response = await axios.get(URL);
                     const postArr = response.data.data.children;
 
-                    const post = postArr[rand.randomMath(memes.postCount)];
+                    const post = postArr[randomMath(memes.postCount)];
 
-                    recipient.send(encodeURI(post.data.url));
+                    recipient.createMessage(encodeURI(post.data.url));
                 }
                 catch (error) {
                     console.log(error);

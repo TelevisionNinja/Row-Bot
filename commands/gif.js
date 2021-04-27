@@ -1,21 +1,18 @@
-const {
-    tenor,
-    noResultsMsg
-} = require('../config.json');
-const axios = require('axios');
-const {
-    RateLimiterMemory,
-    RateLimiterQueue
-} = require('rate-limiter-flexible');
+import { default as config } from '../config.json';
+import axios from 'axios';
+import PQueue from 'p-queue';
+import { backOff } from '../lib/limit.js';
 
-const limit = new RateLimiterMemory({
-    points: 10,
-    duration: 1
+const tenor = config.tenor,
+    noResultsMsg = config.noResultsMsg;
+
+const queue = new PQueue({
+    interval: 1000,
+    intervalCap: 10
 });
-const rateLimiter = new RateLimiterQueue(limit);
 const URL = `${tenor.API}${tenor.APIKey}&q=`;
 
-module.exports = {
+export default {
     names: tenor.names,
     description: tenor.description,
     argsRequired: true,
@@ -31,13 +28,12 @@ module.exports = {
         } = await getGif(args);
 
         if (hasResult) {
-            msg.channel.send(gif);
+            msg.channel.createMessage(gif);
         }
         else {
-            msg.channel.send(noResultsMsg);
+            msg.channel.createMessage(noResultsMsg);
         }
-    },
-    getGif
+    }
 }
 
 /**
@@ -46,27 +42,25 @@ module.exports = {
  * 
  * @param {*} tagArr array of tags to be searched
  */
-async function getGif(tagArr) {
-    await rateLimiter.removeTokens(1);
-
+export async function getGif(tagArr) {
     const searchTerms = encodeURIComponent(tagArr.join(' '));
-    const searchURL = `${URL}${searchTerms}`;
-
     let gif = '';
     let hasResult = false;
 
-    try {
-        const response = await axios.get(searchURL);
-        const gifArr = response.data.results;
+    await queue.add(async () => {
+        try {
+            const response = await axios.get(`${URL}${searchTerms}`);
+            const gifArr = response.data.results;
 
-        if (gifArr.length) {
-            gif = gifArr[0].url;
-            hasResult = true;
+            if (gifArr.length) {
+                gif = gifArr[0].url;
+                hasResult = true;
+            }
         }
-    }
-    catch (error) {
-        console.log(error);
-    }
+        catch (error) {
+            backOff(error, queue);
+        }
+    });
 
     return {
         gif,

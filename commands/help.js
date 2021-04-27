@@ -1,16 +1,22 @@
-const {
-    prefix,
-    help,
-    icon,
-    names
-} = require('../config.json');
-const Discord = require('discord.js');
-const msgUtils = require('../lib/msgUtils.js');
+import { default as config } from '../config.json';
+import { sendAuthorDm } from '../lib/msgUtils.js';
+import { readFileSync } from 'fs';
 
-let helpCenter = new Discord.MessageEmbed()
-    .setTitle(`${names[0]}\'s Help Center`)
-    .attachFiles(`./${icon}`)
-    .setThumbnail(`attachment://${icon}`);
+const prefix = config.prefix,
+    help = config.help,
+    icon = config.icon,
+    names = config.names;
+
+let helpCenter = {
+    embed: {
+        title: `${names[0]}\'s Help Center`,
+        thumbnail: { url: `attachment://${icon}` }
+    }
+};
+const file = {
+    file: readFileSync(`./${icon}`),
+    name: icon
+};
 const specific = {
     name: 'Specific Command Info',
     value: `\nSend \`${prefix}help <command name>\` to get info on a specific command`
@@ -18,7 +24,7 @@ const specific = {
 
 let notCalled = true;
 
-module.exports = {
+export default {
     names: help.names,
     description: help.description,
     argsRequired: false,
@@ -30,24 +36,22 @@ module.exports = {
     execute(msg, args) {
         // initialize embed
         if (notCalled) {
-            helpCenter.addFields(
+            notCalled = false;
+            helpCenter.embed.fields = [
                 {
                     name: 'My Commands',
-                    value: msg.client.commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
+                    value: msg.channel.client.commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
                 },
                 specific
-            );
-            notCalled = false;
+            ];
         }
-
-        let embed;
 
 		if (args.length) {
 			const userCommand = args[0];
-            const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
+            const argCommand = msg.channel.client.commands.find(cmd => cmd.names.includes(userCommand));
 
             if (!argCommand) {
-                msgUtils.sendAuthorDm(msg, 'That\'s not one of my commands');
+                sendAuthorDm(msg, 'That\'s not one of my commands');
                 return;
             }
 
@@ -63,32 +67,35 @@ module.exports = {
                 usageStr = `${usageStr}\``;
             }
 
-            embed = new Discord.MessageEmbed()
-                .setTitle(`Command: ${argCommand.names[0]}`)
-                .setDescription(argCommand.description)
-                .addFields(
-                    {
-                        name: 'Aliases',
-                        value: argCommand.names.slice(1).join(', ')
-                    },
-                    {
-                        name: 'Usage',
-                        value: usageStr
-                    },
-                    {
-                        name: 'Server Only Command?',
-                        value: argCommand.guildOnly ? 'Can only be used in servers' : 'Can be used in DM\'s'
-                    },
-                    {
-                        name: 'Cooldown Time',
-                        value: `${argCommand.cooldown} second(s)`
-                    }
-                );
+            const embed = {
+                embed: {
+                    title: `Command: ${argCommand.names[0]}`,
+                    description: argCommand.description,
+                    fields: [
+                        {
+                            name: 'Aliases',
+                            value: argCommand.names.slice(1).join(', ')
+                        },
+                        {
+                            name: 'Usage',
+                            value: usageStr
+                        },
+                        {
+                            name: 'Server Only Command?',
+                            value: argCommand.guildOnly ? 'Can only be used in servers' : 'Can be used in DM\'s'
+                        },
+                        {
+                            name: 'Cooldown Time',
+                            value: `${argCommand.cooldown} second(s)`
+                        }
+                    ]
+                }
+            };
+
+            sendAuthorDm(msg, embed);
         }
         else {
-            embed = helpCenter;
+            sendAuthorDm(msg, helpCenter, file);
         }
-
-        msgUtils.sendAuthorDm(msg, embed);
     }
 }

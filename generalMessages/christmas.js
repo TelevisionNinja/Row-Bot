@@ -1,21 +1,21 @@
-const {
-    christmas,
-    christmasEve
-} = require('../messages.json');
-const rand = require('../lib/randomFunctions.js');
+import { default as messages } from '../messages.json';
+import { randomMath } from '../lib/randomFunctions.js';
 
-module.exports = {
+const christmas = messages.christmas,
+    christmasEve = messages.christmasEve;
+
+export default {
     description: 'Wish a merry christmas',
     execute(msg, filteredMsg) {
         for (let i = 0, n = christmas.length; i < n; i++) {
             if (filteredMsg === christmas[i].toLowerCase()) {
-                return  christmas[rand.randomMath(n)];
+                return  christmas[randomMath(n)];
             }
         }
 
         for (let i = 0, n = christmasEve.length; i < n; i++) {
             if (filteredMsg === christmasEve[i].toLowerCase()) {
-                return christmasEve[rand.randomMath(n)];
+                return christmasEve[randomMath(n)];
             }
         }
 

@@ -1,23 +1,20 @@
-const {
-    derp,
-    tagSeparator
-} = require('../config.json');
-const msgUtils = require('../lib/msgUtils.js');
-const stringUtils = require('../lib/stringUtils.js');
-const axios = require('axios');
-const {
-    RateLimiterMemory,
-    RateLimiterQueue
-} = require('rate-limiter-flexible');
+import { default as config } from '../config.json';
+import { sendImg } from '../lib/msgUtils.js';
+import { tagArrToStr } from '../lib/stringUtils.js';
+import axios from 'axios';
+import PQueue from 'p-queue';
+import { backOff } from '../lib/limit.js';
 
-const limit = new RateLimiterMemory({
-    points: 10,
-    duration: 1
+const derp = config.derp,
+    tagSeparator = config.tagSeparator;
+
+const queue = new PQueue({
+    interval: 1000,
+    intervalCap: 10
 });
-const rateLimiter = new RateLimiterQueue(limit);
 const URL = `${derp.API}${derp.APIKey}&q=`;
 
-module.exports = {
+export default {
     names: derp.names,
     description: derp.description,
     argsRequired: true,
@@ -29,15 +26,10 @@ module.exports = {
     async execute(msg, args) {
         args = args.join(' ').split(tagSeparator);
 
-        const {
-            imgURL,
-            source,
-            results
-        } = await getImage(args);
+        const img = await getImage(args);
 
-        msgUtils.sendImg(msg.channel, imgURL, source, results);
-    },
-    getImage
+        sendImg(msg.channel, img);
+    }
 }
 
 /**
@@ -46,36 +38,54 @@ module.exports = {
  * 
  * @param {*} tagArr array of tags to be searched
  */
-async function getImage(tagArr) {
-    await rateLimiter.removeTokens(1);
-
+export async function getImage(tagArr) {
     // whitespace is replaced with '+'
     // tags are separated by '%2C'
     // '-' infront of a tag means to exclude it
-    const tags = stringUtils.tagArrToStr(tagArr, derp.whitespace, derp.separator);
-    
-    let imgURL = '';
-    let source = '';
-    let results = 0;
+    const tags = tagArrToStr(tagArr, derp.whitespace, derp.separator);
+    let imgObj = { results: 0 };
 
-    try {
-        const response = await axios.get(`${URL}${tags}`);
-        results = parseInt(response.data.total);
+    await queue.add(async () => {
+        try {
+            const response = await axios.get(`${URL}${tags}`);
+            const results = parseInt(response.data.total);
 
-        if (results) {
-            const img = response.data.images[0];
+            if (results) {
+                const img = response.data.images[0];
 
-            imgURL = img.representations.full;
-            source = `${derp.URL}${img.id}`;
+                //-----------------------------------------
+                // create image object
+
+                let artists = [];
+
+                for (let i = 0, n = img.tags.length; i < n; i++) {
+                    const tag = img.tags[i];
+
+                    if (tag.startsWith('artist:')) {
+                        artists.push(tag.substring(7));
+                    }
+                }
+
+                if (!artists.length) {
+                    artists.push('unknown artist');
+                }
+
+                imgObj = {
+                    source: `${derp.URL}${img.id}`,
+                    url: img.representations.full,
+                    artist: artists,
+                    description: img.description,
+                    results: results,
+                    title: '',
+                    website: derp.websiteName,
+                    embedColor: derp.embedColor
+                }
+            }
         }
-    }
-    catch (error) {
-        console.log(error);
-    }
+        catch (error) {
+            backOff(error, queue);
+        }
+    });
 
-    return {
-        imgURL,
-        source,
-        results
-    };
+    return imgObj;
 }

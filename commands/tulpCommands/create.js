@@ -1,9 +1,12 @@
-const { create } = require('./tulpConfig.json');
-const { tagSeparator } = require('../../config.json');
-const msgUtils = require('../../lib/msgUtils.js');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfig } from './tulpConfig.json';
+import { default as config } from '../../config.json';
+import { extractNameAndAvatar } from '../../lib/msgUtils.js';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const create = tulpConfig.create,
+    tagSeparator = config.tagSeparator;
+
+export default {
     names: create.names,
     description: create.description,
     argsRequired: true,
@@ -16,15 +19,15 @@ module.exports = {
             validURL,
             username,
             avatarLink
-        } = msgUtils.extractNameAndAvatar(msg, args);
+        } = extractNameAndAvatar(msg, args);
 
         if (!success) {
-            msg.channel.send('Please provide a name and a profile picture');
+            msg.channel.createMessage('Please provide a name and a profile picture');
             return;
         }
 
         if (!validURL) {
-            msg.channel.send('Please provide a valid URL for the avatar');
+            msg.channel.createMessage('Please provide a valid URL for the avatar');
             return;
         }
 
@@ -49,10 +52,10 @@ module.exports = {
             const result = await tulpCollection.updateOne(updateQuery, update);
 
             if (result.result.n) {
-                msg.channel.send(create.confirmMsg);
+                msg.channel.createMessage(create.confirmMsg);
             }
             else {
-                msg.channel.send(create.existingMsg);
+                msg.channel.createMessage(create.existingMsg);
             }
         }
         else {
@@ -67,7 +70,7 @@ module.exports = {
             };
 
             tulpCollection.insertOne(newUser);
-            msg.channel.send(create.confirmMsg);
+            msg.channel.createMessage(create.confirmMsg);
         }
     }
 }

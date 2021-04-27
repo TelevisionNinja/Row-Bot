@@ -1,10 +1,12 @@
-const Discord = require('discord.js');
-const { tulp: tulpCollection } = require('../../../lib/database.js');
-const msgUtils = require('../../../lib/msgUtils.js');
-const stringUtils = require('../../../lib/stringUtils.js');
+import { tulp as tulpCollection } from '../../../lib/database.js';
+import { sendWebhookMsg } from '../../../lib/msgUtils.js';
+import {
+    containsURL,
+    cutOff
+} from '../../../lib/stringUtils.js';
 
-module.exports = {
-    usage: `<custom bracket><message><custom bracket>`,
+export default {
+    usage: '<custom bracket><message><custom bracket>',
     async sendEasyMsg(msg) {
         const query = { _id: msg.author.id };
         const userData = await tulpCollection.findOne(query);
@@ -20,7 +22,6 @@ module.exports = {
             startBracket: '',
             endBracket: ''
         };
-        let hasTulp = false;
 
         for (let i = 0, n = tulpArr.length; i < n; i++) {
             const currentTulp = tulpArr[i];
@@ -30,11 +31,10 @@ module.exports = {
                 userMessage.startsWith(currentTulp.startBracket) &&
                 userMessage.endsWith(currentTulp.endBracket)) {
                 selectedTulp = currentTulp;
-                hasTulp = true;
             }
         }
 
-        if (!hasTulp) {
+        if (typeof selectedTulp.username === 'undefined') {
             return false;
         }
 
@@ -47,49 +47,54 @@ module.exports = {
         //-------------------------------------------------------------------------------------
         // referenced msg
 
-        if (msg.reference) {
-            const reference = await msg.channel.messages.fetch(msg.reference.messageID);
+        const reference = msg.referencedMessage;
+
+        if (reference) {
             let referenceMsg = reference.cleanContent;
             let mention;
 
             // format mention and jump link
             if (reference.webhookID === reference.author.id) {
-                mention = `[@${reference.author.username}](${reference.url})`;
+                mention = `[@${reference.author.username}](${reference.jumpLink})`;
 
                 // remove reference inside of reference
                 referenceMsg = referenceMsg.replace(/^(> )(.|\n){0,}(\[.{0,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n\n)/i, '');
             }
             else {
-                mention = `<@${reference.author.id}> - [jump](${reference.url})`;
+                mention = `<@${reference.author.id}> - [jump](${reference.jumpLink})`;
             }
 
             // detect embed or prevent embed from showing
-            if (!referenceMsg.length || stringUtils.containsURL(referenceMsg)) {
-                referenceMsg = `[*Select to see attachment*](${reference.url})`;
+            if (!referenceMsg.length || containsURL(referenceMsg)) {
+                referenceMsg = `[*Select to see attachment*](${reference.jumpLink})`;
             }
             else {
                 // put the referenced msg in a quote
-                referenceMsg = stringUtils.cutOff(referenceMsg.replaceAll('\n', '\n> '), 64);
+                referenceMsg = cutOff(referenceMsg.replaceAll('\n', '\n> '), 64);
             }
 
             // check if the msg is over the discord char limit
-            tulpMsg = stringUtils.cutOff(`> ${referenceMsg}\n${mention}\n\n${tulpMsg}`, 2000);
+            tulpMsg = cutOff(`> ${referenceMsg}\n${mention}\n\n${tulpMsg}`, 2000);
         }
 
         //-------------------------------------------------------------------------------------
         // detect dm channel
 
-        if (msg.channel.type === 'dm') {
-            const simulatedMsg = new Discord.MessageEmbed()
-                .setAuthor(selectedTulp.username, selectedTulp.avatar)
-                .setDescription(tulpMsg);
-
-            msg.channel.send(simulatedMsg);
+        if (msg.channel.type === 1) {
+            msg.channel.createMessage({
+                embed: {
+                    author: {
+                        name: selectedTulp.username,
+                        icon_url: selectedTulp.avatar
+                    },
+                    description: tulpMsg
+                }
+            });
         }
         else {
             // send webhook message
             msg.delete();
-            msgUtils.sendWebhookMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
+            sendWebhookMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
         }
 
         return true;

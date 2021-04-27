@@ -1,14 +1,15 @@
-const {
-    tulp: tulpConfig,
-    tagSeparator
-} = require('../../config.json');
-const { sendMsg } = require('./tulpConfig.json');
-const Discord = require('discord.js');
-const { usage: easyUsage } = require('./easyMessages/sendEasyMsg.js');
-const { tulp: tulpCollection } = require('../../lib/database.js');
-const msgUtils = require('../../lib/msgUtils.js');
+import { default as config } from '../../config.json';
+import { default as tulpConfigFile } from './tulpConfig.json';
+import { default as sendEasyMsg } from './easyMessages/sendEasyMsg.js';
+import { tulp as tulpCollection } from '../../lib/database.js';
+import { sendWebhookMsg } from '../../lib/msgUtils.js';
 
-module.exports = {
+const tulpConfig = config.tulp,
+    tagSeparator = config.tagSeparator,
+    sendMsg = tulpConfigFile.sendMsg,
+    easyUsage = sendEasyMsg.usage;
+
+export default {
     names: sendMsg.names,
     description: sendMsg.description,
     argsRequired: true,
@@ -50,12 +51,12 @@ module.exports = {
         const userData = await tulpCollection.findOne(query, options);
 
         if (userData === null) {
-            msg.channel.send(tulpConfig.notUserMsg);
+            msg.channel.createMessage(tulpConfig.notUserMsg);
             return;
         }
 
         if (typeof userData.tulps === 'undefined') {
-            msg.channel.send(tulpConfig.noDataMsg);
+            msg.channel.createMessage(tulpConfig.noDataMsg);
             return;
         }
 
@@ -65,15 +66,19 @@ module.exports = {
         // detect dm channel
 
         if (isDM) {
-            const simulatedMsg = new Discord.MessageEmbed()
-                .setAuthor(selectedTulp.username, selectedTulp.avatar)
-                .setDescription(tulpMsg);
-
-            msg.channel.send(simulatedMsg);
+            msg.channel.createMessage({
+                embed: {
+                    author: {
+                        name: selectedTulp.username,
+                        icon_url: selectedTulp.avatar
+                    },
+                    description: tulpMsg
+                }
+            });
         }
         else {
             // webhook
-            msgUtils.sendWebhookMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
+            sendWebhookMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
         }
     }
 }

@@ -1,21 +1,17 @@
-const {
-    covid,
-    noResultsMsg
-} = require('../config.json');
-const axios = require('axios');
-const Discord = require('discord.js');
-const {
-    RateLimiterMemory,
-    RateLimiterQueue
-} = require('rate-limiter-flexible');
+import { default as config } from '../config.json';
+import axios from 'axios';
+import PQueue from 'p-queue';
+import { backOff } from '../lib/limit.js';
 
-const limit = new RateLimiterMemory({
-    points: 10,
-    duration: 1
+const covid = config.covid,
+    noResultsMsg = config.noResultsMsg;
+
+const queue = new PQueue({
+    interval: 1000,
+    intervalCap: 10
 });
-const rateLimiter = new RateLimiterQueue(limit);
 
-module.exports = {
+export default {
     names: covid.names,
     description: covid.description,
     argsRequired: true,
@@ -28,15 +24,12 @@ module.exports = {
         const data = await getData();
 
         if (data.length) {
-            msg.channel.send(dataToEmbed(args.join(' '), data));
+            msg.channel.createMessage(dataToEmbed(args.join(' '), data));
         }
         else {
-            msg.channel.send('I couldn\'t get any data for some reason');
+            msg.channel.createMessage('I couldn\'t get any data for some reason');
         }
-    },
-    getData,
-    dataToStrArr,
-    dataToEmbed
+    }
 }
 
 /**
@@ -44,23 +37,24 @@ module.exports = {
  * 
  * @param {*} nthDay 
  */
-async function getData(nthDay = 0) {
-    await rateLimiter.removeTokens(1);
+export async function getData(nthDay = 1) {
+    let results = '';
 
     if (nthDay === 3) {
-        return '';
+        return results;
     }
-    
-    let response;
-    let results;
 
-    try {
-        response = await axios.get(getUrl(nthDay));
-        results = response.data;
-    }
-    catch (error) {
-        results = await getData(nthDay + 1);
-    }
+    await queue.add(async () => {
+        try {
+            const response = await axios.get(getUrl(nthDay));
+            results = response.data;
+        }
+        catch (error) {
+            if (!backOff(error, queue)) {
+                results = await getData(nthDay + 1);
+            }
+        }
+    });
 
     return results;
 }
@@ -122,7 +116,7 @@ function dataToStateData(state, data, precision = 2) {
 
     let stateFound = false;
 
-    if (data.length === 0) {
+    if (!data.length) {
         return {
             stateFound,
             stateName,
@@ -212,7 +206,7 @@ function dataToStateData(state, data, precision = 2) {
  * @param {*} state 
  * @param {*} data 
  */
-function dataToStrArr(state, data) {
+export function dataToStrArr(state, data) {
     const {
         stateFound,
         stateName,
@@ -251,12 +245,12 @@ function dataToStrArr(state, data) {
 }
 
 /**
- * puts a state's data into a discord embed
+ * puts a state's data into an embed
  * 
  * @param {*} state 
  * @param {*} data 
  */
-function dataToEmbed(state, data) {
+export function dataToEmbed(state, data) {
     const {
         stateFound,
         stateName,
@@ -272,61 +266,63 @@ function dataToEmbed(state, data) {
         source
     } = dataToStateData(state, data);
 
-    const embed = new Discord.MessageEmbed();
-
     if (!stateFound) {
-        embed.setTitle(noResultsMsg)
-            .setColor(covid.embedColor);
-
-        return embed;
+        return {
+            embed: {
+                title: noResultsMsg,
+                color: parseInt(covid.embedColor, 16)
+            }
+        };
     }
 
-    embed.setTitle(stateName)
-        .setDescription(`Latest updated on ${lastUpdate} UTC`)
-        .setFooter(source)
-        .setColor(covid.embedColor)
-        .addFields(
-            {
-                name: 'Confirmed Cases',
-                value: confirmed,
-                inline: true
-            },
-            {
-                name: 'Deaths',
-                value: deaths,
-                inline: true
-            },
-            {
-                name: 'Recoveries',
-                value: recovered,
-                inline: true
-            },
-            {
-                name: 'Active Cases',
-                value: active,
-                inline: true
-            },
-            {
-                name: 'Incident Rate',
-                value: `${incidentRate}%`,
-                inline: true
-            },
-            {
-                name: 'Total Tests',
-                value: totalTestResults,
-                inline: true
-            },
-            {
-                name: 'Fatality Percentage',
-                value: `${fatalityRatio}%`,
-                inline: true
-            },
-            {
-                name: 'Testing Rate',
-                value: `${testingRate}%`,
-                inline: true
-            }
-        );
-
-    return embed;
+    return {
+        embed: {
+            title: stateName,
+            description: `Latest updated on ${lastUpdate} UTC`,
+            footer: { text: source },
+            color: parseInt(covid.embedColor, 16),
+            fields: [
+                {
+                    name: 'Confirmed Cases',
+                    value: confirmed,
+                    inline: true
+                },
+                {
+                    name: 'Deaths',
+                    value: deaths,
+                    inline: true
+                },
+                // {
+                //     name: 'Recoveries',
+                //     value: recovered,
+                //     inline: true
+                // },
+                // {
+                //     name: 'Active Cases',
+                //     value: active,
+                //     inline: true
+                // },
+                {
+                    name: 'Incident Rate',
+                    value: `${incidentRate}%`,
+                    inline: true
+                },
+                {
+                    name: 'Total Tests',
+                    value: totalTestResults,
+                    inline: true
+                },
+                {
+                    name: 'Fatality Percentage',
+                    value: `${fatalityRatio}%`,
+                    inline: true
+                },
+                {
+                    name: 'Testing Rate',
+                    value: `${testingRate}%`,
+                    inline: true
+                }
+            ]
+        }
+    };
 }
