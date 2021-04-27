@@ -95,6 +95,8 @@ client.on('message', async msg => {
         }
     }
 
+    //--------------------------------------------------------------------------------
+
     const msgStr = msg.content.toLowerCase();
 
     if (msgStr.startsWith(prefix)) {
