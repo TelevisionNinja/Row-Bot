@@ -76,15 +76,23 @@ client.on('ready', () => {
 // message actions
 
 client.on('message', async msg => {
-    const guildMemberClient = msg.guild.me;
     const notBot = !msg.author.bot;
     const hasLength = msg.content.length;
-    const isAdmin = guildMemberClient.hasPermission('ADMINISTRATOR');
-    const hasMinimumPerms = guildMemberClient.hasPermission(minimumPermissions);
-    const meetsConditions = (notBot && hasLength) && (isAdmin || hasMinimumPerms);
+    const msgFilterBool = notBot && hasLength;
 
-    if (!meetsConditions) {
+    if (!msgFilterBool) {
         return;
+    }
+
+    if (msg.channel.type !== 'dm') {
+        const guildMemberClient = msg.guild.me;
+        const isAdmin = guildMemberClient.hasPermission('ADMINISTRATOR');
+        const hasMinimumPerms = guildMemberClient.hasPermission(minimumPermissions);
+        const meetsConditions = msgFilterBool && (isAdmin || hasMinimumPerms);
+
+        if (!meetsConditions) {
+            return;
+        }
     }
 
     const msgStr = msg.content.toLowerCase();
