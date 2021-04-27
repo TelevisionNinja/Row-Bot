@@ -187,7 +187,8 @@
         "noDataMsg" : "",
         "notUserMsg" : "",
         "dbName" : "",
-        "dbCollection" : ""
+        "dbCollection" : "",
+        "webhookCollection" : ""
     },
 
     "urban" : {
