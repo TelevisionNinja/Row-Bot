@@ -11,6 +11,7 @@ const {
 const rand = require('../lib/randomFunctions.js');
 const DailyInterval = require('daily-intervals');
 const msgUtils = require('../lib/msgUtils.js');
+const stringUtils = require('../lib/stringUtils.js');
 
 module.exports = {
     description: askLateNight.description,
@@ -54,8 +55,8 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
     await msgUtils.sendTypingMsg(recipient, askingMsg, '');
 
     const collector = recipient.createMessageCollector(m => {
-        const str = m.content.toLowerCase();
-        return !(str.startsWith(prefix)) && !(m.author.bot) && (names.some(a => str.includes(a.toLowerCase())) || msgUtils.hasBotMention(m, false, true, false));
+        const filteredStr = stringUtils.removeAllSpecialChars(m.content);
+        return !m.content.startsWith(prefix) && !m.author.bot && (names.some(n => stringUtils.includesPhrase(filteredStr, n, false)) || msgUtils.hasBotMention(m, false, true, false));
     }, { time: timeOut });
 
     collector.on('collect', m => {
@@ -63,16 +64,15 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
         const memberObj = memberMap.get(userID);
         
-        if (memberObj.user.decision !== undecided) {
+        if (typeof memberObj === 'undefined' || memberObj.user.decision !== undecided) {
             return;
         }
 
-        const str = m.content.toLowerCase().replaceAll('\n', ' ');
-        const wordArr = str.split(' ');
+        const str = m.content;
         const initial = numberOfReplies;
         let reply = '';
 
-        if (yeses.some(y => wordArr.includes(y.toLowerCase()))) {
+        if (yeses.some(y => stringUtils.includesPhrase(str, y, false))) {
             numberOfConfirms++;
 
             if (numberOfConfirms === memberSize) {
@@ -86,7 +86,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
             numberOfReplies++;
         }
-        else if (nos.some(n => wordArr.includes(n.toLowerCase()))) {
+        else if (nos.some(n => stringUtils.includesPhrase(str, n, false))) {
             numberOfDenies++;
 
             if (numberOfDenies === memberSize) {
