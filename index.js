@@ -1,4 +1,5 @@
 import Eris from 'eris';
+import { readdirSync } from 'fs';
 import { default as config } from './config.json';
 import {
     hasBotMention,
@@ -11,7 +12,6 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
-import { readdirSync } from 'fs';
 
 //--------------------------------------------------------------------------------
 
@@ -128,20 +128,13 @@ client.on('messageCreate', async msg => {
             return;
         }
 
-        if (command.guildOnly && msg.channel.type === 'dm') {
+        if (command.guildOnly && msg.channel.type === 1) {
             msg.channel.createMessage('I can\'t execute that command in DM\'s');
             return;
         }
 
         if (command.permittedCharsOnly) {
-            const argStr = removeProhibitedChars(args.join(' '));
-
-            if (argStr.length) {
-                args = argStr.split(' ');
-            }
-            else {
-                args = [];
-            }
+            args = removeProhibitedChars(args.join(' ')).split(' ');
         }
 
         if (command.argsRequired && !args.length) {

@@ -266,63 +266,63 @@ export function dataToEmbed(state, data) {
         source
     } = dataToStateData(state, data);
 
-    if (!stateFound) {
+    if (stateFound) {
         return {
             embed: {
-                title: noResultsMsg,
-                color: parseInt(covid.embedColor, 16)
+                title: stateName,
+                description: `Latest updated on ${lastUpdate} UTC`,
+                footer: { text: source },
+                color: parseInt(covid.embedColor, 16),
+                fields: [
+                    {
+                        name: 'Confirmed Cases',
+                        value: confirmed,
+                        inline: true
+                    },
+                    {
+                        name: 'Deaths',
+                        value: deaths,
+                        inline: true
+                    },
+                    // {
+                    //     name: 'Recoveries',
+                    //     value: recovered,
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Active Cases',
+                    //     value: active,
+                    //     inline: true
+                    // },
+                    {
+                        name: 'Incident Rate',
+                        value: `${incidentRate}%`,
+                        inline: true
+                    },
+                    {
+                        name: 'Total Tests',
+                        value: totalTestResults,
+                        inline: true
+                    },
+                    {
+                        name: 'Fatality Percentage',
+                        value: `${fatalityRatio}%`,
+                        inline: true
+                    },
+                    {
+                        name: 'Testing Rate',
+                        value: `${testingRate}%`,
+                        inline: true
+                    }
+                ]
             }
         };
     }
 
     return {
         embed: {
-            title: stateName,
-            description: `Latest updated on ${lastUpdate} UTC`,
-            footer: { text: source },
-            color: parseInt(covid.embedColor, 16),
-            fields: [
-                {
-                    name: 'Confirmed Cases',
-                    value: confirmed,
-                    inline: true
-                },
-                {
-                    name: 'Deaths',
-                    value: deaths,
-                    inline: true
-                },
-                // {
-                //     name: 'Recoveries',
-                //     value: recovered,
-                //     inline: true
-                // },
-                // {
-                //     name: 'Active Cases',
-                //     value: active,
-                //     inline: true
-                // },
-                {
-                    name: 'Incident Rate',
-                    value: `${incidentRate}%`,
-                    inline: true
-                },
-                {
-                    name: 'Total Tests',
-                    value: totalTestResults,
-                    inline: true
-                },
-                {
-                    name: 'Fatality Percentage',
-                    value: `${fatalityRatio}%`,
-                    inline: true
-                },
-                {
-                    name: 'Testing Rate',
-                    value: `${testingRate}%`,
-                    inline: true
-                }
-            ]
+            title: noResultsMsg,
+            color: parseInt(covid.embedColor, 16)
         }
     };
 }
