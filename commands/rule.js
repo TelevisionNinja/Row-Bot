@@ -1,25 +1,25 @@
-const rand = require('../lib/randomFunctions.js');
-const msgUtils = require('../lib/msgUtils.js');
-const stringUtils = require('../lib/stringUtils.js');
-const axios = require('axios');
-const { parseString } = require('xml2js');
-const {
-    rule,
-    tagSeparator
-} = require('../config.json');
-const {
-    RateLimiterMemory,
-    RateLimiterQueue
-} = require('rate-limiter-flexible');
+import { randomMath } from '../lib/randomFunctions.js';
+import { sendImg } from '../lib/msgUtils.js';
+import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
+import axios from 'axios';
+import { parse } from 'txml';
+import { default as config } from '../config.json';
+import PQueue from 'p-queue';
+import { backOff } from '../lib/limit.js';
 
-const limit = new RateLimiterMemory({
-    points: 10,
-    duration: 1
+const rule = config.rule,
+    tagSeparator = config.tagSeparator;
+
+const queueZero = new PQueue({
+    interval: 1000,
+    intervalCap: 10
 });
-const rule0RateLimiter = new RateLimiterQueue(limit);
-const rule1RateLimiter = new RateLimiterQueue(limit);
+const queueOne = new PQueue({
+    interval: 1000,
+    intervalCap: 10
+});
 
-module.exports = {
+export default {
     names: rule.names,
     description: rule.description,
     argsRequired: true,
@@ -31,17 +31,10 @@ module.exports = {
     async execute(msg, args) {
         args = args.join(' ').split(tagSeparator);
 
-        const {
-            img,
-            source,
-            count
-        } = await getImage(args);
+        const img = await getImage(args);
 
-        msgUtils.sendImg(msg.channel, img, source, count);
-    },
-    getImage,
-    getImageRule0,
-    getImageRule1
+        sendImg(msg.channel, img);
+    }
 }
 
 /**
@@ -52,62 +45,55 @@ module.exports = {
  * 
  * @param {*} tagArr array of tags that are already formatted
  */
-async function getImageRule0(tagArr) {
-    await rule0RateLimiter.removeTokens(1);
-
+export async function getImageRule0(tagArr) {
     const URL = `${rule.sites[0].API}${tagArr.join(rule.separator)}&limit=`;
+    let imgObj = { results: 0 };
 
-    let imgURL = '';
-    let source = '';
-    let results = 0;
+    await queueZero.add(async () => {
+        try {
+            let response = await axios.get(`${URL}0`);
+            let parsedXML = parse(response.data);
 
-    try {
-        let response = await axios.get(`${URL}0`);
-        let XMLStr = response.data;
-        let count = 0;
-
-        parseString(XMLStr, (err, result) => {
-            // obj's are named '$'
             // 'count' is # of images for the provided tags
-            count = parseInt(result.posts['$'].count);
-        });
+            let count = parseInt(parsedXML[1].attributes.count);
 
-        results = count;
+            if (count) {
+                imgObj.results = count;
 
-        if (count) {
-            // the max number of images for the rule0 api is 200001 images (0-200000)
-            // the site has a max of 100 posts per request
-            // pid range: zero to count / (limit per request)
+                // the max number of images for the rule0 api is 200001 images (0-200000)
+                // the site has a max of 100 posts per request
+                // pid range: zero to count / (limit per request)
 
-            // (max # images) / (limit per request) = pid max
-            // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
-            if (count > 200000) {
-                count = 200000;
+                // (max # images) / (limit per request) = pid max
+                // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
+                if (count > 200000) {
+                    count = 200000;
+                }
+
+                const pid = randomMath(count);
+
+                response = await axios.get(`${URL}1&pid=${pid}`);
+                parsedXML = parse(response.data);
+
+                // get the first image from the 'posts' array
+                // elements of the array are named 'post'
+                const img = parsedXML[1].children[0].attributes;
+
+                imgObj.source = `${rule.sites[0].URL}${img.id}`;
+                imgObj.url = img.file_url;
+                imgObj.artist = [];
+                imgObj.description = '';
+                imgObj.title = '';
+                imgObj.website = rule.websiteName;
+                imgObj.embedColor = rule.embedColor;
             }
-            const pid = rand.randomMath(count);
-
-            response = await axios.get(`${URL}1&pid=${pid}`);
-            XMLStr = response.data;
-            let img;
-
-            parseString(XMLStr, (err, result) => {
-                // array of posts is named 'post'
-                img = result.posts.post[0]['$'];
-            });
-
-            imgURL = img.file_url;
-            source = `${rule.sites[0].URL}${img.id}`;
         }
-    }
-    catch (error) {
-        console.log(error);
-    }
+        catch (error) {
+            backOff(error, queueZero);
+        }
+    });
 
-    return {
-        imgURL,
-        source,
-        results
-    };
+    return imgObj;
 }
 
 /**
@@ -118,60 +104,54 @@ async function getImageRule0(tagArr) {
  * 
  * @param {*} tagArr array of tags that are already formatted
  */
-async function getImageRule1(tagArr) {
-    await rule1RateLimiter.removeTokens(1);
-
+export async function getImageRule1(tagArr) {
     // this api has a max of 3 tags
     if (tagArr.length > 3) {
         tagArr = tagArr.slice(0, 3);
     }
 
     const URL = `${rule.sites[1].API}${tagArr.join(rule.separator)}&limit=`;
+    let imgObj = { results: 0 };
 
-    let imgURL = '';
-    let source = '';
-    let results = 0;
+    await queueOne.add(async () => {
+        try {
+            let response = await axios.get(`${URL}0`);
+            let parsedXML = parse(response.data);
 
-    try {
-        let response = await axios.get(`${URL}0`);
-        let XMLStr = response.data;
-
-        parseString(XMLStr, (err, result) => {
-            // obj's are named '$'
             // 'count' is # of images for the provided tags
-            results = parseInt(result.posts['$'].count);
-        });
+            const count = parseInt(parsedXML[0].attributes.count);
 
-        if (results) {
-            // the site has a max of 100 posts per request
-            // pid range: zero to count / (limit per request)
+            if (count) {
+                // the site has a max of 100 posts per request
+                // pid range: zero to count / (limit per request)
 
-            // (max # images) / (limit per request) = pid max
-            // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
-            const pid = rand.randomMath(results);
+                // (max # images) / (limit per request) = pid max
+                // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
+                const pid = randomMath(count);
 
-            response = await axios.get(`${URL}1&pid=${pid}`);
-            XMLStr = response.data;
-            let img;
+                response = await axios.get(`${URL}1&pid=${pid}`);
+                parsedXML = parse(response.data);
 
-            parseString(XMLStr, (err, result) => {
-                // array of posts is named 'tag'
-                img = result.posts.tag[0]['$'];
-            });
+                // get the first image from the 'posts' array
+                // elements of the array are named 'tag'
+                const img = parsedXML[0].children[0].attributes;
 
-            imgURL = img.file_url;
-            source = `${rule.sites[1].URL}${img.id}`;
+                imgObj.source = `${rule.sites[1].URL}${img.id}`;
+                imgObj.url = img.file_url;
+                imgObj.results = count;
+                imgObj.artist = [];
+                imgObj.description = '';
+                imgObj.title = '';
+                imgObj.website = rule.websiteName;
+                imgObj.embedColor = rule.embedColor;
+            }
         }
-    }
-    catch (error) {
-        console.log(error);
-    }
+        catch (error) {
+            backOff(error, queueOne);
+        }
+    });
 
-    return {
-        imgURL,
-        source,
-        results
-    };
+    return imgObj;
 }
 
 /**
@@ -180,17 +160,14 @@ async function getImageRule1(tagArr) {
  * 
  * @param {*} tagArr array of tags to be searched
  */
-async function getImage(tagArr) {
+export async function getImage(tagArr) {
     // whitespace is replaced with '_'
     // tags are separated by '+'
     // '-' infront of a tag means to exclude it
-    tagArr = stringUtils.tagArrToParsedTagArr(tagArr, rule.whitespace);
+    tagArr = tagArrToParsedTagArr(tagArr, rule.whitespace);
 
     const numOfSites = rule.sites.length;
-    const randomSiteID = rand.randomMath(numOfSites);
-    let img = '';
-    let source = '';
-    let count = 0;
+    const randomSiteID = randomMath(numOfSites);
     let requestedImg;
 
     if (randomSiteID) {
@@ -200,9 +177,7 @@ async function getImage(tagArr) {
         requestedImg = await getImageRule0(tagArr);
     }
 
-    count = requestedImg.results;
-
-    if (!count) {
+    if (!requestedImg.results) {
         // cycle through the sites
         if ((randomSiteID + 1) % numOfSites) {
             requestedImg = await getImageRule1(tagArr);
@@ -210,16 +185,7 @@ async function getImage(tagArr) {
         else {
             requestedImg = await getImageRule0(tagArr);
         }
-
-        count = requestedImg.results;
     }
 
-    img = requestedImg.imgURL;
-    source = requestedImg.source;
-
-    return {
-        img,
-        source,
-        count,
-    };
+    return requestedImg;
 }

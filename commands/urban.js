@@ -1,24 +1,20 @@
-const {
-    urban,
-    noResultsMsg
-} = require('../config.json');
-const rand = require('../lib/randomFunctions.js');
-const stringUtils = require('../lib/stringUtils.js');
-const querystring = require('querystring');
-const axios = require('axios');
-const { MessageEmbed } = require('discord.js');
-const {
-    RateLimiterMemory,
-    RateLimiterQueue
-} = require('rate-limiter-flexible');
+import { default as config } from '../config.json';
+import { randomMath } from '../lib/randomFunctions.js';
+import { cutOff } from '../lib/stringUtils.js';
+import { stringify } from 'querystring';
+import axios from 'axios';
+import PQueue from 'p-queue';
+import { backOff } from '../lib/limit.js';
 
-const limit = new RateLimiterMemory({
-    points: 10,
-    duration: 1
+const urban = config.urban,
+    noResultsMsg = config.noResultsMsg;
+
+const queue = new PQueue({
+    interval: 1000,
+    intervalCap: 10
 });
-const rateLimiter = new RateLimiterQueue(limit);
 
-module.exports = {
+export default {
     names: urban.names,
     description: urban.description,
     argsRequired: true,
@@ -28,52 +24,53 @@ module.exports = {
     usage: '<search term>',
     cooldown: 1,
     async execute(msg, args) {
-        await rateLimiter.removeTokens(1);
-
-        const searchWord = querystring.stringify({ term: args.join(' ') });
+        const searchWord = stringify({ term: args.join(' ') });
         const URL = `${urban.API}${searchWord}`;
 
-        try {
-            const response = await axios.get(URL);
-            const defs = response.data.list;
-            const count = defs.length;
+        await queue.add(async () => {
+            try {
+                const response = await axios.get(URL);
+                const defs = response.data.list;
+                const count = defs.length;
 
-            if (count) {
-                const result = defs[rand.randomMath(count)];
+                if (count) {
+                    const result = defs[randomMath(count)];
+                    const definition = result.definition.replaceAll(/[\[\]]/g, '');
+                    const example = result.example.replaceAll(/[\[\]]/g, '');
 
-                const definition = result.definition.replaceAll(/[\[\]]/g, '');
-                const example = result.example.replaceAll(/[\[\]]/g, '');
-
-                const embed = new MessageEmbed()
-                    .setTitle(result.word)
-                    .setURL(result.permalink)
-                    .addFields(
-                        {
-                            name: 'Definition',
-                            value: stringUtils.cutOff(definition, 1024)
-                        },
-                        {
-                            name: 'Example',
-                            value: stringUtils.cutOff(example, 1024)
-                        },
-                        {
-                            name: 'Rating',
-                            value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
-                        },
-                        {
-                            name: 'Results',
-                            value: count
+                    msg.channel.send({
+                        embed: {
+                            title: result.word,
+                            url: result.permalink,
+                            fields: [
+                                {
+                                    name: 'Definition',
+                                    value: cutOff(definition, 1024)
+                                },
+                                {
+                                    name: 'Example',
+                                    value: cutOff(example, 1024)
+                                },
+                                {
+                                    name: 'Rating',
+                                    value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
+                                },
+                                {
+                                    name: 'Results',
+                                    value: count
+                                }
+                            ]
                         }
-                    );
-
-                msg.channel.send(embed);
+                    });
+                }
+                else {
+                    msg.channel.send(noResultsMsg);
+                }
             }
-            else {
+            catch (error) {
+                backOff(error, queue);
                 msg.channel.send(noResultsMsg);
             }
-        }
-        catch (error) {
-            msg.channel.send(noResultsMsg);
-        }
+        });
     }
 }

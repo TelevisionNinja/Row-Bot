@@ -1,9 +1,12 @@
-const { create } = require('./tulpConfig.json');
-const { tagSeparator } = require('../../config.json');
-const msgUtils = require('../../lib/msgUtils.js');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfig } from './tulpConfig.json';
+import { default as config } from '../../config.json';
+import { extractNameAndAvatar } from '../../lib/msgUtils.js';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const create = tulpConfig.create,
+    tagSeparator = config.tagSeparator;
+
+export default {
     names: create.names,
     description: create.description,
     argsRequired: true,
@@ -16,7 +19,7 @@ module.exports = {
             validURL,
             username,
             avatarLink
-        } = msgUtils.extractNameAndAvatar(msg, args);
+        } = extractNameAndAvatar(msg, args);
 
         if (!success) {
             msg.channel.send('Please provide a name and a profile picture');

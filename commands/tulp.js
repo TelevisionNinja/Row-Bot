@@ -1,9 +1,9 @@
-const {
-    tulp,
-    prefix
-} = require('../config.json');
+import { default as config } from '../config.json';
 
-module.exports = {
+const tulp = config.tulp,
+    prefix = config.prefix;
+
+export default {
     names: tulp.names,
     description: tulp.description,
     argsRequired: true,

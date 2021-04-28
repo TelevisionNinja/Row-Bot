@@ -1,7 +1,9 @@
-const rand = require('../lib/randomFunctions.js');
-const { coin } = require('../config.json');
+import { randomMath } from '../lib/randomFunctions.js';
+import { default as config } from '../config.json';
 
-module.exports = {
+const coin = config.coin;
+
+export default {
     names: coin.names,
     description: coin.description,
     argsRequired: false,
@@ -11,7 +13,7 @@ module.exports = {
     usage: '',
     cooldown: 0,
     execute(msg, args) {
-        if (rand.randomMath(2)) {
+        if (randomMath(2)) {
             msg.channel.send('Heads');
         }
         else {

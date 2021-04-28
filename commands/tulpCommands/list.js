@@ -1,8 +1,9 @@
-const { list: listConfig } = require('./tulpConfig.json');
-const { MessageEmbed } = require('discord.js');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfig } from './tulpConfig.json';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const listConfig = tulpConfig.list;
+
+export default {
     names: listConfig.names,
     description: listConfig.description,
     argsRequired: false,
@@ -18,11 +19,11 @@ module.exports = {
             return;
         }
 
-        const tulpArr = userData.tulps.map(t => `• ${t.username}`);
-        const tulpList = new MessageEmbed()
-            .setTitle('Your tulps')
-            .setDescription(tulpArr);
-
-        msg.channel.send(tulpList);
+        msg.channel.send({
+            embed: {
+                title: 'Your tulps', 
+                description: userData.tulps.map(t => `• ${t.username}`).join('\n')
+            }
+        });
     }
 }

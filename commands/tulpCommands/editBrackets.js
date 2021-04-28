@@ -1,13 +1,13 @@
-const { editBrackets } = require('./tulpConfig.json');
-const {
-    tulp: tulpConfig,
-    tagSeparator
-} = require('../../config.json');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfigFile } from './tulpConfig.json';
+import { default as config } from '../../config.json';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-const enclosingText = 'text';
+const editBrackets = tulpConfigFile.editBrackets,
+    enclosingText = editBrackets.enclosingText,
+    tulpConfig = config.tulp,
+    tagSeparator = config.tagSeparator;
 
-module.exports = {
+export default {
     names: editBrackets.names,
     description: editBrackets.description,
     argsRequired: true,

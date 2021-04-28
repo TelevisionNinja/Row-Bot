@@ -1,12 +1,14 @@
-const rand = require('../lib/randomFunctions.js');
-const { rps } = require('../config.json');
+import { randomMath } from '../lib/randomFunctions.js';
+import { default as config } from '../config.json';
+
+const rps = config.rps;
 
 const choices = new Map();
 choices.set('rock', 0);
 choices.set('paper', 1);
 choices.set('scissors', 2);
 
-module.exports = {
+export default {
     names: rps.names,
     description: rps.description,
     argsRequired: true,
@@ -24,7 +26,7 @@ module.exports = {
         }
 
         const choiceArr = [...choices.keys()];
-        const botChoice = choiceArr[rand.randomMath(choices.size)];
+        const botChoice = choiceArr[randomMath(choices.size)];
 
         let winnerMsg = `${botChoice}\n`;
 

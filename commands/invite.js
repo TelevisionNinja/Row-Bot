@@ -1,6 +1,8 @@
-const { invite } = require('../config.json');
+import { default as config } from '../config.json';
 
-module.exports = {
+const invite = config.invite;
+
+export default {
     names: invite.names,
     description: invite.description,
     argsRequired: false,

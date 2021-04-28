@@ -1,34 +1,33 @@
-const rule = require('../commands/rule.js');
-const { rule: ruleConfig } = require('../config.json');
-const DailyInterval = require('daily-intervals');
-const msgUtils = require('../lib/msgUtils.js');
-const stringUtils = require('../lib/stringUtils.js');
-const rand = require('../lib/randomFunctions.js');
+import { getImageRule0 } from '../commands/rule.js';
+import { default as config } from '../config.json';
+import DailyInterval from 'daily-intervals';
+import {
+    getRecipient,
+    sendImg
+} from '../lib/msgUtils.js';
+import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
+import { randomMath } from '../lib/randomFunctions.js';
+
+const ruleConfig = config.rule;
 
 const filter = ruleConfig.filterTags.map(t => `-${t}`);
 
-module.exports = {
+export default {
     description: ruleConfig.description,
     async execute(client) {
-        const recipient = await msgUtils.getRecipient(client, ruleConfig.intervalChannelID);
+        const recipient = await getRecipient(client, ruleConfig.intervalChannelID);
 
         const interval = new DailyInterval(
             async () => {
-                const randIndex = rand.randomMath(ruleConfig.intervalTags.length);
-
+                const randIndex = randomMath(ruleConfig.intervalTags.length);
                 const selection = ruleConfig.intervalTags[randIndex];
-
                 let tagArr = [selection, ...filter];
 
-                tagArr = stringUtils.tagArrToParsedTagArr(tagArr, ruleConfig.whitespace);
+                tagArr = tagArrToParsedTagArr(tagArr, ruleConfig.whitespace);
 
-                const {
-                    imgURL,
-                    source,
-                    results
-                } = await rule.getImageRule0(tagArr);
+                const img = await getImageRule0(tagArr);
 
-                msgUtils.sendImg(recipient, imgURL, source, results, false);
+                sendImg(recipient, img, false);
             },
             '0:0',
             ruleConfig.intervalWait,

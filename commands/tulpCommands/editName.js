@@ -1,11 +1,12 @@
-const { editName } = require('./tulpConfig.json');
-const {
-    tulp: tulpConfig,
-    tagSeparator
-} = require('../../config.json');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfigFile } from'./tulpConfig.json';
+import { default as config } from '../../config.json';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const editName = tulpConfigFile.editName,
+    tulpConfig = config.tulp,
+    tagSeparator = config.tagSeparator;
+
+export default {
     names: editName.names,
     description: editName.description,
     argsRequired: true,

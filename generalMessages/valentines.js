@@ -1,12 +1,14 @@
-const { valentines } = require('../messages.json');
-const rand = require('../lib/randomFunctions.js');
+import { default as messages } from '../messages.json';
+import { randomMath } from '../lib/randomFunctions.js';
 
-module.exports = {
+const valentines = messages.valentines;
+
+export default {
     description: 'Wish a happy valentine\'s day',
     execute(msg, filteredMsg) {
         for (let i = 0, n = valentines.length; i < n; i++) {
             if (filteredMsg === valentines[i].toLowerCase()) {
-                return valentines[rand.randomMath(n)];
+                return valentines[randomMath(n)];
             }
         }
 

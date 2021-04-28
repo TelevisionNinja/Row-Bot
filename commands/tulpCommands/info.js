@@ -1,9 +1,11 @@
-const { info } = require('./tulpConfig.json');
-const { tulp: tulpConfig } = require('../../config.json');
-const { MessageEmbed } = require('discord.js');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfigFile } from './tulpConfig.json';
+import { default as config } from '../../config.json';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const info = tulpConfigFile.info,
+    tulpConfig = config.tulp;
+
+export default {
     names: info.names,
     description: info.description,
     argsRequired: true,
@@ -35,16 +37,18 @@ module.exports = {
         }
 
         const selectedTulp = userData.tulps[0];
-        const info = new MessageEmbed()
-            .setThumbnail(selectedTulp.avatar)
-            .setTitle(selectedTulp.username)
-            .addFields(
-                {
-                    name: 'Brackets',
-                    value: `${selectedTulp.startBracket}text${selectedTulp.endBracket}`
-                }
-            );
 
-        msg.channel.send(info);
+        msg.channel.send({
+            embed: {
+                title: selectedTulp.username,
+                thumbnail: { url: selectedTulp.avatar },
+                fields: [
+                    {
+                        name: 'Brackets',
+                        value: `${selectedTulp.startBracket}text${selectedTulp.endBracket}`
+                    }
+                ]
+            }
+        });
     }
 }

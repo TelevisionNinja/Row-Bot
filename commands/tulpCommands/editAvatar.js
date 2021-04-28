@@ -1,12 +1,13 @@
-const { editAvatar } = require('./tulpConfig.json');
-const {
-    tulp: tulpConfig,
-    tagSeparator
-} = require('../../config.json');
-const msgUtils = require('../../lib/msgUtils.js');
-const { tulp: tulpCollection } = require('../../lib/database.js');
+import { default as tulpConfig } from './tulpConfig.json';
+import { default as config } from '../../config.json';
+import { extractNameAndAvatar } from '../../lib/msgUtils.js';
+import { tulp as tulpCollection } from '../../lib/database.js';
 
-module.exports = {
+const editAvatar = tulpConfig.editAvatar,
+    tulpConfigObj = config.tulp,
+    tagSeparator = config.tagSeparator;
+
+export default {
     names: editAvatar.names,
     description: editAvatar.description,
     argsRequired: true,
@@ -19,7 +20,7 @@ module.exports = {
             validURL,
             username,
             avatarLink
-        } = msgUtils.extractNameAndAvatar(msg, args);
+        } = extractNameAndAvatar(msg, args);
 
         if (!success) {
             msg.channel.send('Please provide a name and a profile picture');
@@ -46,7 +47,7 @@ module.exports = {
             msg.channel.send(editAvatar.confirmMsg);
         }
         else {
-            msg.channel.send(tulpConfig.noDataMsg);
+            msg.channel.send(tulpConfigObj.noDataMsg);
         }
     }
 }

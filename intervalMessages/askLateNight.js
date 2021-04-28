@@ -1,22 +1,29 @@
-const {
-    names,
-    askLateNight,
-    prefix
-} = require('../config.json');
-const {
-    acknowledgements,
-    yeses,
-    nos
-} = require('../messages.json');
-const rand = require('../lib/randomFunctions.js');
-const DailyInterval = require('daily-intervals');
-const msgUtils = require('../lib/msgUtils.js');
-const stringUtils = require('../lib/stringUtils.js');
+import { default as config } from '../config.json';
+import { default as messages } from '../messages.json';
+import { randomMath } from '../lib/randomFunctions.js';
+import DailyInterval from 'daily-intervals';
+import {
+    getRecipient,
+    sendDirectDm,
+    hasBotMention,
+    sendTypingMsg
+} from '../lib/msgUtils.js';
+import {
+    includesPhrase,
+    removeAllSpecialChars
+} from '../lib/stringUtils.js';
 
-module.exports = {
+const names = config.names,
+    askLateNight = config.askLateNight,
+    prefix = config.prefix,
+    acknowledgements = messages.acknowledgements,
+    yeses = messages.yeses,
+    nos = messages.nos;
+
+export default {
     description: askLateNight.description,
     async execute(client) {
-        const recipient = await msgUtils.getRecipient(client, askLateNight.channelID);
+        const recipient = await getRecipient(client, askLateNight.channelID);
 
         const interval = new DailyInterval(
             () => {
@@ -44,7 +51,7 @@ module.exports = {
 async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, noReplyMsg, confirmed, undecided, denied) {
     await recipient.guild.members.fetch();
 
-    const memberMap = recipient.members.filter((value, key) => !(value.user.bot));
+    const memberMap = recipient.members.filter((value, key) => !value.user.bot);
     memberMap.forEach((value, key) => value.user.decision = undecided);
     const memberSize = memberMap.size;
 
@@ -52,11 +59,11 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
     let numberOfDenies = 0;
     let numberOfConfirms = 0;
 
-    await msgUtils.sendTypingMsg(recipient, askingMsg, '');
+    await sendTypingMsg(recipient, askingMsg, '');
 
     const collector = recipient.createMessageCollector(m => {
-        const filteredStr = stringUtils.removeAllSpecialChars(m.content);
-        return !m.content.startsWith(prefix) && !m.author.bot && (names.some(n => stringUtils.includesPhrase(filteredStr, n, false)) || msgUtils.hasBotMention(m, false, true, false));
+        const filteredStr = removeAllSpecialChars(m.content);
+        return !m.content.startsWith(prefix) && !m.author.bot && (names.some(n => includesPhrase(filteredStr, n, false)) || hasBotMention(m, false, true, false));
     }, { time: timeOut });
 
     collector.on('collect', m => {
@@ -72,21 +79,21 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
         const initial = numberOfReplies;
         let reply = '';
 
-        if (yeses.some(y => stringUtils.includesPhrase(str, y, false))) {
+        if (yeses.some(y => includesPhrase(str, y, false))) {
             numberOfConfirms++;
 
             if (numberOfConfirms === memberSize) {
                 reply = allConfirmsMsg;
             }
             else {
-                reply = acknowledgements[rand.randomMath(acknowledgements.length)];
+                reply = acknowledgements[randomMath(acknowledgements.length)];
             }
 
             memberObj.user.decision = confirmed;
 
             numberOfReplies++;
         }
-        else if (nos.some(n => stringUtils.includesPhrase(str, n, false))) {
+        else if (nos.some(n => includesPhrase(str, n, false))) {
             numberOfDenies++;
 
             if (numberOfDenies === memberSize) {
@@ -102,7 +109,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
         }
 
         if (initial !== numberOfReplies) {
-            msgUtils.sendTypingMsg(recipient, reply, str);
+            sendTypingMsg(recipient, reply, str);
 
             sendDms(memberMap, askingMsg, denied, str);
         }
@@ -114,10 +121,10 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
     collector.on('end', () => {
         if (!numberOfReplies || !numberOfConfirms) {
-            msgUtils.sendTypingMsg(recipient, noReplyMsg, '');
+            sendTypingMsg(recipient, noReplyMsg, '');
         }
         else if (numberOfReplies < memberSize) {
-            msgUtils.sendTypingMsg(recipient, fewConfirmsMsg, '');
+            sendTypingMsg(recipient, fewConfirmsMsg, '');
         }
     });
 }
@@ -146,7 +153,7 @@ function sendDms(memberMap, askingMsg, denied, readingMsg) {
         const userObj = value.user;
 
         if (userObj.decision !== denied) {
-            msgUtils.sendDirectDm(userObj, reply, true, readingMsg);
+            sendDirectDm(userObj, reply, true, readingMsg);
         }
     });
 }

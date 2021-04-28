@@ -1,18 +1,24 @@
-const { Client } = require('discord.js');
-const fileSys = require('fs');
-let {
-    prefix,
-    token,
-    activityStatus,
-    names
-} = require('./config.json');
-const msgUtils = require('./lib/msgUtils.js');
-const stringUtils = require('./lib/stringUtils.js');
-const { sendEasyMsg } = require('./commands/tulpCommands/easyMessages/sendEasyMsg.js');
+import { Client } from 'discord.js';
+import { readdirSync } from 'fs';
+import { default as config } from './config.json';
+import {
+    hasBotMention,
+    sendTypingMsg,
+    hasMentions
+} from './lib/msgUtils.js';
+import {
+    removeProhibitedChars,
+    includesPhrase,
+    removeMentions
+} from './lib/stringUtils.js';
+import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
 
 //--------------------------------------------------------------------------------
 
-names = names.map(n => n.toLowerCase());
+const prefix = config.prefix,
+    token = config.token,
+    activityStatus = config.activityStatus,
+    names = config.names.map(n => n.toLowerCase());
 
 const client = new Client();
 const cooldowns = new Map();
@@ -26,30 +32,30 @@ const minimumPermissions = ['MANAGE_WEBHOOKS', 'MANAGE_MESSAGES', 'SEND_MESSAGES
 //--------------------------------------------------------------------------------
 // load commands, tulp commands, noncommands, general messages, and interval messages
 
-const commandFiles = fileSys.readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
-const noncommandFiles = fileSys.readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
-const genMsgFiles = fileSys.readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
-const intervalMsgFiles = fileSys.readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
-const tulpCommandFiles = fileSys.readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
+const commandFiles = readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
+const tulpCommandFiles = readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
+const noncommandFiles = readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
+const genMsgFiles = readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
+const intervalMsgFiles = readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
 
 for (let i = 0, n = commandFiles.length; i < n; i++) {
-    client.commands[i] = require(`./commands/${commandFiles[i]}`);
-}
-
-for (let i = 0, n = noncommandFiles.length; i < n; i++) {
-    noncommands[i] = require(`./noncommands/${noncommandFiles[i]}`);
-}
-
-for (let i = 0, n = genMsgFiles.length; i < n; i++) {
-    genMsg[i] = require(`./generalMessages/${genMsgFiles[i]}`);
+    client.commands[i] = (await import(`./commands/${commandFiles[i]}`)).default;
 }
 
 for (let i = 0, n = tulpCommandFiles.length; i < n; i++) {
-    client.tulpCommands[i] = require(`./commands/tulpCommands/${tulpCommandFiles[i]}`);
+    client.tulpCommands[i] = (await import(`./commands/tulpCommands/${tulpCommandFiles[i]}`)).default;
+}
+
+for (let i = 0, n = noncommandFiles.length; i < n; i++) {
+    noncommands[i] = (await import(`./noncommands/${noncommandFiles[i]}`)).default;
+}
+
+for (let i = 0, n = genMsgFiles.length; i < n; i++) {
+    genMsg[i] = (await import(`./generalMessages/${genMsgFiles[i]}`)).default;
 }
 
 for (let i = 0, n = intervalMsgFiles.length; i < n; i++) {
-    intervalMsgs[i] = require(`./intervalMessages/${intervalMsgFiles[i]}`);
+    intervalMsgs[i] = (await import(`./intervalMessages/${intervalMsgFiles[i]}`)).default;
 }
 
 //--------------------------------------------------------------------------------
@@ -121,14 +127,7 @@ client.on('message', async msg => {
         }
 
         if (command.permittedCharsOnly) {
-            let argStr = stringUtils.removeProhibitedChars(args.join(' '));
-
-            if (argStr.length) {
-                args = argStr.split(' ');
-            }
-            else {
-                args = [];
-            }
+            args = removeProhibitedChars(args.join(' ')).split(' ');
         }
 
         if (command.argsRequired && !args.length) {
@@ -175,14 +174,14 @@ client.on('message', async msg => {
     }
 
     // send tulp messages easily
-    if (await sendEasyMsg(msg)) {
+    if (await sendEasyMsg.sendEasyMsg(msg)) {
         return;
     }
 
     //--------------------------------------------------------------------------------
     // set up vars for noncommands and general messages
 
-    let botMention = msgUtils.hasBotMention(msg);
+    let botMention = hasBotMention(msg);
     let selectedName = '';
 
     //--------------------------------------------------------------------------------
@@ -193,7 +192,7 @@ client.on('message', async msg => {
             const currentName = names[i];
 
             if (currentName.length > selectedName.length &&
-                stringUtils.includesPhrase(msgStr, currentName, false)) {
+                includesPhrase(msgStr, currentName, false)) {
                 botMention = true;
                 selectedName = currentName;
             }
@@ -205,31 +204,31 @@ client.on('message', async msg => {
         // noncommands
 
         // remove mentions or name from message
-        const noMentionsMsg = stringUtils.removeMentions(msgStr, selectedName);
+        const noMentionsMsg = removeMentions(msgStr, selectedName);
 
         for (let i = 0, n = noncommands.length; i < n; i++) {
             const replyStr = noncommands[i].execute(msg, noMentionsMsg);
 
             // reply
             if (replyStr.length) {
-                msgUtils.sendTypingMsg(msg.channel, replyStr, msgStr);
+                sendTypingMsg(msg.channel, replyStr, msgStr);
                 return;
             }
         }
     }
-    else if (!msgUtils.hasMentions(msg, false)) {
+    else if (!hasMentions(msg, false)) {
         //--------------------------------------------------------------------------------
         // general message
 
         // remove mentions or name from message
-        const noMentionsMsg = stringUtils.removeMentions(msgStr, selectedName);
+        const noMentionsMsg = removeMentions(msgStr, selectedName);
 
         for (let i = 0, n = genMsg.length; i < n; i++) {
             const replyStr = genMsg[i].execute(msg, noMentionsMsg);
 
             // reply
             if (replyStr.length) {
-                msgUtils.sendTypingMsg(msg.channel, replyStr, msgStr);
+                sendTypingMsg(msg.channel, replyStr, msgStr);
                 return;
             }
         }
