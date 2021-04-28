@@ -1,4 +1,5 @@
 import DailyInterval from 'daily-intervals';
+import { getRecipient } from '../lib/msgUtils.js';
 import { default as config } from '../config.json';
 import {
     getData,
@@ -10,6 +11,8 @@ const covidConfig = config.covid;
 export default {
     description: covidConfig.description,
     async execute(client) {
+        const recipient = await getRecipient(client, covidConfig.intervalChannel);
+
         const interval = new DailyInterval(
             async () => {
                 const data = await getData();
@@ -17,7 +20,7 @@ export default {
 
                 embed.embed.author = { name: 'Daily Covid Report' };
 
-                client.send(covidConfig.intervalChannel, embed);
+                recipient.send(embed);
             },
             covidConfig.intervalTime,
             1440, // 24 hrs in minutes
