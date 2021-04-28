@@ -75,7 +75,7 @@ client.on('ready', () => {
     //--------------------------------------------------------------------------------
     // console log the start up time
 
-    console.log(`Row Bot is up: ${client.readyAt.toString()}`);
+    console.log(`Row Bot is up ${client.readyAt.toString()}`);
 });
 
 //--------------------------------------------------------------------------------
