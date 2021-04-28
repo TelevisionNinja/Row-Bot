@@ -8,16 +8,17 @@ const prefix = config.prefix,
     names = config.names,
     tulp = config.tulp;
 
+const iconFile = {
+    attachment: readFileSync(`./${icon}`),
+    name: icon
+};
 let helpCenter = {
     embed: {
         title: `${names[0]}\'s Tulp Help Center`,
         thumbnail: { url: `attachment://${icon}` }
-    }
+    },
+    files: [iconFile]
 };
-const file = {
-    file: readFileSync(`./${icon}`),
-    name: icon
-}
 const specific = {
     name: 'Specific Command Info',
     value: `\nSend \`${prefix}${tulp.names[0]} help <command name>\` to get info on a specific command`
@@ -90,7 +91,7 @@ export default {
             sendAuthorDm(msg, embed);
         }
         else {
-            sendAuthorDm(msg, helpCenter, file);
+            sendAuthorDm(msg, helpCenter);
         }
     }
 }

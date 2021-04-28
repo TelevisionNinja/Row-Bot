@@ -7,15 +7,16 @@ const prefix = config.prefix,
     icon = config.icon,
     names = config.names;
 
+const iconFile = {
+    attachment: readFileSync(`./${icon}`),
+    name: icon
+};
 let helpCenter = {
     embed: {
         title: `${names[0]}\'s Help Center`,
         thumbnail: { url: `attachment://${icon}` }
-    }
-};
-const file = {
-    file: readFileSync(`./${icon}`),
-    name: icon
+    },
+    files: [iconFile]
 };
 const specific = {
     name: 'Specific Command Info',
@@ -95,7 +96,7 @@ export default {
             sendAuthorDm(msg, embed);
         }
         else {
-            sendAuthorDm(msg, helpCenter, file);
+            sendAuthorDm(msg, helpCenter);
         }
     }
 }
