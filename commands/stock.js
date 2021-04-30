@@ -11,7 +11,7 @@ const queue = new PQueue({
 });
 
 // yahoo finance
-const priceElement = 'Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)" data-reactid="50">';
+const priceElement = 'Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)';
 
 export default {
     names: stock.names,
@@ -49,7 +49,7 @@ export async function getStock(symbol) {
             const str = response.data;
             let priceStr = str.substring(str.indexOf(priceElement) + priceElement.length);
 
-            price = parseFloat(priceStr.substring(0, priceStr.indexOf('<')));
+            price = parseFloat(priceStr.substring(priceStr.indexOf('>') + 1, priceStr.indexOf('<')));
         }
         catch (error) {
             backOff(error, queue);
