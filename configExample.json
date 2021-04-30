@@ -181,6 +181,17 @@
         "filterTags" : [""]
     },
 
+    "stock" : {
+        "names" : [
+            "stock",
+            "stocks",
+            "stonk",
+            "stonks"
+        ],
+        "description" : "Get stock price",
+        "API" : "https://finance.yahoo.com/q?s="
+    },
+
     "tulp" : {
         "names" : [""],
         "description" : "",
