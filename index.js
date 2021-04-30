@@ -127,7 +127,14 @@ client.on('message', async msg => {
         }
 
         if (command.permittedCharsOnly) {
-            args = removeProhibitedChars(args.join(' ')).split(' ');
+            const argStr = removeProhibitedChars(args.join(' '));
+
+            if (argStr.length) {
+                args = argStr.split(' ');
+            }
+            else {
+                args = [];
+            }
         }
 
         if (command.argsRequired && !args.length) {
