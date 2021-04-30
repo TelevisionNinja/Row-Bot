@@ -23,7 +23,7 @@ export default {
     usage: '<symbol>',
     cooldown: 1,
     async execute(msg, args) {
-        const symbol = args.join(' ').trim();
+        const symbol = args[0];
         const price = await getStock(symbol);
 
         if (price) {
