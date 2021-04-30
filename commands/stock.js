@@ -24,9 +24,9 @@ export default {
     cooldown: 1,
     async execute(msg, args) {
         const symbol = args[0];
-        const price = await getStock(symbol);
+        const price = await getStockStr(symbol);
 
-        if (price) {
+        if (price.length) {
             msg.channel.send(`$${price}`);
         }
         else {
@@ -38,7 +38,31 @@ export default {
 /**
  * 
  * @param {*} symbol stock symbol
- * @returns 
+ * @returns price (string)
+ */
+async function getStockStr(symbol) {
+    let price = '';
+
+    await queue.add(async () => {
+        try {
+            const response = await axios.get(`${stock.API}${symbol}`);
+            const str = response.data;
+
+            price = str.substring(str.indexOf(priceElement) + priceElement.length);
+            price = price.substring(price.indexOf('>') + 1, price.indexOf('<'));
+        }
+        catch (error) {
+            backOff(error, queue);
+        }
+    });
+
+    return price;
+}
+
+/**
+ * 
+ * @param {*} symbol stock symbol
+ * @returns price (float)
  */
 export async function getStock(symbol) {
     let price = 0.0;
@@ -49,7 +73,9 @@ export async function getStock(symbol) {
             const str = response.data;
             let priceStr = str.substring(str.indexOf(priceElement) + priceElement.length);
 
-            price = parseFloat(priceStr.substring(priceStr.indexOf('>') + 1, priceStr.indexOf('<')));
+            priceStr = priceStr.substring(priceStr.indexOf('>') + 1, priceStr.indexOf('<'));
+            priceStr = priceStr.replaceAll(',', '');
+            price = parseFloat(priceStr);
         }
         catch (error) {
             backOff(error, queue);
