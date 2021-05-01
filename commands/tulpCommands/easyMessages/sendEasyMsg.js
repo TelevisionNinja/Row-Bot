@@ -58,7 +58,7 @@ export default {
                 mention = `[@${reference.author.username}](${reference.url})`;
 
                 // remove reference inside of reference
-                referenceMsg = referenceMsg.replace(/^(> )(.|\n){0,}(\[.{0,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n\n)/i, '');
+                referenceMsg = referenceMsg.replace(/^(> )(.|\n){1,}(\[.{1,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n)/i, '');
             }
             else {
                 mention = `<@${reference.author.id}> - [jump](${reference.url})`;
@@ -74,7 +74,7 @@ export default {
             }
 
             // check if the msg is over the discord char limit
-            tulpMsg = cutOff(`> ${referenceMsg}\n${mention}\n\n${tulpMsg}`, 2000);
+            tulpMsg = cutOff(`> ${referenceMsg}\n${mention}\n${tulpMsg}`, 2000);
         }
 
         //-------------------------------------------------------------------------------------
