@@ -47,9 +47,8 @@ export default {
         //-------------------------------------------------------------------------------------
         // referenced msg
 
-        const reference = msg.referencedMessage;
-
-        if (reference) {
+        if (msg.reference) {
+            const reference = await msg.channel.messages.fetch(msg.reference.messageID);
             let referenceMsg = reference.cleanContent;
             let mention;
 
