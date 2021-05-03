@@ -49,7 +49,7 @@ export default {
 			const userCommand = args[0];
             const argCommand = msg.channel.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
 
-            if (!argCommand) {
+            if (typeof argCommand === 'undefined') {
                 sendAuthorDm(msg, 'That\'s not one of my tulp commands');
                 return;
             }

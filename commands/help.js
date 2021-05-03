@@ -50,7 +50,7 @@ export default {
 			const userCommand = args[0];
             const argCommand = msg.channel.client.commands.find(cmd => cmd.names.includes(userCommand));
 
-            if (!argCommand) {
+            if (typeof argCommand === 'undefined') {
                 sendAuthorDm(msg, 'That\'s not one of my commands');
                 return;
             }

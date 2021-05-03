@@ -19,7 +19,7 @@ export default {
 
         //--------------------------------------------------------------------------------
 
-        if (!command) {
+        if (typeof command === 'undefined') {
             return;
         }
 

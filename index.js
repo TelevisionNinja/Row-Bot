@@ -124,7 +124,7 @@ client.on('messageCreate', async msg => {
 
         const command = client.commands.find(cmd => cmd.names.includes(userCommand));
 
-        if (!command) {
+        if (typeof command === 'undefined') {
             return;
         }
 
