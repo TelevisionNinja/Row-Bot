@@ -12,6 +12,7 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
+import { tulpWebhooks } from './lib/database.js';
 
 //--------------------------------------------------------------------------------
 
@@ -245,7 +246,30 @@ client.on('message', async msg => {
 //--------------------------------------------------------------------------------
 // disconnect
 
-client.on('disconnect', () => console.log(`Row Bot disconnected ${new Date().toString()}`));
+client.on('shardDisconnect', () => console.log(`Row Bot disconnected ${new Date().toString()}`));
+
+//--------------------------------------------------------------------------------
+// reconnect
+
+client.on('shardResume', () => {
+    // set activity
+
+    client.user.setActivity(activityStatus, { type: 'PLAYING' });
+
+    //--------------------------------------------------------------------------------
+    // console log the start up time
+
+    console.log(`Row Bot is up ${client.readyAt.toString()}`);
+});
+
+//--------------------------------------------------------------------------------
+// delete webhooks from db
+
+client.on('channelDelete', channel => {
+    const deleteQuery = { _id: channel.id };
+
+    tulpWebhooks.deleteOne(deleteQuery);
+});
 
 //--------------------------------------------------------------------------------
 // login
