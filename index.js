@@ -12,6 +12,7 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
+import { tulpWebhooks } from './lib/database.js';
 
 //--------------------------------------------------------------------------------
 
@@ -258,6 +259,15 @@ client.on('disconnect', () => console.log(`Row Bot disconnected ${new Date().toS
 // error
 
 client.on('error', (error) => console.log(error));
+
+//--------------------------------------------------------------------------------
+// delete webhooks from db
+
+client.on('channelDelete', channel => {
+    const deleteQuery = { _id: channel.id };
+
+    tulpWebhooks.deleteOne(deleteQuery);
+});
 
 //--------------------------------------------------------------------------------
 // login
