@@ -36,7 +36,11 @@ export default {
                 if (count) {
                     const result = defs[randomMath(count)];
                     const definition = result.definition.replaceAll(/[\[\]]/g, '');
-                    const example = result.example.replaceAll(/[\[\]]/g, '');
+                    let example = 'No example was provided.';
+
+                    if (result.example.length) {
+                        example = cutOff(result.example.replaceAll(/[\[\]]/g, ''), 1024);
+                    }
 
                     msg.channel.createMessage({
                         embed: {
@@ -49,7 +53,7 @@ export default {
                                 },
                                 {
                                     name: 'Example',
-                                    value: cutOff(example, 1024)
+                                    value: example
                                 },
                                 {
                                     name: 'Rating',
