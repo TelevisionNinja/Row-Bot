@@ -1,4 +1,5 @@
 import { default as config } from '../config.json';
+import { default as tulpCache } from '../lib/tulpCache.js';
 
 const tulp = config.tulp,
     prefix = config.prefix;
@@ -32,6 +33,8 @@ export default {
             msg.channel.createMessage(`Please provide arguments\nex: \`${prefix}${tulp.names[0]} ${command.names[0]} ${command.usage}\``);
             return;
         }
+
+        tulpCache.remove(msg.author.id);
 
         //--------------------------------------------------------------------------------
 

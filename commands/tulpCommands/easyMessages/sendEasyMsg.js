@@ -1,5 +1,5 @@
 import { tulp as tulpCollection } from '../../../lib/database.js';
-import { sendWebhookMsg } from '../../../lib/msgUtils.js';
+import { sendWebhookMsgUsingWebhook } from '../../../lib/msgUtils.js';
 import {
     containsURL,
     cutOff
@@ -7,15 +7,28 @@ import {
 
 export default {
     usage: '<custom bracket><message><custom bracket>',
-    async sendEasyMsg(msg) {
-        const query = { _id: msg.author.id };
-        const userData = await tulpCollection.findOne(query);
+    /**
+     * send tulp message using the tulp cache
+     * 
+     * @param {*} msg message obj
+     * @param {*} userData user data
+     * @param {*} webhook webhook
+     * @returns 
+     */
+     async sendEasyMsg(msg, userData, webhook) {
+        // find user data if not cached
+        if (typeof userData === 'undefined') {
+            const query = { _id: msg.author.id };
+            userData = await tulpCollection.findOne(query);
 
-        if (userData === null) {
-            return false;
+            if (userData === null) {
+                return false;
+            }
         }
 
+        //-------------------------------------------------------------------
         // get specific tulp
+
         const userMessage = msg.content;
         const tulpArr = userData.tulps;
         let selectedTulp = {
@@ -94,7 +107,7 @@ export default {
         else {
             // send webhook message
             msg.delete();
-            sendWebhookMsg(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar);
+            sendWebhookMsgUsingWebhook(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar, webhook);
         }
 
         return true;
