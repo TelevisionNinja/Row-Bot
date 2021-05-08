@@ -36,7 +36,7 @@ export default {
                     $size: 0
                 }
             };
-    
+
             tulpCollection.deleteOne(deleteQuery);
         }
         else {
