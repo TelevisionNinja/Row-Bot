@@ -12,14 +12,22 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
-import { tulpWebhooks } from './lib/database.js';
+import {
+    tulpWebhooks,
+    tulp
+} from './lib/database.js';
+import { default as tulpCache } from './lib/tulpCache.js';
 
 //--------------------------------------------------------------------------------
+// config vars
 
 const prefix = config.prefix,
     token = config.token,
     activityStatus = config.activityStatus,
     names = config.names.map(n => n.toLowerCase());
+
+//--------------------------------------------------------------------------------
+// client vars
 
 const client = new Client();
 const cooldowns = new Map();
@@ -83,6 +91,8 @@ client.on('ready', () => {
 // message actions
 
 client.on('message', async msg => {
+    // permissions
+
     const notBot = !msg.author.bot;
     const hasLength = msg.content.length;
     const msgFilterBool = notBot && hasLength;
@@ -103,11 +113,11 @@ client.on('message', async msg => {
     }
 
     //--------------------------------------------------------------------------------
+    // commands and messages
 
     const msgStr = msg.content.toLowerCase();
 
     if (msgStr.startsWith(prefix)) {
-        //--------------------------------------------------------------------------------
         // split command and arguments
 
         let args = msgStr.slice(prefix.length).trim().split(' ');
@@ -181,9 +191,17 @@ client.on('message', async msg => {
         return;
     }
 
+    //--------------------------------------------------------------------------------
     // send tulp messages easily
-    if (await sendEasyMsg.sendEasyMsg(msg)) {
-        return;
+
+    const userData = tulpCache.get(msg.author.id);
+
+    if (userData !== null) {
+        const webhook = tulpCache.get(msg.channel.id);
+
+        if (await sendEasyMsg.sendEasyMsg(msg, userData, webhook)) {
+            return;
+        }
     }
 
     //--------------------------------------------------------------------------------
@@ -263,12 +281,62 @@ client.on('shardResume', () => {
 });
 
 //--------------------------------------------------------------------------------
-// delete webhooks from db
+// delete webhook data
 
 client.on('channelDelete', channel => {
-    const deleteQuery = { _id: channel.id };
+    // delete from tulp cache
+
+    const id = channel.id;
+
+    tulpCache.remove(id);
+
+    //--------------------------------------------------------------------------------
+    // delete from db
+
+    const deleteQuery = { _id: id };
 
     tulpWebhooks.deleteOne(deleteQuery);
+});
+
+//--------------------------------------------------------------------------------
+// tulp cache
+
+// cache user data and the channel webhook while the user is typing
+client.on('typingStart', async (channel, user) => {
+    // users
+
+    const userID = user.id;
+
+    if (tulpCache.has(userID)) {
+        tulpCache.resetCacheTime(userID);
+    }
+    else {
+        const query = { _id: userID };
+        const userData = await tulp.findOne(query);
+
+        tulpCache.insert(userID, userData);
+
+        if (userData === null) {
+            return;
+        }
+    }
+
+    //--------------------------------------------------------------------------------
+    // webhooks
+
+    const channelID = channel.id;
+
+    if (tulpCache.has(channelID)) {
+        tulpCache.resetCacheTime(channelID);
+    }
+    else {
+        const query = { _id: channelID };
+        const webhook = await tulpWebhooks.findOne(query);
+
+        if (webhook) {
+            tulpCache.insert(channelID, webhook.webhook);
+        }
+    }
 });
 
 //--------------------------------------------------------------------------------
