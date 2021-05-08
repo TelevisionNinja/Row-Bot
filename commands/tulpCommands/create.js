@@ -33,6 +33,12 @@ export default {
 
         const checkQuery = { _id: msg.author.id };
         const isUser = await tulpCollection.countDocuments(checkQuery, { limit: 1 });
+        const newTulp = {
+            username: username,
+            avatar: avatarLink,
+            startBracket: `${username}:`,
+            endBracket: ''
+        };
 
         if (isUser) {
             const updateQuery = {
@@ -41,12 +47,7 @@ export default {
             };
             const update = {
                 $push: {
-                    tulps: {
-                        username: username,
-                        avatar: avatarLink,
-                        startBracket: `${username}:`,
-                        endBracket: ''
-                    }
+                    tulps: newTulp
                 }
             };
             const result = await tulpCollection.updateOne(updateQuery, update);
@@ -61,12 +62,7 @@ export default {
         else {
             const newUser = {
                 _id: msg.author.id,
-                tulps: [{
-                    username: username,
-                    avatar: avatarLink,
-                    startBracket: `${username}:`,
-                    endBracket: ''
-                }]
+                tulps: [newTulp]
             };
 
             tulpCollection.insertOne(newUser);
