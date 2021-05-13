@@ -1,6 +1,5 @@
 import { default as config } from '../../config.json';
 import { sendAuthorDm } from '../../lib/msgUtils.js';
-import { readFileSync } from 'fs';
 
 const prefix = config.prefix,
     help = config.help,
@@ -11,13 +10,9 @@ const prefix = config.prefix,
 let helpCenter = {
     embed: {
         title: `${names[0]}\'s Tulp Help Center`,
-        thumbnail: { url: `attachment://${icon}` }
+        thumbnail: { url: icon }
     }
 };
-const file = {
-    file: readFileSync(`./${icon}`),
-    name: icon
-}
 const specific = {
     name: 'Specific Command Info',
     value: `\nSend \`${prefix}${tulp.names[0]} help <command name>\` to get info on a specific command`
@@ -90,7 +85,7 @@ export default {
             sendAuthorDm(msg, embed);
         }
         else {
-            sendAuthorDm(msg, helpCenter, file);
+            sendAuthorDm(msg, helpCenter);
         }
     }
 }
