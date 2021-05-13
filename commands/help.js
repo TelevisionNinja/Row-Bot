@@ -1,22 +1,16 @@
 import { default as config } from '../config.json';
 import { sendAuthorDm } from '../lib/msgUtils.js';
-import { readFileSync } from 'fs';
 
 const prefix = config.prefix,
     help = config.help,
     icon = config.icon,
     names = config.names;
 
-const iconFile = {
-    attachment: readFileSync(`./${icon}`),
-    name: icon
-};
 let helpCenter = {
     embed: {
         title: `${names[0]}\'s Help Center`,
-        thumbnail: { url: `attachment://${icon}` }
-    },
-    files: [iconFile]
+        thumbnail: { url: icon }
+    }
 };
 const specific = {
     name: 'Specific Command Info',
