@@ -11,7 +11,13 @@
 
     "tagSeparator" : ",",
 
-    "mongodbURI" : "mongodb://localhost/",
+    "postgresql" : {
+        "host": "localhost",
+        "port": 5432,
+        "user": "postgres",
+        "password": "",
+        "database": "tulps"
+    },
 
     "noResultsMsg" : "Aww there's no results 😢",
 
@@ -29,6 +35,8 @@
         "confirmed" : "✅",
         "denied" : "❌"
     },
+
+    "chatbotAPI" : "",
 
     "coin" : {
         "names" : [

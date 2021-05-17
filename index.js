@@ -1,5 +1,8 @@
 import { Client } from 'discord.js';
-import { readdirSync } from 'fs';
+import {
+    readdirSync,
+    createReadStream
+} from 'fs';
 import { default as config } from './config.json';
 import {
     hasBotMention,
@@ -13,10 +16,12 @@ import {
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
 import {
-    tulpWebhooks,
-    tulp
+    tulps,
+    webhooks
 } from './lib/database.js';
 import { default as tulpCache } from './lib/tulpCache.js';
+import { randomMath } from './lib/randomFunctions.js';
+import { getChatBotReply } from './lib/chatBot.js';
 
 //--------------------------------------------------------------------------------
 // config vars
@@ -33,19 +38,21 @@ const client = new Client();
 const cooldowns = new Map();
 client.commands = [];
 client.tulpCommands = [];
-let noncommands = [];
+// let noncommands = [];
 let genMsg = [];
 let intervalMsgs = [];
 const minimumPermissions = ['MANAGE_WEBHOOKS', 'MANAGE_MESSAGES', 'SEND_MESSAGES'];
+let audio = [];
 
 //--------------------------------------------------------------------------------
 // load commands, tulp commands, noncommands, general messages, and interval messages
 
 const commandFiles = readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const tulpCommandFiles = readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
-const noncommandFiles = readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
+// const noncommandFiles = readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 const genMsgFiles = readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
 const intervalMsgFiles = readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
+const audioFiles = readdirSync('./audioFiles/');
 
 for (let i = 0, n = commandFiles.length; i < n; i++) {
     client.commands[i] = (await import(`./commands/${commandFiles[i]}`)).default;
@@ -55,9 +62,9 @@ for (let i = 0, n = tulpCommandFiles.length; i < n; i++) {
     client.tulpCommands[i] = (await import(`./commands/tulpCommands/${tulpCommandFiles[i]}`)).default;
 }
 
-for (let i = 0, n = noncommandFiles.length; i < n; i++) {
-    noncommands[i] = (await import(`./noncommands/${noncommandFiles[i]}`)).default;
-}
+// for (let i = 0, n = noncommandFiles.length; i < n; i++) {
+//     noncommands[i] = (await import(`./noncommands/${noncommandFiles[i]}`)).default;
+// }
 
 for (let i = 0, n = genMsgFiles.length; i < n; i++) {
     genMsg[i] = (await import(`./generalMessages/${genMsgFiles[i]}`)).default;
@@ -65,6 +72,10 @@ for (let i = 0, n = genMsgFiles.length; i < n; i++) {
 
 for (let i = 0, n = intervalMsgFiles.length; i < n; i++) {
     intervalMsgs[i] = (await import(`./intervalMessages/${intervalMsgFiles[i]}`)).default;
+}
+
+for (let i = 0, n = audioFiles.length; i < n; i++) {
+    audio[i] = `./audioFiles/${audioFiles[i]}`;
 }
 
 //--------------------------------------------------------------------------------
@@ -205,6 +216,20 @@ client.on('message', async msg => {
     }
 
     //--------------------------------------------------------------------------------
+    // chat bot
+
+    if (hasBotMention(msg, false, true, false)) {
+        const noMentionsMsg = removeMentions(msgStr, '');
+        const replyStr = await getChatBotReply(msg.author.id, noMentionsMsg);
+
+        // reply
+        if (replyStr.length) {
+            sendTypingMsg(msg.channel, replyStr, msgStr);
+            return;
+        }
+    }
+
+    //--------------------------------------------------------------------------------
     // set up vars for noncommands and general messages
 
     let botMention = hasBotMention(msg);
@@ -226,28 +251,57 @@ client.on('message', async msg => {
     }
 
     if (botMention) {
-        //--------------------------------------------------------------------------------
-        // noncommands
-
         // remove mentions or name from message
         const noMentionsMsg = removeMentions(msgStr, selectedName);
 
-        for (let i = 0, n = noncommands.length; i < n; i++) {
-            const replyStr = noncommands[i].execute(msg, noMentionsMsg);
+        //--------------------------------------------------------------------------------
+        // voice
 
-            // reply
-            if (replyStr.length) {
-                sendTypingMsg(msg.channel, replyStr, msgStr);
+        if (msg.member.voice.channel) {
+            if (noMentionsMsg === 'join me') {
+                msg.member.voice.channel.join();
+
+                return;
+            }
+            else if (noMentionsMsg === 'leave') {
+                msg.member.voice.channel.leave();
+
+                return;
+            }
+            else if (msg.guild.voice && msg.guild.voice.connection && (noMentionsMsg === 'speak' || noMentionsMsg === 'talk')) {
+                const connection = msg.guild.voice.connection;
+                const randAudio = randomMath(audio.length);
+                const dispatcher = connection.play(createReadStream(audio[randAudio]), {
+                    highWaterMark: 50,
+                    volume: false,
+                    type: 'ogg/opus'
+                });
+
+                dispatcher.on('error', error => console.log(error));
+
                 return;
             }
         }
+
+        //--------------------------------------------------------------------------------
+        // noncommands
+
+        // for (let i = 0, n = noncommands.length; i < n; i++) {
+        //     const replyStr = noncommands[i].execute(msg, noMentionsMsg);
+
+        //     // reply
+        //     if (replyStr.length) {
+        //         sendTypingMsg(msg.channel, replyStr, msgStr);
+        //         return;
+        //     }
+        // }
     }
     else if (!hasMentions(msg, false)) {
         //--------------------------------------------------------------------------------
         // general message
 
         // remove mentions or name from message
-        const noMentionsMsg = removeMentions(msgStr, selectedName);
+        const noMentionsMsg = removeMentions(msgStr, '');
 
         for (let i = 0, n = genMsg.length; i < n; i++) {
             const replyStr = genMsg[i].execute(msg, noMentionsMsg);
@@ -293,9 +347,7 @@ client.on('channelDelete', channel => {
     //--------------------------------------------------------------------------------
     // delete from db
 
-    const deleteQuery = { _id: id };
-
-    tulpWebhooks.deleteOne(deleteQuery);
+    webhooks.delete(id);
 });
 
 //--------------------------------------------------------------------------------
@@ -311,12 +363,13 @@ client.on('typingStart', async (channel, user) => {
         tulpCache.resetCacheTime(userID);
     }
     else {
-        const query = { _id: userID };
-        const userData = await tulp.findOne(query);
+        const userData = await tulps.getAll(userID);
 
-        tulpCache.insert(userID, userData);
-
-        if (userData === null) {
+        if (userData.length) {
+            tulpCache.insert(userID, userData);
+        }
+        else {
+            tulpCache.insert(userID, null);
             return;
         }
     }
@@ -330,12 +383,9 @@ client.on('typingStart', async (channel, user) => {
         tulpCache.resetCacheTime(channelID);
     }
     else {
-        const query = { _id: channelID };
-        const webhook = await tulpWebhooks.findOne(query);
+        const webhook = await webhooks.get(channelID);
 
-        if (webhook) {
-            tulpCache.insert(channelID, webhook.webhook);
-        }
+        tulpCache.insert(channelID, webhook);
     }
 });
 
