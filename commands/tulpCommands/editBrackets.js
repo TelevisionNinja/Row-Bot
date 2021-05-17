@@ -1,11 +1,13 @@
 import { default as tulpConfigFile } from './tulpConfig.json';
 import { default as config } from '../../config.json';
-import { tulp as tulpCollection } from '../../lib/database.js';
+import { tulps } from '../../lib/database.js';
 
 const editBrackets = tulpConfigFile.editBrackets,
     enclosingText = editBrackets.enclosingText,
     tulpConfig = config.tulp,
     tagSeparator = config.tagSeparator;
+
+const errorMessage = `Please provide a name followed by a "${tagSeparator}" and then the new brackets enclosing the word "${enclosingText}". "${tagSeparator}" are not allowed in brackets`;
 
 export default {
     names: editBrackets.names,
@@ -16,7 +18,6 @@ export default {
     usage: `<name>${tagSeparator} <new_bracket>${enclosingText}<new_bracket>`,
     async execute(msg, args) {
         const params = args.join(' ').split(tagSeparator).map(s => s.trim());
-        const errorMessage = `Please provide a name followed by a "${tagSeparator}" and then the new brackets enclosing the word "${enclosingText}". "${tagSeparator}" are not allowed in brackets`;
 
         if (params.length < 2) {
             msg.channel.send(errorMessage);
@@ -45,36 +46,18 @@ export default {
             return;
         }
 
-        const checkQuery = {
-            _id: msg.author.id,
-            'tulps.startBracket': startBracket,
-            'tulps.endBracket': endBracket
-        };
-        const existing = await tulpCollection.countDocuments(checkQuery, { limit: 1 });
+        try {
+            const result = await tulps.updateBrackets(msg.author.id, params[0], startBracket, endBracket);
 
-        if (existing) {
-            msg.channel.send('These brackets are already being used');
-            return;
-        }
-
-        const username = params[0];
-        const updateQuery = {
-            _id: msg.author.id,
-            'tulps.username': username
-        };
-        const update = {
-            $set: {
-                'tulps.$.startBracket': startBracket,
-                'tulps.$.endBracket': endBracket
+            if (result.rowCount) {
+                msg.channel.send(editBrackets.confirmMsg);
             }
-        };
-        const result = await tulpCollection.updateOne(updateQuery, update);
-
-        if (result.result.n) {
-            msg.channel.send(editBrackets.confirmMsg);
+            else {
+                msg.channel.send(tulpConfig.noDataMsg);
+            }
         }
-        else {
-            msg.channel.send(tulpConfig.noDataMsg);
+        catch (error) {
+            msg.channel.send('These brackets are already being used');
         }
     }
 }

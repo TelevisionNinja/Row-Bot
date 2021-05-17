@@ -1,7 +1,7 @@
 import { default as tulpConfig } from './tulpConfig.json';
 import { default as config } from '../../config.json';
 import { extractNameAndAvatar } from '../../lib/msgUtils.js';
-import { tulp as tulpCollection } from '../../lib/database.js';
+import { tulps } from '../../lib/database.js';
 
 const create = tulpConfig.create,
     tagSeparator = config.tagSeparator;
@@ -31,42 +31,13 @@ export default {
             return;
         }
 
-        const checkQuery = { _id: msg.author.id };
-        const isUser = await tulpCollection.countDocuments(checkQuery, { limit: 1 });
-        const newTulp = {
-            username: username,
-            avatar: avatarLink,
-            startBracket: `${username}:`,
-            endBracket: ''
-        };
+        try {
+            await tulps.set(msg.author.id, username, avatarLink, `${username}:`, '');
 
-        if (isUser) {
-            const updateQuery = {
-                _id: msg.author.id,
-                'tulps.username': { $ne: username }
-            };
-            const update = {
-                $push: {
-                    tulps: newTulp
-                }
-            };
-            const result = await tulpCollection.updateOne(updateQuery, update);
-
-            if (result.result.n) {
-                msg.channel.send(create.confirmMsg);
-            }
-            else {
-                msg.channel.send(create.existingMsg);
-            }
-        }
-        else {
-            const newUser = {
-                _id: msg.author.id,
-                tulps: [newTulp]
-            };
-
-            tulpCollection.insertOne(newUser);
             msg.channel.send(create.confirmMsg);
+        }
+        catch (error) {
+            msg.channel.send(create.existingMsg);
         }
     }
 }

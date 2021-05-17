@@ -1,6 +1,6 @@
 import { default as tulpConfig } from './tulpConfig.json';
 import { default as config } from '../../config.json';
-import { tulp as tulpCollection } from '../../lib/database.js';
+import { tulps } from '../../lib/database.js';
 
 const deleteTulp = tulpConfig.deleteTulp,
     tulpConfigObj = config.tulp;
@@ -14,30 +14,10 @@ export default {
     usage: '<name>',
     async execute(msg, args) {
         const username = args.join(' ').trim();
-        const query = {
-            _id: msg.author.id,
-            'tulps.username': username
-        };
-        const update = {
-            $pull: {
-                tulps: {
-                    username: username
-                }
-            }
-        };
-        const result = await tulpCollection.updateOne(query, update);
+        const result = await tulps.delete(msg.author.id, username);
 
-        if (result.result.n) {
+        if (result.rowCount) {
             msg.channel.send(deleteTulp.confirmMsg);
-
-            const deleteQuery = {
-                _id: msg.author.id,
-                tulps: {
-                    $size: 0
-                }
-            };
-
-            tulpCollection.deleteOne(deleteQuery);
         }
         else {
             msg.channel.send(tulpConfigObj.noDataMsg);

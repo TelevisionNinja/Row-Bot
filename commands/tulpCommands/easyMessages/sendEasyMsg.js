@@ -1,4 +1,4 @@
-import { tulp as tulpCollection } from '../../../lib/database.js';
+import { tulps } from '../../../lib/database.js';
 import { sendWebhookMsgUsingWebhook } from '../../../lib/msgUtils.js';
 import {
     containsURL,
@@ -11,17 +11,16 @@ export default {
      * send tulp message using the tulp cache
      * 
      * @param {*} msg message obj
-     * @param {*} userData user data
+     * @param {*} tulpArr tulp array
      * @param {*} webhook webhook
      * @returns 
      */
-    async sendEasyMsg(msg, userData, webhook) {
+    async sendEasyMsg(msg, tulpArr, webhook) {
         // find user data if not cached
-        if (typeof userData === 'undefined') {
-            const query = { _id: msg.author.id };
-            userData = await tulpCollection.findOne(query);
+        if (typeof tulpArr === 'undefined') {
+            tulpArr = await tulps.getAll(msg.author.id);
 
-            if (userData === null) {
+            if (!tulpArr.length) {
                 return false;
             }
         }
@@ -30,19 +29,18 @@ export default {
         // get specific tulp
 
         const userMessage = msg.content;
-        const tulpArr = userData.tulps;
         let selectedTulp = {
-            startBracket: '',
-            endBracket: ''
+            start_bracket: '',
+            end_bracket: ''
         };
 
         for (let i = 0, n = tulpArr.length; i < n; i++) {
             const currentTulp = tulpArr[i];
 
-            if (currentTulp.startBracket.length >= selectedTulp.startBracket.length &&
-                currentTulp.endBracket.length >= selectedTulp.endBracket.length &&
-                userMessage.startsWith(currentTulp.startBracket) &&
-                userMessage.endsWith(currentTulp.endBracket)) {
+            if (currentTulp.start_bracket.length >= selectedTulp.start_bracket.length &&
+                currentTulp.end_bracket.length >= selectedTulp.end_bracket.length &&
+                userMessage.startsWith(currentTulp.start_bracket) &&
+                userMessage.endsWith(currentTulp.end_bracket)) {
                 selectedTulp = currentTulp;
             }
         }
@@ -51,7 +49,7 @@ export default {
             return false;
         }
 
-        let tulpMsg = userMessage.substring(selectedTulp.startBracket.length, userMessage.length - selectedTulp.endBracket.length).trim();
+        let tulpMsg = userMessage.substring(selectedTulp.start_bracket.length, userMessage.length - selectedTulp.end_bracket.length).trim();
 
         if (!tulpMsg.length) {
             return false;

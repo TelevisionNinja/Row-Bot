@@ -1,8 +1,8 @@
 import { default as config } from '../../config.json';
 import { default as tulpConfigFile } from './tulpConfig.json';
 import { default as sendEasyMsg } from './easyMessages/sendEasyMsg.js';
-import { tulp as tulpCollection } from '../../lib/database.js';
 import { sendWebhookMsg } from '../../lib/msgUtils.js';
+import { tulps } from '../../lib/database.js';
 
 const tulpConfig = config.tulp,
     tagSeparator = config.tagSeparator,
@@ -38,29 +38,12 @@ export default {
 
         // get specific tulp using username
         const username = str.substring(0, index).trim();
-        const query = { _id: msg.author.id };
-        const options = {
-            projection: {
-                tulps: {
-                    $elemMatch: {
-                        username: username
-                    }
-                }
-            }
-        }
-        const userData = await tulpCollection.findOne(query, options);
+        const selectedTulp = await tulps.get(msg.author.id, username);
 
-        if (userData === null) {
-            msg.channel.send(tulpConfig.notUserMsg);
-            return;
-        }
-
-        if (typeof userData.tulps === 'undefined') {
+        if (typeof selectedTulp === 'undefined') {
             msg.channel.send(tulpConfig.noDataMsg);
             return;
         }
-
-        const selectedTulp = userData.tulps[0];
 
         //-------------------------------------------------------------------------------------
         // detect dm channel

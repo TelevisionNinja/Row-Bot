@@ -1,7 +1,7 @@
 import { default as tulpConfig } from './tulpConfig.json';
 import { default as config } from '../../config.json';
 import { extractNameAndAvatar } from '../../lib/msgUtils.js';
-import { tulp as tulpCollection } from '../../lib/database.js';
+import { tulps } from '../../lib/database.js';
 
 const editAvatar = tulpConfig.editAvatar,
     tulpConfigObj = config.tulp,
@@ -32,18 +32,9 @@ export default {
             return;
         }
 
-        const query = {
-            _id: msg.author.id,
-            'tulps.username': username
-        };
-        const update = {
-            $set: {
-                'tulps.$.avatar': avatarLink
-            }
-        };
-        const result = await tulpCollection.updateOne(query, update);
+        const result = await tulps.updateAvatar(msg.author.id, username, avatarLink);
 
-        if (result.result.n) {
+        if (result.rowCount) {
             msg.channel.send(editAvatar.confirmMsg);
         }
         else {
