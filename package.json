@@ -26,7 +26,6 @@
     "erlpack": "github:discord/erlpack",
     "ffmpeg-static": "^4.3.0",
     "libsodium-wrappers": "^0.7.9",
-    "mongodb": "^3.6.3",
     "p-queue": "^7.1.0",
     "pg": "^8.6.0",
     "txml": "^4.0.1",
