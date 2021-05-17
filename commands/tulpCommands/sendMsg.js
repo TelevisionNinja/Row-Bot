@@ -26,7 +26,7 @@ export default {
         const str = args.join(' ');
         const index = str.indexOf(tagSeparator);
 
-        if (index === -1 || index === str.length - 1) {
+        if (index === -1) {
             return;
         }
 
