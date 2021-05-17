@@ -50,8 +50,12 @@ export default {
         }
 
         let tulpMsg = userMessage.substring(selectedTulp.start_bracket.length, userMessage.length - selectedTulp.end_bracket.length).trim();
+        let attachmentArr = undefined;
 
-        if (!tulpMsg.length) {
+        if (msg.attachments.size) {
+            attachmentArr = msg.attachments.map(img => img.url);
+        }
+        else if (!tulpMsg.length) {
             return false;
         }
 
@@ -104,7 +108,7 @@ export default {
         else {
             // send webhook message
             msg.delete();
-            sendWebhookMsgUsingWebhook(msg, tulpMsg, selectedTulp.username, selectedTulp.avatar, webhook);
+            sendWebhookMsgUsingWebhook(msg, tulpMsg, attachmentArr, selectedTulp.username, selectedTulp.avatar, webhook);
         }
 
         return true;
