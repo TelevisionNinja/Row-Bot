@@ -95,13 +95,22 @@ export default {
         // detect dm channel
 
         if (msg.channel.type === 'dm') {
+            let imageObj = undefined;
+
+            if (typeof attachmentArr !== 'undefined') {
+                imageObj = {
+                    url: attachmentArr[0]
+                };
+            }
+
             msg.channel.send({
                 embed: {
                     author: {
                         name: selectedTulp.username,
                         icon_url: selectedTulp.avatar
                     },
-                    description: tulpMsg
+                    description: tulpMsg,
+                    image: imageObj
                 }
             });
         }
