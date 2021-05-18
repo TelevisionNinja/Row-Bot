@@ -102,23 +102,17 @@ client.on('ready', () => {
 // message actions
 
 client.on('message', async msg => {
-    // permissions
-
-    const notBot = !msg.author.bot;
-    const hasLength = msg.content.length;
-    const msgFilterBool = notBot && hasLength;
-
-    if (!msgFilterBool) {
+    // filter messages
+    if (msg.author.bot || !msg.content.length) {
         return;
     }
 
+    // permissions
     if (msg.channel.type !== 'dm') {
         const guildMemberClient = msg.guild.me;
-        const isAdmin = guildMemberClient.hasPermission('ADMINISTRATOR');
-        const hasMinimumPerms = guildMemberClient.hasPermission(minimumPermissions);
-        const meetsConditions = msgFilterBool && (isAdmin || hasMinimumPerms);
 
-        if (!meetsConditions) {
+        // must be admin or have minimum perms
+        if (!guildMemberClient.hasPermission('ADMINISTRATOR') && !guildMemberClient.hasPermission(minimumPermissions)) {
             return;
         }
     }
