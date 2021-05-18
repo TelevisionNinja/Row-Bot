@@ -45,7 +45,7 @@ export default {
         const selectedTulp = await tulps.get(msg.author.id, username);
 
         if (typeof selectedTulp === 'undefined') {
-            msg.channel.send(tulpConfig.noDataMsg);
+            msg.author.send(tulpConfig.noDataMsg);
             return;
         }
 
