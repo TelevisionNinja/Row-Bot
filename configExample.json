@@ -176,7 +176,7 @@
         ],
 
         "intervalChannelID" : "",
-        "intervalWait" : 240,
+        "intervalWait" : 360,
         "intervalTags" : [""],
         "filterTags" : [""]
     },

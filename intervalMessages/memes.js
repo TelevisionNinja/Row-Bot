@@ -24,7 +24,7 @@ export default {
                 }
             },
             '0:0',
-            180,
+            360,
             5000 // 5 second offset
         );
 
