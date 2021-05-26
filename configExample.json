@@ -71,7 +71,7 @@
         "intervalTime" : "12:0",
         "filterTags" : [""],
 
-        "intervalWait" : 240,
+        "intervalWait" : 360,
         "intervalWaitTags" : [
             [""]
         ],
