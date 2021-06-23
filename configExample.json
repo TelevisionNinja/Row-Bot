@@ -189,6 +189,17 @@
         "filterTags" : [""]
     },
 
+    "sourceCode" : {
+        "names" : [
+            "sourceCode",
+            "source",
+            "code",
+            "github"
+        ],
+        "description" : "Gives a link to the source code",
+        "link" : ""
+    },
+
     "stock" : {
         "names" : [
             "stock",
