@@ -8,7 +8,7 @@ export default {
     description: coin.description,
     argsRequired: false,
     argsOptional: false,
-    permittedCharsOnly: false,
+    noSpecialChars: false,
     guildOnly: false,
     usage: '',
     cooldown: 0,

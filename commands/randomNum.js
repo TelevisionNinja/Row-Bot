@@ -9,7 +9,7 @@ export default {
     description: random.description,
     argsRequired: true,
     argsOptional: false,
-    permittedCharsOnly: false,
+    noSpecialChars: false,
     guildOnly: false,
     usage: `<max>\` or \`${prefix}${random.names[0]} <min> <max>`,
     cooldown: 0,

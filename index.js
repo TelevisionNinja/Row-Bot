@@ -10,7 +10,7 @@ import {
     hasMentions
 } from './lib/msgUtils.js';
 import {
-    removeProhibitedChars,
+    removeAllSpecialChars,
     includesPhrase,
     removeMentions
 } from './lib/stringUtils.js';
@@ -142,8 +142,8 @@ client.on('message', async msg => {
             return;
         }
 
-        if (command.permittedCharsOnly) {
-            const argStr = removeProhibitedChars(args.join(' '));
+        if (command.noSpecialChars) {
+            const argStr = removeAllSpecialChars(args.join(' '));
 
             if (argStr.length) {
                 args = argStr.split(' ');

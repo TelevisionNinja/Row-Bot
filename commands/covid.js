@@ -16,7 +16,7 @@ export default {
     description: covid.description,
     argsRequired: true,
     argsOptional: false,
-    permittedCharsOnly: false,
+    noSpecialChars: false,
     guildOnly: false,
     usage: `<state>`,
     cooldown: 1,

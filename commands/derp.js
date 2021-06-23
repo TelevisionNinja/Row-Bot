@@ -19,7 +19,7 @@ export default {
     description: derp.description,
     argsRequired: true,
     argsOptional: false,
-    permittedCharsOnly: true,
+    noSpecialChars: false,
     guildOnly: false,
     usage: `<tags separated by a "${tagSeparator}">`,
     cooldown: 1,
