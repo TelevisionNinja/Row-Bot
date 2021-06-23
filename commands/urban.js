@@ -19,7 +19,7 @@ export default {
     description: urban.description,
     argsRequired: true,
     argsOptional: false,
-    permittedCharsOnly: false,
+    noSpecialChars: false,
     guildOnly: false,
     usage: '<search term>',
     cooldown: 1,

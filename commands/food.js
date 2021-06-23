@@ -8,7 +8,7 @@ export default {
     description: food.description,
     argsRequired: false,
     argsOptional: true,
-    permittedCharsOnly: false,
+    noSpecialChars: false,
     guildOnly: false,
     usage: '<type of food>',
     cooldown: 0,

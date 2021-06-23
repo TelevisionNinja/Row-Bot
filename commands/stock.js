@@ -18,7 +18,7 @@ export default {
     description: stock.description,
     argsRequired: true,
     argsOptional: false,
-    permittedCharsOnly: true,
+    noSpecialChars: true,
     guildOnly: false,
     usage: '<symbol>',
     cooldown: 1,

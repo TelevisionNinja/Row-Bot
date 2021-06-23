@@ -17,7 +17,7 @@ export default {
     description: tenor.description,
     argsRequired: true,
     argsOptional: false,
-    permittedCharsOnly: false,
+    noSpecialChars: false,
     guildOnly: false,
     usage: '<search terms separated by a space>',
     cooldown: 1,

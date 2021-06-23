@@ -24,7 +24,7 @@ export default {
     description: help.description,
     argsRequired: false,
     argsOptional: true,
-    permittedCharsOnly: false,
+    noSpecialChars: false,
     guildOnly: false,
     usage: '<command name>',
     cooldown: 0,

@@ -9,7 +9,7 @@ export default {
     description: tulp.description,
     argsRequired: true,
     argsOptional: false,
-    permittedCharsOnly: false,
+    noSpecialChars: false,
     guildOnly: false,
     usage: '<command>',
     cooldown: 0,
