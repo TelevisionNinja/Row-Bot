@@ -40,7 +40,7 @@ export default {
             async () => {
                 const randIndex = randomMath(derpConfig.intervalWaitTags.length);
                 const selection = derpConfig.intervalWaitTags[randIndex];
-                const tagArr = [selection, 'score.gte:100', ...filter];
+                const tagArr = [selection, 'score.gte:400', ...filter];
                 const img = await getImage(tagArr);
 
                 sendImg(recipientInterval, img, false);
