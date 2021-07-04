@@ -1,0 +1,11 @@
+{
+    "play" : {
+        "names" : [
+            "play",
+            "start",
+            "resume",
+            "p"
+        ],
+        "description" : "plays music"
+    }
+}
