@@ -9,7 +9,8 @@ const prefix = config.prefix,
 let helpCenter = {
     embed: {
         title: `${names[0]}\'s Help Center`,
-        thumbnail: { url: icon }
+        thumbnail: { url: icon },
+        color: parseInt(help.embedColor, 16)
     }
 };
 const specific = {
@@ -17,7 +18,16 @@ const specific = {
     value: `\nSend \`${prefix}help <command name>\` to get info on a specific command`
 };
 
-let notCalled = true;
+// initialize embed
+export function initialize(commands) {
+    helpCenter.embed.fields = [
+        {
+            name: 'My Commands',
+            value: commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
+        },
+        specific
+    ];
+}
 
 export default {
     names: help.names,
@@ -29,18 +39,6 @@ export default {
     usage: '<command name>',
     cooldown: 0,
     execute(msg, args) {
-        // initialize embed
-        if (notCalled) {
-            notCalled = false;
-            helpCenter.embed.fields = [
-                {
-                    name: 'My Commands',
-                    value: msg.client.commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
-                },
-                specific
-            ];
-        }
-
 		if (args.length) {
 			const userCommand = args[0];
             const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
@@ -66,6 +64,7 @@ export default {
                 embed: {
                     title: `Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
+                    color: parseInt(help.embedColor, 16),
                     fields: [
                         {
                             name: 'Aliases',

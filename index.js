@@ -22,6 +22,9 @@ import {
 import { default as tulpCache } from './lib/tulpCache.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
+import { initialize as initializeHelp } from './commands/help.js';
+import { initialize as initializeTulp } from './commands/tulpCommands/help.js';
+import { initialize as initializeMusic } from './commands/musicCommands/help.js';
 
 //--------------------------------------------------------------------------------
 // config vars
@@ -38,6 +41,7 @@ const client = new Client();
 const cooldowns = new Map();
 client.commands = [];
 client.tulpCommands = [];
+client.musicCommands = [];
 // let noncommands = [];
 let genMsg = [];
 let intervalMsgs = [];
@@ -49,6 +53,7 @@ let audio = [];
 
 const commandFiles = readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const tulpCommandFiles = readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
+const musicCommandFiles = readdirSync('./commands/musicCommands/').filter(aFile => aFile.endsWith('.js'));
 // const noncommandFiles = readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 const genMsgFiles = readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
 const intervalMsgFiles = readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
@@ -60,6 +65,10 @@ for (let i = 0, n = commandFiles.length; i < n; i++) {
 
 for (let i = 0, n = tulpCommandFiles.length; i < n; i++) {
     client.tulpCommands[i] = (await import(`./commands/tulpCommands/${tulpCommandFiles[i]}`)).default;
+}
+
+for (let i = 0, n = musicCommandFiles.length; i < n; i++) {
+    client.musicCommands[i] = (await import(`./commands/musicCommands/${musicCommandFiles[i]}`)).default;
 }
 
 // for (let i = 0, n = noncommandFiles.length; i < n; i++) {
@@ -77,6 +86,13 @@ for (let i = 0, n = intervalMsgFiles.length; i < n; i++) {
 for (let i = 0, n = audioFiles.length; i < n; i++) {
     audio[i] = `./audioFiles/${audioFiles[i]}`;
 }
+
+//--------------------------------------------------------------------------------
+// initialize help embeds
+
+initializeHelp(client.commands);
+initializeTulp(client.tulpCommands);
+initializeMusic(client.musicCommands);
 
 //--------------------------------------------------------------------------------
 // login actions

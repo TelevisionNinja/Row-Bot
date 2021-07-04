@@ -123,7 +123,8 @@
             "help",
             "commands"
         ],
-        "description" : "Lists all commands or gives more info about a specific command"
+        "description" : "Lists all commands or gives more info about a specific command",
+        "embedColor" : ""
     },
 
     "invite" : {
@@ -145,6 +146,16 @@
             "https://www.reddit.com/r/goodanimemes/top.json?raw_json=1&t=day&limit=",
             "https://www.reddit.com/r/Animemes/top.json?raw_json=1&t=day&limit="
         ]
+    },
+
+    "music" : {
+        "names" : [
+            "music",
+            "song",
+            "songs",
+            "audio"
+        ],
+        "description" : "Plays music"
     },
 
     "random" : {

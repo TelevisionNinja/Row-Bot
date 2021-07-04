@@ -10,7 +10,8 @@ const prefix = config.prefix,
 let helpCenter = {
     embed: {
         title: `${names[0]}\'s Tulp Help Center`,
-        thumbnail: { url: icon }
+        thumbnail: { url: icon },
+        color: parseInt(help.embedColor, 16)
     }
 };
 const specific = {
@@ -18,7 +19,16 @@ const specific = {
     value: `\nSend \`${prefix}${tulp.names[0]} help <command name>\` to get info on a specific command`
 };
 
-let notCalled = true;
+// initialize embed
+export function initialize(commands) {
+    helpCenter.embed.fields = [
+        {
+            name: 'My Tulp Commands',
+            value: commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
+        },
+        specific
+    ];
+}
 
 export default {
     names: help.names,
@@ -28,18 +38,6 @@ export default {
     guildOnly: false,
     usage: '<command name>',
     execute(msg, args) {
-        // initialize embed 
-        if (notCalled) {
-            notCalled = false;
-            helpCenter.embed.fields = [
-                {
-                    name: 'My Tulp Commands',
-                    value: msg.client.tulpCommands.map(cmd => `• ${cmd.names[0]}`).join('\n')
-                },
-                specific
-            ];
-        }
-
 		if (args.length) {
 			const userCommand = args[0];
             const argCommand = msg.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
@@ -65,6 +63,7 @@ export default {
                 embed: {
                     title: `Tulp Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
+                    color: parseInt(help.embedColor, 16),
                     fields: [
                         {
                             name: 'Aliases',
