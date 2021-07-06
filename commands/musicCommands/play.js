@@ -14,6 +14,7 @@ export default {
     usage: '<url> or <search term>',
     async execute(msg, args) {
         let songURL = '';
+        let moreInfo = '';
 
         if (ytdl.validateURL(args[0])) {
             songURL = args[0];
@@ -24,6 +25,7 @@ export default {
 
             if (videos.length) {
                 songURL = videos[0].url;
+                moreInfo = songURL;
             }
             else {
                 msg.channel.send('No results');
@@ -37,6 +39,6 @@ export default {
 
         const connection = msg.guild.voice.connection;
 
-        playYoutube(msg, connection, songURL);
+        playYoutube(msg, connection, songURL, moreInfo);
     }
 }
