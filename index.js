@@ -284,7 +284,8 @@ client.on('message', async msg => {
                 const dispatcher = connection.play(createReadStream(audio[randAudio]), {
                     highWaterMark: 50,
                     volume: false,
-                    type: 'ogg/opus'
+                    type: 'ogg/opus',
+                    bitrate: 'auto'
                 });
 
                 dispatcher.on('error', error => console.log(error));
