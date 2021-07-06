@@ -1,11 +1,11 @@
 {
-    "play" : {
+    "leave" : {
         "names" : [
-            "play",
-            "start",
-            "p"
+            "leave",
+            "shoo",
+            "kick"
         ],
-        "description" : "plays music"
+        "description" : "makes the bot leave the voice channel"
     },
 
     "pause" : {
@@ -13,6 +13,15 @@
             "pause"
         ],
         "description" : "pauses the current song"
+    },
+
+    "play" : {
+        "names" : [
+            "play",
+            "start",
+            "p"
+        ],
+        "description" : "plays music"
     },
 
     "resume" : {
