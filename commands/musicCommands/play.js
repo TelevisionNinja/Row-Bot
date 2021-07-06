@@ -13,6 +13,11 @@ export default {
     guildOnly: false,
     usage: '<url> or <search term>',
     async execute(msg, args) {
+        if (!msg.member.voice.channel) {
+            msg.channel.send('Please join a voice channel to play music');
+            return;
+        }
+
         let songURL = '';
         let moreInfo = '';
 
@@ -33,7 +38,13 @@ export default {
             }
         }
 
-        if (!(msg.guild.voice && msg.guild.voice.connection)) {
+        if (msg.guild.voice && msg.guild.voice.connection) {
+            if (msg.guild.voice.channel.id !== msg.member.voice.channel.id) {
+                msg.channel.send('Please join the voice channel the bot is already in or make the bot leave it to play music');
+                return;
+            }
+        }
+        else {
             await msg.member.voice.channel.join();
         }
 
