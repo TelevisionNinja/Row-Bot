@@ -36,6 +36,7 @@ export default {
     argsRequired: false,
     argsOptional: true,
     guildOnly: false,
+    vcMemberOnly: false,
     usage: '<command name>',
     execute(msg, args) {
 		if (args.length) {

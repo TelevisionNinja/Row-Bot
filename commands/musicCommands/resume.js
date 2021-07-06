@@ -9,6 +9,7 @@ export default {
     argsRequired: false,
     argsOptional: false,
     guildOnly: false,
+    vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
         resume(msg);

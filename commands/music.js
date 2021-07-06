@@ -23,6 +23,25 @@ export default {
             return;
         }
 
+        if (command.vcMemberOnly &&
+            msg.guild.voice && msg.guild.voice.connection) {
+            let failedConditions = false;
+
+            if (msg.member.voice.channel) {
+                if (msg.guild.voice.channel.id !== msg.member.voice.channel.id) {
+                    failedConditions = true;
+                }
+            }
+            else {
+                failedConditions = true;
+            }
+
+            if (failedConditions) {
+                msg.channel.send('Please join the voice channel the bot is already in to use this command');
+                return;
+            }
+        }
+
         if (command.guildOnly && msg.channel.type === 'dm') {
             msg.channel.send('I can\'t execute that command in DM\'s');
             return;
