@@ -9,7 +9,7 @@ export default {
     argsRequired: false,
     argsOptional: false,
     guildOnly: false,
-    usage: '<url>',
+    usage: '',
     execute(msg, args) {
         pause(msg);
     }
