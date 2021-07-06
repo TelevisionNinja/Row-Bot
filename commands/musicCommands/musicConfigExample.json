@@ -3,9 +3,22 @@
         "names" : [
             "play",
             "start",
-            "resume",
             "p"
         ],
         "description" : "plays music"
+    },
+
+    "pause" : {
+        "names" : [
+            "pause"
+        ],
+        "description" : "pauses the current song"
+    },
+
+    "resume" : {
+        "names" : [
+            "resume"
+        ],
+        "description" : "resumes the current song"
     }
 }
