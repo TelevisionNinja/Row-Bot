@@ -12,6 +12,6 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        pause(msg);
+        pause(msg.guild.id);
     }
 }
