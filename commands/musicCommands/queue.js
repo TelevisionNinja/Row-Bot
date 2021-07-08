@@ -13,13 +13,25 @@ export default {
     usage: '',
     execute(msg, args) {
         const queue = get(msg.guild.id);
-        const playing = queue.shift();
-        let queueStr = `Currently playing:\n${playing}`;
 
         if (queue.length) {
-            queueStr = `${queueStr}\nQueue:\n${queue.map((str, index) => `${index + 1} ${str}`).join('\n')}`;
-        }
+            const playing = queue[0];
+            let queueStr = `Currently playing:\n${playing}`;
 
-        msg.channel.send(queueStr);
+            if (queue.length > 1) {
+                let queueList = '\nQueue:';
+
+                for (let i = 1; i < queue.length; i++) {
+                    queueList = `${queueList}\n${i}. ${queue[i]}`;
+                }
+
+                queueStr = `${queueStr}${queueList}`;
+            }
+
+            msg.channel.send(queueStr);
+        }
+        else {
+            msg.channel.send('There are no songs in the queue');
+        }
     }
 }
