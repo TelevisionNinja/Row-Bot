@@ -1,4 +1,11 @@
 {
+    "clear" : {
+        "names" : [
+            "clear"
+        ],
+        "description" : "clears the queue"
+    },
+
     "leave" : {
         "names" : [
             "leave",
