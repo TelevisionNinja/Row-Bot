@@ -24,10 +24,26 @@
         "description" : "plays music"
     },
 
+    "queue" : {
+        "names" : [
+            "queue",
+            "q",
+            "ls"
+        ],
+        "description" : "shows the queue list"
+    },
+
     "resume" : {
         "names" : [
             "resume"
         ],
         "description" : "resumes the current song"
+    },
+
+    "skip" : {
+        "names" : [
+            "skip"
+        ],
+        "description" : "skips the current song"
     }
 }
