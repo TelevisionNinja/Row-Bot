@@ -37,7 +37,7 @@ const prefix = config.prefix,
 //--------------------------------------------------------------------------------
 // client vars
 
-const client = new Client();
+const client = new Client({ retryLimit: Infinity });
 const cooldowns = new Map();
 client.commands = [];
 client.tulpCommands = [];
