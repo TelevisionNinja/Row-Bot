@@ -9,7 +9,7 @@ export default {
     argsRequired: true,
     argsOptional: false,
     noSpecialChars: false,
-    guildOnly: false,
+    guildOnly: true,
     usage: '<music command>',
     cooldown: 0,
     execute(msg, args) {
