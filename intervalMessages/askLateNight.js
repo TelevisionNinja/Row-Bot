@@ -61,10 +61,12 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
     await sendTypingMsg(recipient, askingMsg, '');
 
-    const collector = recipient.createMessageCollector(m => {
-        const filteredStr = removeAllSpecialChars(m.content);
-        return !m.content.startsWith(prefix) && !m.author.bot && (names.some(n => includesPhrase(filteredStr, n, false)) || hasBotMention(m, false, true, false));
-    }, { time: timeOut });
+    const collector = recipient.createMessageCollector({
+        filter: m => {
+            return !m.content.startsWith(prefix) && !m.author.bot && (names.some(n => includesPhrase(removeAllSpecialChars(m.content), n, false)) || hasBotMention(m, false, true, false));
+        },
+        time: timeOut
+    });
 
     collector.on('collect', m => {
         const userID = m.author.id;

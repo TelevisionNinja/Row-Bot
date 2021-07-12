@@ -68,7 +68,7 @@ export default {
             let mention;
 
             // format mention and jump link
-            if (reference.webhookID === reference.author.id) {
+            if (reference.webhookId === reference.author.id) {
                 mention = `[@${reference.author.username}](${reference.url})`;
 
                 // remove reference inside of reference
