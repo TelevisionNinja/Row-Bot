@@ -24,7 +24,7 @@ export default {
             return;
         }
 
-        if (command.guildOnly && msg.channel.type === 'dm') {
+        if (command.guildOnly && msg.channel.type === 'DM') {
             msg.channel.send('I can\'t execute that command in DM\'s');
             return;
         }

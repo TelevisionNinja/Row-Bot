@@ -43,7 +43,7 @@ export default {
                     }
 
                     msg.channel.send({
-                        embed: {
+                        embeds: [{
                             title: result.word,
                             url: result.permalink,
                             fields: [
@@ -64,7 +64,7 @@ export default {
                                     value: count
                                 }
                             ]
-                        }
+                        }]
                     });
                 }
                 else {

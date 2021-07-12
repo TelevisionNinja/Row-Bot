@@ -63,7 +63,7 @@ export default {
         // referenced msg
 
         if (msg.reference) {
-            const reference = await msg.channel.messages.fetch(msg.reference.messageID);
+            const reference = await msg.fetchReference();
             let referenceMsg = reference.cleanContent;
             let mention;
 
@@ -94,7 +94,7 @@ export default {
         //-------------------------------------------------------------------------------------
         // detect dm channel
 
-        if (msg.channel.type === 'dm') {
+        if (msg.channel.type === 'DM') {
             let imageObj = undefined;
 
             if (typeof attachmentArr !== 'undefined') {
@@ -104,14 +104,14 @@ export default {
             }
 
             msg.channel.send({
-                embed: {
+                embeds: [{
                     author: {
                         name: selectedTulp.username,
                         icon_url: selectedTulp.avatar
                     },
                     description: tulpMsg,
                     image: imageObj
-                }
+                }]
             });
         }
         else {

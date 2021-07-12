@@ -15,10 +15,10 @@ export default {
 
         if (tulpNames.length) {
             msg.channel.send({
-                embed: {
+                embeds: [{
                     title: 'Your tulps',
                     description: tulpNames.map(t => `• ${t.username}`).join('\n')
-                }
+                }]
             });
         }
         else {

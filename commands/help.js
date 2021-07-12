@@ -7,11 +7,11 @@ const prefix = config.prefix,
     names = config.names;
 
 let helpCenter = {
-    embed: {
+    embeds: [{
         title: `${names[0]}\'s Help Center`,
         thumbnail: { url: icon },
         color: parseInt(help.embedColor, 16)
-    }
+    }]
 };
 const specific = {
     name: 'Specific Command Info',
@@ -20,7 +20,7 @@ const specific = {
 
 // initialize embed
 export function initialize(commands) {
-    helpCenter.embed.fields = [
+    helpCenter.embeds[0].fields = [
         {
             name: 'My Commands',
             value: commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
@@ -60,8 +60,8 @@ export default {
                 usageStr = `${usageStr}\``;
             }
 
-            const embed = {
-                embed: {
+            const embeds = {
+                embeds: [{
                     title: `Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
                     color: parseInt(help.embedColor, 16),
@@ -83,10 +83,10 @@ export default {
                             value: `${argCommand.cooldown} second(s)`
                         }
                     ]
-                }
+                }]
             };
 
-            sendAuthorDm(msg, embed);
+            sendAuthorDm(msg, embeds);
         }
         else {
             sendAuthorDm(msg, helpCenter);

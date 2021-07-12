@@ -18,7 +18,7 @@ export default {
                 const data = await getData();
                 let embed = dataToEmbed(covidConfig.intervalState, data);
 
-                embed.embed.author = { name: 'Daily Covid Report' };
+                embed.embeds[0].author = { name: 'Daily Covid Report' };
 
                 recipient.send(embed);
             },

@@ -257,8 +257,8 @@ export function dataToEmbed(state, data) {
         lastUpdate,
         confirmed,
         deaths,
-        recovered,
-        active,
+        // recovered,
+        // active,
         incidentRate,
         totalTestResults,
         fatalityRatio,
@@ -268,7 +268,7 @@ export function dataToEmbed(state, data) {
 
     if (stateFound) {
         return {
-            embed: {
+            embeds: [{
                 title: stateName,
                 description: `Latest updated on ${lastUpdate} UTC`,
                 footer: { text: source },
@@ -276,12 +276,12 @@ export function dataToEmbed(state, data) {
                 fields: [
                     {
                         name: 'Confirmed Cases',
-                        value: confirmed,
+                        value: `${confirmed}`,
                         inline: true
                     },
                     {
                         name: 'Deaths',
-                        value: deaths,
+                        value: `${deaths}`,
                         inline: true
                     },
                     // {
@@ -301,7 +301,7 @@ export function dataToEmbed(state, data) {
                     },
                     {
                         name: 'Total Tests',
-                        value: totalTestResults,
+                        value: `${totalTestResults}`,
                         inline: true
                     },
                     {
@@ -315,14 +315,14 @@ export function dataToEmbed(state, data) {
                         inline: true
                     }
                 ]
-            }
+            }]
         };
     }
 
     return {
-        embed: {
+        embeds: [{
             title: noResultsMsg,
             color: parseInt(covid.embedColor, 16)
-        }
+        }]
     };
 }

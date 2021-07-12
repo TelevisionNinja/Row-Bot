@@ -1,4 +1,7 @@
-import { Client } from 'discord.js';
+import {
+    Client,
+    Intents
+} from 'discord.js';
 import {
     readdirSync,
     createReadStream
@@ -37,7 +40,27 @@ const prefix = config.prefix,
 //--------------------------------------------------------------------------------
 // client vars
 
-const client = new Client({ retryLimit: Infinity });
+const client = new Client({
+    retryLimit: Infinity,
+
+    intents: [
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.DIRECT_MESSAGE_TYPING,
+
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_TYPING,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_WEBHOOKS
+    ],
+
+    partials: [
+        'MESSAGE',
+        'CHANNEL',
+        'USER'
+    ]
+});
 const cooldowns = new Map();
 client.commands = [];
 client.tulpCommands = [];
@@ -117,18 +140,29 @@ client.on('ready', () => {
 //--------------------------------------------------------------------------------
 // message actions
 
-client.on('message', async msg => {
+client.on('messageCreate', async msg => {
+    if (msg.partial) {
+        try {
+            msg = await msg.fetch();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
     // filter messages
     if (msg.author.bot || !msg.content.length) {
         return;
     }
 
+    const isDM = msg.channel.type === 'DM';
+
     // permissions
-    if (msg.channel.type !== 'dm') {
+    if (!isDM) {
         const guildMemberClient = msg.guild.me;
 
         // must be admin or have minimum perms
-        if (!guildMemberClient.hasPermission('ADMINISTRATOR') && !guildMemberClient.hasPermission(minimumPermissions)) {
+        if (!guildMemberClient.permissions.has('ADMINISTRATOR') && !guildMemberClient.permissions.has(minimumPermissions)) {
             return;
         }
     }
@@ -153,7 +187,7 @@ client.on('message', async msg => {
             return;
         }
 
-        if (command.guildOnly && msg.channel.type === 'dm') {
+        if (command.guildOnly && isDM) {
             msg.channel.send('I can\'t execute that command in DM\'s');
             return;
         }

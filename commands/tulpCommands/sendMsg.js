@@ -17,7 +17,7 @@ export default {
     guildOnly: false,
     usage: `<name>${tagSeparator} <message>\`\nor the easier way:\n\`${easyUsage}`,
     async execute(msg, args) {
-        const isDM = msg.channel.type === 'dm';
+        const isDM = msg.channel.type === 'DM';
 
         if (!isDM) {
             msg.delete();
@@ -62,14 +62,14 @@ export default {
             }
 
             msg.channel.send({
-                embed: {
+                embeds: [{
                     author: {
                         name: selectedTulp.username,
                         icon_url: selectedTulp.avatar
                     },
                     description: tulpMsg,
                     image: imageObj
-                }
+                }]
             });
         }
         else {

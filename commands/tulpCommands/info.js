@@ -22,7 +22,7 @@ export default {
         }
 
         msg.channel.send({
-            embed: {
+            embeds: [{
                 title: selectedTulp.username,
                 thumbnail: { url: selectedTulp.avatar },
                 fields: [
@@ -31,7 +31,7 @@ export default {
                         value: `${selectedTulp.start_bracket}text${selectedTulp.end_bracket}`
                     }
                 ]
-            }
+            }]
         });
     }
 }
