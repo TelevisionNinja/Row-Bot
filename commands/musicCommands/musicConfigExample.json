@@ -42,7 +42,8 @@
 
     "resume" : {
         "names" : [
-            "resume"
+            "resume",
+            "unpause"
         ],
         "description" : "resumes the current song"
     },
