@@ -35,7 +35,6 @@ export default {
     description: help.description,
     argsRequired: false,
     argsOptional: true,
-    guildOnly: false,
     vcMemberOnly: false,
     usage: '<command name>',
     execute(msg, args) {

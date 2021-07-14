@@ -8,7 +8,6 @@ export default {
     description: pauseConfig.description,
     argsRequired: false,
     argsOptional: false,
-    guildOnly: false,
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
