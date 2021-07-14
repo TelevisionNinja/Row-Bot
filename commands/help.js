@@ -86,10 +86,10 @@ export default {
                 }]
             };
 
-            sendAuthorDm(msg, embeds);
+            msg.channel.send(embeds);
         }
         else {
-            sendAuthorDm(msg, helpCenter);
+            msg.channel.send(helpCenter);
         }
     }
 }
