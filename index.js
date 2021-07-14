@@ -2,10 +2,7 @@ import {
     Client,
     Intents
 } from 'discord.js';
-import {
-    readdirSync,
-    createReadStream
-} from 'fs';
+import { readdirSync } from 'fs';
 import { default as config } from './config.json';
 import {
     hasBotMention,
@@ -28,6 +25,12 @@ import { getChatBotReply } from './lib/chatBot.js';
 import { initialize as initializeHelp } from './commands/help.js';
 import { initialize as initializeTulp } from './commands/tulpCommands/help.js';
 import { initialize as initializeMusic } from './commands/musicCommands/help.js';
+import {
+    joinVC,
+    vcCheck,
+    leave,
+    playFile
+} from './lib/audio.js';
 
 //--------------------------------------------------------------------------------
 // config vars
@@ -303,26 +306,18 @@ client.on('messageCreate', async msg => {
 
         if (msg.member.voice.channel) {
             if (noMentionsMsg === 'join me') {
-                msg.member.voice.channel.join();
+                joinVC(msg);
 
                 return;
             }
             else if (noMentionsMsg === 'leave') {
-                msg.member.voice.channel.leave();
+                leave(msg.guild.id);
 
                 return;
             }
-            else if (msg.guild.voice && msg.guild.voice.connection && (noMentionsMsg === 'speak' || noMentionsMsg === 'talk')) {
-                const connection = msg.guild.voice.connection;
+            else if (vcCheck(msg) && (noMentionsMsg === 'speak' || noMentionsMsg === 'talk')) {
                 const randAudio = randomMath(audio.length);
-                const dispatcher = connection.play(createReadStream(audio[randAudio]), {
-                    highWaterMark: 50,
-                    volume: false,
-                    type: 'ogg/opus',
-                    bitrate: 'auto'
-                });
-
-                dispatcher.on('error', error => console.log(error));
+                playFile(msg, audio[randAudio]);
 
                 return;
             }

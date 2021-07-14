@@ -1,5 +1,8 @@
 import { default as musicConfig } from './musicConfig.json';
-import { playYoutube } from '../../lib/audio.js';
+import {
+    playYoutube,
+    joinVC
+} from '../../lib/audio.js';
 import { default as ytdl } from 'ytdl-core';
 import { default as ytSearch } from 'yt-search';
 
@@ -10,12 +13,10 @@ export default {
     description: play.description,
     argsRequired: true,
     argsOptional: false,
-    guildOnly: false,
     vcMemberOnly: false,
     usage: '<url> or <search term>',
     async execute(msg, args) {
-        if (!msg.member.voice.channel) {
-            msg.channel.send('Please join a voice channel to play music');
+        if (!joinVC(msg)) {
             return;
         }
 
@@ -39,18 +40,6 @@ export default {
             }
         }
 
-        if (msg.guild.voice && msg.guild.voice.connection) {
-            if (msg.guild.voice.channel.id !== msg.member.voice.channel.id) {
-                msg.channel.send('Please join the voice channel the bot is already in to add songs to the queue');
-                return;
-            }
-        }
-        else {
-            await msg.member.voice.channel.join();
-        }
-
-        const connection = msg.guild.voice.connection;
-
-        playYoutube(msg, connection, songURL, moreInfo);
+        playYoutube(msg, songURL, moreInfo);
     }
 }

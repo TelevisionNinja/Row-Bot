@@ -1,4 +1,5 @@
 import { default as musicConfig } from './musicConfig.json';
+import { leave } from '../../lib/audio.js';
 
 const leaveConfig = musicConfig.leave;
 
@@ -7,10 +8,9 @@ export default {
     description: leaveConfig.description,
     argsRequired: false,
     argsOptional: false,
-    guildOnly: false,
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        msg.member.voice.channel.leave();
+        leave(msg.guild.id);
     }
 }
