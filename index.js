@@ -58,11 +58,7 @@ const client = new Client({
         Intents.FLAGS.GUILD_WEBHOOKS
     ],
 
-    partials: [
-        'MESSAGE',
-        'CHANNEL',
-        'USER'
-    ]
+    partials: ['CHANNEL']
 });
 const cooldowns = new Map();
 client.commands = [];
@@ -144,15 +140,6 @@ client.on('ready', () => {
 // message actions
 
 client.on('messageCreate', async msg => {
-    if (msg.partial) {
-        try {
-            msg = await msg.fetch();
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
-
     // filter messages
     if (msg.author.bot || !msg.content.length) {
         return;
@@ -394,10 +381,10 @@ client.on('channelDelete', channel => {
 // tulp cache
 
 // cache user data and the channel webhook while the user is typing
-client.on('typingStart', async (channel, user) => {
+client.on('typingStart', async typing => {
     // users
 
-    const userID = user.id;
+    const userID = typing.user.id;
 
     if (tulpCache.has(userID)) {
         tulpCache.resetCacheTime(userID);
@@ -417,7 +404,7 @@ client.on('typingStart', async (channel, user) => {
     //--------------------------------------------------------------------------------
     // webhooks
 
-    const channelID = channel.id;
+    const channelID = typing.channel.id;
 
     if (tulpCache.has(channelID)) {
         tulpCache.resetCacheTime(channelID);
