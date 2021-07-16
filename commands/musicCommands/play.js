@@ -20,26 +20,22 @@ export default {
             return;
         }
 
-        let songURL = '';
-        let moreInfo = '';
-
         if (ytdl.validateURL(args[0])) {
-            songURL = args[0];
+            playYoutube(msg, args[0]);
         }
         else {
             const results = await ytSearch(args.join(' '));
             const videos = results.videos;
 
             if (videos.length) {
-                songURL = videos[0].url;
-                moreInfo = songURL;
+                const songURL = videos[0].url;
+
+                playYoutube(msg, songURL, songURL);
             }
             else {
                 msg.channel.send('No results');
                 return;
             }
         }
-
-        playYoutube(msg, songURL, moreInfo);
     }
 }
