@@ -59,6 +59,13 @@ export default {
                 usageStr = `${usageStr}\``;
             }
 
+            const aliases = argCommand.names.slice(1);
+            let aliasStr = 'There are no aliases for this command';
+
+            if (aliases.length) {
+                aliasStr = aliases.join(', ');
+            }
+
             const embeds = {
                 embeds: [{
                     title: `Tulp Command: ${argCommand.names[0]}`,
@@ -67,7 +74,7 @@ export default {
                     fields: [
                         {
                             name: 'Aliases',
-                            value: argCommand.names.slice(1).join(', ')
+                            value: aliasStr
                         },
                         {
                             name: 'Usage',
