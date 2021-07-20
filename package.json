@@ -23,7 +23,7 @@
     "axios": "^0.21.0",
     "bufferutil": "^4.0.3",
     "daily-intervals": "^1.0.0",
-    "discord.js": "^13.0.0-dev.1dcad05.1626091387",
+    "discord.js": "^13.0.0-dev.02f55f0.1626782659",
     "ffmpeg-static": "^4.3.0",
     "libsodium-wrappers": "^0.7.9",
     "p-queue": "^7.1.0",
