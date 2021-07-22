@@ -8,7 +8,8 @@ import {
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
 
-const ruleConfig = config.rule;
+const ruleConfig = config.rule,
+    noResultsMsg = config.noResultsMsg;
 
 const filter = ruleConfig.filterTags.map(t => `-${t}`);
 
@@ -27,7 +28,12 @@ export default {
 
                 const img = await getImageRule0(tagArr);
 
-                sendImg(recipient, img, false);
+                if (img.results) {
+                    sendImg(recipient, img, false);
+                }
+                else {
+                    recipient.send(`${noResultsMsg}\nTags:\n\`${tagArr}\``);
+                }
             },
             '0:0',
             ruleConfig.intervalWait,

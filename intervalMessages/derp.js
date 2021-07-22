@@ -7,7 +7,8 @@ import {
 } from '../lib/msgUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
 
-const derpConfig = config.derp;
+const derpConfig = config.derp,
+    noResultsMsg = config.noResultsMsg;
 
 const filter = derpConfig.filterTags.map(t => `-${t}`);
 
@@ -25,7 +26,12 @@ export default {
 
                 img.title = `${derpConfig.intervalMsg}${selection}`;
 
-                sendImg(recipientDaily, img, false);
+                if (img.results) {
+                    sendImg(recipientDaily, img, false);
+                }
+                else {
+                    recipientDaily.send(`${noResultsMsg}\nTags:\n\`${tagArr}\``);
+                }
             },
             derpConfig.intervalTime,
             1440, // 24 hrs in minutes
@@ -43,7 +49,12 @@ export default {
                 const tagArr = [selection, 'score.gte:400', ...filter];
                 const img = await getImage(tagArr);
 
-                sendImg(recipientInterval, img, false);
+                if (img.results) {
+                    sendImg(recipientInterval, img, false);
+                }
+                else {
+                    recipientInterval.send(`${noResultsMsg}\nTags:\n\`${tagArr}\``);
+                }
             },
             '0:0',
             derpConfig.intervalWait,
