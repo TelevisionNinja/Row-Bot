@@ -1,5 +1,4 @@
 import { default as config } from '../config.json';
-import { sendAuthorDm } from '../lib/msgUtils.js';
 
 const prefix = config.prefix,
     help = config.help,
@@ -44,7 +43,7 @@ export default {
             const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
 
             if (typeof argCommand === 'undefined') {
-                sendAuthorDm(msg, 'That\'s not one of my commands');
+                msg.channel.send('That\'s not one of my commands');
                 return;
             }
 

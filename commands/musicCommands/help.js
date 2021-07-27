@@ -1,5 +1,4 @@
 import { default as config } from '../../config.json';
-import { sendAuthorDm } from '../../lib/msgUtils.js';
 
 const prefix = config.prefix,
     help = config.help,
@@ -43,7 +42,7 @@ export default {
             const argCommand = msg.client.musicCommands.find(cmd => cmd.names.includes(userCommand));
 
             if (typeof argCommand === 'undefined') {
-                sendAuthorDm(msg, 'That\'s not one of my music commands');
+                msg.channel.send('That\'s not one of my music commands');
                 return;
             }
 
