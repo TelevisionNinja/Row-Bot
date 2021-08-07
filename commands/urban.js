@@ -61,7 +61,7 @@ export default {
                                 },
                                 {
                                     name: 'Results',
-                                    value: count
+                                    value: `${count}`
                                 }
                             ]
                         }]
