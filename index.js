@@ -120,7 +120,7 @@ client.on('ready', () => {
     //--------------------------------------------------------------------------------
     // console log the start up time
 
-    console.log(`Row Bot is up ${client.readyAt.toString()}`);
+    console.log(`Startup: ${client.readyAt.toString()}`);
 });
 
 //--------------------------------------------------------------------------------
@@ -332,7 +332,7 @@ client.on('messageCreate', async msg => {
 //--------------------------------------------------------------------------------
 // disconnect
 
-client.on('shardDisconnect', () => console.log(`Row Bot disconnected ${new Date().toString()}`));
+client.on('shardDisconnect', () => console.log(`Disconnected: ${new Date().toString()}`));
 
 //--------------------------------------------------------------------------------
 // reconnect
@@ -345,7 +345,7 @@ client.on('shardResume', () => {
     //--------------------------------------------------------------------------------
     // console log the start up time
 
-    console.log(`Row Bot is up ${client.readyAt.toString()}`);
+    console.log(`Reconnected: ${client.readyAt.toString()}`);
 });
 
 //--------------------------------------------------------------------------------
