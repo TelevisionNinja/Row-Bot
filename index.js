@@ -81,33 +81,20 @@ const genMsgFiles = readdirSync('./generalMessages/').filter(aFile => aFile.ends
 const intervalMsgFiles = readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
 const audioFiles = readdirSync('./audioFiles/');
 
-for (let i = 0, n = commandFiles.length; i < n; i++) {
-    client.commands[i] = (await import(`./commands/${commandFiles[i]}`)).default;
-}
+client.commands = commandFiles.map(f => import(`./commands/${f}`));
+client.tulpCommands = tulpCommandFiles.map(f => import(`./commands/tulpCommands/${f}`));
+client.musicCommands = musicCommandFiles.map(f => import(`./commands/musicCommands/${f}`));
+//noncommands = noncommandFiles.map(f => import(`./noncommands/${f}`));
+genMsg = genMsgFiles.map(f => import(`./generalMessages/${f}`));
+intervalMsgs = intervalMsgFiles.map(f => import(`./intervalMessages/${f}`));
+audio = audioFiles.map(f => `./audioFiles/${f}`);
 
-for (let i = 0, n = tulpCommandFiles.length; i < n; i++) {
-    client.tulpCommands[i] = (await import(`./commands/tulpCommands/${tulpCommandFiles[i]}`)).default;
-}
-
-for (let i = 0, n = musicCommandFiles.length; i < n; i++) {
-    client.musicCommands[i] = (await import(`./commands/musicCommands/${musicCommandFiles[i]}`)).default;
-}
-
-// for (let i = 0, n = noncommandFiles.length; i < n; i++) {
-//     noncommands[i] = (await import(`./noncommands/${noncommandFiles[i]}`)).default;
-// }
-
-for (let i = 0, n = genMsgFiles.length; i < n; i++) {
-    genMsg[i] = (await import(`./generalMessages/${genMsgFiles[i]}`)).default;
-}
-
-for (let i = 0, n = intervalMsgFiles.length; i < n; i++) {
-    intervalMsgs[i] = (await import(`./intervalMessages/${intervalMsgFiles[i]}`)).default;
-}
-
-for (let i = 0, n = audioFiles.length; i < n; i++) {
-    audio[i] = `./audioFiles/${audioFiles[i]}`;
-}
+client.commands = (await Promise.all(client.commands)).map(i => i.default);
+client.tulpCommands = (await Promise.all(client.tulpCommands)).map(i => i.default);
+client.musicCommands = (await Promise.all(client.musicCommands)).map(i => i.default);
+//noncommands = (await Promise.all(noncommands)).map(i => i.default);
+genMsg = (await Promise.all(genMsg)).map(i => i.default);
+intervalMsgs = (await Promise.all(intervalMsgs)).map(i => i.default);
 
 //--------------------------------------------------------------------------------
 // initialize help embeds
