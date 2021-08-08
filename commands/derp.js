@@ -33,10 +33,11 @@ export default {
 }
 
 /**
- * Returns an image, a source url, and the number of results.
- * If no image is found, the results var is returned as zero.
+ * Returns an image object
+ * If no image is found, the results var is zero
  * 
  * @param {*} tagArr array of tags to be searched
+ * @returns 
  */
 export async function getImage(tagArr) {
     // whitespace is replaced with '+'
