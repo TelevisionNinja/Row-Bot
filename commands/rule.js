@@ -39,7 +39,7 @@ export default {
 
 /**
  * Returns an image object
- * If no image is found, the results var is zero.
+ * If no image is found, the results var is zero
  * 
  * 2 requests are made
  * 
@@ -99,7 +99,7 @@ export async function getImageRule0(tagArr) {
 
 /**
  * Returns an image object
- * If no image is found, the results var is zero.
+ * If no image is found, the results var is zero
  * 
  * 2 requests are made
  * 
@@ -158,7 +158,7 @@ export async function getImageRule1(tagArr) {
 
 /**
  * Returns an image object from one of the rule sites
- * If no image is found, the count var is zero.
+ * If no image is found, the count var is zero
  * 
  * @param {*} tagArr array of tags to be searched
  * @returns 
