@@ -38,12 +38,13 @@ export default {
 }
 
 /**
- * Returns an image, the image id, and the number of results.
- * If no image is found, the results var is returned as zero.
+ * Returns an image object
+ * If no image is found, the results var is zero.
  * 
  * 2 requests are made
  * 
  * @param {*} tagArr array of tags that are already formatted
+ * @returns 
  */
 export async function getImageRule0(tagArr) {
     const URL = `${rule.sites[0].API}${tagArr.join(rule.separator)}&limit=`;
@@ -97,12 +98,13 @@ export async function getImageRule0(tagArr) {
 }
 
 /**
- * Returns an image, the image id, and the number of results.
- * If no image is found, the results var is returned as zero.
+ * Returns an image object
+ * If no image is found, the results var is zero.
  * 
  * 2 requests are made
  * 
  * @param {*} tagArr array of tags that are already formatted
+ * @returns 
  */
 export async function getImageRule1(tagArr) {
     // this api has a max of 3 tags
@@ -155,10 +157,11 @@ export async function getImageRule1(tagArr) {
 }
 
 /**
- * Returns an image from one of the rule sites, a source url, and the number of results.
- * If no image is found, the count var is returned as zero.
+ * Returns an image object from one of the rule sites
+ * If no image is found, the count var is zero.
  * 
  * @param {*} tagArr array of tags to be searched
+ * @returns 
  */
 export async function getImage(tagArr) {
     // whitespace is replaced with '_'
