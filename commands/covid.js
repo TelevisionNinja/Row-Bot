@@ -6,9 +6,14 @@ import { backOff } from '../lib/limit.js';
 const covid = config.covid,
     noResultsMsg = config.noResultsMsg;
 
-const queue = new PQueue({
+const queueTests = new PQueue({
     interval: 1000,
-    intervalCap: 10
+    intervalCap: 50
+});
+
+const queueVaccines = new PQueue({
+    interval: 1000,
+    intervalCap: 50
 });
 
 export default {
@@ -21,10 +26,12 @@ export default {
     usage: `<state>`,
     cooldown: 1,
     async execute(msg, args) {
-        const data = await getData();
+        const embeds = await getDataEmbeds(args.join(' '));
 
-        if (data.length) {
-            msg.channel.send(dataToEmbed(args.join(' '), data));
+        if (embeds.length) {
+            msg.channel.send({
+                embeds: embeds
+            });
         }
         else {
             msg.channel.send('I couldn\'t get any data for some reason');
@@ -33,25 +40,56 @@ export default {
 }
 
 /**
+ * 
+ * @param {*} state 
+ * @returns embed array
+ */
+export async function getDataEmbeds(state) {
+    const response = await Promise.all([
+        getTestData(),
+        getVaccineData()
+    ]);
+
+    const dataTests = response[0];
+    const dataVaccines = response[1];
+
+    if (dataTests.length) {
+        let embeds = [
+            testDataToEmbed(state, dataTests)
+        ];
+        const vaccineEmbed = vaccineDataToEmbed(state, dataVaccines);
+
+        if (typeof vaccineEmbed.description !== 'undefined') {
+            embeds.push(vaccineEmbed);
+        }
+
+        return embeds;
+    }
+
+    return [];
+}
+
+/**
  * returns a csv of the latest us state covid data
  * 
  * @param {*} nthDay 
+ * @returns csv string
  */
-export async function getData(nthDay = 1) {
+export async function getTestData(nthDay = 1) {
     let results = '';
 
     if (nthDay === 3) {
         return results;
     }
 
-    await queue.add(async () => {
+    await queueTests.add(async () => {
         try {
             const response = await axios.get(getUrl(nthDay));
             results = response.data;
         }
         catch (error) {
-            if (!backOff(error, queue)) {
-                results = await getData(nthDay + 1);
+            if (!backOff(error, queueTests)) {
+                results = await getTestData(nthDay + 1);
             }
         }
     });
@@ -63,6 +101,7 @@ export async function getData(nthDay = 1) {
  * creates a url to get covid data
  * 
  * @param {*} nthDayAgo 
+ * @returns url string
  */
 function getUrl(nthDayAgo) {
     let dateObj = new Date();
@@ -89,13 +128,37 @@ function getUrl(nthDayAgo) {
 }
 
 /**
+ * 
+ * @param {*} csvStr 
+ * @param {*} state 
+ * @returns 
+ */
+function getStateDataLine(csvStr, state) {
+    const states = csvStr.split('\n');
+    states.shift();
+
+    state = state.toLowerCase();
+
+    let stateData = '';
+
+    for (let i = 0, n = states.length; i < n; i++) {
+        if (states[i].toLowerCase().includes(state)) {
+            stateData = states[i];
+            break;
+        }
+    }
+    return stateData;
+}
+
+/**
  * gets a states data from the csv
  * 
  * @param {*} state 
  * @param {*} data 
  * @param {*} precision 
+ * @returns 
  */
-function dataToStateData(state, data, precision = 2) {
+function testDataToStateData(state, data, precision = 2) {
     let stateName = '';
     let lastUpdate = '';
     let confirmed = 0;
@@ -116,52 +179,32 @@ function dataToStateData(state, data, precision = 2) {
 
     let stateFound = false;
 
+    const noData = {
+        stateFound,
+        stateName,
+        lastUpdate,
+        confirmed,
+        deaths,
+        recovered,
+        active,
+        incidentRate,
+        totalTestResults,
+        fatalityRatio,
+        testingRate,
+        source
+    };
+
     if (!data.length) {
-        return {
-            stateFound,
-            stateName,
-            lastUpdate,
-            confirmed,
-            deaths,
-            recovered,
-            active,
-            incidentRate,
-            totalTestResults,
-            fatalityRatio,
-            testingRate,
-            source
-        };
-    }
-    
-    const states = data.split('\n');
-
-    state = state.toLowerCase();
-
-    let stateData = '';
-
-    for (let i = 0, n = states.length; i < n; i++) {
-        if (states[i].toLowerCase().startsWith(state)) {
-            stateData = states[i];
-            stateFound = true;
-            break;
-        }
+        return noData;
     }
 
-    if (!stateFound) {
-        return {
-            stateFound,
-            stateName,
-            lastUpdate,
-            confirmed,
-            deaths,
-            recovered,
-            active,
-            incidentRate,
-            totalTestResults,
-            fatalityRatio,
-            testingRate,
-            source
-        };
+    const stateData = getStateDataLine(data, state);
+
+    if (stateData.length) {
+        stateFound = true;
+    }
+    else {
+        return noData;
     }
 
     const dataArr = stateData.split(',');
@@ -205,8 +248,9 @@ function dataToStateData(state, data, precision = 2) {
  * 
  * @param {*} state 
  * @param {*} data 
+ * @returns 
  */
-export function dataToStrArr(state, data) {
+export function testDataToStrArr(state, data) {
     const {
         stateFound,
         stateName,
@@ -220,7 +264,7 @@ export function dataToStrArr(state, data) {
         fatalityRatio,
         testingRate,
         source
-    } = dataToStateData(state, data);
+    } = testDataToStateData(state, data);
 
     let stringArr = [];
 
@@ -249,8 +293,9 @@ export function dataToStrArr(state, data) {
  * 
  * @param {*} state 
  * @param {*} data 
+ * @returns 
  */
-export function dataToEmbed(state, data) {
+export function testDataToEmbed(state, data) {
     const {
         stateFound,
         stateName,
@@ -264,65 +309,195 @@ export function dataToEmbed(state, data) {
         fatalityRatio,
         testingRate,
         source
-    } = dataToStateData(state, data);
+    } = testDataToStateData(state, data);
 
     if (stateFound) {
         return {
-            embeds: [{
-                title: stateName,
-                description: `Latest updated on ${lastUpdate} UTC`,
-                footer: { text: source },
-                color: parseInt(covid.embedColor, 16),
-                fields: [
-                    {
-                        name: 'Confirmed Cases',
-                        value: `${confirmed}`,
-                        inline: true
-                    },
-                    {
-                        name: 'Deaths',
-                        value: `${deaths}`,
-                        inline: true
-                    },
-                    // {
-                    //     name: 'Recoveries',
-                    //     value: recovered,
-                    //     inline: true
-                    // },
-                    // {
-                    //     name: 'Active Cases',
-                    //     value: active,
-                    //     inline: true
-                    // },
-                    {
-                        name: 'Incident Rate',
-                        value: `${incidentRate}%`,
-                        inline: true
-                    },
-                    {
-                        name: 'Total Tests',
-                        value: `${totalTestResults}`,
-                        inline: true
-                    },
-                    {
-                        name: 'Fatality Percentage',
-                        value: `${fatalityRatio}%`,
-                        inline: true
-                    },
-                    {
-                        name: 'Testing Rate',
-                        value: `${testingRate}%`,
-                        inline: true
-                    }
-                ]
-            }]
+            title: `${stateName} Cases`,
+            description: `Latest updated on ${lastUpdate} UTC`,
+            footer: { text: source },
+            color: parseInt(covid.embedColor, 16),
+            fields: [
+                {
+                    name: 'Confirmed Cases',
+                    value: `${confirmed}`,
+                    inline: true
+                },
+                {
+                    name: 'Deaths',
+                    value: `${deaths}`,
+                    inline: true
+                },
+                // {
+                //     name: 'Recoveries',
+                //     value: recovered,
+                //     inline: true
+                // },
+                // {
+                //     name: 'Active Cases',
+                //     value: active,
+                //     inline: true
+                // },
+                {
+                    name: 'Incident Rate',
+                    value: `${incidentRate}%`,
+                    inline: true
+                },
+                {
+                    name: 'Total Tests',
+                    value: `${totalTestResults}`,
+                    inline: true
+                },
+                {
+                    name: 'Fatality Percentage',
+                    value: `${fatalityRatio}%`,
+                    inline: true
+                },
+                {
+                    name: 'Testing Rate',
+                    value: `${testingRate}%`,
+                    inline: true
+                }
+            ]
         };
     }
 
     return {
-        embeds: [{
-            title: noResultsMsg,
-            color: parseInt(covid.embedColor, 16)
-        }]
+        title: noResultsMsg,
+        color: parseInt(covid.embedColor, 16)
+    };
+}
+
+//---------------------------------------------------------------
+
+/**
+ * 
+ * @returns csv string
+ */
+export async function getVaccineData() {
+    let results = '';
+
+    await queueVaccines.add(async () => {
+        try {
+            const response = await axios.get(covid.vaccineURL);
+            results = response.data;
+        }
+        catch (error) {
+            backOff(error, queueVaccines);
+        }
+    });
+
+    return results;
+}
+
+/**
+ * gets a states data from the csv
+ * 
+ * @param {*} state 
+ * @param {*} data 
+ * @returns 
+ */
+function vaccineDataToStateData(state, data) {
+    let stateName = '';
+    let lastUpdate = '';
+    let fullyVaccinated = 0;
+    let partiallyVaccinated = 0;
+    let totalVaccinated = 0;
+
+    let source = '';
+
+    let stateFound = false;
+
+    const noData = {
+        stateFound,
+        stateName,
+        lastUpdate,
+        fullyVaccinated,
+        partiallyVaccinated,
+        totalVaccinated,
+        source
+    };
+
+    if (!data.length) {
+        return noData;
+    }
+
+    const stateData = getStateDataLine(data, state);
+
+    if (stateData.length) {
+        stateFound = true;
+    }
+    else {
+        return noData;
+    }
+
+    const dataArr = stateData.split(',');
+
+    stateName = dataArr[1];
+    lastUpdate = dataArr[3];
+    fullyVaccinated = parseInt(dataArr[8]);
+    partiallyVaccinated = parseInt(dataArr[9]);
+    totalVaccinated = fullyVaccinated + partiallyVaccinated;
+
+    source = 'Data from Johns Hopkins University';
+
+    return {
+        stateFound,
+        stateName,
+        lastUpdate,
+        fullyVaccinated,
+        partiallyVaccinated,
+        totalVaccinated,
+        source
+    };
+}
+
+/**
+ * puts a state's data into an embed
+ * 
+ * @param {*} state 
+ * @param {*} data 
+ * @returns 
+ */
+export function vaccineDataToEmbed(state, data) {
+    const {
+        stateFound,
+        stateName,
+        lastUpdate,
+        fullyVaccinated,
+        partiallyVaccinated,
+        totalVaccinated,
+        source
+    } = vaccineDataToStateData(state, data);
+
+    if (stateFound) {
+        return {
+            title: `${stateName} Vaccinations`,
+            description: `Latest updated on ${lastUpdate}`,
+            footer: { text: source },
+            color: parseInt(covid.embedColor, 16),
+            fields: [
+                {
+                    name: 'Fully Vaccinated',
+                    value: `${fullyVaccinated}`,
+                    inline: true
+                },
+                {
+                    name: 'Partially Vaccinated',
+                    value: `${partiallyVaccinated}`,
+                    inline: true
+                },
+                {
+                    name: 'Vaccinated Total',
+                    value: `${totalVaccinated}`,
+                    inline: true
+                }
+            ]
+        };
+    }
+
+    return {
+        title: noResultsMsg,
+        color: parseInt(covid.embedColor, 16)
     };
 }
