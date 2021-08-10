@@ -12,11 +12,11 @@ const rule = config.rule,
 
 const queueZero = new PQueue({
     interval: 1000,
-    intervalCap: 10
+    intervalCap: 50
 });
 const queueOne = new PQueue({
     interval: 1000,
-    intervalCap: 10
+    intervalCap: 50
 });
 
 export default {

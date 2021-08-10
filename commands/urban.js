@@ -11,7 +11,7 @@ const urban = config.urban,
 
 const queue = new PQueue({
     interval: 1000,
-    intervalCap: 10
+    intervalCap: 50
 });
 
 export default {
