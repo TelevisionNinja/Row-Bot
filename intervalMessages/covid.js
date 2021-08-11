@@ -14,7 +14,8 @@ export default {
             async () => {
                 const embeds = await getDataEmbeds(covidConfig.intervalState);
 
-                embeds[0].author = { name: 'Daily Covid Report' };
+                embeds[0].author = { name: 'Daily Covid Cases Report' };
+                embeds[1].author = { name: 'Daily Covid Vaccine Report' };
 
                 recipient.send({ embeds: embeds });
             },
