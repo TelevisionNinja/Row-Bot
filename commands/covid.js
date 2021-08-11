@@ -141,7 +141,7 @@ function extractStateTestData(stateData, precision = 2) {
     let fatalityRatio = 0.0;
 
     // per 100,000 people
-    let testingRate = 0.0;
+    let testingPercentage = 0.0;
 
     let source = '';
 
@@ -162,7 +162,7 @@ function extractStateTestData(stateData, precision = 2) {
             incidentRate,
             totalTestResults,
             fatalityRatio,
-            testingRate,
+            testingPercentage,
             source
         };
     }
@@ -183,7 +183,7 @@ function extractStateTestData(stateData, precision = 2) {
     fatalityRatio = parseFloat(dataArr[13]).toFixed(precision);
 
     // per 100,000 people
-    testingRate = (parseFloat(dataArr[16]) / 1000).toFixed(precision);
+    testingPercentage = (parseFloat(dataArr[16]) / 1000).toFixed(precision);
 
     source = 'Data from Johns Hopkins University';
 
@@ -198,7 +198,7 @@ function extractStateTestData(stateData, precision = 2) {
         incidentRate,
         totalTestResults,
         fatalityRatio,
-        testingRate,
+        testingPercentage,
         source
     };
 }
@@ -221,7 +221,7 @@ export function testDataToStrArr(data) {
         incidentRate,
         totalTestResults,
         fatalityRatio,
-        testingRate,
+        testingPercentage,
         source
     } = data;
 
@@ -241,7 +241,7 @@ export function testDataToStrArr(data) {
     stringArr.push(`Incident Rate: ${incidentRate}%`);
     stringArr.push(`Total Tests: ${totalTestResults}`);
     stringArr.push(`Fatality: ${fatalityRatio}%`);
-    stringArr.push(`Testing Rate: ${testingRate}%`);
+    stringArr.push(`Population Tested: ${testingPercentage}%`);
     stringArr.push(source);
 
     return stringArr;
@@ -265,7 +265,7 @@ export function createTestEmbed(data) {
         incidentRate,
         totalTestResults,
         fatalityRatio,
-        testingRate,
+        testingPercentage,
         source
     } = data;
 
@@ -312,8 +312,8 @@ export function createTestEmbed(data) {
                     inline: true
                 },
                 {
-                    name: 'Testing Rate',
-                    value: `${testingRate}%`,
+                    name: 'Population Tested',
+                    value: `${testingPercentage}%`,
                     inline: true
                 }
             ]
@@ -609,7 +609,7 @@ export async function getCombinedEmbed(state) {
         incidentRate,
         totalTestResults,
         fatalityRatio,
-        testingRate,
+        testingPercentage,
         source
     } = extractStateTestData(getStateDataLine(state, response[0]));
 
@@ -665,8 +665,8 @@ export async function getCombinedEmbed(state) {
                     inline: true
                 },
                 {
-                    name: 'Testing Rate',
-                    value: `${testingRate}%`,
+                    name: 'Population Tested',
+                    value: `${testingPercentage}%`,
                     inline: true
                 },
                 {
