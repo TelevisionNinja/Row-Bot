@@ -16,9 +16,7 @@ export default {
 
                 embeds[0].author = { name: 'Daily Covid Report' };
 
-                recipient.send({
-                    embeds: embeds
-                });
+                recipient.send({ embeds: embeds });
             },
             covidConfig.intervalTime,
             1440, // 24 hrs in minutes
