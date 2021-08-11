@@ -135,7 +135,7 @@ function extractStateTestData(stateData, precision = 2) {
     let active = 0;
 
     // per 100,000 people
-    let incidentRate = 0.0;
+    let incidenceRate = 0.0;
 
     let totalTestResults = 0;
     let fatalityRatio = 0.0;
@@ -159,7 +159,7 @@ function extractStateTestData(stateData, precision = 2) {
             deaths,
             recovered,
             active,
-            incidentRate,
+            incidenceRate,
             totalTestResults,
             fatalityRatio,
             testingPercentage,
@@ -177,7 +177,7 @@ function extractStateTestData(stateData, precision = 2) {
     active = parseInt(dataArr[8]);
 
     // per 100,000 people
-    incidentRate = (parseFloat(dataArr[10]) / 1000).toFixed(precision);
+    incidenceRate = (parseFloat(dataArr[10]) / 1000).toFixed(precision);
 
     totalTestResults = parseInt(dataArr[11]);
     fatalityRatio = parseFloat(dataArr[13]).toFixed(precision);
@@ -195,7 +195,7 @@ function extractStateTestData(stateData, precision = 2) {
         deaths,
         recovered,
         active,
-        incidentRate,
+        incidenceRate,
         totalTestResults,
         fatalityRatio,
         testingPercentage,
@@ -218,7 +218,7 @@ export function testDataToStrArr(data) {
         deaths,
         recovered,
         active,
-        incidentRate,
+        incidenceRate,
         totalTestResults,
         fatalityRatio,
         testingPercentage,
@@ -238,7 +238,7 @@ export function testDataToStrArr(data) {
     stringArr.push(`Deaths: ${deaths}`);
     stringArr.push(`Recoveries: ${recovered}`);
     stringArr.push(`Active Cases: ${active}`);
-    stringArr.push(`Incident Rate: ${incidentRate}%`);
+    stringArr.push(`Incidence Rate: ${incidenceRate}%`);
     stringArr.push(`Total Tests: ${totalTestResults}`);
     stringArr.push(`Fatality: ${fatalityRatio}%`);
     stringArr.push(`Population Tested: ${testingPercentage}%`);
@@ -262,7 +262,7 @@ export function createTestEmbed(data) {
         deaths,
         // recovered,
         // active,
-        incidentRate,
+        incidenceRate,
         totalTestResults,
         fatalityRatio,
         testingPercentage,
@@ -297,8 +297,8 @@ export function createTestEmbed(data) {
                 //     inline: true
                 // },
                 {
-                    name: 'Incident Rate',
-                    value: `${incidentRate}%`,
+                    name: 'Incidence Rate',
+                    value: `${incidenceRate}%`,
                     inline: true
                 },
                 {
@@ -606,7 +606,7 @@ export async function getCombinedEmbed(state) {
         deaths,
         // recovered,
         // active,
-        incidentRate,
+        incidenceRate,
         totalTestResults,
         fatalityRatio,
         testingPercentage,
@@ -650,8 +650,8 @@ export async function getCombinedEmbed(state) {
                 //     inline: true
                 // },
                 {
-                    name: 'Incident Rate',
-                    value: `${incidentRate}%`,
+                    name: 'Incidence Rate',
+                    value: `${incidenceRate}%`,
                     inline: true
                 },
                 {
