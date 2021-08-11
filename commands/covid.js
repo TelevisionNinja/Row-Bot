@@ -8,10 +8,15 @@ const covid = config.covid,
 
 const queueTests = new PQueue({
     interval: 1000,
-    intervalCap: 50
+    intervalCap: 100
 });
 
 const queueVaccines = new PQueue({
+    interval: 1000,
+    intervalCap: 50
+});
+
+const queuePopulation = new PQueue({
     interval: 1000,
     intervalCap: 50
 });
@@ -26,76 +31,34 @@ export default {
     usage: `<state>`,
     cooldown: 1,
     async execute(msg, args) {
-        const embeds = await getDataEmbeds(args.join(' '));
-
-        if (embeds.length) {
-            msg.channel.send({
-                embeds: embeds
-            });
-        }
-        else {
-            msg.channel.send('I couldn\'t get any data for some reason');
-        }
+        msg.channel.send({ embeds: await getDataEmbeds(args.join(' ').trim()) });
     }
 }
 
 /**
  * 
  * @param {*} state 
- * @returns embed array
+ * @param {*} csvStr 
+ * @returns 
  */
-export async function getDataEmbeds(state) {
-    const response = await Promise.all([
-        getTestData(),
-        getVaccineData()
-    ]);
+function getStateDataLine(state, csvStr) {
+    const states = csvStr.split('\n');
 
-    const dataTests = response[0];
-    const dataVaccines = response[1];
+    state = state.toLowerCase();
 
-    if (dataTests.length) {
-        let embeds = [
-            testDataToEmbed(state, dataTests)
-        ];
-        const vaccineEmbed = vaccineDataToEmbed(state, dataVaccines);
+    let stateData = '';
 
-        if (typeof vaccineEmbed.description !== 'undefined') {
-            embeds.push(vaccineEmbed);
+    for (let i = 1, n = states.length; i < n; i++) {
+        if (states[i].toLowerCase().includes(state)) {
+            stateData = states[i];
+            break;
         }
-
-        return embeds;
     }
 
-    return [];
+    return stateData;
 }
 
-/**
- * returns a csv of the latest us state covid data
- * 
- * @param {*} nthDay 
- * @returns csv string
- */
-export async function getTestData(nthDay = 1) {
-    let results = '';
-
-    if (nthDay === 3) {
-        return results;
-    }
-
-    await queueTests.add(async () => {
-        try {
-            const response = await axios.get(getUrl(nthDay));
-            results = response.data;
-        }
-        catch (error) {
-            if (!backOff(error, queueTests)) {
-                results = await getTestData(nthDay + 1);
-            }
-        }
-    });
-
-    return results;
-}
+//---------------------------------------------------------------
 
 /**
  * creates a url to get covid data
@@ -103,10 +66,10 @@ export async function getTestData(nthDay = 1) {
  * @param {*} nthDayAgo 
  * @returns url string
  */
-function getUrl(nthDayAgo) {
+function getTestURL(nthDayAgo) {
     let dateObj = new Date();
-    // previous day shows today's data
-    dateObj.setDate(dateObj.getDate() - nthDayAgo);
+
+    dateObj.setUTCDate(dateObj.getUTCDate() - nthDayAgo);
 
     let dateStr = '';
 
@@ -128,37 +91,42 @@ function getUrl(nthDayAgo) {
 }
 
 /**
+ * returns a csv of the latest us state covid data
  * 
- * @param {*} csvStr 
- * @param {*} state 
- * @returns 
+ * @param {*} nthDay 
+ * @returns csv string
  */
-function getStateDataLine(csvStr, state) {
-    const states = csvStr.split('\n');
-    states.shift();
+export async function getTestData(nthDay = 0) {
+    let results = '';
 
-    state = state.toLowerCase();
-
-    let stateData = '';
-
-    for (let i = 0, n = states.length; i < n; i++) {
-        if (states[i].toLowerCase().includes(state)) {
-            stateData = states[i];
-            break;
-        }
+    // limit recursion
+    if (nthDay === 5) {
+        return results;
     }
-    return stateData;
+
+    await queueTests.add(async () => {
+        try {
+            const response = await axios.get(getTestURL(nthDay));
+            results = response.data;
+        }
+        catch (error) {
+            if (!backOff(error, queueTests)) {
+                results = await getTestData(nthDay + 1);
+            }
+        }
+    });
+
+    return results;
 }
 
 /**
  * gets a states data from the csv
  * 
- * @param {*} state 
- * @param {*} data 
+ * @param {*} stateData use getStateDataLine()
  * @param {*} precision 
  * @returns 
  */
-function testDataToStateData(state, data, precision = 2) {
+function extractStateTestData(stateData, precision = 2) {
     let stateName = '';
     let lastUpdate = '';
     let confirmed = 0;
@@ -179,32 +147,24 @@ function testDataToStateData(state, data, precision = 2) {
 
     let stateFound = false;
 
-    const noData = {
-        stateFound,
-        stateName,
-        lastUpdate,
-        confirmed,
-        deaths,
-        recovered,
-        active,
-        incidentRate,
-        totalTestResults,
-        fatalityRatio,
-        testingRate,
-        source
-    };
-
-    if (!data.length) {
-        return noData;
-    }
-
-    const stateData = getStateDataLine(data, state);
-
     if (stateData.length) {
         stateFound = true;
     }
     else {
-        return noData;
+        return {
+            stateFound,
+            stateName,
+            lastUpdate,
+            confirmed,
+            deaths,
+            recovered,
+            active,
+            incidentRate,
+            totalTestResults,
+            fatalityRatio,
+            testingRate,
+            source
+        };
     }
 
     const dataArr = stateData.split(',');
@@ -246,11 +206,10 @@ function testDataToStateData(state, data, precision = 2) {
 /**
  * puts a state's data into a string array
  * 
- * @param {*} state 
- * @param {*} data 
+ * @param {*} data use extractStateTestData()
  * @returns 
  */
-export function testDataToStrArr(state, data) {
+export function testDataToStrArr(data) {
     const {
         stateFound,
         stateName,
@@ -264,7 +223,7 @@ export function testDataToStrArr(state, data) {
         fatalityRatio,
         testingRate,
         source
-    } = testDataToStateData(state, data);
+    } = data;
 
     let stringArr = [];
 
@@ -291,11 +250,10 @@ export function testDataToStrArr(state, data) {
 /**
  * puts a state's data into an embed
  * 
- * @param {*} state 
- * @param {*} data 
+ * @param {*} data use extractStateTestData()
  * @returns 
  */
-export function testDataToEmbed(state, data) {
+export function createTestEmbed(data) {
     const {
         stateFound,
         stateName,
@@ -309,7 +267,7 @@ export function testDataToEmbed(state, data) {
         fatalityRatio,
         testingRate,
         source
-    } = testDataToStateData(state, data);
+    } = data;
 
     if (stateFound) {
         return {
@@ -393,11 +351,10 @@ export async function getVaccineData() {
 /**
  * gets a states data from the csv
  * 
- * @param {*} state 
- * @param {*} data 
+ * @param {*} stateData use getStateDataLine()
  * @returns 
  */
-function vaccineDataToStateData(state, data) {
+function extractStateVaccineData(stateData) {
     let stateName = '';
     let lastUpdate = '';
     let fullyVaccinated = 0;
@@ -408,27 +365,19 @@ function vaccineDataToStateData(state, data) {
 
     let stateFound = false;
 
-    const noData = {
-        stateFound,
-        stateName,
-        lastUpdate,
-        fullyVaccinated,
-        partiallyVaccinated,
-        totalVaccinated,
-        source
-    };
-
-    if (!data.length) {
-        return noData;
-    }
-
-    const stateData = getStateDataLine(data, state);
-
     if (stateData.length) {
         stateFound = true;
     }
     else {
-        return noData;
+        return {
+            stateFound,
+            stateName,
+            lastUpdate,
+            fullyVaccinated,
+            partiallyVaccinated,
+            totalVaccinated,
+            source
+        };
     }
 
     const dataArr = stateData.split(',');
@@ -455,11 +404,10 @@ function vaccineDataToStateData(state, data) {
 /**
  * puts a state's data into an embed
  * 
- * @param {*} state 
- * @param {*} data 
+ * @param {*} data use extractStateVaccineData()
  * @returns 
  */
-export function vaccineDataToEmbed(state, data) {
+export function createVaccineEmbed(data) {
     const {
         stateFound,
         stateName,
@@ -468,7 +416,7 @@ export function vaccineDataToEmbed(state, data) {
         partiallyVaccinated,
         totalVaccinated,
         source
-    } = vaccineDataToStateData(state, data);
+    } = data;
 
     if (stateFound) {
         return {
@@ -490,6 +438,260 @@ export function vaccineDataToEmbed(state, data) {
                 {
                     name: 'Vaccinated Total',
                     value: `${totalVaccinated}`,
+                    inline: true
+                }
+            ]
+        };
+    }
+
+    return {
+        title: noResultsMsg,
+        color: parseInt(covid.embedColor, 16)
+    };
+}
+
+//---------------------------------------------------------------
+
+/**
+ * creates a url to get population data
+ * 
+ * @param {*} yearOffset 
+ * @returns url string
+ */
+function getPopulationURL(yearOffset) {
+    let dateObj = new Date();
+
+    dateObj.setUTCFullYear(dateObj.getUTCFullYear() - yearOffset);
+
+    return `https://api.census.gov/data/${dateObj.getUTCFullYear()}/pep/population?get=DATE_CODE,POP,NAME&for=state:*`;
+}
+
+/**
+ * 
+ * @param {*} yearOffset 
+ * @returns array string
+ */
+export async function getPopulationData(yearOffset = 0) {
+    let results = '';
+
+    // limit recursion
+    if (yearOffset === 5) {
+        return results;
+    }
+
+    await queuePopulation.add(async () => {
+        try {
+            const response = await axios.get(getPopulationURL(yearOffset));
+            results = response.data;
+        }
+        catch (error) {
+            if (!backOff(error, queuePopulation)) {
+                results = await getPopulationData(yearOffset + 1);
+            }
+        }
+    });
+
+    return results;
+}
+
+/**
+ * 
+ * @param {*} data use getPopulationData()
+ * @returns 
+ */
+export function filterPopulationData(data) {
+    let filteredData = [];
+
+    for (let i = 12, n = data.length; i < n; i += 12) {
+        filteredData.push(data[i]);
+    }
+
+    return filteredData;
+}
+
+/**
+ * 
+ * @param {*} state 
+ * @param {*} data use filterPopulationData()
+ * @returns -1 if no data is found
+ */
+export function getStatePopulation(state, data) {
+    let result = -1;
+    state = state.toLowerCase();
+
+    for (let i = 0, n = data.length; i < n; i++) {
+        const current = data[i];
+
+        if (current[2].toLowerCase().startsWith(state)) {
+            result = parseInt(current[1]);
+            break;
+        }
+    }
+
+    return result;
+}
+
+//---------------------------------------------------------------
+
+/**
+ * 
+ * @param {*} state 
+ * @returns embed array
+ */
+export async function getDataEmbeds(state) {
+    const response = await Promise.all([
+        getTestData(),
+        getVaccineData(),
+        getPopulationData()
+    ]);
+
+    const testData = response[0];
+    const vaccineData = response[1];
+    const populationData = response[2];
+
+    if (testData.length) {
+        let embeds = [
+            createTestEmbed(extractStateTestData(getStateDataLine(state, testData)))
+        ];
+        const vaccineStateData = extractStateVaccineData(getStateDataLine(state, vaccineData));
+        let vaccineEmbed = createVaccineEmbed(vaccineStateData);
+
+        if (typeof vaccineEmbed.description !== 'undefined') {
+            if (populationData.length) {
+                const population = getStatePopulation(state, filterPopulationData(populationData));
+    
+                if (population !== -1) {
+                    vaccineEmbed.fields = [
+                        ...vaccineEmbed.fields,
+                        {
+                            name: 'Population Estimate',
+                            value: `${population}`,
+                            inline: true
+                        },
+                        {
+                            name: 'Vaccinated Percentage',
+                            value: `${(vaccineStateData.totalVaccinated / population * 100).toFixed(2)}%`,
+                            inline: true
+                        }
+                    ];
+    
+                    vaccineEmbed.footer.text = `${vaccineEmbed.footer.text} & US Census Bureau`;
+                }
+            }
+
+            embeds.push(vaccineEmbed);
+        }
+
+        return embeds;
+    }
+
+    return [];
+}
+
+/**
+ * 
+ * @param {*} state 
+ * @returns 
+ */
+export async function getCombinedEmbed(state) {
+    const response = await Promise.all([
+        getTestData(),
+        getVaccineData(),
+        getPopulationData()
+    ]);
+
+    const {
+        stateFound,
+        confirmed,
+        deaths,
+        // recovered,
+        // active,
+        incidentRate,
+        totalTestResults,
+        fatalityRatio,
+        testingRate,
+        source
+    } = extractStateTestData(getStateDataLine(state, response[0]));
+
+    if (stateFound) {
+        const {
+            stateName,
+            lastUpdate,
+            fullyVaccinated,
+            partiallyVaccinated,
+            totalVaccinated
+        } = extractStateVaccineData(getStateDataLine(state, response[1]));
+        const population = getStatePopulation(state, filterPopulationData(response[2]));
+
+        return {
+            title: `${stateName}`,
+            description: `Latest updated on ${lastUpdate}`,
+            footer: { text: `${source} & US Census Bureau`},
+            color: parseInt(covid.embedColor, 16),
+            fields: [
+                {
+                    name: 'Confirmed Cases',
+                    value: `${confirmed}`,
+                    inline: true
+                },
+                {
+                    name: 'Deaths',
+                    value: `${deaths}`,
+                    inline: true
+                },
+                // {
+                //     name: 'Recoveries',
+                //     value: recovered,
+                //     inline: true
+                // },
+                // {
+                //     name: 'Active Cases',
+                //     value: active,
+                //     inline: true
+                // },
+                {
+                    name: 'Incident Rate',
+                    value: `${incidentRate}%`,
+                    inline: true
+                },
+                {
+                    name: 'Total Tests',
+                    value: `${totalTestResults}`,
+                    inline: true
+                },
+                {
+                    name: 'Fatality Percentage',
+                    value: `${fatalityRatio}%`,
+                    inline: true
+                },
+                {
+                    name: 'Testing Rate',
+                    value: `${testingRate}%`,
+                    inline: true
+                },
+                {
+                    name: 'Fully Vaccinated',
+                    value: `${fullyVaccinated}`,
+                    inline: true
+                },
+                {
+                    name: 'Partially Vaccinated',
+                    value: `${partiallyVaccinated}`,
+                    inline: true
+                },
+                {
+                    name: 'Vaccinated Total',
+                    value: `${totalVaccinated}`,
+                    inline: true
+                },
+                {
+                    name: 'Population Estimate',
+                    value: `${population}`,
+                    inline: true
+                },
+                {
+                    name: 'Vaccinated Percentage',
+                    value: `${(totalVaccinated / population * 100).toFixed(2)}%`,
                     inline: true
                 }
             ]
