@@ -536,9 +536,10 @@ export function getStatePopulation(state, data) {
 /**
  * 
  * @param {*} state 
+ * @param {*} precision 
  * @returns embed array
  */
-export async function getDataEmbeds(state) {
+export async function getDataEmbeds(state, precision = 2) {
     const response = await Promise.all([
         getTestData(),
         getVaccineData(),
@@ -551,7 +552,7 @@ export async function getDataEmbeds(state) {
 
     if (testData.length) {
         let embeds = [
-            createTestEmbed(extractStateTestData(getStateDataLine(state, testData)))
+            createTestEmbed(extractStateTestData(getStateDataLine(state, testData), precision))
         ];
         const vaccineStateData = extractStateVaccineData(getStateDataLine(state, vaccineData));
         let vaccineEmbed = createVaccineEmbed(vaccineStateData);
@@ -570,7 +571,7 @@ export async function getDataEmbeds(state) {
                         },
                         {
                             name: 'Vaccinated Percentage',
-                            value: `${(vaccineStateData.totalVaccinated / population * 100).toFixed(2)}%`,
+                            value: `${(vaccineStateData.totalVaccinated / population * 100).toFixed(precision)}%`,
                             inline: true
                         }
                     ];
@@ -591,9 +592,10 @@ export async function getDataEmbeds(state) {
 /**
  * 
  * @param {*} state 
- * @returns 
+ * @param {*} precision 
+ * @returns embed object
  */
-export async function getCombinedEmbed(state) {
+export async function getCombinedEmbed(state, precision = 2) {
     const response = await Promise.all([
         getTestData(),
         getVaccineData(),
@@ -611,7 +613,7 @@ export async function getCombinedEmbed(state) {
         fatalityRatio,
         testingPercentage,
         source
-    } = extractStateTestData(getStateDataLine(state, response[0]));
+    } = extractStateTestData(getStateDataLine(state, response[0]), precision);
 
     if (stateFound) {
         const {
@@ -691,7 +693,7 @@ export async function getCombinedEmbed(state) {
                 },
                 {
                     name: 'Vaccinated Percentage',
-                    value: `${(totalVaccinated / population * 100).toFixed(2)}%`,
+                    value: `${(totalVaccinated / population * 100).toFixed(precision)}%`,
                     inline: true
                 }
             ]
