@@ -270,7 +270,7 @@ export function createTestEmbed(data) {
     if (stateFound) {
         return {
             title: `${stateName} Cases`,
-            description: `Latest updated on ${lastUpdate} UTC`,
+            description: `Last updated on ${lastUpdate} UTC`,
             footer: { text: source },
             color: parseInt(covid.embedColor, 16),
             fields: [
@@ -419,7 +419,7 @@ export function createVaccineEmbed(data) {
     if (stateFound) {
         return {
             title: `${stateName} Vaccinations`,
-            description: `Latest updated on ${lastUpdate}`,
+            description: `Last updated on ${lastUpdate}`,
             footer: { text: source },
             color: parseInt(covid.embedColor, 16),
             fields: [
@@ -610,7 +610,7 @@ export async function getCombinedEmbed(state, precision = 2) {
 
         return {
             title: `${stateName}`,
-            description: `Latest updated on ${lastUpdate}`,
+            description: `Last updated on ${lastUpdate}`,
             footer: { text: `${source} & US Census Bureau`},
             color: parseInt(covid.embedColor, 16),
             fields: [
