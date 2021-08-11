@@ -18,7 +18,7 @@ const queueVaccines = new PQueue({
 
 const queuePopulation = new PQueue({
     interval: 1000,
-    intervalCap: 50
+    intervalCap: 100
 });
 
 export default {
@@ -71,23 +71,21 @@ function getTestURL(nthDayAgo) {
 
     dateObj.setUTCDate(dateObj.getUTCDate() - nthDayAgo);
 
-    let dateStr = '';
+    const month = dateObj.getUTCMonth() + 1;
+    let monthStr = `${month}`;
 
-    let month = (dateObj.getUTCMonth() + 1).toString();
-
-    if (month.length < 2) {
-        month = `0${month}`;
+    if (month < 10) {
+        monthStr = `0${monthStr}`;
     }
 
-    let day = dateObj.getUTCDate().toString();
+    const day = dateObj.getUTCDate();
+    let dayStr = `${day}`;
 
-    if (day.length < 2) {
-        day = `0${day}`;
+    if (day < 10) {
+        dayStr = `0${dayStr}`;
     }
 
-    dateStr = `${month}-${day}-${dateObj.getUTCFullYear()}`;
-
-    return `${covid.dataURL}${dateStr}.csv`;
+    return `${covid.dataURL}${monthStr}-${dayStr}-${dateObj.getUTCFullYear()}.csv`;
 }
 
 /**
@@ -463,7 +461,7 @@ function getPopulationURL(yearOffset) {
 
     dateObj.setUTCFullYear(dateObj.getUTCFullYear() - yearOffset);
 
-    return `https://api.census.gov/data/${dateObj.getUTCFullYear()}/pep/population?get=DATE_CODE,POP,NAME&for=state:*`;
+    return `https://api.census.gov/data/${dateObj.getUTCFullYear()}/pep/population?get=NAME,POP&for=state:*`;
 }
 
 /**
@@ -496,23 +494,8 @@ export async function getPopulationData(yearOffset = 0) {
 
 /**
  * 
- * @param {*} data use getPopulationData()
- * @returns 
- */
-export function filterPopulationData(data) {
-    let filteredData = [];
-
-    for (let i = 12, n = data.length; i < n; i += 12) {
-        filteredData.push(data[i]);
-    }
-
-    return filteredData;
-}
-
-/**
- * 
  * @param {*} state 
- * @param {*} data use filterPopulationData()
+ * @param {*} data use getPopulationData()
  * @returns -1 if no data is found
  */
 export function getStatePopulation(state, data) {
@@ -522,7 +505,7 @@ export function getStatePopulation(state, data) {
     for (let i = 0, n = data.length; i < n; i++) {
         const current = data[i];
 
-        if (current[2].toLowerCase().startsWith(state)) {
+        if (current[0].toLowerCase().startsWith(state)) {
             result = parseInt(current[1]);
             break;
         }
@@ -559,7 +542,7 @@ export async function getDataEmbeds(state, precision = 2) {
 
         if (typeof vaccineEmbed.description !== 'undefined') {
             if (populationData.length) {
-                const population = getStatePopulation(state, filterPopulationData(populationData));
+                const population = getStatePopulation(state, populationData);
     
                 if (population !== -1) {
                     vaccineEmbed.fields = [
@@ -623,7 +606,7 @@ export async function getCombinedEmbed(state, precision = 2) {
             partiallyVaccinated,
             totalVaccinated
         } = extractStateVaccineData(getStateDataLine(state, response[1]));
-        const population = getStatePopulation(state, filterPopulationData(response[2]));
+        const population = getStatePopulation(state, response[2]);
 
         return {
             title: `${stateName}`,
