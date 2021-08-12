@@ -94,7 +94,7 @@ export default {
         //-------------------------------------------------------------------------------------
         // detect dm channel
 
-        if (msg.channel.type === 'DM') {
+        if (msg.channel.type === 'DM') { // send emulated message
             let imageObj = undefined;
 
             if (typeof attachmentArr !== 'undefined') {
@@ -114,10 +114,15 @@ export default {
                 }]
             });
         }
-        else {
-            // send webhook message
-            msg.delete();
+        else { // send webhook message
             sendWebhookMsgUsingWebhook(msg, tulpMsg, attachmentArr, selectedTulp.username, selectedTulp.avatar, webhook);
+
+            try {
+                await msg.delete();
+            }
+            catch (error) {
+                console.log(error);
+            }
         }
 
         return true;
