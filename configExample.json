@@ -159,6 +159,15 @@
         "description" : "Plays music"
     },
 
+    "ping" : {
+        "names" : [
+            "ping",
+            "latency",
+            "connection"
+        ],
+        "description" : "Returns the bot's ping"
+    },
+
     "random" : {
         "names" : [
             "random",
@@ -231,6 +240,13 @@
         "dbName" : "",
         "dbCollection" : "",
         "webhookCollection" : ""
+    },
+
+    "uptime" : {
+        "names" : [
+            "uptime"
+        ],
+        "description" : "Returns the bot's uptime"
     },
 
     "urban" : {
