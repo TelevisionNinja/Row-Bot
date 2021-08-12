@@ -115,10 +115,14 @@ export default {
             });
         }
         else { // send webhook message
-            Promise.allSettled([
-                sendWebhookMsgUsingWebhook(msg, tulpMsg, attachmentArr, selectedTulp.username, selectedTulp.avatar, webhook),
-                msg.delete()
-            ]);
+            sendWebhookMsgUsingWebhook(msg, tulpMsg, attachmentArr, selectedTulp.username, selectedTulp.avatar, webhook);
+
+            try {
+                await msg.delete();
+            }
+            catch (error) {
+                console.log(error);
+            }
         }
 
         return true;
