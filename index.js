@@ -64,7 +64,7 @@ const cooldowns = new Map();
 client.commands = [];
 client.tulpCommands = [];
 client.musicCommands = [];
-// let noncommands = [];
+let noncommands = [];
 let genMsg = [];
 let intervalMsgs = [];
 const minimumPermissions = ['MANAGE_WEBHOOKS', 'MANAGE_MESSAGES', 'SEND_MESSAGES'];
@@ -76,7 +76,7 @@ let audio = [];
 const commandFiles = readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
 const tulpCommandFiles = readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
 const musicCommandFiles = readdirSync('./commands/musicCommands/').filter(aFile => aFile.endsWith('.js'));
-// const noncommandFiles = readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
+const noncommandFiles = readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 const genMsgFiles = readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
 const intervalMsgFiles = readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
 const audioFiles = readdirSync('./audioFiles/');
@@ -84,7 +84,7 @@ const audioFiles = readdirSync('./audioFiles/');
 client.commands = commandFiles.map(f => import(`./commands/${f}`));
 client.tulpCommands = tulpCommandFiles.map(f => import(`./commands/tulpCommands/${f}`));
 client.musicCommands = musicCommandFiles.map(f => import(`./commands/musicCommands/${f}`));
-//noncommands = noncommandFiles.map(f => import(`./noncommands/${f}`));
+noncommands = noncommandFiles.map(f => import(`./noncommands/${f}`));
 genMsg = genMsgFiles.map(f => import(`./generalMessages/${f}`));
 intervalMsgs = intervalMsgFiles.map(f => import(`./intervalMessages/${f}`));
 audio = audioFiles.map(f => `./audioFiles/${f}`);
@@ -92,7 +92,7 @@ audio = audioFiles.map(f => `./audioFiles/${f}`);
 client.commands = (await Promise.all(client.commands)).map(i => i.default);
 client.tulpCommands = (await Promise.all(client.tulpCommands)).map(i => i.default);
 client.musicCommands = (await Promise.all(client.musicCommands)).map(i => i.default);
-//noncommands = (await Promise.all(noncommands)).map(i => i.default);
+noncommands = (await Promise.all(noncommands)).map(i => i.default);
 genMsg = (await Promise.all(genMsg)).map(i => i.default);
 intervalMsgs = (await Promise.all(intervalMsgs)).map(i => i.default);
 
@@ -300,15 +300,15 @@ client.on('messageCreate', async msg => {
         //--------------------------------------------------------------------------------
         // noncommands
 
-        // for (let i = 0, n = noncommands.length; i < n; i++) {
-        //     const replyStr = noncommands[i].execute(msg, noMentionsMsg);
+        for (let i = 0, n = noncommands.length; i < n; i++) {
+            const replyStr = noncommands[i].execute(msg, noMentionsMsg);
 
-        //     // reply
-        //     if (replyStr.length) {
-        //         sendTypingMsg(msg.channel, replyStr, msgStr);
-        //         return;
-        //     }
-        // }
+            // reply
+            if (replyStr.length) {
+                sendTypingMsg(msg.channel, replyStr, msgStr);
+                return;
+            }
+        }
     }
     else if (!hasMentions(msg, false)) {
         //--------------------------------------------------------------------------------
