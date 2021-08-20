@@ -6,31 +6,29 @@ import { randomMath } from '../lib/randomFunctions.js';
 
 const memes = config.memes;
 
-export default {
-    description: memes.description,
-    async execute(client) {
-        const recipient = await getRecipient(client, memes.channelID);
+// posts a daily meme
+export async function execute(client) {
+    const recipient = await getRecipient(client, memes.channelID);
 
-        const interval = new DailyInterval(
-            async () => {
-                try {
-                    const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.postCount}`;
-                    const response = await axios.get(URL);
-                    const postArr = response.data.data.children;
+    const interval = new DailyInterval(
+        async () => {
+            try {
+                const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.postCount}`;
+                const response = await axios.get(URL);
+                const postArr = response.data.data.children;
 
-                    const post = postArr[randomMath(memes.postCount)];
+                const post = postArr[randomMath(memes.postCount)];
 
-                    recipient.send(encodeURI(post.data.url));
-                }
-                catch (error) {
-                    console.log(error);
-                }
-            },
-            '0:0',
-            360,
-            5000 // 5 second offset
-        );
+                recipient.send(encodeURI(post.data.url));
+            }
+            catch (error) {
+                console.log(error);
+            }
+        },
+        '0:0',
+        360,
+        5000 // 5 second offset
+    );
 
-        interval.start();
-    }
+    interval.start();
 }

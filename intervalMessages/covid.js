@@ -5,25 +5,23 @@ import { getDataEmbeds } from '../commands/covid.js';
 
 const covidConfig = config.covid;
 
-export default {
-    description: covidConfig.description,
-    async execute(client) {
-        const recipient = await getRecipient(client, covidConfig.intervalChannel);
+// posts a daily covid information embed
+export async function execute(client) {
+    const recipient = await getRecipient(client, covidConfig.intervalChannel);
 
-        const interval = new DailyInterval(
-            async () => {
-                const embeds = await getDataEmbeds(covidConfig.intervalState);
+    const interval = new DailyInterval(
+        async () => {
+            const embeds = await getDataEmbeds(covidConfig.intervalState);
 
-                embeds[0].author = { name: 'Daily Covid Cases Report' };
-                embeds[1].author = { name: 'Daily Covid Vaccine Report' };
+            embeds[0].author = { name: 'Daily Covid Cases Report' };
+            embeds[1].author = { name: 'Daily Covid Vaccine Report' };
 
-                recipient.send({ embeds: embeds });
-            },
-            covidConfig.intervalTime,
-            1440, // 24 hrs in minutes
-            5000 // 5 second offset
-        );
+            recipient.send({ embeds: embeds });
+        },
+        covidConfig.intervalTime,
+        1440, // 24 hrs in minutes
+        5000 // 5 second offset
+    );
 
-        interval.start();
-    }
+    interval.start();
 }

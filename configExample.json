@@ -23,7 +23,6 @@
 
     "askLateNight" : {
         "channelID" : "",
-        "description" : "Ask the late night bois if they're going to get on",
         "time" : "22:00",
         "msg" : "Are we getting on tonight?",
         "noReplyMsg" : "Aww, it looks like no one's getting on 😢",
@@ -138,7 +137,6 @@
     },
 
     "memes" : {
-        "description" : "Posts memes",
         "channelID" : "",
         "postCount" : 10,
         "URLs" : [

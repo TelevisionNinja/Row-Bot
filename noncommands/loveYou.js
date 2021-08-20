@@ -10,21 +10,19 @@ const loveYous = messages.loveYous,
 loveYous.push(...kissMeReplies);
 loveYouReplies.push(...kissMeReplies);
 
-export default {
-    description: 'Reply to love you\'s',
-    execute(msg, filteredMsg) {
-        for (let i = 0, n = loveYous.length; i < n; i++) {
-            if (includesPhrase(filteredMsg, loveYous[i], false)) {
-                return loveYouReplies[randomMath(loveYouReplies.length)];
-            }
+// reply to love you's
+export function execute(msg, filteredMsg) {
+    for (let i = 0, n = loveYous.length; i < n; i++) {
+        if (includesPhrase(filteredMsg, loveYous[i], false)) {
+            return loveYouReplies[randomMath(loveYouReplies.length)];
         }
-
-        for (let i = 0, n = kissMes.length; i < n; i++) {
-            if (includesPhrase(filteredMsg, kissMes[i], false)) {
-                return kissMeReplies[randomMath(kissMeReplies.length)];
-            }
-        }
-
-        return '';
     }
+
+    for (let i = 0, n = kissMes.length; i < n; i++) {
+        if (includesPhrase(filteredMsg, kissMes[i], false)) {
+            return kissMeReplies[randomMath(kissMeReplies.length)];
+        }
+    }
+
+    return '';
 }

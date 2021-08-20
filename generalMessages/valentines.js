@@ -3,15 +3,13 @@ import { randomMath } from '../lib/randomFunctions.js';
 
 const valentines = messages.valentines;
 
-export default {
-    description: 'Wish a happy valentine\'s day',
-    execute(msg, filteredMsg) {
-        for (let i = 0, n = valentines.length; i < n; i++) {
-            if (filteredMsg === valentines[i].toLowerCase()) {
-                return valentines[randomMath(n)];
-            }
+// wish a happy valentine's day
+export function execute(msg, filteredMsg) {
+    for (let i = 0, n = valentines.length; i < n; i++) {
+        if (filteredMsg === valentines[i].toLowerCase()) {
+            return valentines[randomMath(n)];
         }
-
-        return '';
     }
+
+    return '';
 }

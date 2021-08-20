@@ -92,9 +92,9 @@ audio = audioFiles.map(f => `./audioFiles/${f}`);
 client.commands = (await Promise.all(client.commands)).map(i => i.default);
 client.tulpCommands = (await Promise.all(client.tulpCommands)).map(i => i.default);
 client.musicCommands = (await Promise.all(client.musicCommands)).map(i => i.default);
-noncommands = (await Promise.all(noncommands)).map(i => i.default);
-genMsg = (await Promise.all(genMsg)).map(i => i.default);
-intervalMsgs = (await Promise.all(intervalMsgs)).map(i => i.default);
+noncommands = (await Promise.all(noncommands));
+genMsg = (await Promise.all(genMsg));
+intervalMsgs = (await Promise.all(intervalMsgs));
 
 //--------------------------------------------------------------------------------
 // initialize help embeds

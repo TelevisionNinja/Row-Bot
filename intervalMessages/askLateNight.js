@@ -20,32 +20,30 @@ const names = config.names,
     yeses = messages.yeses,
     nos = messages.nos;
 
-export default {
-    description: askLateNight.description,
-    async execute(client) {
-        const recipient = await getRecipient(client, askLateNight.channelID);
+// ask the late night bois if they're going to get on
+export async function execute(client) {
+    const recipient = await getRecipient(client, askLateNight.channelID);
 
-        const interval = new DailyInterval(
-            () => {
-                ask(
-                    recipient,
-                    askLateNight.timeOut, // time out is in ms
-                    askLateNight.msg,
-                    askLateNight.allConfirmsMsg,
-                    askLateNight.fewConfirmsMsg,
-                    askLateNight.noReplyMsg,
-                    askLateNight.confirmed,
-                    askLateNight.undecided,
-                    askLateNight.denied
-                );
-            },
-            askLateNight.time,
-            1440, // 24 hrs in minutes
-            5000 // 5 second offset
-        );
+    const interval = new DailyInterval(
+        () => {
+            ask(
+                recipient,
+                askLateNight.timeOut, // time out is in ms
+                askLateNight.msg,
+                askLateNight.allConfirmsMsg,
+                askLateNight.fewConfirmsMsg,
+                askLateNight.noReplyMsg,
+                askLateNight.confirmed,
+                askLateNight.undecided,
+                askLateNight.denied
+            );
+        },
+        askLateNight.time,
+        1440, // 24 hrs in minutes
+        5000 // 5 second offset
+    );
 
-        interval.start();
-    }
+    interval.start();
 }
 
 async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, noReplyMsg, confirmed, undecided, denied) {
