@@ -86,6 +86,14 @@
         "intervalWaitChannelID" : ""
     },
 
+    "donate" : {
+        "names" : [
+            "donate"
+        ],
+        "description" : "",
+        "URL" : ""
+    },
+
     "fifty" : {
         "names" : [""],
         "description" : "",
