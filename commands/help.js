@@ -12,10 +12,6 @@ let helpCenter = {
         color: parseInt(help.embedColor, 16)
     }]
 };
-const specific = {
-    name: 'Specific Command Info',
-    value: `\nSend \`${prefix}help <command name>\` to get info on a specific command`
-};
 
 // initialize embed
 export function initialize(commands) {
@@ -24,7 +20,10 @@ export function initialize(commands) {
             name: 'My Commands',
             value: commands.map(cmd => `• ${cmd.names[0]}`).join('\n')
         },
-        specific
+        {
+            name: 'Specific Command Info',
+            value: `Send \`${prefix}help <command name>\` to get info on a specific command`
+        }
     ];
 }
 
@@ -66,7 +65,7 @@ export default {
                 aliasStr = aliases.join(', ');
             }
 
-            const embeds = {
+            msg.channel.send({
                 embeds: [{
                     title: `Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
@@ -90,9 +89,7 @@ export default {
                         }
                     ]
                 }]
-            };
-
-            msg.channel.send(embeds);
+            });
         }
         else {
             msg.channel.send(helpCenter);
