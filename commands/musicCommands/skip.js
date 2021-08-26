@@ -7,10 +7,22 @@ export default {
     names: skipConfig.names,
     description: skipConfig.description,
     argsRequired: false,
-    argsOptional: false,
+    argsOptional: true,
     vcMemberOnly: true,
-    usage: '',
+    usage: '<index>',
     execute(msg, args) {
-        skip(msg);
+        if (args.length) {
+            const index = parseInt(args[0]);
+
+            if (isNaN(index)) {
+                msg.channel.send('Please provide a number');
+                return;
+            }
+
+            skip(msg, index);
+        }
+        else {
+            skip(msg);
+        }
     }
 }
