@@ -79,10 +79,6 @@ export default {
                             value: usageStr
                         },
                         {
-                            name: 'Server Only Command?',
-                            value: argCommand.guildOnly ? 'Can only be used in servers' : 'Can be used in DM\'s'
-                        },
-                        {
                             name: 'Voice Channel Only Command?',
                             value: argCommand.vcMemberOnly ? 'Can only be used in voice channels' : 'Can be used without voice channels'
                         }
