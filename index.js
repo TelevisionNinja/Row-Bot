@@ -23,8 +23,8 @@ import { default as tulpCache } from './lib/tulpCache.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
 import { initialize as initializeHelp } from './commands/help.js';
-import { initialize as initializeTulp } from './commands/tulpCommands/help.js';
-import { initialize as initializeMusic } from './commands/musicCommands/help.js';
+import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
+import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
 import {
     joinVC,
     vcCheck,
@@ -100,8 +100,8 @@ intervalMsgs = (await Promise.all(intervalMsgs));
 // initialize help embeds
 
 initializeHelp(client.commands);
-initializeTulp(client.tulpCommands);
-initializeMusic(client.musicCommands);
+initializeTulpHelp(client.tulpCommands);
+initializeMusicHelp(client.musicCommands);
 
 //--------------------------------------------------------------------------------
 // login actions
@@ -263,8 +263,7 @@ client.on('messageCreate', async msg => {
         for (let i = 0, n = names.length; i < n; i++) {
             const currentName = names[i];
 
-            if (currentName.length > selectedName.length &&
-                includesPhrase(msgStr, currentName, false)) {
+            if (currentName.length > selectedName.length && includesPhrase(msgStr, currentName, false)) {
                 botMention = true;
                 selectedName = currentName;
             }
