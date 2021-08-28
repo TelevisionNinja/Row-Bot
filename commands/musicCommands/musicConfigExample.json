@@ -17,7 +17,8 @@
 
     "pause" : {
         "names" : [
-            "pause"
+            "pause",
+            "stop"
         ],
         "description" : "pauses the current song"
     },
