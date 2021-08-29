@@ -14,6 +14,6 @@ export default {
     async execute(msg, args) {
         const pingMsg = await msg.channel.send('Pinging...');
 
-        pingMsg.edit(`Latency: ${pingMsg.createdTimestamp - msg.createdTimestamp} ms\nAPI Latency: ${msg.client.ws.ping} ms`);
+        pingMsg.edit(`Roundtrip latency: ${pingMsg.createdTimestamp - msg.createdTimestamp} ms\nWebsocket heartbeat: ${msg.client.ws.ping} ms`);
     }
 }
