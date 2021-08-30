@@ -390,6 +390,19 @@ client.on('channelDelete', channel => {
     webhooks.delete(id);
 });
 
+client.on('threadDelete', thread => {
+    // delete from tulp cache
+
+    const id = thread.id;
+
+    tulpCache.remove(id);
+
+    //--------------------------------------------------------------------------------
+    // delete from db
+
+    webhooks.delete(id);
+});
+
 //--------------------------------------------------------------------------------
 // tulp cache
 
