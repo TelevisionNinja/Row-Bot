@@ -38,7 +38,7 @@ export default {
     execute(msg, args) {
 		if (args.length) {
 			const userCommand = args[0];
-            const argCommand = msg.client.musicCommands.find(cmd => cmd.names.includes(userCommand));
+            const argCommand = msg.client.musicCommands.get(userCommand);
 
             if (typeof argCommand === 'undefined') {
                 msg.channel.send('That\'s not one of my music commands');

@@ -39,7 +39,7 @@ export default {
     execute(msg, args) {
 		if (args.length) {
 			const userCommand = args[0];
-            const argCommand = msg.client.commands.find(cmd => cmd.names.includes(userCommand));
+            const argCommand = msg.client.commands.get(userCommand);
 
             if (typeof argCommand === 'undefined') {
                 msg.channel.send('That\'s not one of my commands');

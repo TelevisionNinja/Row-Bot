@@ -16,7 +16,7 @@ export default {
     execute(msg, args) {
         // get command
         const userCommand = args.shift();
-        const command = msg.client.tulpCommands.find(cmd => cmd.names.includes(userCommand));
+        const command = msg.client.tulpCommands.get(userCommand);
 
         //--------------------------------------------------------------------------------
 

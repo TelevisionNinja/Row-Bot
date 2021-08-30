@@ -61,9 +61,12 @@ const client = new Client({
     partials: ['CHANNEL']
 });
 const cooldowns = new Map();
-client.commands = [];
-client.tulpCommands = [];
-client.musicCommands = [];
+client.commands = new Map();
+client.tulpCommands = new Map();
+client.musicCommands = new Map();
+let commands = [];
+let tulpCommands = [];
+let musicCommands = [];
 let noncommands = [];
 let genMsg = [];
 let intervalMsgs = [];
@@ -81,27 +84,51 @@ const genMsgFiles = readdirSync('./generalMessages/').filter(aFile => aFile.ends
 const intervalMsgFiles = readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
 const audioFiles = readdirSync('./audioFiles/');
 
-client.commands = commandFiles.map(f => import(`./commands/${f}`));
-client.tulpCommands = tulpCommandFiles.map(f => import(`./commands/tulpCommands/${f}`));
-client.musicCommands = musicCommandFiles.map(f => import(`./commands/musicCommands/${f}`));
+commands = commandFiles.map(f => import(`./commands/${f}`));
+tulpCommands = tulpCommandFiles.map(f => import(`./commands/tulpCommands/${f}`));
+musicCommands = musicCommandFiles.map(f => import(`./commands/musicCommands/${f}`));
 noncommands = noncommandFiles.map(f => import(`./noncommands/${f}`));
 genMsg = genMsgFiles.map(f => import(`./generalMessages/${f}`));
 intervalMsgs = intervalMsgFiles.map(f => import(`./intervalMessages/${f}`));
 audio = audioFiles.map(f => `./audioFiles/${f}`);
 
-client.commands = (await Promise.all(client.commands)).map(i => i.default);
-client.tulpCommands = (await Promise.all(client.tulpCommands)).map(i => i.default);
-client.musicCommands = (await Promise.all(client.musicCommands)).map(i => i.default);
+commands = (await Promise.all(commands)).map(i => i.default);
+tulpCommands = (await Promise.all(tulpCommands)).map(i => i.default);
+musicCommands = (await Promise.all(musicCommands)).map(i => i.default);
 noncommands = (await Promise.all(noncommands));
 genMsg = (await Promise.all(genMsg));
 intervalMsgs = (await Promise.all(intervalMsgs));
 
+for (let i = 0, n = commands.length; i < n; i++) {
+    const command = commands[i];
+
+    for (let j = 0, m = command.names.length; j < m; j++) {
+        client.commands.set(command.names[j], command);
+    }
+}
+
+for (let i = 0, n = tulpCommands.length; i < n; i++) {
+    const tulpCommand = tulpCommands[i];
+
+    for (let j = 0, m = tulpCommand.names.length; j < m; j++) {
+        client.tulpCommands.set(tulpCommand.names[j], tulpCommand);
+    }
+}
+
+for (let i = 0, n = musicCommands.length; i < n; i++) {
+    const musicCommand = musicCommands[i];
+
+    for (let j = 0, m = musicCommand.names.length; j < m; j++) {
+        client.musicCommands.set(musicCommand.names[j], musicCommand);
+    }
+}
+
 //--------------------------------------------------------------------------------
 // initialize help embeds
 
-initializeHelp(client.commands);
-initializeTulpHelp(client.tulpCommands);
-initializeMusicHelp(client.musicCommands);
+initializeHelp(commands);
+initializeTulpHelp(tulpCommands);
+initializeMusicHelp(musicCommands);
 
 //--------------------------------------------------------------------------------
 // login actions
@@ -158,7 +185,7 @@ client.on('messageCreate', async msg => {
         //--------------------------------------------------------------------------------
         // get command
 
-        const command = client.commands.find(cmd => cmd.names.includes(userCommand));
+        const command = client.commands.get(userCommand);
 
         if (typeof command === 'undefined') {
             return;
