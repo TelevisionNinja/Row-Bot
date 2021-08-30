@@ -2,7 +2,7 @@ import { getImageRule0 } from '../commands/rule.js';
 import { default as config } from '../config.json';
 import DailyInterval from 'daily-intervals';
 import {
-    getRecipient,
+    getChannel,
     sendImg
 } from '../lib/msgUtils.js';
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
@@ -15,7 +15,7 @@ const filter = ruleConfig.filterTags.map(t => `-${t}`);
 
 // posts a daily rule image
 export async function execute(client) {
-    const recipient = await getRecipient(client, ruleConfig.intervalChannelID);
+    const recipient = await getChannel(client, ruleConfig.intervalChannelID);
 
     const interval = new DailyInterval(
         async () => {

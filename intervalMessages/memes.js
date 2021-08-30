@@ -1,5 +1,5 @@
 import DailyInterval from 'daily-intervals';
-import { getRecipient } from '../lib/msgUtils.js';
+import { getChannel } from '../lib/msgUtils.js';
 import { default as config } from '../config.json';
 import axios from 'axios';
 import { randomMath } from '../lib/randomFunctions.js';
@@ -8,7 +8,7 @@ const memes = config.memes;
 
 // posts a daily meme
 export async function execute(client) {
-    const recipient = await getRecipient(client, memes.channelID);
+    const recipient = await getChannel(client, memes.channelID);
 
     const interval = new DailyInterval(
         async () => {

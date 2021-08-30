@@ -2,7 +2,7 @@ import { getImage } from '../commands/derp.js';
 import { default as config } from '../config.json';
 import DailyInterval from 'daily-intervals';
 import {
-    getRecipient,
+    getChannel,
     sendImg
 } from '../lib/msgUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
@@ -14,7 +14,7 @@ const filter = derpConfig.filterTags.map(t => `-${t}`);
 
 // posts a daily derp image
 export async function execute(client) {
-    const recipientDaily = await getRecipient(client, derpConfig.intervalChannelID);
+    const recipientDaily = await getChannel(client, derpConfig.intervalChannelID);
 
     const interval1 = new DailyInterval(
         async () => {
@@ -39,7 +39,7 @@ export async function execute(client) {
 
     //-------------------------------------------------------------------
 
-    const recipientInterval = await getRecipient(client, derpConfig.intervalWaitChannelID);
+    const recipientInterval = await getChannel(client, derpConfig.intervalWaitChannelID);
 
     const interval2 = new DailyInterval(
         async () => {

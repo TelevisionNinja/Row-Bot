@@ -3,7 +3,7 @@ import { default as messages } from '../messages.json';
 import { randomMath } from '../lib/randomFunctions.js';
 import DailyInterval from 'daily-intervals';
 import {
-    getRecipient,
+    getChannel,
     sendDirectDm,
     hasBotMention,
     sendTypingMsg
@@ -22,7 +22,7 @@ const names = config.names,
 
 // ask the late night bois if they're going to get on
 export async function execute(client) {
-    const recipient = await getRecipient(client, askLateNight.channelID);
+    const recipient = await getChannel(client, askLateNight.channelID);
 
     const interval = new DailyInterval(
         () => {
