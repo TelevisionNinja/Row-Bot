@@ -174,13 +174,13 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // commands and messages
 
-    const msgStr = msg.content.toLowerCase();
+    const msgStr = msg.content;
 
     if (msgStr.startsWith(prefix)) {
         // split command and arguments
 
         let args = msgStr.slice(prefix.length).trim().split(' ');
-        const userCommand = args.shift();
+        const userCommand = args.shift().toLowerCase();
 
         //--------------------------------------------------------------------------------
         // get command
@@ -299,7 +299,7 @@ client.on('messageCreate', async msg => {
 
     if (botMention) {
         // remove mentions or name from message
-        const noMentionsMsg = removeMentions(msgStr, selectedName);
+        const noMentionsMsg = removeMentions(msgStr, selectedName).toLowerCase();
 
         //--------------------------------------------------------------------------------
         // voice
@@ -341,7 +341,7 @@ client.on('messageCreate', async msg => {
         // general message
 
         // remove mentions or name from message
-        const noMentionsMsg = removeMentions(msgStr);
+        const noMentionsMsg = removeMentions(msgStr).toLowerCase();
 
         for (let i = 0, n = genMsg.length; i < n; i++) {
             const replyStr = genMsg[i].execute(msg, noMentionsMsg);

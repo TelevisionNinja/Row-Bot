@@ -18,7 +18,7 @@ export default {
     usage: '<rock, paper, or scissors>',
     cooldown: 0,
     execute(msg, args) {
-        const valueOfPlayer = choices.get(args[0]);
+        const valueOfPlayer = choices.get(args[0].toLowerCase());
 
         if (typeof valueOfPlayer === 'undefined') {
             msg.channel.send('Hey! That\'s not rock, paper, or scissors!');

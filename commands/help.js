@@ -38,7 +38,7 @@ export default {
     cooldown: 0,
     execute(msg, args) {
 		if (args.length) {
-			const userCommand = args[0];
+			const userCommand = args[0].toLowerCase();
             const argCommand = msg.client.commands.get(userCommand);
 
             if (typeof argCommand === 'undefined') {

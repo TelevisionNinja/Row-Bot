@@ -15,7 +15,7 @@ export default {
     cooldown: 0,
     execute(msg, args) {
         // get command
-        const userCommand = args.shift();
+        const userCommand = args.shift().toLowerCase();
         const command = msg.client.tulpCommands.get(userCommand);
 
         //--------------------------------------------------------------------------------
@@ -37,16 +37,10 @@ export default {
         tulpCache.remove(msg.author.id);
 
         //--------------------------------------------------------------------------------
-
-        const tulpArgs = msg.content.slice(prefix.length).trim().split(' ');
-        tulpArgs.shift(); // remove first command
-        tulpArgs.shift(); // remove second command
-
-        //--------------------------------------------------------------------------------
         // execute command
 
         try {
-            command.execute(msg, tulpArgs);
+            command.execute(msg, args);
         }
         catch (error) {
             msg.channel.send('I couldn\'t do that command for some reason 😢');

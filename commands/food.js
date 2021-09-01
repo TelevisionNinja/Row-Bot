@@ -15,7 +15,7 @@ export default {
     execute(msg, args) {
         let placeArr = food.places;
 
-        const foodType = args.join(' ');
+        const foodType = args.join(' ').toLowerCase();
 
         if (args.length) {
             placeArr = placeArr.filter(p => p.type.toLowerCase() === foodType);

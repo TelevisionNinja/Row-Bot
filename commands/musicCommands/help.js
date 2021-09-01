@@ -37,7 +37,7 @@ export default {
     usage: '<command name>',
     execute(msg, args) {
 		if (args.length) {
-			const userCommand = args[0];
+			const userCommand = args[0].toLowerCase();
             const argCommand = msg.client.musicCommands.get(userCommand);
 
             if (typeof argCommand === 'undefined') {
