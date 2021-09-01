@@ -3,6 +3,10 @@ import { default as tulpConfigFile } from './tulpConfig.json';
 import { default as sendEasyMsg } from './easyMessages/sendEasyMsg.js';
 import { sendWebhookMsg } from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';
+import {
+    containsURL,
+    cutOff
+} from '../../lib/stringUtils.js';
 
 const tulpConfig = config.tulp,
     tagSeparator = config.tagSeparator,
@@ -30,7 +34,7 @@ export default {
             return;
         }
 
-        const tulpMsg = str.substring(index + 1).trim();
+        let tulpMsg = str.substring(index + 1).trim();
         let attachmentArr = undefined;
 
         if (msg.attachments.size) {
@@ -47,6 +51,38 @@ export default {
         if (typeof selectedTulp === 'undefined') {
             msg.author.send(tulpConfig.noDataMsg);
             return;
+        }
+
+        //-------------------------------------------------------------------------------------
+        // referenced msg
+
+        if (msg.reference) {
+            const reference = await msg.fetchReference();
+            let referenceMsg = reference.cleanContent;
+            let mention = undefined;
+
+            // format mention and jump link
+            if (reference.webhookId === reference.author.id) {
+                mention = `[@${reference.author.username}](${reference.url})`;
+
+                // remove reference inside of reference
+                referenceMsg = referenceMsg.replace(/^(> )(.|\n){1,}(\[.{1,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n)/i, '').trim();
+            }
+            else {
+                mention = `<@${reference.author.id}> - [jump](${reference.url})`;
+            }
+
+            // detect embed or prevent embed from showing
+            if (!referenceMsg.length || containsURL(referenceMsg)) {
+                referenceMsg = `[*Select to see attachment*](${reference.url})`;
+            }
+            else {
+                // put the referenced msg in a quote
+                referenceMsg = cutOff(referenceMsg.replaceAll('\n', '\n> '), 64);
+            }
+
+            // check if the msg is over the discord char limit
+            tulpMsg = cutOff(`> ${referenceMsg}\n${mention}\n${tulpMsg}`, 2000);
         }
 
         //-------------------------------------------------------------------------------------
