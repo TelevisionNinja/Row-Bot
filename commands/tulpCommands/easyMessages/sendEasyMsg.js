@@ -65,7 +65,7 @@ export default {
         if (msg.reference) {
             const reference = await msg.fetchReference();
             let referenceMsg = reference.cleanContent;
-            let mention;
+            let mention = undefined;
 
             // format mention and jump link
             if (reference.webhookId === reference.author.id) {
