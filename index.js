@@ -179,7 +179,8 @@ client.on('messageCreate', async msg => {
     if (msgStr.startsWith(prefix)) {
         // split command and arguments
 
-        let args = msgStr.slice(prefix.length).trim().split(' ');
+        // discord trims the original message so only a left trim is needed
+        let args = msgStr.slice(prefix.length).trimLeft().split(' ');
         const userCommand = args.shift().toLowerCase();
 
         //--------------------------------------------------------------------------------
@@ -240,7 +241,7 @@ client.on('messageCreate', async msg => {
         // execute command
 
         try {
-            command.execute(msg, args);
+            await command.execute(msg, args);
         }
         catch (error) {
             msg.channel.send('I couldn\'t do that command for some reason 😢');
