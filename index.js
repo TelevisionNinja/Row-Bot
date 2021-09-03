@@ -180,7 +180,7 @@ client.on('messageCreate', async msg => {
         // split command and arguments
 
         // discord trims the original message so only a left trim is needed
-        let args = msgStr.slice(prefix.length).trimLeft().split(' ');
+        let args = msgStr.slice(prefix.length).trimStart().split(' ');
         const userCommand = args.shift().toLowerCase();
 
         //--------------------------------------------------------------------------------
