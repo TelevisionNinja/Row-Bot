@@ -1,5 +1,5 @@
 import { default as musicConfig } from './musicConfig.json';
-import { clear } from '../../lib/audioQueue.js';
+import { default as audioQueue } from '../../lib/audioQueue.js';
 
 const clearConfig = musicConfig.clear;
 
@@ -11,6 +11,6 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        clear(msg.guild.id);
+        audioQueue.clear(msg.guild.id);
     }
 }

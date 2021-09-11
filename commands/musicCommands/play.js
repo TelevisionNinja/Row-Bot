@@ -1,8 +1,5 @@
 import { default as musicConfig } from './musicConfig.json';
-import {
-    playYoutube,
-    joinVC
-} from '../../lib/audio.js';
+import { default as audio } from '../../lib/audio.js';
 import { default as ytdl } from 'ytdl-core';
 import { default as ytSearch } from 'yt-search';
 
@@ -16,12 +13,12 @@ export default {
     vcMemberOnly: false,
     usage: '<url> or <search term>',
     async execute(msg, args) {
-        if (!joinVC(msg)) {
+        if (!audio.joinVC(msg)) {
             return;
         }
 
         if (ytdl.validateURL(args[0])) {
-            playYoutube(msg, args[0]);
+            audio.playYoutube(msg, args[0]);
         }
         else {
             const results = await ytSearch(args.join(' '));
@@ -30,7 +27,7 @@ export default {
             if (videos.length) {
                 const songURL = videos[0].url;
 
-                playYoutube(msg, songURL, songURL);
+                audio.playYoutube(msg, songURL, songURL);
             }
             else {
                 msg.channel.send('No results');

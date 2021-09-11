@@ -1,5 +1,5 @@
 import { default as musicConfig } from './musicConfig.json';
-import { skip } from '../../lib/audio.js';
+import { default as audio } from '../../lib/audio.js';
 
 const skipConfig = musicConfig.skip;
 
@@ -19,10 +19,10 @@ export default {
                 return;
             }
 
-            skip(msg, index);
+            audio.skip(msg, index);
         }
         else {
-            skip(msg);
+            audio.skip(msg);
         }
     }
 }

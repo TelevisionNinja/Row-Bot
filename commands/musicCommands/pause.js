@@ -1,5 +1,5 @@
 import { default as musicConfig } from './musicConfig.json';
-import { pause } from '../../lib/audio.js';
+import { default as audio } from '../../lib/audio.js';
 
 const pauseConfig = musicConfig.pause;
 
@@ -11,6 +11,6 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        pause(msg.guild.id);
+        audio.pause(msg.guild.id);
     }
 }

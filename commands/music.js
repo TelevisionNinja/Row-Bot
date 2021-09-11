@@ -1,5 +1,5 @@
 import { default as config } from '../config.json';
-import { vcCheck } from '../lib/audio.js';
+import { default as audio } from '../lib/audio.js';
 
 const music = config.music,
     prefix = config.prefix;
@@ -24,7 +24,7 @@ export default {
             return;
         }
 
-        if (command.vcMemberOnly && !vcCheck(msg)) {
+        if (command.vcMemberOnly && !audio.vcCheck(msg)) {
             return;
         }
 

@@ -1,5 +1,5 @@
 import { default as musicConfig } from './musicConfig.json';
-import { resume } from '../../lib/audio.js';
+import { default as audio } from '../../lib/audio.js';
 
 const resumeConfig = musicConfig.resume;
 
@@ -11,6 +11,6 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        resume(msg.guild.id);
+        audio.resume(msg.guild.id);
     }
 }

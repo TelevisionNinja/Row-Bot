@@ -1,5 +1,5 @@
 import { default as musicConfig } from './musicConfig.json';
-import { get } from '../../lib/audioQueue.js';
+import { default as audioQueue } from '../../lib/audioQueue.js';
 
 const queueConfig = musicConfig.queue;
 
@@ -11,7 +11,7 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        const queue = get(msg.guild.id);
+        const queue = audioQueue.get(msg.guild.id);
 
         if (queue.length) {
             const playing = queue[0];
