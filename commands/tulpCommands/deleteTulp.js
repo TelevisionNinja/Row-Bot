@@ -13,7 +13,7 @@ export default {
     guildOnly: false,
     usage: '<name>',
     async execute(msg, args) {
-        const username = args.join(' ').trim();
+        const username = args.join(' ').trimStart();
         const result = await tulps.delete(msg.author.id, username);
 
         if (result.rowCount) {

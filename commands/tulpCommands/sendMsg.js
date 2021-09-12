@@ -34,7 +34,7 @@ export default {
             return;
         }
 
-        let tulpMsg = str.substring(index + 1).trim();
+        let tulpMsg = str.substring(index + 1).trimStart();
         let attachmentArr = undefined;
 
         if (msg.attachments.size) {
@@ -66,7 +66,7 @@ export default {
                 mention = `[@${reference.author.username}](${reference.url})`;
 
                 // remove reference inside of reference
-                referenceMsg = referenceMsg.replace(/^(> )(.|\n){1,}(\[.{1,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n)/i, '').trim();
+                referenceMsg = referenceMsg.replace(/^(> )(.|\n){1,}(\[.{1,}\]\(https:\/\/discord\.com\/channels\/.{0,}\)\n)/i, '').trimStart();
             }
             else {
                 mention = `<@${reference.author.id}> - [jump](${reference.url})`;

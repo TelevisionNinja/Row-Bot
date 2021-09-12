@@ -13,7 +13,7 @@ export default {
     guildOnly: false,
     usage: '<name>',
     async execute(msg, args) {
-        const username = args.join(' ').trim();
+        const username = args.join(' ').trimStart();
         const selectedTulp = await tulps.get(msg.author.id, username);
 
         if (typeof selectedTulp === 'undefined') {

@@ -31,7 +31,7 @@ export default {
     usage: `<state>`,
     cooldown: 1,
     async execute(msg, args) {
-        msg.channel.send({ embeds: await getDataEmbeds(args.join(' ').trim()) });
+        msg.channel.send({ embeds: await getDataEmbeds(args.join(' ').trimStart()) });
     }
 }
 
