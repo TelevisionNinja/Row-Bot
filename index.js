@@ -25,12 +25,7 @@ import { getChatBotReply } from './lib/chatBot.js';
 import { initialize as initializeHelp } from './commands/help.js';
 import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
 import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
-import {
-    joinVC,
-    vcCheck,
-    leave,
-    playFile
-} from './lib/audio.js';
+import { default as audioPlayer } from './lib/audio.js';
 
 //--------------------------------------------------------------------------------
 // config vars
@@ -307,18 +302,18 @@ client.on('messageCreate', async msg => {
 
         if (msg.member.voice.channel) {
             if (noMentionsMsg === 'join me') {
-                joinVC(msg);
+                audioPlayer.joinVC(msg);
 
                 return;
             }
             else if (noMentionsMsg === 'leave') {
-                leave(msg.guild.id);
+                audioPlayer.leave(msg.guild.id);
 
                 return;
             }
-            else if (vcCheck(msg) && (noMentionsMsg === 'speak' || noMentionsMsg === 'talk')) {
+            else if (audioPlayer.vcCheck(msg) && (noMentionsMsg === 'speak' || noMentionsMsg === 'talk')) {
                 const randAudio = randomMath(audio.length);
-                playFile(msg, audio[randAudio]);
+                audioPlayer.playFile(msg, audio[randAudio]);
 
                 return;
             }
@@ -372,7 +367,7 @@ client.on('shardResume', () => {
     //--------------------------------------------------------------------------------
     // console log the start up time
 
-    console.log(`Reconnected: ${client.readyAt.toString()}`);
+    console.log(`Reconnected: ${new Date().toString()}`);
 });
 
 //--------------------------------------------------------------------------------
