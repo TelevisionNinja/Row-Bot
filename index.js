@@ -26,12 +26,15 @@ import { initialize as initializeHelp } from './commands/help.js';
 import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
 import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
 import { default as audioPlayer } from './lib/audio.js';
+import { buildCommandJSON } from './lib/slashCommandUtils.js';
+import axios from 'axios';
 
 //--------------------------------------------------------------------------------
 // config vars
 
 const prefix = config.prefix,
     token = config.token,
+    clientID = config.clientID,
     activityStatus = config.activityStatus,
     names = config.names.map(n => n.toLowerCase());
 
@@ -124,6 +127,55 @@ for (let i = 0, n = musicCommands.length; i < n; i++) {
 initializeHelp(commands);
 initializeTulpHelp(tulpCommands);
 initializeMusicHelp(musicCommands);
+
+//--------------------------------------------------------------------------------
+// slash commands
+
+let slashCommands = buildCommandJSON(commands);
+
+for (let i = 0, n = slashCommands.length; i < n; i++) {
+    let slashCommand = slashCommands[i];
+
+    if (slashCommand.name === 'tulp') {
+        slashCommand.options = buildCommandJSON(tulpCommands);
+        slashCommands[i] = slashCommand;
+        break;
+    }
+}
+
+for (let i = 0, n = slashCommands.length; i < n; i++) {
+    let slashCommand = slashCommands[i];
+
+    if (slashCommand.name === 'music') {
+        slashCommand.options = buildCommandJSON(musicCommands);
+        slashCommands[i] = slashCommand;
+        break;
+    }
+}
+
+async function loadSlashCommands() {
+    try {
+        console.log('Started refreshing application (/) commands.');
+
+        // specific guild
+        // https://discord.com/api/v9/applications/${clientID}/guilds/${guildID}/commands
+
+        await axios.put(`https://discord.com/api/v9/applications/${clientID}/commands`,
+        slashCommands,
+        {
+            headers: {
+                Authorization: `Bot ${token}`
+            }
+        });
+
+        console.log('Successfully reloaded application (/) commands.');
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+loadSlashCommands();
 
 //--------------------------------------------------------------------------------
 // login actions
@@ -349,6 +401,51 @@ client.on('messageCreate', async msg => {
             }
         }
     }
+});
+
+//--------------------------------------------------------------------------------
+// interaction actions
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) {
+        return;
+    }
+
+    //--------------------------------------------------------------------------------
+    // get command
+
+    const command = client.commands.get(interaction.commandName);
+
+    if (typeof command === 'undefined') {
+        return;
+    }
+
+    if (command.guildOnly && interaction.channel.type === 'DM') {
+        interaction.reply('I can\'t execute that command in DM\'s');
+        return;
+    }
+
+    //--------------------------------------------------------------------------------
+    // execute command
+
+    try {
+		await command.executeInteraction(interaction);
+	}
+    catch (error) {
+        const content = {
+            content: 'I couldn\'t do that command for some reason 😢',
+            ephemeral: true
+        };
+
+        if (interaction.deferred) {
+            interaction.editReply(content);
+        }
+        else {
+            interaction.reply(content);
+        }
+
+        console.log(error);
+	}
 });
 
 //--------------------------------------------------------------------------------

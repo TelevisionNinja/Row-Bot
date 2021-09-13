@@ -7,6 +7,7 @@ import {
     containsURL,
     cutOff
 } from '../../lib/stringUtils.js';
+import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
 
 const tulpConfig = config.tulp,
     tagSeparator = config.tagSeparator,
@@ -14,6 +15,25 @@ const tulpConfig = config.tulp,
     easyUsage = sendEasyMsg.usage;
 
 export default {
+    interactionData: {
+        name: sendMsg.names[0],
+        description: sendMsg.description,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        options: [
+            {
+                name: 'name',
+                description: 'The name',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            },
+            {
+                name: 'message',
+                description: 'The message',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: sendMsg.names,
     description: sendMsg.description,
     argsRequired: true,
@@ -111,6 +131,44 @@ export default {
         else {
             // webhook
             sendWebhookMsg(msg, tulpMsg, attachmentArr, selectedTulp.username, selectedTulp.avatar);
+        }
+    },
+    async executeInteraction(interaction) {
+        const isDM = interaction.channel.type === 'DM';
+
+        if (!isDM) {
+            interaction.deferReply();
+            interaction.deleteReply();
+        }
+
+        const tulpMsg = interaction.options.get('message').value;
+
+        // get specific tulp using username
+        const username = interaction.options.get('name').value;
+        const selectedTulp = await tulps.get(interaction.user.id, username);
+
+        if (typeof selectedTulp === 'undefined') {
+            interaction.user.send(tulpConfig.noDataMsg);
+            return;
+        }
+
+        //-------------------------------------------------------------------------------------
+        // detect dm channel
+
+        if (isDM) {
+            interaction.channel.send({
+                embeds: [{
+                    author: {
+                        name: selectedTulp.username,
+                        icon_url: selectedTulp.avatar
+                    },
+                    description: tulpMsg
+                }]
+            });
+        }
+        else {
+            // webhook
+            sendWebhookMsg(interaction, tulpMsg, undefined, selectedTulp.username, selectedTulp.avatar);
         }
     }
 }

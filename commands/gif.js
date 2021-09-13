@@ -2,6 +2,7 @@ import { default as config } from '../config.json';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
+import { ApplicationCommandOptionTypes } from '../lib/enums.js';
 
 const tenor = config.tenor,
     noResultsMsg = config.noResultsMsg;
@@ -13,6 +14,18 @@ const queue = new PQueue({
 const URL = `${tenor.API}${tenor.APIKey}&q=`;
 
 export default {
+    interactionData: {
+        name: tenor.names[0],
+        description: tenor.description,
+        options: [
+            {
+                name: 'search',
+                description: 'What to search gifs for',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: tenor.names,
     description: tenor.description,
     argsRequired: true,
@@ -25,13 +38,28 @@ export default {
         const {
             gif,
             hasResult
-        } = await getGif(args);
+        } = await getGif(args.join(' '));
 
         if (hasResult) {
             msg.channel.send(gif);
         }
         else {
             msg.channel.send(noResultsMsg);
+        }
+    },
+    async executeInteraction(interaction) {
+        await interaction.deferReply();
+
+        const {
+            gif,
+            hasResult
+        } = await getGif(interaction.options.get('search').value);
+
+        if (hasResult) {
+            interaction.editReply(gif);
+        }
+        else {
+            interaction.editReply(noResultsMsg);
         }
     }
 }
@@ -40,10 +68,10 @@ export default {
  * Returns a gif and a boolean for whether of not there's a result.
  * If no gif is found, the hasResult var is returned as false.
  * 
- * @param {*} tagArr array of tags to be searched
+ * @param {*} searchTerm term to be searched
  */
-export async function getGif(tagArr) {
-    const searchTerms = encodeURIComponent(tagArr.join(' '));
+export async function getGif(searchTerm) {
+    const searchTerms = encodeURIComponent(searchTerm);
     let gif = '';
     let hasResult = false;
 

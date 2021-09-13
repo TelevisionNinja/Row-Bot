@@ -2,6 +2,7 @@ import { default as config } from '../config.json';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
+import { ApplicationCommandOptionTypes } from '../lib/enums.js';
 
 const stock = config.stock;
 
@@ -14,6 +15,18 @@ const queue = new PQueue({
 const priceElement = 'Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)';
 
 export default {
+    interactionData: {
+        name: stock.names[0],
+        description: stock.description,
+        options: [
+            {
+                name: 'symbol',
+                description: 'The symbol of the stock',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: stock.names,
     description: stock.description,
     argsRequired: true,
@@ -31,6 +44,19 @@ export default {
         }
         else {
             msg.channel.send('I couldn\'t find that stock');
+        }
+    },
+    async executeInteraction(interaction) {
+        await interaction.deferReply();
+
+        const symbol = interaction.options.get('symbol').value;
+        const price = await getStockStr(symbol);
+
+        if (price.length) {
+            interaction.editReply(`$${price}`);
+        }
+        else {
+            interaction.editReply('I couldn\'t find that stock');
         }
     }
 }

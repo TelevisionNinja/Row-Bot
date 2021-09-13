@@ -1,4 +1,5 @@
 import { default as config } from '../../config.json';
+import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
 
 const prefix = config.prefix,
     help = config.help,
@@ -23,12 +24,25 @@ export function initialize(commands) {
         },
         {
             name: 'Specific Command Info',
-            value: `Send \`${prefix}${music.names[0]} help <command name>\` to get info on a specific command`
+            value: `Send \`${prefix}${music.names[0]} help <command name>\` or \`/${music.names[0]} help <command name>\` to get info on a specific command`
         }
     ];
 }
 
 export default {
+    interactionData: {
+        name: help.names[0],
+        description: help.description,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        options: [
+            {
+                name: 'command',
+                description: 'The command to get specific information about',
+                required: false,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: help.names,
     description: help.description,
     argsRequired: false,
@@ -56,6 +70,9 @@ export default {
             else {
                 usageStr = `${usageStr}\``;
             }
+
+            // add slash command example
+            usageStr = `Message:\n${usageStr}\nSlash Command:\n\`/${music.names[0]} ${argCommand.names[0]}\``;
 
             const aliases = argCommand.names.slice(1);
             let aliasStr = 'There are no aliases for this command';
@@ -88,6 +105,65 @@ export default {
         }
         else {
             msg.channel.send(helpCenter);
+        }
+    },
+    executeInteraction(interaction) {
+        const userCommand = interaction.options.get('command');
+
+        if (userCommand) {
+            const argCommand = interaction.client.musicCommands.get(userCommand.value);
+
+            if (typeof argCommand === 'undefined') {
+                interaction.reply('That\'s not one of my music commands');
+                return;
+            }
+
+            let usageStr = `\`${prefix}${music.names[0]} ${argCommand.names[0]}`;
+
+            if (argCommand.argsRequired) {
+                usageStr = `${usageStr} ${argCommand.usage}\``;
+            }
+            else if (argCommand.argsOptional) {
+                usageStr = `${usageStr}\` or ${usageStr} ${argCommand.usage}\``;
+            }
+            else {
+                usageStr = `${usageStr}\``;
+            }
+
+            // add slash command example
+            usageStr = `Message:\n${usageStr}\nSlash Command:\n\`/${music.names[0]} ${argCommand.names[0]}\``;
+
+            const aliases = argCommand.names.slice(1);
+            let aliasStr = 'There are no aliases for this command';
+
+            if (aliases.length) {
+                aliasStr = aliases.join(', ');
+            }
+
+            interaction.reply({
+                embeds: [{
+                    title: `Music Command: ${argCommand.names[0]}`,
+                    description: argCommand.description,
+                    color: parseInt(help.embedColor, 16),
+                    fields: [
+                        {
+                            name: 'Aliases',
+                            value: aliasStr
+                        },
+                        {
+                            name: 'Usage',
+                            value: usageStr
+                        },
+                        {
+                            name: 'Voice Channel Only Command?',
+                            value: argCommand.vcMemberOnly ? 'Can only be used in voice channels' : 'Can be used without voice channels'
+                        }
+                    ]
+                }]
+            });
+        }
+        else {
+            interaction.reply(helpCenter);
         }
     }
 }

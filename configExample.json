@@ -218,10 +218,10 @@
 
     "sourceCode" : {
         "names" : [
-            "sourceCode",
-            "source",
+            "github",
             "code",
-            "github"
+            "sourceCode",
+            "source"
         ],
         "description" : "Gives a link to the source code",
         "link" : ""

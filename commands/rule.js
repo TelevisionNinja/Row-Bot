@@ -1,11 +1,15 @@
 import { randomMath } from '../lib/randomFunctions.js';
-import { sendImg } from '../lib/msgUtils.js';
+import {
+    sendImg,
+    sendImgInteraction
+} from '../lib/msgUtils.js';
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
 import axios from 'axios';
 import { parse } from 'txml';
 import { default as config } from '../config.json';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
+import { ApplicationCommandOptionTypes } from '../lib/enums.js';
 
 const rule = config.rule,
     tagSeparator = config.tagSeparator;
@@ -20,6 +24,18 @@ const queueOne = new PQueue({
 });
 
 export default {
+    interactionData: {
+        name: rule.names[0],
+        description: rule.description,
+        options: [
+            {
+                name: 'tags',
+                description: 'The tags to search for',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: rule.names,
     description: rule.description,
     argsRequired: true,
@@ -34,6 +50,14 @@ export default {
         const img = await getImage(args);
 
         sendImg(msg.channel, img);
+    },
+    async executeInteraction(interaction) {
+        await interaction.deferReply();
+
+        const tags = interaction.options.get('tags').value.split(tagSeparator);
+        const img = await getImage(tags);
+
+        sendImgInteraction(interaction, img);
     }
 }
 
@@ -159,6 +183,7 @@ export async function getImageRule1(tagArr) {
 /**
  * Returns an image object from one of the rule sites
  * If no image is found, the count var is zero
+ * Put a '-' infront of tags you want to exclude
  * 
  * @param {*} tagArr array of tags to be searched
  * @returns 

@@ -12,6 +12,11 @@ const queue = new PQueue({
 });
 
 export default {
+    interactionData: {
+        name: fifty.names[0],
+        description: fifty.description,
+        options: []
+    },
     names: fifty.names,
     description: fifty.description,
     argsRequired: false,
@@ -27,6 +32,16 @@ export default {
         } = await getRandomFifty();
 
         msg.channel.send(`${title}\n<${link}>`);
+    },
+    async executeInteraction(interaction) {
+        await interaction.deferReply();
+
+        const {
+            title,
+            link
+        } = await getRandomFifty();
+
+        interaction.editReply(`${title}\n<${link}>`);
     }
 }
 

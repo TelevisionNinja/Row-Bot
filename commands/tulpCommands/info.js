@@ -1,11 +1,25 @@
 import { default as tulpConfigFile } from './tulpConfig.json';
 import { default as config } from '../../config.json';
 import { tulps } from '../../lib/database.js';
+import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
 
 const info = tulpConfigFile.info,
     tulpConfig = config.tulp;
 
 export default {
+    interactionData: {
+        name: info.names[0],
+        description: info.description,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        options: [
+            {
+                name: 'name',
+                description: 'The name',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: info.names,
     description: info.description,
     argsRequired: true,
@@ -22,6 +36,28 @@ export default {
         }
 
         msg.channel.send({
+            embeds: [{
+                title: selectedTulp.username,
+                thumbnail: { url: selectedTulp.avatar },
+                fields: [
+                    {
+                        name: 'Brackets',
+                        value: `${selectedTulp.start_bracket}text${selectedTulp.end_bracket}`
+                    }
+                ]
+            }]
+        });
+    },
+    async executeInteraction(interaction) {
+        const username = interaction.options.get('name').value;
+        const selectedTulp = await tulps.get(interaction.user.id, username);
+
+        if (typeof selectedTulp === 'undefined') {
+            interaction.reply(tulpConfig.noDataMsg);
+            return;
+        }
+
+        interaction.reply({
             embeds: [{
                 title: selectedTulp.username,
                 thumbnail: { url: selectedTulp.avatar },

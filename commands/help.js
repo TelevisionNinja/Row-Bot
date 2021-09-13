@@ -1,4 +1,5 @@
 import { default as config } from '../config.json';
+import { ApplicationCommandOptionTypes } from '../lib/enums.js';
 
 const prefix = config.prefix,
     help = config.help,
@@ -22,12 +23,24 @@ export function initialize(commands) {
         },
         {
             name: 'Specific Command Info',
-            value: `Send \`${prefix}help <command name>\` to get info on a specific command`
+            value: `Send \`${prefix}help <command name>\` or \`/help <command name>\` to get info on a specific command`
         }
     ];
 }
 
 export default {
+    interactionData: {
+        name: help.names[0],
+        description: help.description,
+        options: [
+            {
+                name: 'command',
+                description: 'The command to get specific information about',
+                required: false,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: help.names,
     description: help.description,
     argsRequired: false,
@@ -37,8 +50,8 @@ export default {
     usage: '<command name>',
     cooldown: 0,
     execute(msg, args) {
-		if (args.length) {
-			const userCommand = args[0].toLowerCase();
+        if (args.length) {
+            const userCommand = args[0].toLowerCase();
             const argCommand = msg.client.commands.get(userCommand);
 
             if (typeof argCommand === 'undefined') {
@@ -57,6 +70,9 @@ export default {
             else {
                 usageStr = `${usageStr}\``;
             }
+
+            // add slash command example
+            usageStr = `Message:\n${usageStr}\nSlash Command:\n\`/${argCommand.names[0]}\``;
 
             const aliases = argCommand.names.slice(1);
             let aliasStr = 'There are no aliases for this command';
@@ -93,6 +109,69 @@ export default {
         }
         else {
             msg.channel.send(helpCenter);
+        }
+    },
+    executeInteraction(interaction) {
+        const userCommand = interaction.options.get('command');
+
+        if (userCommand) {
+            const argCommand = interaction.client.commands.get(userCommand.value);
+
+            if (typeof argCommand === 'undefined') {
+                interaction.reply('That\'s not one of my commands');
+                return;
+            }
+
+            let usageStr = `\`${prefix}${argCommand.names[0]}`;
+
+            if (argCommand.argsRequired) {
+                usageStr = `${usageStr} ${argCommand.usage}\``;
+            }
+            else if (argCommand.argsOptional) {
+                usageStr = `${usageStr}\` or ${usageStr} ${argCommand.usage}\``;
+            }
+            else {
+                usageStr = `${usageStr}\``;
+            }
+
+            // add slash command example
+            usageStr = `Message:\n${usageStr}\nSlash Command:\n\`/${argCommand.names[0]}\``;
+
+            const aliases = argCommand.names.slice(1);
+            let aliasStr = 'There are no aliases for this command';
+
+            if (aliases.length) {
+                aliasStr = aliases.join(', ');
+            }
+
+            interaction.reply({
+                embeds: [{
+                    title: `Command: ${argCommand.names[0]}`,
+                    description: argCommand.description,
+                    color: parseInt(help.embedColor, 16),
+                    fields: [
+                        {
+                            name: 'Aliases',
+                            value: aliasStr
+                        },
+                        {
+                            name: 'Usage',
+                            value: usageStr
+                        },
+                        {
+                            name: 'Server Only Command?',
+                            value: argCommand.guildOnly ? 'Can only be used in servers' : 'Can be used in DM\'s'
+                        },
+                        {
+                            name: 'Cooldown Time',
+                            value: `${argCommand.cooldown} second(s)`
+                        }
+                    ]
+                }]
+            });
+        }
+        else {
+            interaction.reply(helpCenter);
         }
     }
 }

@@ -4,6 +4,11 @@ import { default as config } from '../config.json';
 const coin = config.coin;
 
 export default {
+    interactionData: {
+        name: coin.names[0],
+        description: coin.description,
+        options: []
+    },
     names: coin.names,
     description: coin.description,
     argsRequired: false,
@@ -18,6 +23,14 @@ export default {
         }
         else {
             msg.channel.send('Tails');
+        }
+    },
+    executeInteraction(interaction) {
+        if (randomMath(2)) {
+            interaction.reply('Heads');
+        }
+        else {
+            interaction.reply('Tails');
         }
     }
 }

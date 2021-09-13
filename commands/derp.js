@@ -1,9 +1,13 @@
 import { default as config } from '../config.json';
-import { sendImg } from '../lib/msgUtils.js';
+import {
+    sendImg,
+    sendImgInteraction
+} from '../lib/msgUtils.js';
 import { tagArrToStr } from '../lib/stringUtils.js';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
+import { ApplicationCommandOptionTypes } from '../lib/enums.js';
 
 const derp = config.derp,
     tagSeparator = config.tagSeparator;
@@ -15,6 +19,18 @@ const queue = new PQueue({
 const URL = `${derp.API}${derp.APIKey}&q=`;
 
 export default {
+    interactionData: {
+        name: derp.names[0],
+        description: derp.description,
+        options: [
+            {
+                name: 'tags',
+                description: 'The tags to search for',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: derp.names,
     description: derp.description,
     argsRequired: true,
@@ -29,12 +45,23 @@ export default {
         const img = await getImage(args);
 
         sendImg(msg.channel, img);
+    },
+    async executeInteraction(interaction) {
+        await interaction.deferReply();
+
+        const tags = interaction.options.get('tags').value.split(tagSeparator);
+        const img = await getImage(tags);
+
+        sendImgInteraction(interaction, img);
     }
 }
 
 /**
  * Returns an image object
  * If no image is found, the results var is zero
+ * To search artists' images, type `artist:<artist name>` as a tag
+ * Search `explicit` for nsfw images. Search `safe` for sfw images
+ * Put a '-' infront of tags you want to exclude
  * 
  * @param {*} tagArr array of tags to be searched
  * @returns 

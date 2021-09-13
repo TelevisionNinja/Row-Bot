@@ -2,11 +2,32 @@ import { default as tulpConfig } from './tulpConfig.json';
 import { default as config } from '../../config.json';
 import { extractNameAndAvatar } from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';
+import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { isValidURL } from '../../lib/stringUtils.js';
 
 const create = tulpConfig.create,
     tagSeparator = config.tagSeparator;
 
 export default {
+    interactionData: {
+        name: create.names[0],
+        description: create.description,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        options: [
+            {
+                name: 'name',
+                description: 'The name',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            },
+            {
+                name: 'avatar',
+                description: 'The profile picture link',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: create.names,
     description: create.description,
     argsRequired: true,
@@ -38,6 +59,25 @@ export default {
         }
         catch (error) {
             msg.channel.send(create.existingMsg);
+        }
+    },
+    async executeInteraction(interaction) {
+        const avatarLink = interaction.options.get('avatar').value;
+
+        if (!isValidURL(avatarLink)) {
+            interaction.reply('Please provide a valid URL for the avatar');
+            return;
+        }
+
+        const username = interaction.options.get('name').value;
+
+        try {
+            await tulps.set(interaction.user.id, username, avatarLink, `${username}:`, '');
+
+            interaction.reply(create.confirmMsg);
+        }
+        catch (error) {
+            interaction.reply(create.existingMsg);
         }
     }
 }

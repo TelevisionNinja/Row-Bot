@@ -1,9 +1,16 @@
 import { default as musicConfig } from './musicConfig.json';
 import { default as audio } from '../../lib/audio.js';
+import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
 
 const pauseConfig = musicConfig.pause;
 
 export default {
+    interactionData: {
+        name: pauseConfig.names[0],
+        description: pauseConfig.description,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        options: []
+    },
     names: pauseConfig.names,
     description: pauseConfig.description,
     argsRequired: false,
@@ -12,5 +19,9 @@ export default {
     usage: '',
     execute(msg, args) {
         audio.pause(msg.guild.id);
+    },
+    executeInteraction(interaction) {
+        audio.pause(interaction.guild.id);
+        interaction.reply('Song paused');
     }
 }

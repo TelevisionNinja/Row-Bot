@@ -3,6 +3,11 @@ import { default as config } from '../config.json';
 const invite = config.invite;
 
 export default {
+    interactionData: {
+        name: invite.names[0],
+        description: invite.description,
+        options: []
+    },
     names: invite.names,
     description: invite.description,
     argsRequired: false,
@@ -13,5 +18,8 @@ export default {
     cooldown: 0,
     execute(msg, args) {
         msg.channel.send(invite.link);
+    },
+    executeInteraction(interaction) {
+        interaction.reply(invite.link);
     }
 }

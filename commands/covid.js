@@ -2,6 +2,7 @@ import { default as config } from '../config.json';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
+import { ApplicationCommandOptionTypes } from '../lib/enums.js';
 
 const covid = config.covid,
     noResultsMsg = config.noResultsMsg;
@@ -22,6 +23,18 @@ const queuePopulation = new PQueue({
 });
 
 export default {
+    interactionData: {
+        name: covid.names[0],
+        description: covid.description,
+        options: [
+            {
+                name: 'state',
+                description: 'The state to get information of',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: covid.names,
     description: covid.description,
     argsRequired: true,
@@ -32,6 +45,11 @@ export default {
     cooldown: 1,
     async execute(msg, args) {
         msg.channel.send({ embeds: await getDataEmbeds(args.join(' ').trimStart()) });
+    },
+    async executeInteraction(interaction) {
+        await interaction.deferReply();
+
+        interaction.editReply({ embeds: await getDataEmbeds(interaction.options.get('state').value) });
     }
 }
 

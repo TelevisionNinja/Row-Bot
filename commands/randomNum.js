@@ -1,10 +1,29 @@
 import { randomMath } from '../lib/randomFunctions.js';
 import { default as config } from '../config.json';
+import { ApplicationCommandOptionTypes } from '../lib/enums.js';
 
 const random = config.random,
     prefix = config.prefix;
 
 export default {
+    interactionData: {
+        name: random.names[0],
+        description: random.description,
+        options: [
+            {
+                name: 'max',
+                description: 'The maximum value of the random number',
+                required: true,
+                type: ApplicationCommandOptionTypes.INTEGER
+            },
+            {
+                name: 'min',
+                description: 'The minimum value of the random number',
+                required: false,
+                type: ApplicationCommandOptionTypes.INTEGER
+            }
+        ]
+    },
     names: random.names,
     description: random.description,
     argsRequired: true,
@@ -40,5 +59,25 @@ export default {
         result = randomMath(min, max + 1);
 
         msg.channel.send(`Your random number is ${result}`);
+    },
+    executeInteraction(interaction) {
+        const min = interaction.options.get('min');
+        let minValue = 0;
+        let max = parseInt(interaction.options.get('max').value);
+        let result = 0;
+
+        if (min) {
+            minValue = parseInt(min.value);
+        }
+
+        if (minValue > max) {
+            const temp = max;
+            max = minValue;
+            minValue = temp;
+        }
+
+        result = randomMath(minValue, max + 1);
+
+        interaction.reply(`Your random number is ${result}`);
     }
 }

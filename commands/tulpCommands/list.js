@@ -1,9 +1,16 @@
 import { default as tulpConfig } from './tulpConfig.json';
 import { tulps } from '../../lib/database.js';
+import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
 
 const listConfig = tulpConfig.list;
 
 export default {
+    interactionData: {
+        name: listConfig.names[0],
+        description: listConfig.description,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        options: []
+    },
     names: listConfig.names,
     description: listConfig.description,
     argsRequired: false,
@@ -23,6 +30,21 @@ export default {
         }
         else {
             msg.channel.send(listConfig.noTulpsMsg);
+        }
+    },
+    async executeInteraction(interaction) {
+        const tulpNames = await tulps.listAll(interaction.user.id);
+
+        if (tulpNames.length) {
+            interaction.reply({
+                embeds: [{
+                    title: 'Your tulps',
+                    description: tulpNames.map(t => `• ${t.username}`).join('\n')
+                }]
+            });
+        }
+        else {
+            interaction.reply(listConfig.noTulpsMsg);
         }
     }
 }

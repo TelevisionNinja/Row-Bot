@@ -1,11 +1,25 @@
 import { default as tulpConfig } from './tulpConfig.json';
 import { default as config } from '../../config.json';
 import { tulps } from '../../lib/database.js';
+import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
 
 const deleteTulp = tulpConfig.deleteTulp,
     tulpConfigObj = config.tulp;
 
 export default {
+    interactionData: {
+        name: deleteTulp.names[0],
+        description: deleteTulp.description,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        options: [
+            {
+                name: 'name',
+                description: 'The name',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: deleteTulp.names,
     description: deleteTulp.description,
     argsRequired: true,
@@ -21,6 +35,17 @@ export default {
         }
         else {
             msg.channel.send(tulpConfigObj.noDataMsg);
+        }
+    },
+    async executeInteraction(interaction) {
+        const username = interaction.options.get('name').value;
+        const result = await tulps.delete(interaction.user.id, username);
+
+        if (result.rowCount) {
+            interaction.reply(deleteTulp.confirmMsg);
+        }
+        else {
+            interaction.reply(tulpConfigObj.noDataMsg);
         }
     }
 }

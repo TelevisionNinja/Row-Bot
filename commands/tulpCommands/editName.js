@@ -1,12 +1,32 @@
 import { default as tulpConfigFile } from'./tulpConfig.json';
 import { default as config } from '../../config.json';
 import { tulps } from '../../lib/database.js';
+import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
 
 const editName = tulpConfigFile.editName,
     tulpConfig = config.tulp,
     tagSeparator = config.tagSeparator;
 
 export default {
+    interactionData: {
+        name: editName.names[0],
+        description: editName.description,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        options: [
+            {
+                name: 'old-name',
+                description: 'The old name',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            },
+            {
+                name: 'new-name',
+                description: 'The new name',
+                required: true,
+                type: ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    },
     names: editName.names,
     description: editName.description,
     argsRequired: true,
@@ -55,6 +75,34 @@ export default {
         }
         catch (nameError) {
             msg.channel.send('That new name is already being used');
+        }
+    },
+    async executeInteraction(interaction) {
+        const newName = interaction.options.get('new-name').value;
+        const oldName = interaction.options.get('old-name').value;
+
+        try {
+            const result = await tulps.updateUsernameAndBrackets(interaction.user.id, oldName, newName, `${oldName}:`, `${newName}:`, '');
+
+            if (result.rowCount) {
+                interaction.reply(editName.confirmMsg);
+                return;
+            }
+        }
+        catch (nameOrBracketError) {}
+
+        try {
+            const result = await tulps.updateUsername(interaction.user.id, oldName, newName);
+
+            if (result.rowCount) {
+                interaction.reply(editName.confirmMsg);
+            }
+            else {
+                interaction.reply(tulpConfig.noDataMsg);
+            }
+        }
+        catch (nameError) {
+            interaction.reply('That new name is already being used');
         }
     }
 }

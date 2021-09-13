@@ -5,6 +5,11 @@ const music = config.music,
     prefix = config.prefix;
 
 export default {
+    interactionData: {
+        name: music.names[0],
+        description: music.description,
+        options: []
+    },
     names: music.names,
     description: music.description,
     argsRequired: true,
@@ -13,7 +18,7 @@ export default {
     guildOnly: true,
     usage: '<music command>',
     cooldown: 0,
-    execute(msg, args) {
+    async execute(msg, args) {
         // get command
         const userCommand = args.shift().toLowerCase();
         const command = msg.client.musicCommands.get(userCommand);
@@ -37,10 +42,46 @@ export default {
         // execute command
 
         try {
-            command.execute(msg, args);
+            await command.execute(msg, args);
         }
         catch (error) {
             msg.channel.send('I couldn\'t do that command for some reason 😢');
+            console.log(error);
+        }
+    },
+    async executeInteraction(interaction) {
+        // get command
+        const command = interaction.client.musicCommands.get(interaction.options._subcommand);
+
+        //--------------------------------------------------------------------------------
+
+        if (typeof command === 'undefined') {
+            return;
+        }
+
+        if (command.vcMemberOnly && !audio.vcCheckInteraction(interaction)) {
+            return;
+        }
+
+        //--------------------------------------------------------------------------------
+        // execute command
+
+        try {
+            await command.executeInteraction(interaction);
+        }
+        catch (error) {
+            const content = {
+                content: 'I couldn\'t do that command for some reason 😢',
+                ephemeral: true
+            };
+
+            if (interaction.deferred) {
+                interaction.editReply(content);
+            }
+            else {
+                interaction.reply(content);
+            }
+
             console.log(error);
         }
     }
