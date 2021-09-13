@@ -26,8 +26,10 @@ import { initialize as initializeHelp } from './commands/help.js';
 import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
 import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
 import { default as audioPlayer } from './lib/audio.js';
-import { buildCommandJSON } from './lib/slashCommandUtils.js';
-import axios from 'axios';
+import {
+    buildCommandJSON,
+    loadGlobalSlashCommands
+} from './lib/slashCommandUtils.js';
 
 //--------------------------------------------------------------------------------
 // config vars
@@ -153,29 +155,7 @@ for (let i = 0, n = slashCommands.length; i < n; i++) {
     }
 }
 
-async function loadSlashCommands() {
-    try {
-        console.log('Started refreshing application (/) commands.');
-
-        // specific guild
-        // https://discord.com/api/v9/applications/${clientID}/guilds/${guildID}/commands
-
-        await axios.put(`https://discord.com/api/v9/applications/${clientID}/commands`,
-        slashCommands,
-        {
-            headers: {
-                Authorization: `Bot ${token}`
-            }
-        });
-
-        console.log('Successfully reloaded application (/) commands.');
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-
-loadSlashCommands();
+loadGlobalSlashCommands(slashCommands, clientID, token);
 
 //--------------------------------------------------------------------------------
 // login actions
