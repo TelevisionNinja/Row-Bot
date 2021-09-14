@@ -112,10 +112,10 @@ export default {
         }
     },
     executeInteraction(interaction) {
-        const userCommand = interaction.options.get('command');
+        const userCommand = interaction.options.getString('command');
 
         if (userCommand) {
-            const argCommand = interaction.client.commands.get(userCommand.value);
+            const argCommand = interaction.client.commands.get(userCommand.toLowerCase());
 
             if (typeof argCommand === 'undefined') {
                 interaction.reply('That\'s not one of my commands');

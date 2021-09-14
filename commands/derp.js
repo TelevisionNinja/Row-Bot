@@ -49,7 +49,7 @@ export default {
     async executeInteraction(interaction) {
         await interaction.deferReply();
 
-        const tags = interaction.options.get('tags').value.split(tagSeparator);
+        const tags = interaction.options.getString('tags').split(tagSeparator);
         const img = await getImage(tags);
 
         sendImgInteraction(interaction, img);

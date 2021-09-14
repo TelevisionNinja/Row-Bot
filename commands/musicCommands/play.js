@@ -53,7 +53,7 @@ export default {
             return;
         }
 
-        const arg = interaction.options.get('song').value;
+        const arg = interaction.options.getString('song');
 
         if (ytdl.validateURL(arg)) {
             interaction.reply('Fetching song');

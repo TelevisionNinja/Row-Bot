@@ -38,7 +38,7 @@ export default {
         }
     },
     async executeInteraction(interaction) {
-        const username = interaction.options.get('name').value;
+        const username = interaction.options.getString('name');
         const result = await tulps.delete(interaction.user.id, username);
 
         if (result.rowCount) {

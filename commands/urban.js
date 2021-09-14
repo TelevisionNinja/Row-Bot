@@ -93,7 +93,7 @@ export default {
     async executeInteraction(interaction) {
         await interaction.deferReply();
 
-        const searchWord = stringify({ term: interaction.options.get('search').value });
+        const searchWord = stringify({ term: interaction.options.getString('search') });
         const URL = `${urban.API}${searchWord}`;
 
         await queue.add(async () => {

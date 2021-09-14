@@ -53,7 +53,7 @@ export default {
         const {
             gif,
             hasResult
-        } = await getGif(interaction.options.get('search').value);
+        } = await getGif(interaction.options.getString('search'));
 
         if (hasResult) {
             interaction.editReply(gif);

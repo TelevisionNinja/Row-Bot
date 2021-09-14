@@ -81,8 +81,8 @@ export default {
         }
     },
     async executeInteraction(interaction) {
-        const unparsedBrackets = interaction.options.get('brackets').value;
-        const username = interaction.options.get('name').value;
+        const unparsedBrackets = interaction.options.getString('brackets');
+        const username = interaction.options.getString('name');
 
         if (unparsedBrackets.indexOf(enclosingText) === -1) {
             interaction.reply(errorMessage);

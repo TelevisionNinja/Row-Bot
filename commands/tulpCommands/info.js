@@ -49,7 +49,7 @@ export default {
         });
     },
     async executeInteraction(interaction) {
-        const username = interaction.options.get('name').value;
+        const username = interaction.options.getString('name');
         const selectedTulp = await tulps.get(interaction.user.id, username);
 
         if (typeof selectedTulp === 'undefined') {

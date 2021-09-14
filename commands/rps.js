@@ -58,7 +58,7 @@ export default {
         msg.channel.send(winnerMsg);
     },
     executeInteraction(interaction) {
-        const valueOfPlayer = choices.get(interaction.options.get('choice').value.toLowerCase());
+        const valueOfPlayer = choices.get(interaction.options.getString('choice').toLowerCase());
 
         if (typeof valueOfPlayer === 'undefined') {
             interaction.reply('Hey! That\'s not rock, paper, or scissors!');

@@ -63,14 +63,14 @@ export default {
         }
     },
     async executeInteraction(interaction) {
-        const avatarLink = interaction.options.get('avatar').value;
+        const avatarLink = interaction.options.getString('avatar');
 
         if (!isValidURL(avatarLink)) {
             interaction.reply('Please provide a valid URL for the avatar');
             return;
         }
 
-        const username = interaction.options.get('name').value;
+        const username = interaction.options.getString('name');
         const result = await tulps.updateAvatar(interaction.user.id, username, avatarLink);
 
         if (result.rowCount) {

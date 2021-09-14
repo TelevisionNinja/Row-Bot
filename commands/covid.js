@@ -49,7 +49,7 @@ export default {
     async executeInteraction(interaction) {
         await interaction.deferReply();
 
-        interaction.editReply({ embeds: await getDataEmbeds(interaction.options.get('state').value) });
+        interaction.editReply({ embeds: await getDataEmbeds(interaction.options.getString('state')) });
     }
 }
 

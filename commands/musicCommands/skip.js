@@ -14,7 +14,7 @@ export default {
                 name: 'index',
                 description: 'The index of the song to skip',
                 required: false,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.INTEGER
             }
         ]
     },
@@ -40,10 +40,10 @@ export default {
         }
     },
     executeInteraction(interaction) {
-        const index = interaction.options.get('index');
+        const index = interaction.options.getInteger('index');
 
         if (index) {
-            audio.skip(interaction, index.value);
+            audio.skip(interaction, index);
         }
         else {
             audio.skip(interaction);

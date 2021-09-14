@@ -47,12 +47,11 @@ export default {
         msg.channel.send(message);
     },
     executeInteraction(interaction) {
-        const param = interaction.options.get('type');
-
+        let foodType = interaction.options.getString('type');
         let placeArr = food.places;
 
-        if (param) {
-            const foodType = param.value.toLowerCase();
+        if (foodType) {
+            foodType = foodType.toLowerCase();
             placeArr = placeArr.filter(p => p.type.toLowerCase() === foodType);
         }
 

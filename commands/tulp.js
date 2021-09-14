@@ -54,11 +54,11 @@ export default {
     },
     async executeInteraction(interaction) {
         // get command
-        const command = interaction.client.tulpCommands.get(interaction.options._subcommand);
+        const command = interaction.client.tulpCommands.get(interaction.options.getSubcommand());
 
         //--------------------------------------------------------------------------------
 
-        if (command.guildOnly && interaction.channel.type === 'DM') {
+        if (command.guildOnly && !interaction.inGuild()) {
             interaction.reply('I can\'t execute that command in DM\'s');
             return;
         }

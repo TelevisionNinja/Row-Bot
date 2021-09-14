@@ -51,7 +51,7 @@ export default {
     },
     async executeInteraction(interaction) {
         // get command
-        const command = interaction.client.musicCommands.get(interaction.options._subcommand);
+        const command = interaction.client.musicCommands.get(interaction.options.getSubcommand());
 
         //--------------------------------------------------------------------------------
 

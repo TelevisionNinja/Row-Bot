@@ -78,8 +78,8 @@ export default {
         }
     },
     async executeInteraction(interaction) {
-        const newName = interaction.options.get('new-name').value;
-        const oldName = interaction.options.get('old-name').value;
+        const newName = interaction.options.getString('new-name');
+        const oldName = interaction.options.getString('old-name');
 
         try {
             const result = await tulps.updateUsernameAndBrackets(interaction.user.id, oldName, newName, `${oldName}:`, `${newName}:`, '');

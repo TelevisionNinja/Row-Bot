@@ -141,10 +141,10 @@ export default {
             interaction.deleteReply();
         }
 
-        const tulpMsg = interaction.options.get('message').value;
+        const tulpMsg = interaction.options.getString('message');
 
         // get specific tulp using username
-        const username = interaction.options.get('name').value;
+        const username = interaction.options.getString('name');
         const selectedTulp = await tulps.get(interaction.user.id, username);
 
         if (typeof selectedTulp === 'undefined') {

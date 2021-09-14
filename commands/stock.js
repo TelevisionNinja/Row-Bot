@@ -49,7 +49,7 @@ export default {
     async executeInteraction(interaction) {
         await interaction.deferReply();
 
-        const symbol = interaction.options.get('symbol').value;
+        const symbol = interaction.options.getString('symbol');
         const price = await getStockStr(symbol);
 
         if (price.length) {
