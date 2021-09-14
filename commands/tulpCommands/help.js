@@ -1,5 +1,5 @@
 import { default as config } from '../../config.json';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const prefix = config.prefix,
     help = config.help,
@@ -33,13 +33,13 @@ export default {
     interactionData: {
         name: help.names[0],
         description: help.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: [
             {
                 name: 'command',
                 description: 'The command to get specific information about',
                 required: false,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

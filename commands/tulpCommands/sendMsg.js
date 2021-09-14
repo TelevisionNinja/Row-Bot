@@ -7,7 +7,7 @@ import {
     containsURL,
     cutOff
 } from '../../lib/stringUtils.js';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const tulpConfig = config.tulp,
     tagSeparator = config.tagSeparator,
@@ -18,19 +18,19 @@ export default {
     interactionData: {
         name: sendMsg.names[0],
         description: sendMsg.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: [
             {
                 name: 'name',
                 description: 'The name',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             },
             {
                 name: 'message',
                 description: 'The message',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

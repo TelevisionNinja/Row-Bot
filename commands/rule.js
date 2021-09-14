@@ -9,7 +9,7 @@ import { parse } from 'txml';
 import { default as config } from '../config.json';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
-import { ApplicationCommandOptionTypes } from '../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const rule = config.rule,
     tagSeparator = config.tagSeparator;
@@ -32,7 +32,7 @@ export default {
                 name: 'tags',
                 description: 'The tags to search for',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

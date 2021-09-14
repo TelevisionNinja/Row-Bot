@@ -7,7 +7,7 @@ import { tagArrToStr } from '../lib/stringUtils.js';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
-import { ApplicationCommandOptionTypes } from '../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const derp = config.derp,
     tagSeparator = config.tagSeparator;
@@ -27,7 +27,7 @@ export default {
                 name: 'tags',
                 description: 'The tags to search for',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

@@ -2,7 +2,7 @@ import { default as config } from '../config.json';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
-import { ApplicationCommandOptionTypes } from '../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const stock = config.stock;
 
@@ -23,7 +23,7 @@ export default {
                 name: 'symbol',
                 description: 'The symbol of the stock',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

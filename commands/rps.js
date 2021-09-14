@@ -1,6 +1,6 @@
 import { randomMath } from '../lib/randomFunctions.js';
 import { default as config } from '../config.json';
-import { ApplicationCommandOptionTypes } from '../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const rps = config.rps;
 
@@ -18,7 +18,7 @@ export default {
                 name: 'choice',
                 description: 'The choice of rock, paper, or scissors',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

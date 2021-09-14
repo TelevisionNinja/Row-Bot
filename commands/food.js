@@ -1,6 +1,6 @@
 import { randomMath } from '../lib/randomFunctions.js';
 import { default as config } from '../config.json';
-import { ApplicationCommandOptionTypes } from '../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const food = config.food;
 
@@ -13,7 +13,7 @@ export default {
                 name: 'type',
                 description: 'The type of food',
                 required: false,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

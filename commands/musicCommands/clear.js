@@ -1,6 +1,6 @@
 import { default as musicConfig } from './musicConfig.json';
 import { default as audioQueue } from '../../lib/audioQueue.js';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const clearConfig = musicConfig.clear;
 
@@ -8,7 +8,7 @@ export default {
     interactionData: {
         name: clearConfig.names[0],
         description: clearConfig.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: []
     },
     names: clearConfig.names,

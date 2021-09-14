@@ -1,6 +1,6 @@
 import { randomMath } from '../lib/randomFunctions.js';
 import { default as config } from '../config.json';
-import { ApplicationCommandOptionTypes } from '../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const random = config.random,
     prefix = config.prefix;
@@ -14,13 +14,13 @@ export default {
                 name: 'max',
                 description: 'The maximum value of the random number',
                 required: true,
-                type: ApplicationCommandOptionTypes.INTEGER
+                type: Constants.ApplicationCommandOptionTypes.INTEGER
             },
             {
                 name: 'min',
                 description: 'The minimum value of the random number',
                 required: false,
-                type: ApplicationCommandOptionTypes.INTEGER
+                type: Constants.ApplicationCommandOptionTypes.INTEGER
             }
         ]
     },

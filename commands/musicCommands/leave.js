@@ -1,6 +1,6 @@
 import { default as musicConfig } from './musicConfig.json';
 import { default as audio } from '../../lib/audio.js';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const leaveConfig = musicConfig.leave;
 
@@ -8,7 +8,7 @@ export default {
     interactionData: {
         name: leaveConfig.names[0],
         description: leaveConfig.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: []
     },
     names: leaveConfig.names,

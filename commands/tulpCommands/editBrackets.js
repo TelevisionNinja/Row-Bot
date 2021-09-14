@@ -1,7 +1,7 @@
 import { default as tulpConfigFile } from './tulpConfig.json';
 import { default as config } from '../../config.json';
 import { tulps } from '../../lib/database.js';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const editBrackets = tulpConfigFile.editBrackets,
     enclosingText = editBrackets.enclosingText,
@@ -14,19 +14,19 @@ export default {
     interactionData: {
         name: editBrackets.names[0],
         description: editBrackets.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: [
             {
                 name: 'name',
                 description: 'The name',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             },
             {
                 name: 'brackets',
                 description: `<new_bracket>${enclosingText}<new_bracket>`,
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

@@ -2,7 +2,7 @@ import { default as config } from '../config.json';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
-import { ApplicationCommandOptionTypes } from '../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const covid = config.covid,
     noResultsMsg = config.noResultsMsg;
@@ -31,7 +31,7 @@ export default {
                 name: 'state',
                 description: 'The state to get information of',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

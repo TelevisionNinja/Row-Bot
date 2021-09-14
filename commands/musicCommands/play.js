@@ -2,7 +2,7 @@ import { default as musicConfig } from './musicConfig.json';
 import { default as audio } from '../../lib/audio.js';
 import { default as ytdl } from 'ytdl-core';
 import { default as ytSearch } from 'yt-search';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const play = musicConfig.play;
 
@@ -10,13 +10,13 @@ export default {
     interactionData: {
         name: play.names[0],
         description: play.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: [
             {
                 name: 'song',
                 description: 'The URL or search term',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

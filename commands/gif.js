@@ -2,7 +2,7 @@ import { default as config } from '../config.json';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/limit.js';
-import { ApplicationCommandOptionTypes } from '../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const tenor = config.tenor,
     noResultsMsg = config.noResultsMsg;
@@ -22,7 +22,7 @@ export default {
                 name: 'search',
                 description: 'What to search gifs for',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

@@ -1,6 +1,6 @@
 import { default as musicConfig } from './musicConfig.json';
 import { default as audio } from '../../lib/audio.js';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const skipConfig = musicConfig.skip;
 
@@ -8,13 +8,13 @@ export default {
     interactionData: {
         name: skipConfig.names[0],
         description: skipConfig.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: [
             {
                 name: 'index',
                 description: 'The index of the song to skip',
                 required: false,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },

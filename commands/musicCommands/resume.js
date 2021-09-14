@@ -1,6 +1,6 @@
 import { default as musicConfig } from './musicConfig.json';
 import { default as audio } from '../../lib/audio.js';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const resumeConfig = musicConfig.resume;
 
@@ -8,7 +8,7 @@ export default {
     interactionData: {
         name: resumeConfig.names[0],
         description: resumeConfig.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: []
     },
     names: resumeConfig.names,

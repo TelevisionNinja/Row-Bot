@@ -1,7 +1,7 @@
 import { default as tulpConfigFile } from'./tulpConfig.json';
 import { default as config } from '../../config.json';
 import { tulps } from '../../lib/database.js';
-import { ApplicationCommandOptionTypes } from '../../lib/enums.js';
+import { Constants } from 'discord.js';
 
 const editName = tulpConfigFile.editName,
     tulpConfig = config.tulp,
@@ -11,19 +11,19 @@ export default {
     interactionData: {
         name: editName.names[0],
         description: editName.description,
-        type: ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
         options: [
             {
                 name: 'old-name',
                 description: 'The old name',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             },
             {
                 name: 'new-name',
                 description: 'The new name',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING
+                type: Constants.ApplicationCommandOptionTypes.STRING
             }
         ]
     },
