@@ -396,10 +396,6 @@ client.on('interactionCreate', async interaction => {
 
     const command = client.commands.get(interaction.commandName);
 
-    if (typeof command === 'undefined') {
-        return;
-    }
-
     if (command.guildOnly && interaction.channel.type === 'DM') {
         interaction.reply('I can\'t execute that command in DM\'s');
         return;
