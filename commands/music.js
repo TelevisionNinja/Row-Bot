@@ -55,10 +55,6 @@ export default {
 
         //--------------------------------------------------------------------------------
 
-        if (typeof command === 'undefined') {
-            return;
-        }
-
         if (command.vcMemberOnly && !audio.vcCheckInteraction(interaction)) {
             return;
         }
