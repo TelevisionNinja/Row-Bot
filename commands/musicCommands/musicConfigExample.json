@@ -53,6 +53,6 @@
         "names" : [
             "skip"
         ],
-        "description" : "skips the current song"
+        "description" : "skips the current or selected song"
     }
 }
