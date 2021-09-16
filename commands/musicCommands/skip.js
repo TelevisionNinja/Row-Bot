@@ -43,12 +43,10 @@ export default {
         const index = interaction.options.getInteger('index');
 
         if (index) {
-            audio.skip(interaction, index);
+            audio.skipInteraction(interaction, index);
         }
         else {
-            audio.skip(interaction);
+            audio.skipInteraction(interaction);
         }
-
-        interaction.reply('Song skipped');
     }
 }

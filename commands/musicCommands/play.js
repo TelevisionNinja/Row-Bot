@@ -56,7 +56,7 @@ export default {
         const arg = interaction.options.getString('song');
 
         if (ytdl.validateURL(arg)) {
-            interaction.reply('Fetching song');
+            interaction.reply('Fetching song...');
             audio.playYoutube(interaction, arg);
         }
         else {
@@ -68,7 +68,7 @@ export default {
             if (videos.length) {
                 const songURL = videos[0].url;
 
-                interaction.editReply('Song found');
+                interaction.editReply('Fetching song...');
                 audio.playYoutube(interaction, songURL, songURL);
             }
             else {
