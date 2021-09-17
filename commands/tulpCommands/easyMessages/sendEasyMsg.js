@@ -1,9 +1,7 @@
 import { tulps } from '../../../lib/database.js';
 import { sendWebhookMsgUsingWebhook } from '../../../lib/msgUtils.js';
-import {
-    containsURL,
-    cutOff
-} from '../../../lib/stringUtils.js';
+import { containsURL } from '../../../lib/urlUtils.js';
+import { cutOff } from '../../../lib/stringUtils.js';
 
 export default {
     usage: '<custom bracket><message><custom bracket>',

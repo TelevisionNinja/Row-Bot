@@ -1,6 +1,6 @@
 import { default as config } from '../config.json';
 import axios from 'axios';
-import { replaceHTMLEntities } from '../lib/stringUtils.js';
+import { replaceHTMLEntities } from '../lib/urlUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 

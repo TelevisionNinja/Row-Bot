@@ -3,10 +3,8 @@ import { default as tulpConfigFile } from './tulpConfig.json';
 import { default as sendEasyMsg } from './easyMessages/sendEasyMsg.js';
 import { sendWebhookMsg } from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';
-import {
-    containsURL,
-    cutOff
-} from '../../lib/stringUtils.js';
+import { containsURL } from '../../lib/urlUtils.js';
+import { cutOff } from '../../lib/stringUtils.js';
 import { Constants } from 'discord.js';
 
 const tulpConfig = config.tulp,

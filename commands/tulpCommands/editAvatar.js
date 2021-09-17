@@ -3,7 +3,7 @@ import { default as config } from '../../config.json';
 import { extractNameAndAvatar } from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';
 import { Constants } from 'discord.js';
-import { isValidURL } from '../../lib/stringUtils.js';
+import { isValidURL } from '../../lib/urlUtils.js';
 
 const editAvatar = tulpConfig.editAvatar,
     tulpConfigObj = config.tulp,
