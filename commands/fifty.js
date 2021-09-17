@@ -2,7 +2,7 @@ import { default as config } from '../config.json';
 import axios from 'axios';
 import { replaceHTMLEntities } from '../lib/stringUtils.js';
 import PQueue from 'p-queue';
-import { backOff } from '../lib/limit.js';
+import { backOff } from '../lib/urlUtils.js';
 
 const fifty = config.fifty;
 

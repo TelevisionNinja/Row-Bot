@@ -8,7 +8,7 @@ import axios from 'axios';
 import { parse } from 'txml';
 import { default as config } from '../config.json';
 import PQueue from 'p-queue';
-import { backOff } from '../lib/limit.js';
+import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
 
 const rule = config.rule,

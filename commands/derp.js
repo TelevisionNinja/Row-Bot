@@ -6,7 +6,7 @@ import {
 import { tagArrToStr } from '../lib/stringUtils.js';
 import axios from 'axios';
 import PQueue from 'p-queue';
-import { backOff } from '../lib/limit.js';
+import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
 
 const derp = config.derp,
