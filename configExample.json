@@ -7,9 +7,17 @@
     "icon" : "iconExampleURL",
     "readingSpeed" : 300,
     "typingSpeed" : 200,
-    "reactionSpeed" : 950,
+    "reactionSpeed" : 1000,
+    "minimumPermissions" : [
+        "MANAGE_WEBHOOKS",
+        "MANAGE_MESSAGES",
+        "SEND_MESSAGES"
+    ],
 
     "tagSeparator" : ",",
+
+    "devGuild" : "",
+    "ruleChannel" : "",
 
     "postgresql" : {
         "host": "localhost",

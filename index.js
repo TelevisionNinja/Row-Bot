@@ -30,6 +30,7 @@ import {
     buildCommandJSON,
     loadGlobalSlashCommands
 } from './lib/slashCommandUtils.js';
+import { default as messages } from './messages.json';
 
 //--------------------------------------------------------------------------------
 // config vars
@@ -38,7 +39,10 @@ const prefix = config.prefix,
     token = config.token,
     clientID = config.clientID,
     activityStatus = config.activityStatus,
-    names = config.names.map(n => n.toLowerCase());
+    names = config.names.map(n => n.toLowerCase()),
+    minimumPermissions = config.minimumPermissions,
+    devGuildID = config.devGuildID,
+    ruleChannelID = config.ruleChannelID;
 
 //--------------------------------------------------------------------------------
 // client vars
@@ -70,7 +74,6 @@ let musicCommands = [];
 let noncommands = [];
 let genMsg = [];
 let intervalMsgs = [];
-const minimumPermissions = ['MANAGE_WEBHOOKS', 'MANAGE_MESSAGES', 'SEND_MESSAGES'];
 let audio = [];
 
 //--------------------------------------------------------------------------------
@@ -190,10 +193,10 @@ client.on('messageCreate', async msg => {
 
     // permissions
     if (!isDM) {
-        const guildMemberClient = msg.guild.me;
+        const permissions = msg.channel.permissionsFor(clientID);
 
-        // must be admin or have minimum perms
-        if (!guildMemberClient.permissions.has('ADMINISTRATOR') && !guildMemberClient.permissions.has(minimumPermissions)) {
+        // must be admin or have minimum permissions
+        if (!permissions.has(minimumPermissions)) {
             return;
         }
     }
@@ -201,13 +204,11 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // commands and messages
 
-    const msgStr = msg.content;
-
-    if (msgStr.startsWith(prefix)) {
+    if (msg.content.startsWith(prefix)) {
         // split command and arguments
 
         // discord trims the original message so only a left trim is needed
-        let args = msgStr.slice(prefix.length).trimStart().split(' ');
+        let args = msg.content.slice(prefix.length).trimStart().split(' ');
         const userCommand = args.shift().toLowerCase();
 
         //--------------------------------------------------------------------------------
@@ -295,12 +296,12 @@ client.on('messageCreate', async msg => {
     // chat bot
 
     if (hasBotMention(msg, false, true, false)) {
-        const noMentionsMsg = removeMentions(msgStr);
+        const noMentionsMsg = removeMentions(msg.content);
         const replyStr = await getChatBotReply(msg.author.id, noMentionsMsg);
 
         // reply
         if (replyStr.length) {
-            sendTypingMsg(msg.channel, replyStr, msgStr);
+            sendTypingMsg(msg.channel, replyStr, msg.content);
             return;
         }
     }
@@ -318,7 +319,7 @@ client.on('messageCreate', async msg => {
         for (let i = 0, n = names.length; i < n; i++) {
             const currentName = names[i];
 
-            if (currentName.length > selectedName.length && includesPhrase(msgStr, currentName, false)) {
+            if (currentName.length > selectedName.length && includesPhrase(msg.content, currentName, false)) {
                 botMention = true;
                 selectedName = currentName;
             }
@@ -327,7 +328,7 @@ client.on('messageCreate', async msg => {
 
     if (botMention) {
         // remove mentions or name from message
-        const noMentionsMsg = removeMentions(msgStr, selectedName).toLowerCase();
+        const noMentionsMsg = removeMentions(msg.content, selectedName).toLowerCase();
 
         //--------------------------------------------------------------------------------
         // voice
@@ -359,7 +360,7 @@ client.on('messageCreate', async msg => {
 
             // reply
             if (replyStr.length) {
-                sendTypingMsg(msg.channel, replyStr, msgStr);
+                sendTypingMsg(msg.channel, replyStr, msg.content);
                 return;
             }
         }
@@ -369,14 +370,14 @@ client.on('messageCreate', async msg => {
         // general message
 
         // remove mentions or name from message
-        const noMentionsMsg = removeMentions(msgStr).toLowerCase();
+        const noMentionsMsg = removeMentions(msg.content).toLowerCase();
 
         for (let i = 0, n = genMsg.length; i < n; i++) {
             const replyStr = genMsg[i].execute(msg, noMentionsMsg);
 
             // reply
             if (replyStr.length) {
-                sendTypingMsg(msg.channel, replyStr, msgStr);
+                sendTypingMsg(msg.channel, replyStr, msg.content);
                 return;
             }
         }
@@ -509,6 +510,22 @@ client.on('typingStart', async typing => {
 
         tulpCache.insert(channelID, webhook);
     }
+});
+
+//--------------------------------------------------------------------------------
+// welcome message
+
+client.on('guildMemberAdd', async member => {
+    const channel = member.guild.systemChannel;
+
+    if (channel === null || !channel.permissionsFor(clientID).has('SEND_MESSAGES') || member.guild.id !== devGuildID) {
+        return;
+    }
+
+    const greetingMsg = messages.greetings[randomMath(messages.greetings.length)];
+    const msg = `Please check the <#${ruleChannelID}> channel for some info 🙂`;
+
+    sendTypingMsg(channel, `${greetingMsg} <@${member.id}> ${msg}`, member.user.username);
 });
 
 //--------------------------------------------------------------------------------
