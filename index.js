@@ -31,6 +31,7 @@ import {
     loadGlobalSlashCommands
 } from './lib/slashCommandUtils.js';
 import { default as messages } from './messages.json';
+import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
 
 //--------------------------------------------------------------------------------
 // config vars
@@ -380,6 +381,17 @@ client.on('messageCreate', async msg => {
                 sendTypingMsg(msg.channel, replyStr, msg.content);
                 return;
             }
+        }
+    }
+
+    //--------------------------------------------------------------------------------
+    // AMP links
+
+    if (msg.guild.id === devGuildID) {
+        const links = await extractAndConvertAmpLinks(msg.content);
+
+        if (links.length) {
+            msg.reply(`It looks like you sent an AMP link. You should check out the canonical link instead for privacy reasons:\n${links.join('\n')}`);
         }
     }
 });
