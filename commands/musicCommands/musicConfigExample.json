@@ -41,6 +41,15 @@
         "description" : "shows the queue list"
     },
 
+    "remove" : {
+        "names" : [
+            "remove",
+            "delete",
+            "discard"
+        ],
+        "description" : "removes a song in the queue"
+    },
+
     "resume" : {
         "names" : [
             "resume",
@@ -53,6 +62,6 @@
         "names" : [
             "skip"
         ],
-        "description" : "skips the current or selected song"
+        "description" : "skips the current song or skips to the selected song"
     }
 }
