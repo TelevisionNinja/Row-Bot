@@ -285,12 +285,8 @@ client.on('messageCreate', async msg => {
 
     const userData = tulpCache.get(msg.author.id);
 
-    if (userData !== null) {
-        const webhook = tulpCache.get(msg.channel.id);
-
-        if (await sendEasyMsg.sendEasyMsg(msg, userData, webhook)) {
-            return;
-        }
+    if (userData !== null && await sendEasyMsg.sendEasyMsg(msg, userData)) {
+        return;
     }
 
     //--------------------------------------------------------------------------------
@@ -491,36 +487,9 @@ client.on('threadDelete', thread => {
 // cache user data and the channel webhook while the user is typing
 client.on('typingStart', async typing => {
     // users
-
-    const userID = typing.user.id;
-
-    if (tulpCache.has(userID)) {
-        tulpCache.resetCacheTime(userID);
-    }
-    else {
-        const userData = await tulps.getAll(userID);
-
-        if (userData.length) {
-            tulpCache.insert(userID, userData);
-        }
-        else {
-            tulpCache.insert(userID, null);
-            return;
-        }
-    }
-
-    //--------------------------------------------------------------------------------
-    // webhooks
-
-    const channelID = typing.channel.id;
-
-    if (tulpCache.has(channelID)) {
-        tulpCache.resetCacheTime(channelID);
-    }
-    else {
-        const webhook = await webhooks.get(channelID);
-
-        tulpCache.insert(channelID, webhook);
+    if (await tulpCache.cacheUser(typing.user.id)) {
+        // webhooks
+        tulpCache.cacheWebhook(typing.channel.id);
     }
 });
 

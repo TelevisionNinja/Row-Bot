@@ -1,24 +1,29 @@
 import { tulps } from '../../../lib/database.js';
-import { sendWebhookMsgUsingWebhook } from '../../../lib/msgUtils.js';
+import { sendWebhookMsg } from '../../../lib/msgUtils.js';
 import { containsURL } from '../../../lib/urlUtils.js';
 import { cutOff } from '../../../lib/stringUtils.js';
+import { default as tulpCache } from '../../../lib/tulpCache.js';
 
 export default {
     usage: '<custom bracket><message><custom bracket>',
     /**
-     * send tulp message using the tulp cache
+     * send tulp messages using brackets
      * 
      * @param {*} msg message obj
      * @param {*} tulpArr tulp array
-     * @param {*} webhook webhook
      * @returns 
      */
-    async sendEasyMsg(msg, tulpArr, webhook) {
+    async sendEasyMsg(msg, tulpArr) {
         // find user data if not cached
         if (typeof tulpArr === 'undefined') {
-            tulpArr = await tulps.getAll(msg.author.id);
+            const userID = msg.author.id;
+            tulpArr = await tulps.getAll(userID);
 
-            if (!tulpArr.length) {
+            if (tulpArr.length) {
+                tulpCache.insert(userID, tulpArr);
+            }
+            else {
+                tulpCache.insert(userID, null);
                 return false;
             }
         }
@@ -113,7 +118,12 @@ export default {
             });
         }
         else { // send webhook message
-            sendWebhookMsgUsingWebhook(msg, tulpMsg, attachmentArr, selectedTulp.username, selectedTulp.avatar, webhook);
+            sendWebhookMsg(msg, {
+                content: tulpMsg,
+                username: selectedTulp.username,
+                avatarURL: selectedTulp.avatar,
+                files: attachmentArr
+            });
 
             try {
                 await msg.delete();

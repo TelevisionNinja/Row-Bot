@@ -128,16 +128,16 @@ export default {
         }
         else {
             // webhook
-            sendWebhookMsg(msg, tulpMsg, attachmentArr, selectedTulp.username, selectedTulp.avatar);
+            sendWebhookMsg(msg, {
+                content: tulpMsg,
+                username: selectedTulp.username,
+                avatarURL: selectedTulp.avatar,
+                files: attachmentArr
+            });
         }
     },
     async executeInteraction(interaction) {
-        const isDM = interaction.channel.type === 'DM';
-
-        if (!isDM) {
-            interaction.deferReply();
-            interaction.deleteReply();
-        }
+        await interaction.deferReply({ ephemeral: true });
 
         const tulpMsg = interaction.options.getString('message');
 
@@ -146,14 +146,24 @@ export default {
         const selectedTulp = await tulps.get(interaction.user.id, username);
 
         if (typeof selectedTulp === 'undefined') {
-            interaction.user.send(tulpConfig.noDataMsg);
+            interaction.editReply(tulpConfig.noDataMsg);
             return;
         }
+
+        interaction.deleteReply();
 
         //-------------------------------------------------------------------------------------
         // detect dm channel
 
-        if (isDM) {
+        if (interaction.inGuild()) {
+            // webhook
+            sendWebhookMsg(interaction, {
+                content: tulpMsg,
+                username: selectedTulp.username,
+                avatarURL: selectedTulp.avatar
+            });
+        }
+        else {
             interaction.channel.send({
                 embeds: [{
                     author: {
@@ -163,10 +173,6 @@ export default {
                     description: tulpMsg
                 }]
             });
-        }
-        else {
-            // webhook
-            sendWebhookMsg(interaction, tulpMsg, undefined, selectedTulp.username, selectedTulp.avatar);
         }
     }
 }
