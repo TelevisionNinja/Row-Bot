@@ -45,6 +45,15 @@
 
     "chatbotAPI" : "",
 
+    "activity" : {
+        "names" : [
+            "activity",
+            "activities",
+            "games"
+        ],
+        "description" : "Returns an invite to an activity"
+    },
+
     "coin" : {
         "names" : [
             "coin",
