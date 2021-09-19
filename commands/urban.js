@@ -1,7 +1,6 @@
 import { default as config } from '../config.json';
 import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
-import { stringify } from 'querystring';
 import axios from 'axios';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
@@ -37,8 +36,7 @@ export default {
     usage: '<search term>',
     cooldown: 1,
     async execute(msg, args) {
-        const searchWord = stringify({ term: args.join(' ') });
-        const URL = `${urban.API}${searchWord}`;
+        const URL = `${urban.API}${args.join(' ')}`;
 
         await queue.add(async () => {
             try {
@@ -93,8 +91,7 @@ export default {
     async executeInteraction(interaction) {
         await interaction.deferReply();
 
-        const searchWord = stringify({ term: interaction.options.getString('search') });
-        const URL = `${urban.API}${searchWord}`;
+        const URL = `${urban.API}${interaction.options.getString('search')}`;
 
         await queue.add(async () => {
             try {

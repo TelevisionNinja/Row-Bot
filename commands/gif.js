@@ -71,13 +71,13 @@ export default {
  * @param {*} searchTerm term to be searched
  */
 export async function getGif(searchTerm) {
-    const searchTerms = encodeURIComponent(searchTerm);
+    const encodedSearchTerm = encodeURIComponent(searchTerm);
     let gif = '';
     let hasResult = false;
 
     await queue.add(async () => {
         try {
-            const response = await axios.get(`${URL}${searchTerms}`);
+            const response = await axios.get(`${URL}${encodedSearchTerm}`);
             const gifArr = response.data.results;
 
             if (gifArr.length) {
