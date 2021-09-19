@@ -383,12 +383,14 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // AMP links
 
-    if (msg.guild.id === devGuildID) {
-        const links = await extractAndConvertAmpLinks(msg.content);
+    if (msg.guild.id !== devGuildID) {
+        return;
+    }
 
-        if (links.length) {
-            msg.reply(`It looks like you sent an AMP link. You should check out the canonical link instead for privacy reasons:\n${links.join('\n')}`);
-        }
+    const links = await extractAndConvertAmpLinks(msg.content);
+
+    if (links.length) {
+        msg.reply(`It looks like you sent an AMP link. You should check out the canonical link instead for privacy reasons:\n${links.join('\n')}`);
     }
 });
 
@@ -497,9 +499,13 @@ client.on('typingStart', async typing => {
 // welcome message
 
 client.on('guildMemberAdd', async member => {
+    if (member.guild.id !== devGuildID) {
+        return;
+    }
+
     const channel = member.guild.systemChannel;
 
-    if (channel === null || !channel.permissionsFor(clientID).has('SEND_MESSAGES') || member.guild.id !== devGuildID) {
+    if (channel === null || !channel.permissionsFor(clientID).has('SEND_MESSAGES')) {
         return;
     }
 
