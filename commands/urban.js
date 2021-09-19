@@ -36,7 +36,7 @@ export default {
     usage: '<search term>',
     cooldown: 1,
     async execute(msg, args) {
-        const URL = `${urban.API}${args.join(' ')}`;
+        const URL = `${urban.API}${encodeURIComponent(args.join(' '))}`;
 
         await queue.add(async () => {
             try {
@@ -91,7 +91,7 @@ export default {
     async executeInteraction(interaction) {
         await interaction.deferReply();
 
-        const URL = `${urban.API}${interaction.options.getString('search')}`;
+        const URL = `${urban.API}${encodeURIComponent(interaction.options.getString('search'))}`;
 
         await queue.add(async () => {
             try {
