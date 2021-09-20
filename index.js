@@ -325,7 +325,7 @@ client.on('messageCreate', async msg => {
 
     if (botMention) {
         // remove mentions or name from message
-        const noMentionsMsg = removeMentions(msg.content, selectedName).toLowerCase();
+        const noMentionsMsg = removeAllSpecialChars(removeMentions(msg.content, selectedName)).trim().toLowerCase();
 
         //--------------------------------------------------------------------------------
         // voice
@@ -367,7 +367,7 @@ client.on('messageCreate', async msg => {
         // general message
 
         // remove mentions or name from message
-        const noMentionsMsg = removeMentions(msg.content).toLowerCase();
+        const noMentionsMsg = removeAllSpecialChars(removeMentions(msg.content)).trim().toLowerCase();
 
         for (let i = 0, n = genMsg.length; i < n; i++) {
             const replyStr = genMsg[i].execute(msg, noMentionsMsg);
