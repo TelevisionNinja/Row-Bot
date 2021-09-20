@@ -259,10 +259,7 @@
         "names" : [""],
         "description" : "",
         "noDataMsg" : "",
-        "notUserMsg" : "",
-        "dbName" : "",
-        "dbCollection" : "",
-        "webhookCollection" : ""
+        "notUserMsg" : ""
     },
 
     "uptime" : {
