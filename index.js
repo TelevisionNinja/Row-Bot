@@ -330,7 +330,7 @@ client.on('messageCreate', async msg => {
         //--------------------------------------------------------------------------------
         // voice
 
-        if (msg.member.voice.channel) {
+        if (!isDM && msg.member.voice.channel) {
             if (noMentionsMsg === 'join me') {
                 audioPlayer.joinVC(msg);
 
@@ -341,7 +341,7 @@ client.on('messageCreate', async msg => {
 
                 return;
             }
-            else if (audioPlayer.vcCheck(msg) && (noMentionsMsg === 'speak' || noMentionsMsg === 'talk')) {
+            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioPlayer.vcCheck(msg)) {
                 const randAudio = randomMath(audio.length);
                 audioPlayer.playFile(msg, audio[randAudio]);
 
@@ -383,7 +383,7 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // AMP links
 
-    if (msg.guild.id !== devGuildID) {
+    if (!isDM && msg.guild.id !== devGuildID) {
         return;
     }
 
