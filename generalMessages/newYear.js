@@ -6,18 +6,24 @@ const newYear = messages.newYear,
     newYearLowerCase = newYear.map(n => n.toLowerCase()),
     newYearsEveLowerCase = newYearsEve.map(n => n.toLowerCase());
 
+const newYearMap = new Map(),
+    newYearsEveMap = new Map();
+
+newYearLowerCase.forEach((n, i) => newYearMap.set(n, i));
+newYearsEveLowerCase.forEach(n => newYearsEveMap.set(n, true));
+
 // wish a happy new year
 export function execute(msg, filteredMsg) {
-    for (let i = 0, n = newYear.length; i < n; i++) {
-        if (filteredMsg === newYearLowerCase[i]) {
-            return newYear[i];
-        }
+    const newYearIndex = newYearMap.get(filteredMsg);
+
+    if (typeof newYearIndex !== 'undefined') {
+        return newYear[newYearIndex];
     }
 
-    for (let i = 0, n = newYearsEve.length; i < n; i++) {
-        if (filteredMsg === newYearsEveLowerCase[i]) {
-            return newYearsEve[randomMath(n)];
-        }
+    //------------------------
+
+    if (newYearsEveMap.get(filteredMsg)) {
+        return newYearsEve[randomMath(newYearsEve.length)];
     }
 
     return '';

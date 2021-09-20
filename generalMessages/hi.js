@@ -6,20 +6,15 @@ const names = config.names.map(n => n.toLowerCase()),
     greetings = messages.greetings,
     greetingsLowerCase = greetings.map(g => g.toLowerCase());
 
+const greetingsMap = new Map();
+
+greetingsLowerCase.forEach(g => greetingsMap.set(g, true));
+names.forEach(n => greetingsMap.set(n, true));
+
 // say hi
 export function execute(msg, filteredMsg) {
-    const numOfGreetings = greetings.length;
-
-    for (let i = 0; i < numOfGreetings; i++) {
-        if (filteredMsg === greetingsLowerCase[i]) {
-            return greetings[randomMath(numOfGreetings)];
-        }
-    }
-
-    for (let i = 0, n = names.length; i < n; i++) {
-        if (filteredMsg === names[i]) {
-            return greetings[randomMath(numOfGreetings)];
-        }
+    if (greetingsMap.get(filteredMsg)) {
+        return greetings[randomMath(greetings.length)];
     }
 
     return '';

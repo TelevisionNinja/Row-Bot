@@ -4,12 +4,14 @@ import { randomMath } from '../lib/randomFunctions.js';
 const valentines = messages.valentines,
     valentinesLowerCase = valentines.map(v => v.toLowerCase());
 
+const valentinesMap = new Map();
+
+valentinesLowerCase.forEach(v => valentinesMap.set(v, true));
+
 // wish a happy valentine's day
 export function execute(msg, filteredMsg) {
-    for (let i = 0, n = valentines.length; i < n; i++) {
-        if (filteredMsg === valentinesLowerCase[i]) {
-            return valentines[randomMath(n)];
-        }
+    if (valentinesMap.get(filteredMsg)) {
+        return valentines[randomMath(valentines.length)];
     }
 
     return '';

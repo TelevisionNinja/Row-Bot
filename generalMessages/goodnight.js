@@ -4,12 +4,14 @@ import { randomMath } from '../lib/randomFunctions.js';
 const goodnights = messages.goodnights,
     goodnightsLowerCase = goodnights.map(g => g.toLowerCase());
 
+const goodnightsMap = new Map();
+
+goodnightsLowerCase.forEach(g => goodnightsMap.set(g, true));
+
 // say goodnight
 export function execute(msg, filteredMsg) {
-    for (let i = 0, n = goodnights.length; i < n; i++) {
-        if (filteredMsg === goodnightsLowerCase[i]) {
-            return goodnights[randomMath(n)];
-        }
+    if (goodnightsMap.get(filteredMsg)) {
+        return goodnights[randomMath(goodnights.length)];
     }
 
     return '';

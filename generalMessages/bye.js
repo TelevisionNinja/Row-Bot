@@ -4,12 +4,14 @@ import { randomMath } from '../lib/randomFunctions.js';
 const farewells = messages.farewells,
     farewellsLowerCase = farewells.map(f => f.toLowerCase());
 
+const farewellsMap = new Map();
+
+farewellsLowerCase.forEach(f => farewellsMap.set(f, true));
+
 // say goodbye
 export function execute(msg, filteredMsg) {
-    for (let i = 0, n = farewells.length; i < n; i++) {
-        if (filteredMsg === farewellsLowerCase[i]) {
-            return farewells[randomMath(n)];
-        }
+    if (farewellsMap.get(filteredMsg)) {
+        return farewells[randomMath(farewells.length)];
     }
 
     return '';

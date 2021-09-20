@@ -6,18 +6,20 @@ const christmas = messages.christmas,
     christmasLowerCase = christmas.map(c => c.toLowerCase()),
     christmasEveLowerCase = christmasEve.map(c => c.toLowerCase());
 
+const christmasMap = new Map(),
+    christmasEveMap = new Map();
+
+christmasLowerCase.forEach(c => christmasMap.set(c, true));
+christmasEveLowerCase.forEach(c => christmasEveMap.set(c, true));
+
 // wish a merry christmas
 export function execute(msg, filteredMsg) {
-    for (let i = 0, n = christmas.length; i < n; i++) {
-        if (filteredMsg === christmasLowerCase[i]) {
-            return  christmas[randomMath(n)];
-        }
+    if (christmasMap.get(filteredMsg)) {
+        return christmas[randomMath(christmas.length)];
     }
 
-    for (let i = 0, n = christmasEve.length; i < n; i++) {
-        if (filteredMsg === christmasEveLowerCase[i]) {
-            return christmasEve[randomMath(n)];
-        }
+    if (christmasEveMap.get(filteredMsg)) {
+        return christmasEve[randomMath(christmasEve.length)];
     }
 
     return '';
