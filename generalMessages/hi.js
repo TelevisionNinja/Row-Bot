@@ -3,14 +3,15 @@ import { randomMath } from '../lib/randomFunctions.js';
 import { default as config } from '../config.json';
 
 const names = config.names.map(n => n.toLowerCase()),
-    greetings = messages.greetings;
+    greetings = messages.greetings,
+    greetingsLowerCase = greetings.map(g => g.toLowerCase());
 
 // say hi
 export function execute(msg, filteredMsg) {
     const numOfGreetings = greetings.length;
 
     for (let i = 0; i < numOfGreetings; i++) {
-        if (filteredMsg === greetings[i].toLowerCase()) {
+        if (filteredMsg === greetingsLowerCase[i]) {
             return greetings[randomMath(numOfGreetings)];
         }
     }
