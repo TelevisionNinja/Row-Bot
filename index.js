@@ -416,8 +416,8 @@ client.on('interactionCreate', async interaction => {
     // execute command
 
     try {
-		await command.executeInteraction(interaction);
-	}
+        await command.executeInteraction(interaction);
+    }
     catch (error) {
         const content = {
             content: 'I couldn\'t do that command for some reason 😢',
@@ -432,7 +432,7 @@ client.on('interactionCreate', async interaction => {
         }
 
         console.log(error);
-	}
+    }
 });
 
 //--------------------------------------------------------------------------------

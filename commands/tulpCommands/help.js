@@ -50,8 +50,8 @@ export default {
     guildOnly: false,
     usage: '<command name>',
     execute(msg, args) {
-		if (args.length) {
-			const userCommand = args[0].toLowerCase();
+        if (args.length) {
+            const userCommand = args[0].toLowerCase();
             const argCommand = msg.client.tulpCommands.get(userCommand);
 
             if (typeof argCommand === 'undefined') {
