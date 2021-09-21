@@ -71,7 +71,7 @@ async function getStockStr(symbol) {
 
     await queue.add(async () => {
         try {
-            const response = await axios.get(`${stock.API}${symbol}`);
+            const response = await axios.get(`${stock.API}${encodeURIComponent(symbol)}`);
             const str = response.data;
 
             price = str.substring(str.indexOf(priceElement) + priceElement.length);
@@ -95,7 +95,7 @@ export async function getStock(symbol) {
 
     await queue.add(async () => {
         try {
-            const response = await axios.get(`${stock.API}${symbol}`);
+            const response = await axios.get(`${stock.API}${encodeURIComponent(symbol)}`);
             const str = response.data;
             let priceStr = str.substring(str.indexOf(priceElement) + priceElement.length);
 
