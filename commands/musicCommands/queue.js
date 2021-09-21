@@ -1,6 +1,7 @@
 import { default as musicConfig } from './musicConfig.json';
 import { default as audioQueue } from '../../lib/audioQueue.js';
 import { Constants } from 'discord.js';
+import { cutOff } from '../../lib/stringUtils.js';
 
 const queueConfig = musicConfig.queue;
 
@@ -34,7 +35,7 @@ export default {
                 queueStr = `${queueStr}${queueList}`;
             }
 
-            msg.channel.send(queueStr);
+            msg.channel.send(cutOff(queueStr, 2000));
         }
         else {
             msg.channel.send('There are no songs in the queue');
@@ -57,7 +58,7 @@ export default {
                 queueStr = `${queueStr}${queueList}`;
             }
 
-            interaction.reply(queueStr);
+            interaction.reply(cutOff(queueStr, 2000));
         }
         else {
             interaction.reply('There are no songs in the queue');

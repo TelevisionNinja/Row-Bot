@@ -1,6 +1,7 @@
 import { default as tulpConfig } from './tulpConfig.json';
 import { tulps } from '../../lib/database.js';
 import { Constants } from 'discord.js';
+import { cutOff } from '../../lib/stringUtils.js';
 
 const listConfig = tulpConfig.list;
 
@@ -24,7 +25,7 @@ export default {
             msg.channel.send({
                 embeds: [{
                     title: 'Your tulps',
-                    description: tulpNames.map(t => `• ${t.username}`).join('\n')
+                    description: cutOff(tulpNames.map(t => `• ${t.username}`).join('\n'), 4096)
                 }]
             });
         }
@@ -39,7 +40,7 @@ export default {
             interaction.reply({
                 embeds: [{
                     title: 'Your tulps',
-                    description: tulpNames.map(t => `• ${t.username}`).join('\n')
+                    description: cutOff(tulpNames.map(t => `• ${t.username}`).join('\n'), 4096)
                 }]
             });
         }

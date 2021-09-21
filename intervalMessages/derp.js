@@ -6,6 +6,7 @@ import {
     sendImg
 } from '../lib/msgUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
+import { cutOff } from '../lib/stringUtils.js';
 
 const derpConfig = config.derp,
     noResultsMsg = config.noResultsMsg;
@@ -29,7 +30,7 @@ export async function execute(client) {
                 sendImg(recipientDaily, img, false);
             }
             else {
-                recipientDaily.send(`${noResultsMsg}\nTags:\n\`${tagArr}\``);
+                recipientDaily.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
             }
         },
         derpConfig.intervalTime,
@@ -52,7 +53,7 @@ export async function execute(client) {
                 sendImg(recipientInterval, img, false);
             }
             else {
-                recipientInterval.send(`${noResultsMsg}\nTags:\n\`${tagArr}\``);
+                recipientInterval.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
             }
         },
         '0:0',

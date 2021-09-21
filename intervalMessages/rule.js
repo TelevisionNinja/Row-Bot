@@ -7,6 +7,7 @@ import {
 } from '../lib/msgUtils.js';
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
+import { cutOff } from '../lib/stringUtils.js';
 
 const ruleConfig = config.rule,
     noResultsMsg = config.noResultsMsg;
@@ -31,7 +32,7 @@ export async function execute(client) {
                 sendImg(recipient, img, false);
             }
             else {
-                recipient.send(`${noResultsMsg}\nTags:\n\`${tagArr}\``);
+                recipient.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
             }
         },
         '0:0',
