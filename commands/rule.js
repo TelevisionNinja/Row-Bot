@@ -71,7 +71,7 @@ export default {
  * @returns 
  */
 export async function getImageRule0(tagArr) {
-    const URL = `${rule.sites[0].API}${tagArr.join(encodeURIComponent(rule.separator))}&limit=`;
+    const URL = `${rule.sites[0].API}${tagArr.join(rule.separator)}&limit=`;
     let imgObj = { results: 0 };
 
     await queueZero.add(async () => {
@@ -136,7 +136,7 @@ export async function getImageRule1(tagArr) {
         tagArr = tagArr.slice(0, 3);
     }
 
-    const URL = `${rule.sites[1].API}${tagArr.join(encodeURIComponent(rule.separator))}&limit=`;
+    const URL = `${rule.sites[1].API}${tagArr.join(rule.separator)}&limit=`;
     let imgObj = { results: 0 };
 
     await queueOne.add(async () => {
