@@ -24,7 +24,7 @@ export async function execute(client) {
             const selection = ruleConfig.intervalTags[randIndex];
             let tagArr = [selection, ...filter];
 
-            tagArr = tagArrToParsedTagArr(tagArr, ruleConfig.whitespace);
+            tagArr = tagArrToParsedTagArr(tagArr, ruleConfig.sites[0].whitespace);
 
             const img = await getImageRule0(tagArr);
 
