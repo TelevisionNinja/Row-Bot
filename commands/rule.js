@@ -71,7 +71,8 @@ export default {
  * @returns 
  */
 export async function getImageRule0(tagArr) {
-    const URL = `${rule.sites[0].API}${tagArr.join(rule.separator)}&limit=`;
+    // tags are separated by '+'
+    const URL = `${rule.sites[0].API}${tagArr.join(rule.sites[0].separator)}&limit=`;
     let imgObj = { results: 0 };
 
     await queueZero.add(async () => {
@@ -136,7 +137,8 @@ export async function getImageRule1(tagArr) {
         tagArr = tagArr.slice(0, 3);
     }
 
-    const URL = `${rule.sites[1].API}${tagArr.join(rule.separator)}&limit=`;
+    // tags are separated by ' '
+    const URL = `${rule.sites[1].API}${tagArr.join(encodeURIComponent(rule.sites[1].separator))}&limit=`;
     let imgObj = { results: 0 };
 
     await queueOne.add(async () => {
@@ -190,9 +192,8 @@ export async function getImageRule1(tagArr) {
  */
 export async function getImage(tagArr) {
     // whitespace is replaced with '_'
-    // tags are separated by '+'
     // '-' infront of a tag means to exclude it
-    tagArr = tagArrToParsedTagArr(tagArr, rule.whitespace);
+    tagArr = tagArrToParsedTagArr(tagArr, rule.sites[0].whitespace);
 
     const numOfSites = rule.sites.length;
     const randomSiteID = randomMath(numOfSites);

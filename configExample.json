@@ -212,18 +212,20 @@
     "rule" : {
         "names" : [""],
         "description" : "",
-        "whitespace" : "_",
-        "separator" : "+",
         "websiteName" : "",
         "embedColor" : "",
         "sites" : [
             {
                 "URL": "",
-                "API" : ""
+                "API" : "",
+                "whitespace" : "_",
+                "separator" : "+"
             },
             {
                 "URL": "",
-                "API" : ""
+                "API" : "",
+                "whitespace" : "_",
+                "separator" : " "
             }
         ],
 
