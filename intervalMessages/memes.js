@@ -1,7 +1,7 @@
 import DailyInterval from 'daily-intervals';
 import { getChannel } from '../lib/msgUtils.js';
 import { default as config } from '../config.json';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import { randomMath } from '../lib/randomFunctions.js';
 
 const memes = config.memes;
@@ -12,11 +12,11 @@ export async function execute(client) {
 
     const interval = new DailyInterval(
         async () => {
-            try {
-                const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.postCount}`;
-                const response = await axios.get(URL);
-                const postArr = response.data.data.children;
+            const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.postCount}`;
+            const response = await fetch(URL);
 
+            try {
+                const postArr = (await response.json()).data.children;
                 const post = postArr[randomMath(memes.postCount)];
 
                 recipient.send(encodeURI(post.data.url));

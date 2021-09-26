@@ -1,5 +1,5 @@
 import { default as config } from '../config.json';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
@@ -70,16 +70,16 @@ async function getStockStr(symbol) {
     let price = '';
 
     await queue.add(async () => {
-        try {
-            const response = await axios.get(`${stock.API}${encodeURIComponent(symbol)}`);
-            const str = response.data;
+        const response = await fetch(`${stock.API}${encodeURIComponent(symbol)}`);
 
-            price = str.substring(str.indexOf(priceElement) + priceElement.length);
-            price = price.substring(price.indexOf('>') + 1, price.indexOf('<'));
+        if (backOff(response, queue)) {
+            return;
         }
-        catch (error) {
-            backOff(error, queue);
-        }
+
+        const str = await response.text();
+
+        price = str.substring(str.indexOf(priceElement) + priceElement.length);
+        price = price.substring(price.indexOf('>') + 1, price.indexOf('<'));
     });
 
     return price;
@@ -94,18 +94,18 @@ export async function getStock(symbol) {
     let price = 0.0;
 
     await queue.add(async () => {
-        try {
-            const response = await axios.get(`${stock.API}${encodeURIComponent(symbol)}`);
-            const str = response.data;
-            let priceStr = str.substring(str.indexOf(priceElement) + priceElement.length);
+        const response = await fetch(`${stock.API}${encodeURIComponent(symbol)}`);
 
-            priceStr = priceStr.substring(priceStr.indexOf('>') + 1, priceStr.indexOf('<'));
-            priceStr = priceStr.replaceAll(',', '');
-            price = parseFloat(priceStr);
+        if (backOff(response, queue)) {
+            return;
         }
-        catch (error) {
-            backOff(error, queue);
-        }
+
+        const str = await response.text();
+        let priceStr = str.substring(str.indexOf(priceElement) + priceElement.length);
+
+        priceStr = priceStr.substring(priceStr.indexOf('>') + 1, priceStr.indexOf('<'));
+        priceStr = priceStr.replaceAll(',', '');
+        price = parseFloat(priceStr);
     });
 
     return price;

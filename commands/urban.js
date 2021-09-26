@@ -1,7 +1,7 @@
 import { default as config } from '../config.json';
 import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
@@ -35,55 +35,55 @@ export default {
     guildOnly: false,
     usage: '<search term>',
     cooldown: 1,
-    async execute(msg, args) {
+    execute(msg, args) {
         const URL = `${urban.API}${encodeURIComponent(args.join(' '))}`;
 
-        await queue.add(async () => {
-            try {
-                const response = await axios.get(URL);
-                const defs = response.data.list;
-                const count = defs.length;
+        queue.add(async () => {
+            const response = await fetch(URL);
 
-                if (count) {
-                    const result = defs[randomMath(count)];
-                    const definition = result.definition.replaceAll(/[\[\]]/g, '');
-                    let example = 'No example was provided.';
-
-                    if (result.example.length) {
-                        example = cutOff(result.example.replaceAll(/[\[\]]/g, ''), 1024);
-                    }
-
-                    msg.channel.send({
-                        embeds: [{
-                            title: result.word,
-                            url: result.permalink,
-                            fields: [
-                                {
-                                    name: 'Definition',
-                                    value: cutOff(definition, 1024)
-                                },
-                                {
-                                    name: 'Example',
-                                    value: example
-                                },
-                                {
-                                    name: 'Rating',
-                                    value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
-                                },
-                                {
-                                    name: 'Results',
-                                    value: `${count}`
-                                }
-                            ]
-                        }]
-                    });
-                }
-                else {
-                    msg.channel.send(noResultsMsg);
-                }
+            if (backOff(response, queue)) {
+                msg.channel.send(noResultsMsg);
+                return;
             }
-            catch (error) {
-                backOff(error, queue);
+
+            const defs = (await response.json()).list;
+            const count = defs.length;
+
+            if (count) {
+                const result = defs[randomMath(count)];
+                const definition = result.definition.replaceAll(/[\[\]]/g, '');
+                let example = 'No example was provided.';
+
+                if (result.example.length) {
+                    example = cutOff(result.example.replaceAll(/[\[\]]/g, ''), 1024);
+                }
+
+                msg.channel.send({
+                    embeds: [{
+                        title: result.word,
+                        url: result.permalink,
+                        fields: [
+                            {
+                                name: 'Definition',
+                                value: cutOff(definition, 1024)
+                            },
+                            {
+                                name: 'Example',
+                                value: example
+                            },
+                            {
+                                name: 'Rating',
+                                value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
+                            },
+                            {
+                                name: 'Results',
+                                value: `${count}`
+                            }
+                        ]
+                    }]
+                });
+            }
+            else {
                 msg.channel.send(noResultsMsg);
             }
         });
@@ -93,52 +93,52 @@ export default {
 
         const URL = `${urban.API}${encodeURIComponent(interaction.options.getString('search'))}`;
 
-        await queue.add(async () => {
-            try {
-                const response = await axios.get(URL);
-                const defs = response.data.list;
-                const count = defs.length;
+        queue.add(async () => {
+            const response = await fetch(URL);
 
-                if (count) {
-                    const result = defs[randomMath(count)];
-                    const definition = result.definition.replaceAll(/[\[\]]/g, '');
-                    let example = 'No example was provided.';
-
-                    if (result.example.length) {
-                        example = cutOff(result.example.replaceAll(/[\[\]]/g, ''), 1024);
-                    }
-
-                    interaction.editReply({
-                        embeds: [{
-                            title: result.word,
-                            url: result.permalink,
-                            fields: [
-                                {
-                                    name: 'Definition',
-                                    value: cutOff(definition, 1024)
-                                },
-                                {
-                                    name: 'Example',
-                                    value: example
-                                },
-                                {
-                                    name: 'Rating',
-                                    value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
-                                },
-                                {
-                                    name: 'Results',
-                                    value: `${count}`
-                                }
-                            ]
-                        }]
-                    });
-                }
-                else {
-                    interaction.editReply(noResultsMsg);
-                }
+            if (backOff(response, queue)) {
+                interaction.editReply(noResultsMsg);
+                return;
             }
-            catch (error) {
-                backOff(error, queue);
+
+            const defs = (await response.json()).list;
+            const count = defs.length;
+
+            if (count) {
+                const result = defs[randomMath(count)];
+                const definition = result.definition.replaceAll(/[\[\]]/g, '');
+                let example = 'No example was provided.';
+
+                if (result.example.length) {
+                    example = cutOff(result.example.replaceAll(/[\[\]]/g, ''), 1024);
+                }
+
+                interaction.editReply({
+                    embeds: [{
+                        title: result.word,
+                        url: result.permalink,
+                        fields: [
+                            {
+                                name: 'Definition',
+                                value: cutOff(definition, 1024)
+                            },
+                            {
+                                name: 'Example',
+                                value: example
+                            },
+                            {
+                                name: 'Rating',
+                                value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
+                            },
+                            {
+                                name: 'Results',
+                                value: `${count}`
+                            }
+                        ]
+                    }]
+                });
+            }
+            else {
                 interaction.editReply(noResultsMsg);
             }
         });

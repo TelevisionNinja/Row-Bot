@@ -1,5 +1,5 @@
 import { default as config } from '../config.json';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
@@ -121,14 +121,17 @@ export async function getTestData(nthDay = 0) {
     }
 
     await queueTests.add(async () => {
-        try {
-            const response = await axios.get(getTestURL(nthDay));
-            results = response.data;
+        const response = await fetch(getTestURL(nthDay));
+
+        if (backOff(response, queueTests)) {
+            return;
         }
-        catch (error) {
-            if (!backOff(error, queueTests)) {
-                results = await getTestData(nthDay + 1);
-            }
+
+        if (response.status === 404) {
+            results = await getTestData(nthDay + 1);
+        }
+        else {
+            results = await response.text();
         }
     });
 
@@ -352,13 +355,13 @@ export async function getVaccineData() {
     let results = '';
 
     await queueVaccines.add(async () => {
-        try {
-            const response = await axios.get(covid.vaccineURL);
-            results = response.data;
+        const response = await fetch(covid.vaccineURL);
+
+        if (backOff(response, queueVaccines)) {
+            return;
         }
-        catch (error) {
-            backOff(error, queueVaccines);
-        }
+
+        results = await response.text();
     });
 
     return results;
@@ -496,14 +499,17 @@ export async function getPopulationData(yearOffset = 0) {
     }
 
     await queuePopulation.add(async () => {
-        try {
-            const response = await axios.get(getPopulationURL(yearOffset));
-            results = response.data;
+        const response = await fetch(getPopulationURL(yearOffset));
+
+        if (backOff(response, queuePopulation)) {
+            return;
         }
-        catch (error) {
-            if (!backOff(error, queuePopulation)) {
-                results = await getPopulationData(yearOffset + 1);
-            }
+
+        if (response.status === 404) {
+            results = await getPopulationData(yearOffset + 1);
+        }
+        else {
+            results = await response.text();
         }
     });
 

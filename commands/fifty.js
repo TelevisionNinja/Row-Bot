@@ -1,5 +1,5 @@
 import { default as config } from '../config.json';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import { replaceHTMLEntities } from '../lib/urlUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
@@ -50,16 +50,16 @@ export async function getRandomFifty() {
     let link = '';
 
     await queue.add(async () => {
-        try {
-            const response = await axios.get(fifty.URL);
-            const post = response.data[0].data.children[0].data;
+        const response = await fetch(fifty.URL);
 
-            title = post.title;
-            link = replaceHTMLEntities(post.url);
+        if (backOff(response, queue)) {
+            return;
         }
-        catch (error) {
-            backOff(error, queue);
-        }
+
+        const post = (await response.json())[0].data.children[0].data;
+
+        title = post.title;
+        link = replaceHTMLEntities(post.url);
     });
 
     return {

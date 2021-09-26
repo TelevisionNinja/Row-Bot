@@ -4,7 +4,7 @@ import {
     sendImgInteraction
 } from '../lib/msgUtils.js';
 import { tagArrToStr } from '../lib/stringUtils.js';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
@@ -73,44 +73,45 @@ export async function getImage(tagArr) {
     let imgObj = { results: 0 };
 
     await queue.add(async () => {
-        try {
-            const response = await axios.get(`${URL}${tags}`);
-            const results = parseInt(response.data.total);
+        const response = await fetch(`${URL}${tags}`);
 
-            if (results) {
-                const img = response.data.images[0];
+        if (backOff(response, queue)) {
+            return;
+        }
 
-                //-----------------------------------------
-                // create image object
+        const body = await response.json();
+        const results = parseInt(body.total);
 
-                let artists = [];
+        if (results) {
+            const img = body.images[0];
 
-                for (let i = 0, n = img.tags.length; i < n; i++) {
-                    const tag = img.tags[i];
+            //-----------------------------------------
+            // create image object
 
-                    if (tag.startsWith('artist:')) {
-                        artists.push(tag.substring(7));
-                    }
-                }
+            let artists = [];
 
-                if (!artists.length) {
-                    artists.push('unknown artist');
-                }
+            for (let i = 0, n = img.tags.length; i < n; i++) {
+                const tag = img.tags[i];
 
-                imgObj = {
-                    source: `${derp.URL}${img.id}`,
-                    url: img.representations.full,
-                    artist: artists,
-                    description: img.description,
-                    results: results,
-                    title: '',
-                    website: derp.websiteName,
-                    embedColor: derp.embedColor
+                if (tag.startsWith('artist:')) {
+                    artists.push(tag.substring(7));
                 }
             }
-        }
-        catch (error) {
-            backOff(error, queue);
+
+            if (!artists.length) {
+                artists.push('unknown artist');
+            }
+
+            imgObj = {
+                source: `${derp.URL}${img.id}`,
+                url: img.representations.full,
+                artist: artists,
+                description: img.description,
+                results: results,
+                title: '',
+                website: derp.websiteName,
+                embedColor: derp.embedColor
+            }
         }
     });
 

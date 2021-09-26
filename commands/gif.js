@@ -1,5 +1,5 @@
 import { default as config } from '../config.json';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
@@ -76,17 +76,17 @@ export async function getGif(searchTerm) {
     let hasResult = false;
 
     await queue.add(async () => {
-        try {
-            const response = await axios.get(`${URL}${encodedSearchTerm}`);
-            const gifArr = response.data.results;
+        const response = await fetch(`${URL}${encodedSearchTerm}`);
 
-            if (gifArr.length) {
-                gif = gifArr[0].url;
-                hasResult = true;
-            }
+        if (backOff(response, queue)) {
+            return;
         }
-        catch (error) {
-            backOff(error, queue);
+
+        const gifArr = (await response.json()).results;
+
+        if (gifArr.length) {
+            gif = gifArr[0].url;
+            hasResult = true;
         }
     });
 
