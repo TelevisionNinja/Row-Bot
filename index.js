@@ -390,7 +390,12 @@ client.on('messageCreate', async msg => {
     const links = await extractAndConvertAmpLinks(msg.content);
 
     if (links.length) {
-        msg.reply(`It looks like you sent an AMP link. You should check out the canonical link instead for privacy reasons:\n${links.join('\n')}`);
+        msg.reply({
+            content: `It looks like you sent an AMP link. You should check out the canonical link instead for privacy reasons:\n${links.join('\n')}`,
+            allowedMentions: {
+                repliedUser: false
+            }
+        });
     }
 });
 
