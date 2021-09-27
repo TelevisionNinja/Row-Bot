@@ -488,7 +488,7 @@ function getPopulationURL(yearOffset) {
 /**
  * 
  * @param {*} yearOffset 
- * @returns array string
+ * @returns array
  */
 export async function getPopulationData(yearOffset = 0) {
     let results = '';
