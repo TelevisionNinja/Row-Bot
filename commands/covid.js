@@ -490,7 +490,7 @@ function getPopulationURL(yearOffset) {
  * @param {*} yearOffset 
  * @returns array
  */
-export async function getPopulationData(yearOffset = 0) {
+export async function getPopulationData(yearOffset = 1) {
     let results = '';
 
     // limit recursion
