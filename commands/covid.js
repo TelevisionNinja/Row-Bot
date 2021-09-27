@@ -509,7 +509,7 @@ export async function getPopulationData(yearOffset = 0) {
             results = await getPopulationData(yearOffset + 1);
         }
         else {
-            results = await response.text();
+            results = await response.json();
         }
     });
 
@@ -526,7 +526,7 @@ export function getStatePopulation(state, data) {
     let result = -1;
     state = state.toLowerCase();
 
-    for (let i = 0, n = data.length; i < n; i++) {
+    for (let i = 1, n = data.length; i < n; i++) {
         const current = data[i];
 
         if (current[0].toLowerCase().startsWith(state)) {
