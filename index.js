@@ -15,7 +15,6 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
-import { webhooks } from './lib/database.js';
 import { default as tulpCache } from './lib/tulpCache.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
@@ -363,7 +362,7 @@ client.on('messageCreate', async msg => {
         //--------------------------------------------------------------------------------
         // general message
 
-        // remove mentions or name from message
+        // remove mentions from message
         const noMentionsMsg = removeAllSpecialChars(removeMentions(msg.content)).trim().toLowerCase();
 
         for (let i = 0, n = genMsg.length; i < n; i++) {
@@ -460,29 +459,11 @@ client.on('shardResume', () => {
 // delete webhook data
 
 client.on('channelDelete', channel => {
-    // delete from tulp cache
-
-    const id = channel.id;
-
-    tulpCache.remove(id);
-
-    //--------------------------------------------------------------------------------
-    // delete from db
-
-    webhooks.delete(id);
+    tulpCache.deleteWebhook(channel.id);
 });
 
 client.on('threadDelete', thread => {
-    // delete from tulp cache
-
-    const id = thread.id;
-
-    tulpCache.remove(id);
-
-    //--------------------------------------------------------------------------------
-    // delete from db
-
-    webhooks.delete(id);
+    tulpCache.deleteWebhook(thread.id);
 });
 
 //--------------------------------------------------------------------------------
@@ -490,11 +471,7 @@ client.on('threadDelete', thread => {
 
 // cache user data and the channel webhook while the user is typing
 client.on('typingStart', async typing => {
-    // users
-    if (await tulpCache.cacheUser(typing.user.id)) {
-        // webhooks
-        tulpCache.cacheWebhook(typing.channel.id);
-    }
+    tulpCache.loadCache(typing.user.id, typing.channel.id);
 });
 
 //--------------------------------------------------------------------------------
