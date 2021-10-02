@@ -23,10 +23,10 @@ import { initialize as initializeHelp } from './commands/help.js';
 import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
 import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
 import { default as audioPlayer } from './lib/audio.js';
-import {
-    buildCommandJSON,
-    loadGlobalSlashCommands
-} from './lib/slashCommandUtils.js';
+// import {
+//     buildCommandJSON,
+//     loadGlobalSlashCommands
+// } from './lib/slashCommandUtils.js';
 import { default as messages } from './messages.json';
 import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
 
@@ -134,29 +134,29 @@ initializeMusicHelp(musicCommands);
 //--------------------------------------------------------------------------------
 // slash commands
 
-let slashCommands = buildCommandJSON(commands);
+// let slashCommands = buildCommandJSON(commands);
 
-for (let i = 0, n = slashCommands.length; i < n; i++) {
-    let slashCommand = slashCommands[i];
+// for (let i = 0, n = slashCommands.length; i < n; i++) {
+//     let slashCommand = slashCommands[i];
 
-    if (slashCommand.name === 'tulp') {
-        slashCommand.options = buildCommandJSON(tulpCommands);
-        slashCommands[i] = slashCommand;
-        break;
-    }
-}
+//     if (slashCommand.name === 'tulp') {
+//         slashCommand.options = buildCommandJSON(tulpCommands);
+//         slashCommands[i] = slashCommand;
+//         break;
+//     }
+// }
 
-for (let i = 0, n = slashCommands.length; i < n; i++) {
-    let slashCommand = slashCommands[i];
+// for (let i = 0, n = slashCommands.length; i < n; i++) {
+//     let slashCommand = slashCommands[i];
 
-    if (slashCommand.name === 'music') {
-        slashCommand.options = buildCommandJSON(musicCommands);
-        slashCommands[i] = slashCommand;
-        break;
-    }
-}
+//     if (slashCommand.name === 'music') {
+//         slashCommand.options = buildCommandJSON(musicCommands);
+//         slashCommands[i] = slashCommand;
+//         break;
+//     }
+// }
 
-loadGlobalSlashCommands(slashCommands, clientID, token);
+// loadGlobalSlashCommands(slashCommands, clientID, token);
 
 //--------------------------------------------------------------------------------
 // login actions
