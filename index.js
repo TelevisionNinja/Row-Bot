@@ -23,12 +23,12 @@ import { initialize as initializeHelp } from './commands/help.js';
 import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
 import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
 import { default as audioPlayer } from './lib/audio.js';
+import { default as messages } from './messages.json';
+import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
 // import {
 //     buildCommandJSON,
 //     loadGlobalSlashCommands
 // } from './lib/slashCommandUtils.js';
-import { default as messages } from './messages.json';
-import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
 
 //--------------------------------------------------------------------------------
 // config vars
