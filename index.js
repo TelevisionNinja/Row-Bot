@@ -15,10 +15,7 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
-import {
-    tulps,
-    webhooks
-} from './lib/database.js';
+import { webhooks } from './lib/database.js';
 import { default as tulpCache } from './lib/tulpCache.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
