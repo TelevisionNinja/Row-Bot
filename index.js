@@ -95,9 +95,9 @@ audio = audioFiles.map(f => `./audioFiles/${f}`);
 commands = (await Promise.all(commands)).map(i => i.default);
 tulpCommands = (await Promise.all(tulpCommands)).map(i => i.default);
 musicCommands = (await Promise.all(musicCommands)).map(i => i.default);
-noncommands = (await Promise.all(noncommands));
-genMsg = (await Promise.all(genMsg));
-intervalMsgs = (await Promise.all(intervalMsgs));
+noncommands = await Promise.all(noncommands);
+genMsg = await Promise.all(genMsg);
+intervalMsgs = await Promise.all(intervalMsgs);
 
 for (let i = 0, n = commands.length; i < n; i++) {
     const command = commands[i];
