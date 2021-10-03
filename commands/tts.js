@@ -1,6 +1,9 @@
 import { default as config } from '../config.json';
 import { Constants } from 'discord.js';
-import { cutOff } from '../lib/stringUtils.js';
+import {
+    cutOff,
+    properCase
+} from '../lib/stringUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import fetch from 'node-fetch';
@@ -117,7 +120,7 @@ async function getTts(character, text, emotion = 'Contextual') {
             },
             body: JSON.stringify({
                 text: text,
-                character: character,
+                character: properCase(character),
                 emotion: emotion
             })
         });
