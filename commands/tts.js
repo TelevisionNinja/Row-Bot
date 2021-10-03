@@ -9,8 +9,8 @@ const tts = config.tts,
     tagSeparator = config.tagSeparator;
 
 const queue = new PQueue({
-    interval: 60000,
-    intervalCap: 15
+    interval: 1000,
+    intervalCap: 50
 });
 const punctuation = ['.', ',', ':', '!', '?'];
 
