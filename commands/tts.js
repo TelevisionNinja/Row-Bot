@@ -91,7 +91,7 @@ function filterText(text) {
  * @param {*} character 
  * @param {*} text 
  * @param {*} emotion 
- * @returns a buffer
+ * @returns a url
  */
 async function getTts(character, text, emotion = 'Contextual') {
     text = filterText(text);
