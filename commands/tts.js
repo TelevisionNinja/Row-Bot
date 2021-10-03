@@ -1,9 +1,6 @@
 import { default as config } from '../config.json';
 import { Constants } from 'discord.js';
-import {
-    cutOff,
-    properCase
-} from '../lib/stringUtils.js';
+import { cutOff } from '../lib/stringUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import fetch from 'node-fetch';
@@ -12,9 +9,10 @@ const tts = config.tts,
     tagSeparator = config.tagSeparator;
 
 const queue = new PQueue({
-    interval: 1000,
-    intervalCap: 50
+    interval: 60000,
+    intervalCap: 15
 });
+const punctuation = ['.', ',', ':', '!', '?'];
 
 export default {
     interactionData: {
@@ -85,7 +83,6 @@ function filterText(text) {
 
     let filteredText = cutOff(text.trim(), 200);
     const lastChar = filteredText[filteredText.length - 1];
-    const punctuation = ['.', ',', ':', '!', '?'];
 
     if (filteredText.length < 200 && !punctuation.includes(lastChar)) {
         return `${filteredText}.`;
@@ -120,7 +117,7 @@ async function getTts(character, text, emotion = 'Contextual') {
             },
             body: JSON.stringify({
                 text: text,
-                character: properCase(character),
+                character: character,
                 emotion: emotion
             })
         });
