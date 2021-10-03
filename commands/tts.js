@@ -44,8 +44,13 @@ export default {
         args = args.join(' ').split(tagSeparator);
 
         const character = args.shift().trim();
-        const text = args.join(tagSeparator);
+        const text = args.join(tagSeparator).trimStart();
         const url = await getTts(character, text);
+
+        if (!character.length || !text.length) {
+            msg.reply('Please provide a character and text');
+            return;
+        }
 
         if (url.length) {
             msg.reply({ files: [url] });
