@@ -257,6 +257,16 @@
         "API" : "https://finance.yahoo.com/q?s="
     },
 
+    "tts" : {
+        "names" : [
+            "tts",
+            "speech",
+            "talk",
+            "voice"
+        ],
+        "description" : "Generate a tts file"
+    },
+
     "tulp" : {
         "names" : [""],
         "description" : "",
