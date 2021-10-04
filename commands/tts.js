@@ -46,7 +46,7 @@ export default {
 
         const character = args.shift().trim();
         const text = args.join(tagSeparator).trimStart();
-        const url = await getTts(character, text);
+        const url = await getTtsUrl(character, text);
 
         if (!character.length || !text.length) {
             msg.reply('Please provide a character and text');
@@ -65,7 +65,7 @@ export default {
 
         const character = interaction.options.getString('character');
         const text = interaction.options.getString('text');
-        const url = await getTts(character, text);
+        const url = await getTtsUrl(character, text);
 
         if (url.length) {
             interaction.editReply({ files: [url] });
@@ -98,7 +98,7 @@ function filterText(text) {
  * @param {*} emotion 
  * @returns a url
  */
-async function getTts(character, text, emotion = 'Contextual') {
+export async function getTtsUrl(character, text, emotion = 'Contextual') {
     text = filterText(text);
     let url = '';
 
@@ -139,4 +139,28 @@ async function getTts(character, text, emotion = 'Contextual') {
     });
 
     return url;
+}
+
+/**
+ * 
+ * @param {*} url url from getTtsUrl()
+ * @returns buffer
+ */
+export async function getTtsBuffer(url) {
+    let buffer = undefined;
+
+    await queue.add(async () => {
+        //----------------------------
+        // get response
+
+        const response = await fetch(url);
+
+        if (backOff(response, queue)) {
+            return;
+        }
+
+        buffer = await response.buffer();
+    });
+
+    return buffer;
 }
