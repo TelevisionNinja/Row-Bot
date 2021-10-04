@@ -3,14 +3,12 @@ import { randomMath } from '../lib/randomFunctions.js';
 
 const newYear = messages.newYear,
     newYearsEve = messages.newYearsEve,
-    newYearLowerCase = newYear.map(n => n.toLowerCase()),
-    newYearsEveLowerCase = newYearsEve.map(n => n.toLowerCase());
+    newYearLowerCase = newYear.map(n => n.toLowerCase());
 
 const newYearMap = new Map(),
-    newYearsEveMap = new Map();
+    newYearsEveSet = new Set(newYearsEve.map(n => n.toLowerCase()));
 
 newYearLowerCase.forEach((n, i) => newYearMap.set(n, i));
-newYearsEveLowerCase.forEach(n => newYearsEveMap.set(n, true));
 
 // wish a happy new year
 export function execute(msg, filteredMsg) {
@@ -22,7 +20,7 @@ export function execute(msg, filteredMsg) {
 
     //------------------------
 
-    if (newYearsEveMap.get(filteredMsg)) {
+    if (newYearsEveSet.has(filteredMsg)) {
         return newYearsEve[randomMath(newYearsEve.length)];
     }
 

@@ -2,23 +2,18 @@ import { default as messages } from '../messages.json';
 import { randomMath } from '../lib/randomFunctions.js';
 
 const christmas = messages.christmas,
-    christmasEve = messages.christmasEve,
-    christmasLowerCase = christmas.map(c => c.toLowerCase()),
-    christmasEveLowerCase = christmasEve.map(c => c.toLowerCase());
+    christmasEve = messages.christmasEve;
 
-const christmasMap = new Map(),
-    christmasEveMap = new Map();
-
-christmasLowerCase.forEach(c => christmasMap.set(c, true));
-christmasEveLowerCase.forEach(c => christmasEveMap.set(c, true));
+const christmasSet = new Set(christmas.map(c => c.toLowerCase())),
+    christmasEveSet = new Set(christmasEve.map(c => c.toLowerCase()));
 
 // wish a merry christmas
 export function execute(msg, filteredMsg) {
-    if (christmasMap.get(filteredMsg)) {
+    if (christmasSet.has(filteredMsg)) {
         return christmas[randomMath(christmas.length)];
     }
 
-    if (christmasEveMap.get(filteredMsg)) {
+    if (christmasEveSet.has(filteredMsg)) {
         return christmasEve[randomMath(christmasEve.length)];
     }
 

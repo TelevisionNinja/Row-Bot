@@ -1,16 +1,13 @@
 import { default as messages } from '../messages.json';
 import { randomMath } from '../lib/randomFunctions.js';
 
-const farewells = messages.farewells,
-    farewellsLowerCase = farewells.map(f => f.toLowerCase());
+const farewells = messages.farewells;
 
-const farewellsMap = new Map();
-
-farewellsLowerCase.forEach(f => farewellsMap.set(f, true));
+const farewellsSet = new Set(farewells.map(f => f.toLowerCase()));
 
 // say goodbye
 export function execute(msg, filteredMsg) {
-    if (farewellsMap.get(filteredMsg)) {
+    if (farewellsSet.has(filteredMsg)) {
         return farewells[randomMath(farewells.length)];
     }
 

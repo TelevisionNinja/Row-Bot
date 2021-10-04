@@ -1,16 +1,13 @@
 import { default as messages } from '../messages.json';
 import { randomMath } from '../lib/randomFunctions.js';
 
-const goodnights = messages.goodnights,
-    goodnightsLowerCase = goodnights.map(g => g.toLowerCase());
+const goodnights = messages.goodnights;
 
-const goodnightsMap = new Map();
-
-goodnightsLowerCase.forEach(g => goodnightsMap.set(g, true));
+const goodnightsSet = new Set(goodnights.map(g => g.toLowerCase()));
 
 // say goodnight
 export function execute(msg, filteredMsg) {
-    if (goodnightsMap.get(filteredMsg)) {
+    if (goodnightsSet.has(filteredMsg)) {
         return goodnights[randomMath(goodnights.length)];
     }
 
