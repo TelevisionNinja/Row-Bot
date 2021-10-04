@@ -35,112 +35,118 @@ export default {
     guildOnly: false,
     usage: '<search term>',
     cooldown: 1,
-    execute(msg, args) {
-        const URL = `${urban.API}${encodeURIComponent(args.join(' '))}`;
+    async execute(msg, args) {
+        const {
+            definition,
+            results
+        } = await getDefinition(args.join(' '));
 
-        queue.add(async () => {
-            const response = await fetch(URL);
+        if (typeof definition === 'undefined') {
+            msg.channel.send(noResultsMsg);
+            return;
+        }
 
-            if (backOff(response, queue)) {
-                msg.channel.send(noResultsMsg);
-                return;
-            }
+        const definitionStr = definition.definition.replaceAll(/[\[\]]/g, '');
+        let example = 'No example was provided.';
 
-            const defs = (await response.json()).list;
-            const count = defs.length;
+        if (definition.example.length) {
+            example = cutOff(definition.example.replaceAll(/[\[\]]/g, ''), 1024);
+        }
 
-            if (count) {
-                const result = defs[randomMath(count)];
-                const definition = result.definition.replaceAll(/[\[\]]/g, '');
-                let example = 'No example was provided.';
-
-                if (result.example.length) {
-                    example = cutOff(result.example.replaceAll(/[\[\]]/g, ''), 1024);
-                }
-
-                msg.channel.send({
-                    embeds: [{
-                        title: result.word,
-                        url: result.permalink,
-                        fields: [
-                            {
-                                name: 'Definition',
-                                value: cutOff(definition, 1024)
-                            },
-                            {
-                                name: 'Example',
-                                value: example
-                            },
-                            {
-                                name: 'Rating',
-                                value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
-                            },
-                            {
-                                name: 'Results',
-                                value: `${count}`
-                            }
-                        ]
-                    }]
-                });
-            }
-            else {
-                msg.channel.send(noResultsMsg);
-            }
+        msg.channel.send({
+            embeds: [{
+                title: definition.word,
+                url: definition.permalink,
+                fields: [
+                    {
+                        name: 'Definition',
+                        value: cutOff(definitionStr, 1024)
+                    },
+                    {
+                        name: 'Example',
+                        value: example
+                    },
+                    {
+                        name: 'Rating',
+                        value: `👍 ${definition.thumbs_up}\t👎 ${definition.thumbs_down}`
+                    },
+                    {
+                        name: 'Results',
+                        value: `${results}`
+                    }
+                ]
+            }]
         });
     },
     async executeInteraction(interaction) {
         await interaction.deferReply();
 
-        const URL = `${urban.API}${encodeURIComponent(interaction.options.getString('search'))}`;
+        const {
+            definition,
+            results
+        } = await getDefinition(interaction.options.getString('search'));
 
-        queue.add(async () => {
-            const response = await fetch(URL);
+        if (typeof definition === 'undefined') {
+            interaction.editReply(noResultsMsg);
+            return;
+        }
 
-            if (backOff(response, queue)) {
-                interaction.editReply(noResultsMsg);
-                return;
-            }
+        const definitionStr = definition.definition.replaceAll(/[\[\]]/g, '');
+        let example = 'No example was provided.';
 
-            const defs = (await response.json()).list;
-            const count = defs.length;
+        if (definition.example.length) {
+            example = cutOff(definition.example.replaceAll(/[\[\]]/g, ''), 1024);
+        }
 
-            if (count) {
-                const result = defs[randomMath(count)];
-                const definition = result.definition.replaceAll(/[\[\]]/g, '');
-                let example = 'No example was provided.';
-
-                if (result.example.length) {
-                    example = cutOff(result.example.replaceAll(/[\[\]]/g, ''), 1024);
-                }
-
-                interaction.editReply({
-                    embeds: [{
-                        title: result.word,
-                        url: result.permalink,
-                        fields: [
-                            {
-                                name: 'Definition',
-                                value: cutOff(definition, 1024)
-                            },
-                            {
-                                name: 'Example',
-                                value: example
-                            },
-                            {
-                                name: 'Rating',
-                                value: `👍 ${result.thumbs_up}\t👎 ${result.thumbs_down}`
-                            },
-                            {
-                                name: 'Results',
-                                value: `${count}`
-                            }
-                        ]
-                    }]
-                });
-            }
-            else {
-                interaction.editReply(noResultsMsg);
-            }
+        interaction.editReply({
+            embeds: [{
+                title: definition.word,
+                url: definition.permalink,
+                fields: [
+                    {
+                        name: 'Definition',
+                        value: cutOff(definitionStr, 1024)
+                    },
+                    {
+                        name: 'Example',
+                        value: example
+                    },
+                    {
+                        name: 'Rating',
+                        value: `👍 ${definition.thumbs_up}\t👎 ${definition.thumbs_down}`
+                    },
+                    {
+                        name: 'Results',
+                        value: `${results}`
+                    }
+                ]
+            }]
         });
     }
+}
+
+export async function getDefinition(term) {
+    let definition = undefined;
+    let results = 0;
+    const URL = `${urban.API}${encodeURIComponent(term)}`;
+
+    await queue.add(async () => {
+        const response = await fetch(URL);
+
+        if (backOff(response, queue)) {
+            return;
+        }
+
+        const defs = (await response.json()).list;
+        results = defs.length;
+
+        if (results) {
+            definition = defs[randomMath(results)];
+        }
+    });
+
+    return {
+        definition,
+        results
+    };
 }
