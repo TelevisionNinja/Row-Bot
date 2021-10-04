@@ -77,7 +77,7 @@ let noncommands = [];
 let genMsg = [];
 let intervalMsgs = [];
 const speechArr = messages.greetings.filter(g => g.length >= 5);
-// let audio = [];
+let audio = [];
 
 //--------------------------------------------------------------------------------
 // load commands, tulp commands, noncommands, general messages, and interval messages
@@ -88,7 +88,7 @@ const musicCommandFiles = readdirSync('./commands/musicCommands/').filter(aFile 
 const noncommandFiles = readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
 const genMsgFiles = readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
 const intervalMsgFiles = readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
-// const audioFiles = readdirSync('./audioFiles/');
+const audioFiles = readdirSync('./audioFiles/');
 
 commands = commandFiles.map(f => import(`./commands/${f}`));
 tulpCommands = tulpCommandFiles.map(f => import(`./commands/tulpCommands/${f}`));
@@ -96,7 +96,7 @@ musicCommands = musicCommandFiles.map(f => import(`./commands/musicCommands/${f}
 noncommands = noncommandFiles.map(f => import(`./noncommands/${f}`));
 genMsg = genMsgFiles.map(f => import(`./generalMessages/${f}`));
 intervalMsgs = intervalMsgFiles.map(f => import(`./intervalMessages/${f}`));
-// audio = audioFiles.map(f => `./audioFiles/${f}`);
+audio = audioFiles.map(f => `./audioFiles/${f}`);
 
 commands = (await Promise.all(commands)).map(i => i.default);
 tulpCommands = (await Promise.all(tulpCommands)).map(i => i.default);
@@ -335,25 +335,28 @@ client.on('messageCreate', async msg => {
         if (!isDM && msg.member.voice.channel) {
             if (noMentionsMsg === 'join me') {
                 audioPlayer.joinVC(msg);
-
                 return;
             }
             else if (noMentionsMsg === 'leave') {
                 audioPlayer.leave(msg.guild.id);
-
                 return;
             }
             else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioPlayer.vcCheck(msg)) {
-                // const randAudio = randomMath(audio.length);
-                // audioPlayer.playFile(msg, audio[randAudio]);
-
-                //----------------------
-
                 const url = await getTtsUrl('Pinkie Pie', speechArr[randomMath(speechArr.length)]);
-                const buffer = await getTtsBuffer(url);
-                const readStream = Readable.from(buffer);
 
-                audioPlayer.playStream(msg, readStream);
+                // play backup audio
+                if (!url.length) {
+                    audioPlayer.playFile(msg, audio[randomMath(audio.length)]);
+                    return;
+                }
+
+                const buffer = await getTtsBuffer(url);
+
+                if (typeof buffer === 'undefined') {
+                    return;
+                }
+
+                audioPlayer.playStream(msg, Readable.from(buffer));
                 return;
             }
         }
