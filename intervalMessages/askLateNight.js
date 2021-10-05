@@ -20,8 +20,16 @@ const names = config.names,
     yeses = messages.yeses,
     nos = messages.nos;
 
+let once = false;
+
 // ask the late night bois if they're going to get on
 export async function execute(client) {
+    if (once) {
+        return;
+    }
+
+    once = true;
+
     const recipient = await getChannel(client, askLateNight.channelID);
 
     const interval = new DailyInterval(

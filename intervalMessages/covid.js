@@ -5,8 +5,16 @@ import { getDataEmbeds } from '../commands/covid.js';
 
 const covidConfig = config.covid;
 
+let once = false;
+
 // posts a daily covid information embed
 export async function execute(client) {
+    if (once) {
+        return;
+    }
+
+    once = true;
+
     const recipient = await getChannel(client, covidConfig.intervalChannel);
 
     const interval = new DailyInterval(

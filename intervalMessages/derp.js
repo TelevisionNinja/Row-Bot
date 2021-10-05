@@ -13,8 +13,16 @@ const derpConfig = config.derp,
 
 const filter = derpConfig.filterTags.map(t => `-${t}`);
 
+let once = false;
+
 // posts a daily derp image
 export async function execute(client) {
+    if (once) {
+        return;
+    }
+
+    once = true;
+
     const recipientDaily = await getChannel(client, derpConfig.intervalChannelID);
 
     const interval1 = new DailyInterval(
