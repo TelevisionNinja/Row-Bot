@@ -201,5 +201,19 @@
         "nope",
         "nah",
         "naw"
+    ],
+
+    "speech" : [
+        "Hiya! I'm Pinkie Pie!",
+        "Hello! Hello! I'm the mighty Ponko!",
+        "The name's Pinkie, but you can call me The Ponk.",
+        "Pinkie is the name, but making cupcakes is my game",
+        "Pinkie is the name, but making ponies smile is my game",
+        "Hello! I hope you had a great day today!",
+        "Hiya! Want a cupcake?",
+        "Chimmy-cherry or cherry-changa?",
+        "Pickle barrel kumquat!",
+        "pickle barrel kumquat pickle barrel kumquat pickle barrel kumquat chimmy cherry changa",
+        "Oh hello there cutie!"
     ]
 }

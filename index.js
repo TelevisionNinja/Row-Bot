@@ -76,7 +76,7 @@ let musicCommands = [];
 let noncommands = [];
 let genMsg = [];
 let intervalMsgs = [];
-const speechArr = messages.greetings.filter(g => g.length >= 5);
+const speechArr = [...messages.greetings.filter(g => g.length >= 5), ...messages.speech];
 let audio = [];
 
 //--------------------------------------------------------------------------------
