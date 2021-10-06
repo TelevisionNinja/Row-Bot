@@ -140,6 +140,7 @@ initializeMusicHelp(musicCommands);
 // slash commands
 
 // let slashCommands = buildCommandJSON(commands);
+// let breakBool = false;
 
 // for (let i = 0, n = slashCommands.length; i < n; i++) {
 //     let slashCommand = slashCommands[i];
@@ -147,17 +148,22 @@ initializeMusicHelp(musicCommands);
 //     if (slashCommand.name === 'tulp') {
 //         slashCommand.options = buildCommandJSON(tulpCommands);
 //         slashCommands[i] = slashCommand;
-//         break;
+
+//         if (breakBool) {
+//             break;
+//         }
+
+//         breakBool = true;
 //     }
-// }
-
-// for (let i = 0, n = slashCommands.length; i < n; i++) {
-//     let slashCommand = slashCommands[i];
-
-//     if (slashCommand.name === 'music') {
+//     else if (slashCommand.name === 'music') {
 //         slashCommand.options = buildCommandJSON(musicCommands);
 //         slashCommands[i] = slashCommand;
-//         break;
+
+//         if (breakBool) {
+//             break;
+//         }
+
+//         breakBool = true;
 //     }
 // }
 
