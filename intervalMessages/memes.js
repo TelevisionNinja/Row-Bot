@@ -6,16 +6,8 @@ import { randomMath } from '../lib/randomFunctions.js';
 
 const memes = config.memes;
 
-let once = false;
-
 // posts a daily meme
 export async function execute(client) {
-    if (once) {
-        return;
-    }
-
-    once = true;
-
     const recipient = await getChannel(client, memes.channelID);
 
     const interval = new DailyInterval(

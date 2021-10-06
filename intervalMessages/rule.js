@@ -14,16 +14,8 @@ const ruleConfig = config.rule,
 
 const filter = ruleConfig.filterTags.map(t => `-${t}`);
 
-let once = false;
-
 // posts a daily rule image
 export async function execute(client) {
-    if (once) {
-        return;
-    }
-
-    once = true;
-
     const recipient = await getChannel(client, ruleConfig.intervalChannelID);
 
     const interval = new DailyInterval(

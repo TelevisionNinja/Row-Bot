@@ -137,6 +137,23 @@ initializeTulpHelp(tulpCommands);
 initializeMusicHelp(musicCommands);
 
 //--------------------------------------------------------------------------------
+// initialize interval messages
+
+let once = false;
+
+export function initializeIntervals(client) {
+    if (once) {
+        return;
+    }
+
+    once = true;
+
+    for (let i = 0, n = intervalMsgs.length; i < n; i++) {
+        intervalMsgs[i].execute(client);
+    }
+}
+
+//--------------------------------------------------------------------------------
 // slash commands
 
 // let slashCommands = buildCommandJSON(commands);

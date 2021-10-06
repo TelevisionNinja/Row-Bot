@@ -43,8 +43,9 @@ import {
 
     noncommands,
     genMsg,
-    intervalMsgs,
-    greetings
+    greetings,
+
+    initializeIntervals
 } from './initialize.js';
 
 //--------------------------------------------------------------------------------
@@ -61,9 +62,7 @@ client.musicCommands = musicCommandMap;
 
 client.on('ready', () => {
     // start interval messages
-    for (let i = 0, n = intervalMsgs.length; i < n; i++) {
-        intervalMsgs[i].execute(client);
-    }
+    initializeIntervals(client);
 
     //--------------------------------------------------------------------------------
     // set activity
