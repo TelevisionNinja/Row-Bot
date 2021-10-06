@@ -1,9 +1,4 @@
-import {
-    Client,
-    Intents
-} from 'discord.js';
-import { readdirSync } from 'fs';
-import { default as config } from './config.json';
+import { Client } from 'discord.js';
 import {
     hasBotMention,
     sendTypingMsg,
@@ -18,150 +13,48 @@ import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sen
 import { default as tulpCache } from './lib/tulpCache.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
-import { initialize as initializeHelp } from './commands/help.js';
-import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
-import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
 import { default as audioPlayer } from './lib/audio.js';
-import { default as messages } from './messages.json';
 import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
 import { Readable } from 'stream';
 import {
     getTtsUrl,
     getTtsBuffer
 } from './commands/tts.js';
-// import {
-//     buildCommandJSON,
-//     loadGlobalSlashCommands
-// } from './lib/slashCommandUtils.js';
+import {
+    // config vars
+    prefix,
+    token,
+    clientID,
+    activityStatus,
+    names,
+    minimumPermissions,
+    devGuildID,
+    ruleChannelID,
+    clientOptions,
 
-//--------------------------------------------------------------------------------
-// config vars
+    // audio
+    speechArr,
+    audio,
 
-const prefix = config.prefix,
-    token = config.token,
-    clientID = config.clientID,
-    activityStatus = config.activityStatus,
-    names = config.names.map(n => n.toLowerCase()),
-    minimumPermissions = config.minimumPermissions,
-    devGuildID = config.devGuildID,
-    ruleChannelID = config.ruleChannelID;
+    // commands
+    commandMap,
+    tulpCommandMap,
+    musicCommandMap,
+
+    noncommands,
+    genMsg,
+    intervalMsgs,
+    greetings
+} from './initialize.js';
 
 //--------------------------------------------------------------------------------
 // client vars
 
-const client = new Client({
-    retryLimit: Infinity,
-
-    intents: [
-        Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.DIRECT_MESSAGE_TYPING,
-
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_TYPING,
-        Intents.FLAGS.GUILD_VOICE_STATES,
-        Intents.FLAGS.GUILD_WEBHOOKS
-    ],
-
-    partials: ['CHANNEL']
-});
+const client = new Client(clientOptions);
 const cooldowns = new Map();
-client.commands = new Map();
-client.tulpCommands = new Map();
-client.musicCommands = new Map();
-let commands = [];
-let tulpCommands = [];
-let musicCommands = [];
-let noncommands = [];
-let genMsg = [];
-let intervalMsgs = [];
-const speechArr = [...messages.greetings.filter(g => g.length >= 5), ...messages.speech];
-let audio = [];
-
-//--------------------------------------------------------------------------------
-// load commands, tulp commands, noncommands, general messages, and interval messages
-
-const commandFiles = readdirSync('./commands/').filter(aFile => aFile.endsWith('.js'));
-const tulpCommandFiles = readdirSync('./commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
-const musicCommandFiles = readdirSync('./commands/musicCommands/').filter(aFile => aFile.endsWith('.js'));
-const noncommandFiles = readdirSync('./noncommands/').filter(aFile => aFile.endsWith('.js'));
-const genMsgFiles = readdirSync('./generalMessages/').filter(aFile => aFile.endsWith('.js'));
-const intervalMsgFiles = readdirSync('./intervalMessages/').filter(aFile => aFile.endsWith('.js'));
-const audioFiles = readdirSync('./audioFiles/');
-
-commands = commandFiles.map(f => import(`./commands/${f}`));
-tulpCommands = tulpCommandFiles.map(f => import(`./commands/tulpCommands/${f}`));
-musicCommands = musicCommandFiles.map(f => import(`./commands/musicCommands/${f}`));
-noncommands = noncommandFiles.map(f => import(`./noncommands/${f}`));
-genMsg = genMsgFiles.map(f => import(`./generalMessages/${f}`));
-intervalMsgs = intervalMsgFiles.map(f => import(`./intervalMessages/${f}`));
-audio = audioFiles.map(f => `./audioFiles/${f}`);
-
-commands = (await Promise.all(commands)).map(i => i.default);
-tulpCommands = (await Promise.all(tulpCommands)).map(i => i.default);
-musicCommands = (await Promise.all(musicCommands)).map(i => i.default);
-noncommands = await Promise.all(noncommands);
-genMsg = await Promise.all(genMsg);
-intervalMsgs = await Promise.all(intervalMsgs);
-
-for (let i = 0, n = commands.length; i < n; i++) {
-    const command = commands[i];
-
-    for (let j = 0, m = command.names.length; j < m; j++) {
-        client.commands.set(command.names[j], command);
-    }
-}
-
-for (let i = 0, n = tulpCommands.length; i < n; i++) {
-    const tulpCommand = tulpCommands[i];
-
-    for (let j = 0, m = tulpCommand.names.length; j < m; j++) {
-        client.tulpCommands.set(tulpCommand.names[j], tulpCommand);
-    }
-}
-
-for (let i = 0, n = musicCommands.length; i < n; i++) {
-    const musicCommand = musicCommands[i];
-
-    for (let j = 0, m = musicCommand.names.length; j < m; j++) {
-        client.musicCommands.set(musicCommand.names[j], musicCommand);
-    }
-}
-
-//--------------------------------------------------------------------------------
-// initialize help embeds
-
-initializeHelp(commands);
-initializeTulpHelp(tulpCommands);
-initializeMusicHelp(musicCommands);
-
-//--------------------------------------------------------------------------------
-// slash commands
-
-// let slashCommands = buildCommandJSON(commands);
-
-// for (let i = 0, n = slashCommands.length; i < n; i++) {
-//     let slashCommand = slashCommands[i];
-
-//     if (slashCommand.name === 'tulp') {
-//         slashCommand.options = buildCommandJSON(tulpCommands);
-//         slashCommands[i] = slashCommand;
-//         break;
-//     }
-// }
-
-// for (let i = 0, n = slashCommands.length; i < n; i++) {
-//     let slashCommand = slashCommands[i];
-
-//     if (slashCommand.name === 'music') {
-//         slashCommand.options = buildCommandJSON(musicCommands);
-//         slashCommands[i] = slashCommand;
-//         break;
-//     }
-// }
-
-// loadGlobalSlashCommands(slashCommands, clientID, token);
+client.commands = commandMap;
+client.tulpCommands = tulpCommandMap;
+client.musicCommands = musicCommandMap;
 
 //--------------------------------------------------------------------------------
 // login actions
@@ -504,7 +397,7 @@ client.on('guildMemberAdd', async member => {
         return;
     }
 
-    const greetingMsg = messages.greetings[randomMath(messages.greetings.length)];
+    const greetingMsg = greetings[randomMath(greetings.length)];
     const msg = `Please check the <#${ruleChannelID}> channel for some info 🙂`;
 
     sendTypingMsg(channel, `${greetingMsg} <@${member.id}> ${msg}`, member.user.username);
