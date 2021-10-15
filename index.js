@@ -386,7 +386,7 @@ client.on('typingStart', async typing => {
 // welcome message
 
 client.on('guildMemberAdd', async member => {
-    if (member.guild.id !== devGuildID) {
+    if (member.guild.id !== devGuildID || member.user.bot) {
         return;
     }
 
