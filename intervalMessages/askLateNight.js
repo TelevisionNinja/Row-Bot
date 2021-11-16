@@ -20,6 +20,8 @@ const names = config.names,
     yeses = messages.yeses,
     nos = messages.nos;
 
+let asked = false;
+
 // ask the late night bois if they're going to get on
 export async function execute(client) {
     const recipient = await getChannel(client, askLateNight.channelID);
@@ -47,6 +49,10 @@ export async function execute(client) {
 }
 
 async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, noReplyMsg, confirmed, undecided, denied) {
+    if (asked) {
+        return;
+    }
+
     await recipient.guild.members.fetch();
 
     const memberMap = recipient.members.filter((value, key) => !value.user.bot);
@@ -57,11 +63,12 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
     let numberOfDenies = 0;
     let numberOfConfirms = 0;
 
+    asked = true;
     await sendTypingMsg(recipient, askingMsg, '');
 
     const collector = recipient.createMessageCollector({
         filter: m => {
-            return !m.content.startsWith(prefix) && !m.author.bot && (names.some(n => includesPhrase(removeAllSpecialChars(m.content), n, false)) || hasBotMention(m, false, true, false));
+            return !m.author.bot && !m.content.startsWith(prefix) && (names.some(n => includesPhrase(removeAllSpecialChars(m.content), n, false)) || hasBotMention(m, false, true, false));
         },
         time: timeOut
     });
@@ -120,6 +127,8 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
     });
 
     collector.on('end', () => {
+        asked = false;
+
         if (!numberOfReplies || !numberOfConfirms) {
             sendTypingMsg(recipient, noReplyMsg, '');
         }
