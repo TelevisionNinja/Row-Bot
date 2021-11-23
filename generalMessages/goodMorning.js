@@ -1,4 +1,4 @@
-import { default as messages } from '../messages.json';
+import messages from '../messages.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
 
 const goodMornings = messages.goodMornings;

@@ -1,4 +1,4 @@
-import { default as musicConfig } from './musicConfig.json';
+import musicConfig from './musicConfig.json' assert { type: 'json' };
 import { default as audioQueue } from '../../lib/audioQueue.js';
 import { Constants } from 'discord.js';
 import { cutOff } from '../../lib/stringUtils.js';

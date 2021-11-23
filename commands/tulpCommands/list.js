@@ -1,4 +1,4 @@
-import { default as tulpConfig } from './tulpConfig.json';
+import tulpConfig from './tulpConfig.json' assert { type: 'json' };
 import { tulps } from '../../lib/database.js';
 import { Constants } from 'discord.js';
 import { cutOff } from '../../lib/stringUtils.js';

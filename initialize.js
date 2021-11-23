@@ -1,10 +1,10 @@
 import { Intents } from 'discord.js';
 import { readdirSync } from 'fs';
-import { default as config } from './config.json';
+import config from './config.json' assert { type: 'json' };
 import { initialize as initializeHelp } from './commands/help.js';
 import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
 import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
-import { default as messages } from './messages.json';
+import messages from './messages.json' assert { type: 'json' };
 // import {
 //     buildCommandJSON,
 //     loadGlobalSlashCommands

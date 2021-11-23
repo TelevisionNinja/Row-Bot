@@ -1,5 +1,5 @@
-import { default as config } from '../../config.json';
-import { default as tulpConfigFile } from './tulpConfig.json';
+import config from '../../config.json' assert { type: 'json' };
+import tulpConfigFile from './tulpConfig.json' assert { type: 'json' };
 import { default as sendEasyMsg } from './easyMessages/sendEasyMsg.js';
 import { sendWebhookMsg } from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';

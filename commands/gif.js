@@ -1,4 +1,4 @@
-import { default as config } from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';

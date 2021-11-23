@@ -1,6 +1,6 @@
 import DailyInterval from 'daily-intervals';
 import { getChannel } from '../lib/msgUtils.js';
-import { default as config } from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 import { getDataEmbeds } from '../commands/covid.js';
 
 const covidConfig = config.covid;

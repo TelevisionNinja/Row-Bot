@@ -1,4 +1,4 @@
-import { default as config } from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
 import fetch from 'node-fetch';
