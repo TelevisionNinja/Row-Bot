@@ -1,4 +1,4 @@
-import { default as config } from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 import {
     sendImg,
     sendImgInteraction

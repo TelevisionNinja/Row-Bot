@@ -6,7 +6,7 @@ import {
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
 import fetch from 'node-fetch';
 import { parse } from 'txml';
-import { default as config } from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';

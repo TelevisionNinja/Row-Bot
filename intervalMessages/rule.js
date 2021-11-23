@@ -1,5 +1,5 @@
 import { getImageRule0 } from '../commands/rule.js';
-import { default as config } from '../config.json';
+import config from '../config.json' assert { type: 'json' };
 import DailyInterval from 'daily-intervals';
 import {
     getChannel,

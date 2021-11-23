@@ -1,5 +1,5 @@
-import { default as config } from '../config.json';
-import { default as messages } from '../messages.json';
+import config from '../config.json' assert { type: 'json' };
+import messages from '../messages.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
 import DailyInterval from 'daily-intervals';
 import {
