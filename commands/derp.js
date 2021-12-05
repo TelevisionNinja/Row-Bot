@@ -3,7 +3,6 @@ import {
     sendImg,
     sendImgInteraction
 } from '../lib/msgUtils.js';
-import { tagArrToStr } from '../lib/stringUtils.js';
 import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
@@ -69,7 +68,7 @@ export default {
 export async function getImage(tagArr) {
     // tags are separated by ','
     // '-' infront of a tag means to exclude it
-    const tags = tagArrToStr(tagArr, derp.whitespace, derp.separator);
+    const tags = encodeURIComponent(tagArr.join(derp.separator));
     let imgObj = { results: 0 };
 
     await queue.add(async () => {

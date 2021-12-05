@@ -45,7 +45,7 @@ export default {
             return;
         }
 
-        msg.channel.send(`Your random number is ${randomMath(min, max, true)}`);
+        msg.channel.send(`Your random number is ${randomMath(min, max + 1)}`);
     },
     executeInteraction(interaction) {
         let min = interaction.options.getInteger('min');
@@ -55,6 +55,6 @@ export default {
             min = 0;
         }
 
-        interaction.reply(`Your random number is ${randomMath(min, max, true)}`);
+        interaction.reply(`Your random number is ${randomMath(min, max + 1)}`);
     }
 }
