@@ -1,8 +1,10 @@
 import config from '../config.json' assert { type: 'json' };
 import fetch from 'node-fetch';
-import { replaceHTMLEntities } from '../lib/urlUtils.js';
 import PQueue from 'p-queue';
-import { backOff } from '../lib/urlUtils.js';
+import {
+    backOff,
+    replaceHTMLEntities
+} from '../lib/urlUtils.js';
 
 const fifty = config.fifty;
 
