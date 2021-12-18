@@ -12,7 +12,8 @@ const queue = new PQueue({
 });
 
 // yahoo finance
-const priceElement = 'Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)';
+const priceElement = 'Fw(b) Fz(36px) Mb(-4px) D(ib)';
+const valueStr = 'value="';
 
 export default {
     interactionData: {
@@ -103,8 +104,9 @@ export async function getStock(symbol) {
         const str = await response.text();
         let priceStr = str.substring(str.indexOf(priceElement) + priceElement.length);
 
-        priceStr = priceStr.substring(priceStr.indexOf('>') + 1, priceStr.indexOf('<'));
-        priceStr = priceStr.replaceAll(',', '');
+        const strtingIndex = priceStr.indexOf(valueStr) + valueStr.length;
+        priceStr = priceStr.substring(strtingIndex, priceStr.indexOf('"', strtingIndex));
+
         price = parseFloat(priceStr);
     });
 
