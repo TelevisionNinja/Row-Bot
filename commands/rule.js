@@ -70,7 +70,7 @@ export default {
  * @param {*} tagArr array of tags that are already formatted
  * @returns 
  */
-export async function getImageRule0(tagArr) {
+async function getImageRule0Formatted(tagArr) {
     // tags are separated by '+'
     const URL = `${rule.sites[0].API}${tagArr.join(rule.sites[0].separator)}&limit=`;
     let imgObj = { results: 0 };
@@ -136,7 +136,7 @@ export async function getImageRule0(tagArr) {
  * @param {*} tagArr array of tags that are already formatted
  * @returns 
  */
-export async function getImageRule1(tagArr) {
+async function getImageRule1Formatted(tagArr) {
     // this api has a max of 3 tags
     if (tagArr.length > 3) {
         tagArr = tagArr.slice(0, 3);
@@ -210,21 +210,47 @@ export async function getImage(tagArr) {
     let requestedImg;
 
     if (randomSiteID) {
-        requestedImg = await getImageRule1(tagArr);
+        requestedImg = await getImageRule1Formatted(tagArr);
     }
     else {
-        requestedImg = await getImageRule0(tagArr);
+        requestedImg = await getImageRule0Formatted(tagArr);
     }
 
     if (!requestedImg.results) {
         // cycle through the sites
         if ((randomSiteID + 1) % numOfSites) {
-            requestedImg = await getImageRule1(tagArr);
+            requestedImg = await getImageRule1Formatted(tagArr);
         }
         else {
-            requestedImg = await getImageRule0(tagArr);
+            requestedImg = await getImageRule0Formatted(tagArr);
         }
     }
 
     return requestedImg;
+}
+
+/**
+ * Returns an image object
+ * If no image is found, the results var is zero
+ * 
+ * 2 requests are made
+ * 
+ * @param {*} tagArr array of tags
+ * @returns 
+ */
+export function getImageRule0(tagArr) {
+    return getImageRule0Formatted(tagArrToParsedTagArr(tagArr, rule.sites[0].whitespace));
+}
+
+/**
+ * Returns an image object
+ * If no image is found, the results var is zero
+ * 
+ * 2 requests are made
+ * 
+ * @param {*} tagArr array of tags
+ * @returns 
+ */
+export function getImageRule1(tagArr) {
+    return getImageRule1Formatted(tagArrToParsedTagArr(tagArr, rule.sites[1].whitespace));
 }

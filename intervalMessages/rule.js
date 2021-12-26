@@ -5,7 +5,6 @@ import {
     getChannel,
     sendImg
 } from '../lib/msgUtils.js';
-import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
 
@@ -23,8 +22,6 @@ export async function execute(client) {
             const randIndex = randomMath(ruleConfig.intervalTags.length);
             const selection = ruleConfig.intervalTags[randIndex];
             let tagArr = [selection, ...filter];
-
-            tagArr = tagArrToParsedTagArr(tagArr, ruleConfig.sites[0].whitespace);
 
             const img = await getImageRule0(tagArr);
 
