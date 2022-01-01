@@ -505,7 +505,7 @@ export async function getPopulationData(yearOffset = 1) {
             return;
         }
 
-        if (response.status === 404) {
+        if (response.status === 404 || response.status === 400) {
             results = await getPopulationData(yearOffset + 1);
         }
         else {
