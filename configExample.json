@@ -165,10 +165,14 @@
         "channelID" : "",
         "postCount" : 10,
         "URLs" : [
-            "https://www.reddit.com/r/memes/top.json?raw_json=1&t=day&limit=",
-            "https://www.reddit.com/r/dankmemes/top.json?raw_json=1&t=day&limit=",
-            "https://www.reddit.com/r/goodanimemes/top.json?raw_json=1&t=day&limit=",
-            "https://www.reddit.com/r/Animemes/top.json?raw_json=1&t=day&limit="
+            "https://www.reddit.com/r/memes/top.json?raw_json=1&t=week&limit=",
+            "https://www.reddit.com/r/dankmemes/top.json?raw_json=1&t=week&limit=",
+            "https://www.reddit.com/r/goodanimemes/top.json?raw_json=1&t=week&limit=",
+            "https://www.reddit.com/r/Animemes/top.json?raw_json=1&t=week&limit=",
+            "https://www.reddit.com/r/Whatcouldgowrong/top.json?raw_json=1&t=week&limit=",
+            "https://www.reddit.com/r/PhoenixSC/top.json?raw_json=1&t=week&limit=",
+            "https://www.reddit.com/r/MinecraftMemes/top.json?raw_json=1&t=week&limit=",
+            "https://www.reddit.com/r/Minecrafthmmm/top.json?raw_json=1&t=week&limit="
         ]
     },
 
