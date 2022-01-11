@@ -46,7 +46,7 @@ export async function execute(client) {
         async () => {
             const randIndex = randomMath(derpConfig.intervalWaitTags.length);
             const selection = derpConfig.intervalWaitTags[randIndex];
-            const tagArr = [selection, 'score.gte:400', ...filter];
+            const tagArr = [selection, 'score.gte:450', ...filter];
             const img = await getImage(tagArr);
 
             if (img.results) {
