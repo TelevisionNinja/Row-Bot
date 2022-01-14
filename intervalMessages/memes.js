@@ -12,14 +12,14 @@ export async function execute(client) {
 
     const interval = new DailyInterval(
         async () => {
-            const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.postCount}`;
+            const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.queryString}${memes.postCount}`;
             const response = await fetch(URL);
 
             try {
                 const postArr = (await response.json()).data.children;
                 const post = postArr[randomMath(memes.postCount)];
 
-                recipient.send(encodeURI(post.data.url));
+                recipient.send(post.data.url);
             }
             catch (error) {
                 console.log(error);
