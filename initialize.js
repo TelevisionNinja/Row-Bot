@@ -184,4 +184,13 @@ export function initializeIntervals(client) {
 //     }
 // }
 
-// loadGlobalSlashCommands(slashCommands, clientID, token);
+// console.log('Started refreshing application (/) commands.');
+
+// const response = await loadGlobalSlashCommands(slashCommands, clientID, token);
+
+// if (response.ok) {
+//     console.log('Successfully reloaded application (/) commands.');
+// }
+// else {
+//     console.log(response);
+// }
