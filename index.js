@@ -244,11 +244,10 @@ client.on('messageCreate', async msg => {
 
                 const buffer = await getTtsBuffer(url);
 
-                if (typeof buffer === 'undefined') {
-                    return;
+                if (typeof buffer !== 'undefined') {
+                    audioPlayer.playStream(msg, Readable.from(buffer));
                 }
 
-                audioPlayer.playStream(msg, Readable.from(buffer));
                 return;
             }
         }
