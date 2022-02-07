@@ -16,8 +16,8 @@
 
     "tagSeparator" : ",",
 
-    "devGuild" : "",
-    "ruleChannel" : "",
+    "devGuildID" : "",
+    "ruleChannelID" : "",
 
     "postgresql" : {
         "host": "localhost",
