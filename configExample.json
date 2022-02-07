@@ -280,8 +280,10 @@
         "names" : [
             "tts",
             "speech",
+            "speak",
             "talk",
-            "voice"
+            "voice",
+            "say"
         ],
         "description" : "Generate a tts file"
     },
