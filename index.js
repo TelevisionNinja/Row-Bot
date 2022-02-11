@@ -44,6 +44,7 @@ import {
     noncommands,
     genMsg,
     greetings,
+    reactionRoles,
 
     initializeIntervals
 } from './initialize.js';
@@ -399,6 +400,57 @@ client.on('guildMemberAdd', async member => {
     const msg = `Please check the <#${ruleChannelID}> channel for some info 🙂`;
 
     sendTypingMsg(channel, `${greetingMsg} <@${member.id}> ${msg}`, member.user.username);
+});
+
+//--------------------------------------------------------------------------------
+// reaction roles
+
+client.on('messageReactionAdd', async (react, user) => {
+    if (!react.message.guild || react.message.guild.id !== devGuildID || user.bot) {
+        return;
+    }
+
+    if (react.partial) {
+        await react.fetch();
+    }
+
+    if (react.message.partial) {
+        await react.message.fetch();
+    }
+
+    const roles = reactionRoles[react.message.id];
+
+    if (typeof roles !== 'undefined') {
+        const role = roles[react.emoji.name];
+
+        if (typeof role !== 'undefined') {
+            react.message.guild.members.cache.get(user.id).roles.add(role);
+        }
+    }
+});
+
+client.on('messageReactionRemove', async (react, user) => {
+    if (!react.message.guild || react.message.guild.id !== devGuildID || user.bot) {
+        return;
+    }
+
+    if (react.partial) {
+        await react.fetch();
+    }
+
+    if (react.message.partial) {
+        await react.message.fetch();
+    }
+
+    const roles = reactionRoles[react.message.id];
+
+    if (typeof roles !== 'undefined') {
+        const role = roles[react.emoji.name];
+
+        if (typeof role !== 'undefined') {
+            react.message.guild.members.cache.get(user.id).roles.remove(role);
+        }
+    }
 });
 
 //--------------------------------------------------------------------------------

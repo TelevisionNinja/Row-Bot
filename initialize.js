@@ -5,6 +5,7 @@ import { initialize as initializeHelp } from './commands/help.js';
 import { initialize as initializeTulpHelp } from './commands/tulpCommands/help.js';
 import { initialize as initializeMusicHelp } from './commands/musicCommands/help.js';
 import messages from './messages.json' assert { type: 'json' };
+import reactionRoles from './reactionRoles.json' assert { type: 'json' };
 // import {
 //     buildCommandJSON,
 //     loadGlobalSlashCommands
@@ -31,7 +32,8 @@ export {
     noncommands,
     genMsg,
     intervalMsgs,
-    greetings
+    greetings,
+    reactionRoles
 };
 
 //--------------------------------------------------------------------------------
@@ -62,10 +64,16 @@ const clientOptions = {
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_MESSAGE_TYPING,
         Intents.FLAGS.GUILD_VOICE_STATES,
-        Intents.FLAGS.GUILD_WEBHOOKS
+        Intents.FLAGS.GUILD_WEBHOOKS,
+
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS
     ],
 
-    partials: ['CHANNEL']
+    partials: [
+        'CHANNEL',
+        'MESSAGE',
+        'REACTION'
+    ]
 };
 let commandMap = new Map();
 let tulpCommandMap = new Map();
