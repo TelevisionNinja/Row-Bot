@@ -85,10 +85,10 @@ client.on('messageCreate', async msg => {
         return;
     }
 
-    const isDM = msg.channel.type === 'DM';
+    const inGuild = msg.inGuild();
 
     // permissions
-    if (!isDM) {
+    if (inGuild) {
         const permissions = msg.channel.permissionsFor(clientID);
 
         // must be admin or have minimum permissions
@@ -116,7 +116,7 @@ client.on('messageCreate', async msg => {
             return;
         }
 
-        if (command.guildOnly && isDM) {
+        if (command.guildOnly && !inGuild) {
             msg.channel.send('I can\'t execute that command in DM\'s');
             return;
         }
@@ -225,7 +225,7 @@ client.on('messageCreate', async msg => {
         //--------------------------------------------------------------------------------
         // voice
 
-        if (!isDM && msg.member.voice.channel) {
+        if (inGuild && msg.member.voice.channel) {
             if (noMentionsMsg === 'join me') {
                 audioPlayer.joinVC(msg);
                 return;
@@ -287,7 +287,7 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // AMP links
 
-    if (!isDM && msg.guild.id !== devGuildID) {
+    if (inGuild && msg.guild.id !== devGuildID) {
         return;
     }
 
@@ -364,28 +364,19 @@ client.on('shardResume', () => {
 });
 
 //--------------------------------------------------------------------------------
+// tulp events
+
 // delete webhook data
-
-client.on('channelDelete', channel => {
-    tulpCache.deleteWebhook(channel.id);
-});
-
-client.on('threadDelete', thread => {
-    tulpCache.deleteWebhook(thread.id);
-});
-
-//--------------------------------------------------------------------------------
-// tulp cache
+client.on('channelDelete', channel => tulpCache.deleteWebhook(channel.id));
+client.on('threadDelete', thread => tulpCache.deleteWebhook(thread.id));
 
 // cache user data and the channel webhook while the user is typing
-client.on('typingStart', async typing => {
-    tulpCache.loadCache(typing.user.id, typing.channel.id);
-});
+client.on('typingStart', typing => tulpCache.loadCache(typing.user.id, typing.channel.id));
 
 //--------------------------------------------------------------------------------
 // welcome message
 
-client.on('guildMemberAdd', async member => {
+client.on('guildMemberAdd', member => {
     if (member.guild.id !== devGuildID || member.user.bot) {
         return;
     }
@@ -406,51 +397,67 @@ client.on('guildMemberAdd', async member => {
 // reaction roles
 
 client.on('messageReactionAdd', async (react, user) => {
-    if (!react.message.guild || react.message.guild.id !== devGuildID || user.bot) {
-        return;
-    }
-
     if (react.partial) {
-        await react.fetch();
+        try {
+            await react.fetch();
+        }
+        catch (error) {
+            console.log(error);
+            return;
+        }
     }
 
-    if (react.message.partial) {
-        await react.message.fetch();
+    //--------------------------------------------------------------------------------
+
+    if (!react.message.guild || user.bot) {
+        return;
     }
 
     const roles = reactionRoles[react.message.id];
 
-    if (typeof roles !== 'undefined') {
-        const role = roles[react.emoji.name];
-
-        if (typeof role !== 'undefined') {
-            react.message.guild.members.cache.get(user.id).roles.add(role);
-        }
+    if (typeof roles === 'undefined') {
+        return;
     }
+
+    const roleID = roles[react.emoji.name];
+
+    if (typeof roleID === 'undefined') {
+        return;
+    }
+
+    react.message.guild.members.cache.get(user.id).roles.add(roleID);
 });
 
 client.on('messageReactionRemove', async (react, user) => {
-    if (!react.message.guild || react.message.guild.id !== devGuildID || user.bot) {
-        return;
-    }
-
     if (react.partial) {
-        await react.fetch();
+        try {
+            await react.fetch();
+        }
+        catch (error) {
+            console.log(error);
+            return;
+        }
     }
 
-    if (react.message.partial) {
-        await react.message.fetch();
+    //--------------------------------------------------------------------------------
+
+    if (!react.message.guild || user.bot) {
+        return;
     }
 
     const roles = reactionRoles[react.message.id];
 
-    if (typeof roles !== 'undefined') {
-        const role = roles[react.emoji.name];
-
-        if (typeof role !== 'undefined') {
-            react.message.guild.members.cache.get(user.id).roles.remove(role);
-        }
+    if (typeof roles === 'undefined') {
+        return;
     }
+
+    const roleID = roles[react.emoji.name];
+
+    if (typeof roleID === 'undefined') {
+        return;
+    }
+
+    react.message.guild.members.cache.get(user.id).roles.remove(roleID);
 });
 
 //--------------------------------------------------------------------------------
