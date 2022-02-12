@@ -6,7 +6,6 @@ import {
 } from './lib/msgUtils.js';
 import {
     removeAllSpecialChars,
-    includesPhrase,
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
@@ -26,7 +25,6 @@ import {
     token,
     clientID,
     activityStatus,
-    names,
     minimumPermissions,
     devGuildID,
     ruleChannelID,
@@ -187,7 +185,7 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // chat bot
 
-    if (hasBotMention(msg, false, true, false)) {
+    if (hasBotMention(msg, false, true, false, false).mentioned) {
         const noMentionsMsg = removeMentions(msg.content);
         const replyStr = await getChatBotReply(msg.author.id, noMentionsMsg);
 
@@ -199,28 +197,16 @@ client.on('messageCreate', async msg => {
     }
 
     //--------------------------------------------------------------------------------
-    // set up vars for noncommands and general messages
-
-    let botMention = hasBotMention(msg);
-    let selectedName = '';
-
-    //--------------------------------------------------------------------------------
     // detect any mentions
 
-    if (!botMention) {
-        for (let i = 0, n = names.length; i < n; i++) {
-            const currentName = names[i];
-
-            if (currentName.length > selectedName.length && includesPhrase(msg.content, currentName, false)) {
-                botMention = true;
-                selectedName = currentName;
-            }
-        }
-    }
+    const {
+        mentioned: botMention,
+        name: foundName
+    } = hasBotMention(msg);
 
     if (botMention) {
         // remove mentions or name from message
-        const noMentionsMsg = removeAllSpecialChars(removeMentions(msg.content, selectedName)).trim().toLowerCase();
+        const noMentionsMsg = removeAllSpecialChars(removeMentions(msg.content, foundName)).trim().toLowerCase();
 
         //--------------------------------------------------------------------------------
         // voice

@@ -8,13 +8,9 @@ import {
     hasBotMention,
     sendTypingMsg
 } from '../lib/msgUtils.js';
-import {
-    includesPhrase,
-    removeAllSpecialChars
-} from '../lib/stringUtils.js';
+import { includesPhrase } from '../lib/stringUtils.js';
 
-const names = config.names,
-    askLateNight = config.askLateNight,
+const askLateNight = config.askLateNight,
     prefix = config.prefix,
     acknowledgements = messages.acknowledgements,
     yeses = messages.yeses,
@@ -68,7 +64,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
 
     const collector = recipient.createMessageCollector({
         filter: m => {
-            return !m.author.bot && !m.content.startsWith(prefix) && (names.some(n => includesPhrase(removeAllSpecialChars(m.content), n, false)) || hasBotMention(m, false, true, false));
+            return !m.author.bot && !m.content.startsWith(prefix) && hasBotMention(m, false, true, false, true, true).mentioned;
         },
         time: timeOut
     });
