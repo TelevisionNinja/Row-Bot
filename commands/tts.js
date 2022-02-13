@@ -3,7 +3,6 @@ import { Constants } from 'discord.js';
 import { cutOff } from '../lib/stringUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
-import fetch from 'node-fetch';
 
 const tts = config.tts,
     tagSeparator = config.tagSeparator;
