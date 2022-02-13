@@ -1,7 +1,6 @@
 import config from '../config.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
-import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';

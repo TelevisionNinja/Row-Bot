@@ -1,7 +1,6 @@
 import DailyInterval from 'daily-intervals';
 import { getChannel } from '../lib/msgUtils.js';
 import config from '../config.json' assert { type: 'json' };
-import fetch from 'node-fetch';
 import { randomMath } from '../lib/randomFunctions.js';
 
 const memes = config.memes;

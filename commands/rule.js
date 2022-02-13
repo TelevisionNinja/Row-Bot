@@ -4,7 +4,6 @@ import {
     sendImgInteraction
 } from '../lib/msgUtils.js';
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
-import fetch from 'node-fetch';
 import { parse } from 'txml';
 import config from '../config.json' assert { type: 'json' };
 import PQueue from 'p-queue';

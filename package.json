@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --experimental-json-modules ."
+    "start": "node --experimental-json-modules --experimental-fetch ."
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,6 @@
     "erlpack": "github:discord/erlpack",
     "ffmpeg-static": "^4.4.1",
     "libsodium-wrappers": "^0.7.9",
-    "node-fetch": "^3.2.0",
     "p-queue": "^7.2.0",
     "pg": "^8.7.3",
     "txml": "^5.1.1",
