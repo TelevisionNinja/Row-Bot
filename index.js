@@ -363,7 +363,7 @@ client.on('typingStart', typing => tulpCache.loadCache(typing.user.id, typing.ch
 // welcome message
 
 client.on('guildMemberAdd', member => {
-    if (member.guild.id !== devGuildID || member.user.bot) {
+    if (member.user.bot || member.guild.id !== devGuildID) {
         return;
     }
 
@@ -395,7 +395,7 @@ client.on('messageReactionAdd', async (react, user) => {
 
     //--------------------------------------------------------------------------------
 
-    if (!react.message.guild || user.bot) {
+    if (!react.message.guild || user.bot || react.message.guild.id !== devGuildID) {
         return;
     }
 
@@ -427,7 +427,7 @@ client.on('messageReactionRemove', async (react, user) => {
 
     //--------------------------------------------------------------------------------
 
-    if (!react.message.guild || user.bot) {
+    if (!react.message.guild || user.bot || react.message.guild.id !== devGuildID) {
         return;
     }
 
