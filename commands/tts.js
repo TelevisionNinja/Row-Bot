@@ -13,6 +13,8 @@ const queue = new PQueue({
 });
 const punctuation = ['.', ',', ':', '!', '?'];
 
+const tooShortMsg = 'Text must be at least 5 characters, and a valid character must be provided';
+
 export default {
     interactionData: {
         name: tts.names[0],
@@ -56,7 +58,7 @@ export default {
             msg.reply({ files: [url] });
         }
         else {
-            msg.reply('Text must be at least 5 characters, and a valid character must be provided');
+            msg.reply(tooShortMsg);
         }
     },
     async executeInteraction(interaction) {
@@ -70,7 +72,7 @@ export default {
             interaction.editReply({ files: [url] });
         }
         else {
-            interaction.editReply('Text must be at least 5 characters, and a valid character must be provided');
+            interaction.editReply(tooShortMsg);
         }
     }
 }
