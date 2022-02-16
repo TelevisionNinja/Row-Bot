@@ -146,7 +146,7 @@ export default {
         const selectedTulp = await tulps.get(interaction.user.id, username);
 
         if (typeof selectedTulp === 'undefined') {
-            interaction.editReply({
+            interaction.reply({
                 content: tulpConfig.noDataMsg,
                 ephemeral: true
             });
