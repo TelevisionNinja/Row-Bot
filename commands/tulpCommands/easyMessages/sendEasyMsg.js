@@ -1,8 +1,6 @@
-import { tulps } from '../../../lib/database.js';
 import { sendWebhookMsg } from '../../../lib/msgUtils.js';
 import { containsURL } from '../../../lib/urlUtils.js';
 import { cutOff } from '../../../lib/stringUtils.js';
-import { default as tulpCache } from '../../../lib/tulpCache.js';
 
 export default {
     usage: '<custom bracket><message><custom bracket>',
@@ -14,18 +12,8 @@ export default {
      * @returns 
      */
     async sendEasyMsg(msg, tulpArr) {
-        // find user data if not cached
-        if (typeof tulpArr === 'undefined') {
-            const userID = msg.author.id;
-            tulpArr = await tulps.getAll(userID);
-
-            if (tulpArr.length) {
-                tulpCache.insert(userID, tulpArr);
-            }
-            else {
-                tulpCache.insert(userID, null);
-                return false;
-            }
+        if (!tulpArr.length) {
+            return false;
         }
 
         //-------------------------------------------------------------------

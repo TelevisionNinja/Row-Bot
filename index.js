@@ -176,9 +176,9 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // send tulp messages easily
 
-    const userData = tulpCache.get(msg.author.id);
+    const userData = await tulpCache.getUser(msg.author.id);
 
-    if (userData !== null && await sendEasyMsg.sendEasyMsg(msg, userData)) {
+    if (await sendEasyMsg.sendEasyMsg(msg, userData)) {
         return;
     }
 
@@ -357,7 +357,7 @@ client.on('channelDelete', channel => tulpCache.deleteWebhook(channel.id));
 client.on('threadDelete', thread => tulpCache.deleteWebhook(thread.id));
 
 // cache user data and the channel webhook while the user is typing
-client.on('typingStart', typing => tulpCache.loadCache(typing.user.id, typing.channel.id));
+client.on('typingStart', typing => tulpCache.updateCache(typing));
 
 //--------------------------------------------------------------------------------
 // welcome message
