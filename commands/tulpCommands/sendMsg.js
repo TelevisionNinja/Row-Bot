@@ -137,7 +137,7 @@ export default {
         }
     },
     async executeInteraction(interaction) {
-        await interaction.deferReply({ ephemeral: true });
+        // await interaction.deferReply();
 
         const tulpMsg = interaction.options.getString('message');
 
@@ -146,11 +146,15 @@ export default {
         const selectedTulp = await tulps.get(interaction.user.id, username);
 
         if (typeof selectedTulp === 'undefined') {
-            interaction.editReply(tulpConfig.noDataMsg);
+            interaction.editReply({
+                content: tulpConfig.noDataMsg,
+                ephemeral: true
+            });
+
             return;
         }
 
-        interaction.deleteReply();
+        // interaction.deleteReply();
 
         //-------------------------------------------------------------------------------------
         // detect dm channel
