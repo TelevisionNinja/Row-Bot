@@ -22,7 +22,7 @@ export default {
         const tulpNames = await tulps.listAll(msg.author.id);
 
         if (tulpNames.length) {
-            msg.channel.send({
+            msg.reply({
                 embeds: [{
                     title: 'Your tulps',
                     description: cutOff(tulpNames.map(t => `• ${t.username}`).join('\n'), 4096)
@@ -30,7 +30,7 @@ export default {
             });
         }
         else {
-            msg.channel.send(listConfig.noTulpsMsg);
+            msg.reply(listConfig.noTulpsMsg);
         }
     },
     async executeInteraction(interaction) {

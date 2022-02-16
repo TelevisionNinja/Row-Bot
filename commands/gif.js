@@ -40,10 +40,10 @@ export default {
         } = await getGif(args.join(' '));
 
         if (hasResult) {
-            msg.channel.send(gif);
+            msg.reply(gif);
         }
         else {
-            msg.channel.send(noResultsMsg);
+            msg.reply(noResultsMsg);
         }
     },
     async executeInteraction(interaction) {

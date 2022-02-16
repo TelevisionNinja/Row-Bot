@@ -35,7 +35,7 @@ export default {
         }
 
         if (command.argsRequired && !args.length) {
-            msg.channel.send(`Please provide arguments\nex: \`${prefix}${tulp.names[0]} ${command.names[0]} ${command.usage}\``);
+            msg.reply(`Please provide arguments\nex: \`${prefix}${tulp.names[0]} ${command.names[0]} ${command.usage}\``);
             return;
         }
 
@@ -48,7 +48,7 @@ export default {
             await command.execute(msg, args);
         }
         catch (error) {
-            msg.channel.send('I couldn\'t do that command for some reason 😢');
+            msg.reply('I couldn\'t do that command for some reason 😢');
             console.log(error);
         }
     },

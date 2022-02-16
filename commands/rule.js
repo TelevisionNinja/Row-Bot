@@ -1,8 +1,5 @@
 import { randomMath } from '../lib/randomFunctions.js';
-import {
-    sendImg,
-    sendImgInteraction
-} from '../lib/msgUtils.js';
+import { createImgResult } from '../lib/msgUtils.js';
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
 import { parse } from 'txml';
 import config from '../config.json' assert { type: 'json' };
@@ -48,7 +45,7 @@ export default {
 
         const img = await getImage(args);
 
-        sendImg(msg.channel, img);
+        msg.reply(createImgResult(img));
     },
     async executeInteraction(interaction) {
         await interaction.deferReply();
@@ -56,7 +53,7 @@ export default {
         const tags = interaction.options.getString('tags').split(tagSeparator);
         const img = await getImage(tags);
 
-        sendImgInteraction(interaction, img);
+        interaction.editReply(createImgResult(img));
     }
 }
 

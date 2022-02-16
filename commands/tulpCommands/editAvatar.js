@@ -44,22 +44,22 @@ export default {
         } = extractNameAndAvatar(msg, args);
 
         if (!success) {
-            msg.channel.send('Please provide a name and a profile picture');
+            msg.reply('Please provide a name and a profile picture');
             return;
         }
 
         if (!validURL) {
-            msg.channel.send('Please provide a valid URL for the avatar');
+            msg.reply('Please provide a valid URL for the avatar');
             return;
         }
 
         const result = await tulps.updateAvatar(msg.author.id, username, avatarLink);
 
         if (result.rowCount) {
-            msg.channel.send(editAvatar.confirmMsg);
+            msg.reply(editAvatar.confirmMsg);
         }
         else {
-            msg.channel.send(tulpConfigObj.noDataMsg);
+            msg.reply(tulpConfigObj.noDataMsg);
         }
     },
     async executeInteraction(interaction) {

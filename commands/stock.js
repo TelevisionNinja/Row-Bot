@@ -14,6 +14,8 @@ const queue = new PQueue({
 const priceElement = 'Fw(b) Fz(36px) Mb(-4px) D(ib)';
 const valueStr = 'value="';
 
+const errorMsg = 'I couldn\'t find that stock';
+
 export default {
     interactionData: {
         name: stock.names[0],
@@ -40,10 +42,10 @@ export default {
         const price = await getStockStr(symbol);
 
         if (price.length) {
-            msg.channel.send(`$${price}`);
+            msg.reply(`$${price}`);
         }
         else {
-            msg.channel.send('I couldn\'t find that stock');
+            msg.reply(errorMsg);
         }
     },
     async executeInteraction(interaction) {
@@ -56,7 +58,7 @@ export default {
             interaction.editReply(`$${price}`);
         }
         else {
-            interaction.editReply('I couldn\'t find that stock');
+            interaction.editReply(errorMsg);
         }
     }
 }

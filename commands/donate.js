@@ -17,7 +17,7 @@ export default {
     usage: '',
     cooldown: 0,
     execute(msg, args) {
-        msg.channel.send({
+        msg.reply({
             embeds: [{
                 title: 'Donate Here!',
                 url: donateConfig.URL,

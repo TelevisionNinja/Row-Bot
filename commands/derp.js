@@ -1,8 +1,5 @@
 import config from '../config.json' assert { type: 'json' };
-import {
-    sendImg,
-    sendImgInteraction
-} from '../lib/msgUtils.js';
+import { createImgResult } from '../lib/msgUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
@@ -42,7 +39,7 @@ export default {
 
         const img = await getImage(args);
 
-        sendImg(msg.channel, img);
+        msg.reply(createImgResult(img));
     },
     async executeInteraction(interaction) {
         await interaction.deferReply();
@@ -50,7 +47,7 @@ export default {
         const tags = interaction.options.getString('tags').split(tagSeparator);
         const img = await getImage(tags);
 
-        sendImgInteraction(interaction, img);
+        interaction.editReply(createImgResult(img));
     }
 }
 

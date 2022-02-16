@@ -44,7 +44,7 @@ export default {
             message = 'I don\'t have any restaurants of that type';
         }
 
-        msg.channel.send(message);
+        msg.reply(message);
     },
     executeInteraction(interaction) {
         let foodType = interaction.options.getString('type');

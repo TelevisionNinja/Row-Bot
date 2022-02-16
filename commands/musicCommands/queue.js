@@ -35,10 +35,10 @@ export default {
                 queueStr = `${queueStr}${queueList}`;
             }
 
-            msg.channel.send(cutOff(queueStr, 2000));
+            msg.reply(cutOff(queueStr, 2000));
         }
         else {
-            msg.channel.send('There are no songs in the queue');
+            msg.reply('There are no songs in the queue');
         }
     },
     executeInteraction(interaction) {

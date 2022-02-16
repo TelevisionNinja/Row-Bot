@@ -31,11 +31,11 @@ export default {
         const selectedTulp = await tulps.get(msg.author.id, username);
 
         if (typeof selectedTulp === 'undefined') {
-            msg.channel.send(tulpConfig.noDataMsg);
+            msg.reply(tulpConfig.noDataMsg);
             return;
         }
 
-        msg.channel.send({
+        msg.reply({
             embeds: [{
                 title: selectedTulp.username,
                 thumbnail: { url: selectedTulp.avatar },

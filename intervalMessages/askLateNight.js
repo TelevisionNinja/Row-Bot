@@ -20,12 +20,12 @@ let asked = false;
 
 // ask the late night bois if they're going to get on
 export async function execute(client) {
-    const recipient = await getChannel(client, askLateNight.channelID);
+    const channel = await getChannel(client, askLateNight.channelID);
 
     const interval = new DailyInterval(
         () => {
             ask(
-                recipient,
+                channel,
                 askLateNight.timeOut, // time out is in ms
                 askLateNight.msg,
                 askLateNight.allConfirmsMsg,
@@ -44,14 +44,14 @@ export async function execute(client) {
     interval.start();
 }
 
-async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, noReplyMsg, confirmed, undecided, denied) {
+async function ask(channel, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, noReplyMsg, confirmed, undecided, denied) {
     if (asked) {
         return;
     }
 
-    await recipient.guild.members.fetch();
+    await channel.guild.members.fetch();
 
-    const memberMap = recipient.members.filter((value, key) => !value.user.bot);
+    const memberMap = channel.members.filter((value, key) => !value.user.bot);
     memberMap.forEach((value, key) => value.user.decision = undecided);
     const memberSize = memberMap.size;
 
@@ -60,9 +60,9 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
     let numberOfConfirms = 0;
 
     asked = true;
-    await sendTypingMsg(recipient, askingMsg, '');
+    await sendTypingMsg(channel, askingMsg, '');
 
-    const collector = recipient.createMessageCollector({
+    const collector = channel.createMessageCollector({
         filter: m => {
             return !m.author.bot && !m.content.startsWith(prefix) && hasBotMention(m, false, true, false, true, true).mentioned;
         },
@@ -112,7 +112,7 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
         }
 
         if (initial !== numberOfReplies) {
-            sendTypingMsg(recipient, reply, str);
+            sendTypingMsg(channel, reply, str);
 
             sendDms(memberMap, askingMsg, denied, str);
         }
@@ -126,10 +126,10 @@ async function ask(recipient, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg
         asked = false;
 
         if (!numberOfReplies || !numberOfConfirms) {
-            sendTypingMsg(recipient, noReplyMsg, '');
+            sendTypingMsg(channel, noReplyMsg, '');
         }
         else if (numberOfReplies < memberSize) {
-            sendTypingMsg(recipient, fewConfirmsMsg, '');
+            sendTypingMsg(channel, fewConfirmsMsg, '');
         }
     });
 }

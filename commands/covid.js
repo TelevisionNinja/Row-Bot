@@ -43,7 +43,7 @@ export default {
     usage: `<state>`,
     cooldown: 1,
     async execute(msg, args) {
-        msg.channel.send({ embeds: await getDataEmbeds(args.join(' ').trimStart()) });
+        msg.reply({ embeds: await getDataEmbeds(args.join(' ').trimStart()) });
     },
     async executeInteraction(interaction) {
         await interaction.deferReply();

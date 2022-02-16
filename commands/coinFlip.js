@@ -19,10 +19,10 @@ export default {
     cooldown: 0,
     execute(msg, args) {
         if (randomMath(2)) {
-            msg.channel.send('Heads');
+            msg.reply('Heads');
         }
         else {
-            msg.channel.send('Tails');
+            msg.reply('Tails');
         }
     },
     executeInteraction(interaction) {

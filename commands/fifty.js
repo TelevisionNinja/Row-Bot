@@ -32,7 +32,7 @@ export default {
             link
         } = await getRandomFifty();
 
-        msg.channel.send(`${title}\n<${link}>`);
+        msg.reply(`${title}\n<${link}>`);
     },
     async executeInteraction(interaction) {
         await interaction.deferReply();

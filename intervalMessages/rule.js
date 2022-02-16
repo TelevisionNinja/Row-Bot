@@ -3,7 +3,7 @@ import config from '../config.json' assert { type: 'json' };
 import DailyInterval from 'daily-intervals';
 import {
     getChannel,
-    sendImg
+    createImgResult
 } from '../lib/msgUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
@@ -26,7 +26,7 @@ export async function execute(client) {
             const img = await getImageRule0(tagArr);
 
             if (img.results) {
-                sendImg(recipient, img, false);
+                recipient.send(createImgResult(img, false));
             }
             else {
                 recipient.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));

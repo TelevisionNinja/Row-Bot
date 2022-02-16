@@ -40,21 +40,21 @@ export default {
         const params = args.join(' ').split(tagSeparator).map(s => s.trim());
 
         if (params.length < 2) {
-            msg.channel.send(errorMessage);
+            msg.reply(errorMessage);
             return;
         }
 
         const unparsedBrackets = params[1];
 
         if (unparsedBrackets.indexOf(enclosingText) === -1) {
-            msg.channel.send(errorMessage);
+            msg.reply(errorMessage);
             return;
         }
 
         const bracketArr = unparsedBrackets.split(enclosingText).map(b => b.trim());
 
         if (!bracketArr.length) {
-            msg.channel.send(errorMessage);
+            msg.reply(errorMessage);
             return;
         }
 
@@ -62,7 +62,7 @@ export default {
         const endBracket = bracketArr[1];
 
         if (!startBracket.length && !endBracket.length) {
-            msg.channel.send('Brackets can\'t be empty');
+            msg.reply('Brackets can\'t be empty');
             return;
         }
 
@@ -70,14 +70,14 @@ export default {
             const result = await tulps.updateBrackets(msg.author.id, params[0], startBracket, endBracket);
 
             if (result.rowCount) {
-                msg.channel.send(editBrackets.confirmMsg);
+                msg.reply(editBrackets.confirmMsg);
             }
             else {
-                msg.channel.send(tulpConfig.noDataMsg);
+                msg.reply(tulpConfig.noDataMsg);
             }
         }
         catch (error) {
-            msg.channel.send('These brackets are already being used');
+            msg.reply('These brackets are already being used');
         }
     },
     async executeInteraction(interaction) {

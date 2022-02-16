@@ -43,22 +43,22 @@ export default {
         } = extractNameAndAvatar(msg, args);
 
         if (!success) {
-            msg.channel.send('Please provide a name and a profile picture');
+            msg.reply('Please provide a name and a profile picture');
             return;
         }
 
         if (!validURL) {
-            msg.channel.send('Please provide a valid URL for the avatar');
+            msg.reply('Please provide a valid URL for the avatar');
             return;
         }
 
         try {
             await tulps.set(msg.author.id, username, avatarLink, `${username}:`, '');
 
-            msg.channel.send(create.confirmMsg);
+            msg.reply(create.confirmMsg);
         }
         catch (error) {
-            msg.channel.send(create.existingMsg);
+            msg.reply(create.existingMsg);
         }
     },
     async executeInteraction(interaction) {

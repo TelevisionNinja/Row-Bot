@@ -28,7 +28,7 @@ export default {
         uptime = ~~(uptime / 24);
         const days = uptime % 365;
 
-        msg.channel.send(`${days} day(s)\n${hrs} hr(s)\n${mins} min(s)\n${s} s\n${ms} ms`);
+        msg.reply(`${days} day(s)\n${hrs} hr(s)\n${mins} min(s)\n${s} s\n${ms} ms`);
     },
     executeInteraction(interaction) {
         let uptime = interaction.client.uptime;

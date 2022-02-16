@@ -55,7 +55,7 @@ export default {
             const argCommand = msg.client.commands.get(userCommand);
 
             if (typeof argCommand === 'undefined') {
-                msg.channel.send('That\'s not one of my commands');
+                msg.reply('That\'s not one of my commands');
                 return;
             }
 
@@ -81,7 +81,7 @@ export default {
                 aliasStr = aliases.join(', ');
             }
 
-            msg.channel.send({
+            msg.reply({
                 embeds: [{
                     title: `Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
@@ -108,7 +108,7 @@ export default {
             });
         }
         else {
-            msg.channel.send(helpCenter);
+            msg.reply(helpCenter);
         }
     },
     executeInteraction(interaction) {

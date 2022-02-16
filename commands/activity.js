@@ -37,7 +37,7 @@ export default {
         const vc = msg.member.voice.channel;
 
         if (!vc) {
-            msg.channel.send('Please join a voice channel');
+            msg.reply('Please join a voice channel');
             return;
         }
 
@@ -45,12 +45,12 @@ export default {
         const activityID = activities.get(activityName);
 
         if (typeof activityID === 'undefined') {
-            msg.channel.send('I don\'t have that activity');
+            msg.reply('I don\'t have that activity');
             return;
         }
 
         if (activityName === 'list') {
-            msg.channel.send(activityID);
+            msg.reply(activityID);
             return;
         }
 
@@ -61,7 +61,7 @@ export default {
             targetType: 2
         });
 
-        return msg.channel.send(invite.url);
+        return msg.reply(invite.url);
     },
     async executeInteraction(interaction) {
         const vc = interaction.member.voice.channel;

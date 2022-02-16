@@ -17,7 +17,7 @@ export default {
     usage: '',
     cooldown: 0,
     execute(msg, args) {
-        msg.channel.send(invite.link);
+        msg.reply(invite.link);
     },
     executeInteraction(interaction) {
         interaction.reply(invite.link);

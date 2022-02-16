@@ -44,7 +44,7 @@ export default {
                 audio.playYoutube(msg, songURL, songURL);
             }
             else {
-                msg.channel.send('No results');
+                msg.reply('No results');
             }
         }
     },

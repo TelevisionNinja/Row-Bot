@@ -29,7 +29,7 @@ export default {
             const index = parseInt(args[0]);
 
             if (isNaN(index)) {
-                msg.channel.send('Please provide a number');
+                msg.reply('Please provide a number');
                 return;
             }
 

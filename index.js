@@ -131,7 +131,7 @@ client.on('messageCreate', async msg => {
         }
 
         if (command.argsRequired && !args.length) {
-            msg.channel.send(`Please provide arguments\nex: \`${prefix}${command.names[0]} ${command.usage}\``);
+            msg.reply(`Please provide arguments\nex: \`${prefix}${command.names[0]} ${command.usage}\``);
             return;
         }
 
@@ -151,7 +151,7 @@ client.on('messageCreate', async msg => {
 
             if (now < expirationTime) {
                 const timeLeft = (expirationTime - now) / 1000;
-                msg.channel.send(`Please let me cooldown for ${timeLeft.toFixed(1)} second(s)`);
+                msg.reply(`Please let me cooldown for ${timeLeft.toFixed(1)} second(s)`);
                 return;
             }
         }
@@ -166,7 +166,7 @@ client.on('messageCreate', async msg => {
             await command.execute(msg, args);
         }
         catch (error) {
-            msg.channel.send('I couldn\'t do that command for some reason 😢');
+            msg.reply('I couldn\'t do that command for some reason 😢');
             console.log(error);
         }
 
@@ -191,7 +191,7 @@ client.on('messageCreate', async msg => {
 
         // reply
         if (replyStr.length) {
-            sendTypingMsg(msg.channel, replyStr, msg.content);
+            sendTypingMsg(msg, replyStr, msg.content, true);
             return;
         }
     }
@@ -247,7 +247,7 @@ client.on('messageCreate', async msg => {
 
             // reply
             if (replyStr.length) {
-                sendTypingMsg(msg.channel, replyStr, msg.content);
+                sendTypingMsg(msg, replyStr, msg.content, true);
                 return;
             }
         }

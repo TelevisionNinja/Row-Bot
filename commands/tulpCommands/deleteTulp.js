@@ -31,10 +31,10 @@ export default {
         const result = await tulps.delete(msg.author.id, username);
 
         if (result.rowCount) {
-            msg.channel.send(deleteTulp.confirmMsg);
+            msg.reply(deleteTulp.confirmMsg);
         }
         else {
-            msg.channel.send(tulpConfigObj.noDataMsg);
+            msg.reply(tulpConfigObj.noDataMsg);
         }
     },
     async executeInteraction(interaction) {

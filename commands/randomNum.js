@@ -41,11 +41,11 @@ export default {
         }
 
         if (isNaN(min) || isNaN(max)) {
-            msg.channel.send('Use numbers please');
+            msg.reply('Use numbers please');
             return;
         }
 
-        msg.channel.send(`Your random number is ${randomMath(min, max + 1)}`);
+        msg.reply(`Your random number is ${randomMath(min, max + 1)}`);
     },
     executeInteraction(interaction) {
         let min = interaction.options.getInteger('min');

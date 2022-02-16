@@ -3,7 +3,7 @@ import config from '../config.json' assert { type: 'json' };
 import DailyInterval from 'daily-intervals';
 import {
     getChannel,
-    sendImg
+    createImgResult
 } from '../lib/msgUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
@@ -27,7 +27,7 @@ export async function execute(client) {
             img.title = `${derpConfig.intervalMsg}${selection}`;
 
             if (img.results) {
-                sendImg(recipientDaily, img, false);
+                recipientDaily.send(createImgResult(img, false));
             }
             else {
                 recipientDaily.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
@@ -50,7 +50,7 @@ export async function execute(client) {
             const img = await getImage(tagArr);
 
             if (img.results) {
-                sendImg(recipientInterval, img, false);
+                recipientInterval.send(createImgResult(img, false));
             }
             else {
                 recipientInterval.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));

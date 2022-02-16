@@ -47,7 +47,7 @@ export default {
         }
 
         if (needParameters || !oldName.length || !newName.length || oldName === newName) {
-            msg.channel.send(`Please provide the current name and a new name spearated by a "${tagSeparator}"`);
+            msg.reply(`Please provide the current name and a new name spearated by a "${tagSeparator}"`);
             return;
         }
 
@@ -57,7 +57,7 @@ export default {
             const result = await tulps.updateUsernameAndBrackets(msg.author.id, oldName, newName, `${oldName}:`, `${newName}:`, '');
 
             if (result.rowCount) {
-                msg.channel.send(editName.confirmMsg);
+                msg.reply(editName.confirmMsg);
                 return;
             }
         }
@@ -67,14 +67,14 @@ export default {
             const result = await tulps.updateUsername(msg.author.id, oldName, newName);
 
             if (result.rowCount) {
-                msg.channel.send(editName.confirmMsg);
+                msg.reply(editName.confirmMsg);
             }
             else {
-                msg.channel.send(tulpConfig.noDataMsg);
+                msg.reply(tulpConfig.noDataMsg);
             }
         }
         catch (nameError) {
-            msg.channel.send('That new name is already being used');
+            msg.reply('That new name is already being used');
         }
     },
     async executeInteraction(interaction) {

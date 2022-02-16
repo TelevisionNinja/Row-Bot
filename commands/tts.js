@@ -13,7 +13,7 @@ const queue = new PQueue({
 });
 const punctuation = ['.', ',', ':', '!', '?'];
 
-const tooShortMsg = 'Text must be at least 5 characters, and a valid character must be provided';
+const errorMsg = 'Text must be at least 5 characters, and a valid character must be provided';
 
 export default {
     interactionData: {
@@ -58,7 +58,7 @@ export default {
             msg.reply({ files: [url] });
         }
         else {
-            msg.reply(tooShortMsg);
+            msg.reply(errorMsg);
         }
     },
     async executeInteraction(interaction) {
@@ -72,7 +72,7 @@ export default {
             interaction.editReply({ files: [url] });
         }
         else {
-            interaction.editReply(tooShortMsg);
+            interaction.editReply(errorMsg);
         }
     }
 }

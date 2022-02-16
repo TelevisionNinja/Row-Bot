@@ -41,7 +41,7 @@ export default {
         } = await getDefinition(args.join(' '));
 
         if (typeof definition === 'undefined') {
-            msg.channel.send(noResultsMsg);
+            msg.reply(noResultsMsg);
             return;
         }
 
@@ -52,7 +52,7 @@ export default {
             example = cutOff(definition.example.replaceAll(/[\[\]]/g, ''), 1024);
         }
 
-        msg.channel.send({
+        msg.reply({
             embeds: [{
                 title: definition.word,
                 url: definition.permalink,

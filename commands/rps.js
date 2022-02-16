@@ -9,6 +9,8 @@ choices.set('rock', 0);
 choices.set('paper', 1);
 choices.set('scissors', 2);
 
+const errorMsg = 'Hey! That\'s not rock, paper, or scissors!';
+
 export default {
     interactionData: {
         name: rps.names[0],
@@ -34,7 +36,7 @@ export default {
         const valueOfPlayer = choices.get(args[0].toLowerCase());
 
         if (typeof valueOfPlayer === 'undefined') {
-            msg.channel.send('Hey! That\'s not rock, paper, or scissors!');
+            msg.reply(errorMsg);
             return;
         }
 
@@ -55,13 +57,13 @@ export default {
             winnerMsg = `${winnerMsg}Aww, I lost...`;
         }
 
-        msg.channel.send(winnerMsg);
+        msg.reply(winnerMsg);
     },
     executeInteraction(interaction) {
         const valueOfPlayer = choices.get(interaction.options.getString('choice').toLowerCase());
 
         if (typeof valueOfPlayer === 'undefined') {
-            interaction.reply('Hey! That\'s not rock, paper, or scissors!');
+            interaction.reply(errorMsg);
             return;
         }
 
