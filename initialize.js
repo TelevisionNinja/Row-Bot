@@ -54,22 +54,25 @@ const clientOptions = {
     retryLimit: Infinity,
 
     intents: [
+        // dm's
         Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.DIRECT_MESSAGE_TYPING,
+        Intents.FLAGS.DIRECT_MESSAGE_TYPING, // tulp caching
 
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MEMBERS,
+        // guilds
+        Intents.FLAGS.GUILDS, // webhook management
         Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_TYPING,
-        Intents.FLAGS.GUILD_VOICE_STATES,
-        Intents.FLAGS.GUILD_WEBHOOKS,
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS
+        Intents.FLAGS.GUILD_MESSAGE_TYPING, // tulp caching
+        Intents.FLAGS.GUILD_VOICE_STATES, // music commands
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS, // reaction roles
+
+        // priviledged
+        Intents.FLAGS.GUILD_MEMBERS // late night bois, guild welcome message
     ],
 
     partials: [
-        'CHANNEL',
-        'MESSAGE',
-        'REACTION'
+        'CHANNEL', // dm channels
+        'MESSAGE', // reaction roles
+        'REACTION' // reaction roles
     ]
 };
 let commandMap = new Map();
