@@ -1,5 +1,5 @@
 import musicConfig from './musicConfig.json' assert { type: 'json' };
-import { default as audio } from '../../lib/audio.js';
+import { default as audioPlayer } from '../../lib/audioPlayer.js';
 import { Constants } from 'discord.js';
 
 const pauseConfig = musicConfig.pause;
@@ -18,10 +18,9 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        audio.pause(msg.guild.id);
+        audioPlayer.pause(msg);
     },
     executeInteraction(interaction) {
-        audio.pause(interaction.guild.id);
-        interaction.reply('Song paused');
+        audioPlayer.pause(interaction);
     }
 }

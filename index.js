@@ -12,7 +12,7 @@ import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sen
 import { default as tulpCache } from './lib/tulpCache.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
-import { default as audioPlayer } from './lib/audio.js';
+import { default as audioUtils } from './lib/audioUtils.js';
 import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
 import { Readable } from 'stream';
 import {
@@ -213,26 +213,26 @@ client.on('messageCreate', async msg => {
 
         if (inGuild && msg.member.voice.channel) {
             if (noMentionsMsg === 'join me') {
-                audioPlayer.joinVC(msg);
+                audioUtils.joinVC(msg);
                 return;
             }
             else if (noMentionsMsg === 'leave') {
-                audioPlayer.leave(msg.guild.id);
+                audioUtils.leaveVC(msg.guild.id);
                 return;
             }
-            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioPlayer.vcCheck(msg)) {
+            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg)) {
                 const url = await getTtsUrl('Pinkie Pie', speechArr[randomMath(speechArr.length)]);
 
                 // play backup audio
                 if (!url.length) {
-                    audioPlayer.playFile(msg, audio[randomMath(audio.length)]);
+                    audioUtils.playFile(msg, audio[randomMath(audio.length)]);
                     return;
                 }
 
                 const buffer = await getTtsBuffer(url);
 
                 if (typeof buffer !== 'undefined') {
-                    audioPlayer.playStream(msg, Readable.from(buffer));
+                    audioUtils.playStream(msg, Readable.from(buffer));
                 }
 
                 return;

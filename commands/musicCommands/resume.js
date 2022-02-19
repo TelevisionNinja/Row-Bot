@@ -1,5 +1,5 @@
 import musicConfig from './musicConfig.json' assert { type: 'json' };
-import { default as audio } from '../../lib/audio.js';
+import { default as audioPlayer } from '../../lib/audioPlayer.js';
 import { Constants } from 'discord.js';
 
 const resumeConfig = musicConfig.resume;
@@ -18,10 +18,9 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        audio.resume(msg.guild.id);
+        audioPlayer.resume(msg);
     },
     executeInteraction(interaction) {
-        audio.resume(interaction.guild.id);
-        interaction.reply('Song resumed');
+        audioPlayer.resume(interaction);
     }
 }

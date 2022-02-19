@@ -1,5 +1,5 @@
 import config from '../config.json' assert { type: 'json' };
-import { default as audio } from '../lib/audio.js';
+import { default as audioUtils } from '../lib/audioUtils.js';
 
 const music = config.music,
     prefix = config.prefix;
@@ -29,7 +29,7 @@ export default {
             return;
         }
 
-        if (command.vcMemberOnly && !audio.vcCheck(msg)) {
+        if (command.vcMemberOnly && !audioUtils.vcCheck(msg)) {
             return;
         }
 
@@ -55,7 +55,7 @@ export default {
 
         //--------------------------------------------------------------------------------
 
-        if (command.vcMemberOnly && !audio.vcCheckInteraction(interaction)) {
+        if (command.vcMemberOnly && !audioUtils.vcCheck(interaction)) {
             return;
         }
 

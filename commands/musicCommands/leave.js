@@ -1,5 +1,5 @@
 import musicConfig from './musicConfig.json' assert { type: 'json' };
-import { default as audio } from '../../lib/audio.js';
+import { default as audioPlayer } from '../../lib/audioPlayer.js';
 import { Constants } from 'discord.js';
 
 const leaveConfig = musicConfig.leave;
@@ -18,10 +18,9 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        audio.leave(msg.guild.id);
+        audioPlayer.leaveVC(msg);
     },
     executeInteraction(interaction) {
-        audio.leave(interaction.guild.id);
-        interaction.reply('Okie dokie lokie!');
+        audioPlayer.leaveVC(interaction);
     }
 }

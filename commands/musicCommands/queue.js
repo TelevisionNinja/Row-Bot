@@ -1,7 +1,6 @@
 import musicConfig from './musicConfig.json' assert { type: 'json' };
-import { default as audioQueue } from '../../lib/audioQueue.js';
+import { default as audioPlayer } from '../../lib/audioPlayer.js';
 import { Constants } from 'discord.js';
-import { cutOff } from '../../lib/stringUtils.js';
 
 const queueConfig = musicConfig.queue;
 
@@ -19,49 +18,9 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        const queue = audioQueue.get(msg.guild.id);
-
-        if (queue.length) {
-            const playing = queue[0];
-            let queueStr = `Currently playing:\n${playing}`;
-
-            if (queue.length > 1) {
-                let queueList = '\nQueue:';
-
-                for (let i = 1; i < queue.length; i++) {
-                    queueList = `${queueList}\n${i}. ${queue[i]}`;
-                }
-
-                queueStr = `${queueStr}${queueList}`;
-            }
-
-            msg.reply(cutOff(queueStr, 2000));
-        }
-        else {
-            msg.reply('There are no songs in the queue');
-        }
+        audioPlayer.getQueue(msg);
     },
     executeInteraction(interaction) {
-        const queue = audioQueue.get(interaction.guild.id);
-
-        if (queue.length) {
-            const playing = queue[0];
-            let queueStr = `Currently playing:\n${playing}`;
-
-            if (queue.length > 1) {
-                let queueList = '\nQueue:';
-
-                for (let i = 1; i < queue.length; i++) {
-                    queueList = `${queueList}\n${i}. ${queue[i]}`;
-                }
-
-                queueStr = `${queueStr}${queueList}`;
-            }
-
-            interaction.reply(cutOff(queueStr, 2000));
-        }
-        else {
-            interaction.reply('There are no songs in the queue');
-        }
+        audioPlayer.getQueue(interaction);
     }
 }

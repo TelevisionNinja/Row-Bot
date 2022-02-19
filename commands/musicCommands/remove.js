@@ -1,5 +1,5 @@
 import musicConfig from './musicConfig.json' assert { type: 'json' };
-import { default as audio } from '../../lib/audio.js';
+import { default as audioPlayer } from '../../lib/audioPlayer.js';
 import { Constants } from 'discord.js';
 
 const removeConfig = musicConfig.remove;
@@ -31,12 +31,12 @@ export default {
             msg.reply('Please provide a number');
         }
         else {
-            audio.remove(msg, index);
+            audioPlayer.removeSong(msg, index);
         }
     },
     executeInteraction(interaction) {
         const index = interaction.options.getInteger('index');
 
-        audio.removeInteraction(interaction, index);
+        audioPlayer.removeSong(interaction, index);
     }
 }

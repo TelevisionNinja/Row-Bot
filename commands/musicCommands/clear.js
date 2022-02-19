@@ -1,5 +1,5 @@
 import musicConfig from './musicConfig.json' assert { type: 'json' };
-import { default as audioQueue } from '../../lib/audioQueue.js';
+import { default as audioPlayer } from '../../lib/audioPlayer.js';
 import { Constants } from 'discord.js';
 
 const clearConfig = musicConfig.clear;
@@ -18,10 +18,9 @@ export default {
     vcMemberOnly: true,
     usage: '',
     execute(msg, args) {
-        audioQueue.clear(msg.guild.id);
+        audioPlayer.clearQueue(msg);
     },
     executeInteraction(interaction) {
-        audioQueue.clear(interaction.guild.id);
-        interaction.reply('Queue cleared');
+        audioPlayer.clearQueue(interaction);
     }
 }

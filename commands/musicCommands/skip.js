@@ -1,5 +1,5 @@
 import musicConfig from './musicConfig.json' assert { type: 'json' };
-import { default as audio } from '../../lib/audio.js';
+import { default as audioPlayer } from '../../lib/audioPlayer.js';
 import { Constants } from 'discord.js';
 
 const skipConfig = musicConfig.skip;
@@ -33,15 +33,15 @@ export default {
                 return;
             }
 
-            audio.skip(msg, index);
+            audioPlayer.skip(msg, index);
         }
         else {
-            audio.skip(msg);
+            audioPlayer.skip(msg);
         }
     },
     executeInteraction(interaction) {
         const index = interaction.options.getInteger('index');
 
-        audio.skipInteraction(interaction, index);
+        audioPlayer.skip(interaction, index);
     }
 }
