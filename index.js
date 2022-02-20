@@ -45,7 +45,7 @@ import {
     reactionRoles,
 
     initializeIntervals
-} from './initialize.js';
+} from './lib/initialize.js';
 
 //--------------------------------------------------------------------------------
 // client vars
@@ -186,12 +186,13 @@ client.on('messageCreate', async msg => {
     // chat bot
 
     if (hasBotMention(msg, false, true, false, false).mentioned) {
-        const noMentionsMsg = removeMentions(msg.content);
-        const replyStr = await getChatBotReply(msg.author.id, noMentionsMsg);
+        const replyStr = await getChatBotReply(msg.author.id, msg.cleanContent);
 
         // reply
         if (replyStr.length) {
-            sendTypingMsg(msg, replyStr, msg.content, true);
+            sendTypingMsg(msg, {
+                content: replyStr
+            }, msg.content, true);
             return;
         }
     }
@@ -247,7 +248,9 @@ client.on('messageCreate', async msg => {
 
             // reply
             if (replyStr.length) {
-                sendTypingMsg(msg, replyStr, msg.content, true);
+                sendTypingMsg(msg, {
+                    content: replyStr
+                }, msg.content, true);
                 return;
             }
         }
@@ -264,7 +267,9 @@ client.on('messageCreate', async msg => {
 
             // reply
             if (replyStr.length) {
-                sendTypingMsg(msg.channel, replyStr, msg.content);
+                sendTypingMsg(msg.channel, {
+                    content: replyStr
+                }, msg.content);
                 return;
             }
         }
@@ -376,7 +381,9 @@ client.on('guildMemberAdd', member => {
     const greetingMsg = greetings[randomMath(greetings.length)];
     const msg = `Please check the <#${ruleChannelID}> channel for some info 🙂`;
 
-    sendTypingMsg(channel, `${greetingMsg} <@${member.id}> ${msg}`, member.user.username);
+    sendTypingMsg(channel, {
+        content: `${greetingMsg} <@${member.id}> ${msg}`
+    }, member.user.username);
 });
 
 //--------------------------------------------------------------------------------

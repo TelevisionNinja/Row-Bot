@@ -49,6 +49,8 @@ async function ask(channel, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, 
         return;
     }
 
+    asked = true;
+
     await channel.guild.members.fetch();
 
     const memberMap = channel.members.filter((value, key) => !value.user.bot);
@@ -59,8 +61,9 @@ async function ask(channel, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, 
     let numberOfDenies = 0;
     let numberOfConfirms = 0;
 
-    asked = true;
-    await sendTypingMsg(channel, askingMsg, '');
+    await sendTypingMsg(channel, {
+        content: askingMsg
+    }, '');
 
     const collector = channel.createMessageCollector({
         filter: m => {
@@ -112,7 +115,9 @@ async function ask(channel, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, 
         }
 
         if (initial !== numberOfReplies) {
-            sendTypingMsg(channel, reply, str);
+            sendTypingMsg(channel, {
+                content: reply
+            }, str);
 
             sendDms(memberMap, askingMsg, denied, str);
         }
@@ -126,10 +131,14 @@ async function ask(channel, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, 
         asked = false;
 
         if (!numberOfReplies || !numberOfConfirms) {
-            sendTypingMsg(channel, noReplyMsg, '');
+            sendTypingMsg(channel, {
+                content: noReplyMsg
+            }, '');
         }
         else if (numberOfReplies < memberSize) {
-            sendTypingMsg(channel, fewConfirmsMsg, '');
+            sendTypingMsg(channel, {
+                content: fewConfirmsMsg
+            }, '');
         }
     });
 }
@@ -158,7 +167,9 @@ function sendDms(memberMap, askingMsg, denied, readingMsg) {
         const userObj = value.user;
 
         if (userObj.decision !== denied) {
-            sendDirectDm(userObj, reply, true, readingMsg);
+            sendDirectDm(userObj, {
+                content: reply
+            }, true, readingMsg);
         }
     });
 }
