@@ -1,4 +1,4 @@
-import musicConfig from './musicConfig.json' assert { type: 'json' };
+import musicConfig from '../../config/musicConfig.json' assert { type: 'json' };
 import { default as audioPlayer } from '../../lib/audioPlayer.js';
 import { Constants } from 'discord.js';
 

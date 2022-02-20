@@ -1,4 +1,4 @@
-import messages from '../messages.json' assert { type: 'json' };
+import messages from '../config/messages.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
 
 const farewells = messages.farewells;

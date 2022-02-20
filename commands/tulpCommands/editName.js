@@ -1,5 +1,5 @@
-import tulpConfigFile from'./tulpConfig.json' assert { type: 'json' };
-import config from '../../config.json' assert { type: 'json' };
+import tulpConfigFile from'../../config/tulpConfig.json' assert { type: 'json' };
+import config from '../../config/config.json' assert { type: 'json' };
 import { tulps } from '../../lib/database.js';
 import { Constants } from 'discord.js';
 

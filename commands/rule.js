@@ -2,7 +2,7 @@ import { randomMath } from '../lib/randomFunctions.js';
 import { createImgResult } from '../lib/msgUtils.js';
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
 import { parse } from 'txml';
-import config from '../config.json' assert { type: 'json' };
+import config from '../config/config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';

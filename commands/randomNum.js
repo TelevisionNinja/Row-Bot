@@ -1,5 +1,5 @@
 import { randomMath } from '../lib/randomFunctions.js';
-import config from '../config.json' assert { type: 'json' };
+import config from '../config/config.json' assert { type: 'json' };
 import { Constants } from 'discord.js';
 
 const random = config.random,

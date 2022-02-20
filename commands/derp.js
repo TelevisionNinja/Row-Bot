@@ -1,4 +1,4 @@
-import config from '../config.json' assert { type: 'json' };
+import config from '../config/config.json' assert { type: 'json' };
 import { createImgResult } from '../lib/msgUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
