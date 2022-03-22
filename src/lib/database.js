@@ -31,8 +31,8 @@ CREATE INDEX IF NOT EXISTS user_id_index ON tulps(user_id);
 
 CREATE TABLE IF NOT EXISTS webhooks(
     channel_id TEXT PRIMARY KEY,
-    id TEXT,
-    token TEXT
+    id TEXT NOT NULL,
+    token TEXT NOT NULL
 );
 `);
 
@@ -91,6 +91,35 @@ export const tulps = {
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
             WHERE user_id = $1 AND username = $2;
         `, [user_id, username])).rows[0];
+    },
+    /**
+     * 
+     * @param {*} user_id discord id of the user
+     * @param {*} text the user's text
+     * @returns 
+     */
+    async find(user_id, text) {
+        return (await tulpDB.query(`
+            SELECT username, avatar, start_bracket, end_bracket FROM tulps
+            WHERE user_id = $1 AND $2 LIKE CONCAT(start_bracket, '%') AND $2 LIKE CONCAT('%', end_bracket)
+            ORDER BY LENGTH(CONCAT(start_bracket, end_bracket))
+            DESC
+            LIMIT 1;
+        `, [user_id, text])).rows[0];
+    },
+    /**
+     * checks if a user is in the db
+     * 
+     * @param {*} user_id 
+     * @returns 
+     */
+    async check(user_id) {
+        return (await tulpDB.query(`
+            SELECT EXISTS (
+                SELECT 1 FROM tulps
+                WHERE user_id = $1
+            );
+        `, [user_id])).rows[0];
     },
     delete(user_id, username) {
         return tulpDB.query(`

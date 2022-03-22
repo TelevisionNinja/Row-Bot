@@ -19,13 +19,13 @@ export default {
     execute(msg, args) {
         let uptime = msg.client.uptime;
         const ms = uptime % 1000;
-        uptime = ~~(uptime / 1000);
+        uptime = Math.trunc(uptime / 1000);
         const s = uptime % 60;
-        uptime = ~~(uptime / 60);
+        uptime = Math.trunc(uptime / 60);
         const mins = uptime % 60;
-        uptime = ~~(uptime / 60);
+        uptime = Math.trunc(uptime / 60);
         const hrs = uptime % 24;
-        uptime = ~~(uptime / 24);
+        uptime = Math.trunc(uptime / 24);
         const days = uptime % 365;
 
         msg.reply(`${days} day(s)\n${hrs} hr(s)\n${mins} min(s)\n${s} s\n${ms} ms`);
@@ -33,13 +33,13 @@ export default {
     executeInteraction(interaction) {
         let uptime = interaction.client.uptime;
         const ms = uptime % 1000;
-        uptime = ~~(uptime / 1000);
+        uptime = Math.trunc(uptime / 1000);
         const s = uptime % 60;
-        uptime = ~~(uptime / 60);
+        uptime = Math.trunc(uptime / 60);
         const mins = uptime % 60;
-        uptime = ~~(uptime / 60);
+        uptime = Math.trunc(uptime / 60);
         const hrs = uptime % 24;
-        uptime = ~~(uptime / 24);
+        uptime = Math.trunc(uptime / 24);
         const days = uptime % 365;
 
         interaction.reply(`${days} day(s)\n${hrs} hr(s)\n${mins} min(s)\n${s} s\n${ms} ms`);
