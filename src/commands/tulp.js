@@ -1,5 +1,4 @@
 import config from '../../config/config.json' assert { type: 'json' };
-import { default as tulpCache } from '../lib/tulpCache.js';
 
 const tulp = config.tulp,
     prefix = config.prefix;
@@ -39,8 +38,6 @@ export default {
             return;
         }
 
-        tulpCache.remove(msg.author.id);
-
         //--------------------------------------------------------------------------------
         // execute command
 
@@ -62,8 +59,6 @@ export default {
             interaction.reply('I can\'t execute that command in DM\'s');
             return;
         }
-
-        tulpCache.remove(interaction.user.id);
 
         //--------------------------------------------------------------------------------
         // execute command

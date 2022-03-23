@@ -9,7 +9,7 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
-import { default as tulpCache } from './lib/tulpCache.js';
+import { default as cache } from './lib/cache.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
 import { default as audioUtils } from './lib/audioUtils.js';
@@ -176,9 +176,7 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // send tulp messages easily
 
-    const userData = await tulpCache.getUser(msg.author.id);
-
-    if (await sendEasyMsg.sendEasyMsg(msg, userData)) {
+    if (await sendEasyMsg.sendEasyMsg(msg)) {
         return;
     }
 
@@ -358,11 +356,8 @@ client.on('shardResume', () => {
 // tulp events
 
 // delete webhook data
-client.on('channelDelete', channel => tulpCache.deleteWebhook(channel.id));
-client.on('threadDelete', thread => tulpCache.deleteWebhook(thread.id));
-
-// cache user data and the channel webhook while the user is typing
-client.on('typingStart', typing => tulpCache.updateCache(typing));
+client.on('channelDelete', channel => cache.deleteWebhook(channel.id));
+client.on('threadDelete', thread => cache.deleteWebhook(thread.id));
 
 //--------------------------------------------------------------------------------
 // welcome message

@@ -5,7 +5,7 @@ import {
     includesPhrase,
     removeAllSpecialChars
 } from './stringUtils.js';
-import { default as tulpCache } from './tulpCache.js';
+import { default as cache } from './cache.js';
 
 /**
  * wpm to ms per char derivation
@@ -427,7 +427,7 @@ async function tryWebhook(msgObj, webhookContent, webhook) {
     catch (error) {
         // Unknown Webhook error
         if (error.code === 10015) {
-            webhook = await tulpCache.fetchWebhookAndUpdateDB(msgObj);
+            webhook = await cache.fetchWebhookAndUpdateDBAndCache(msgObj);
 
             return webhook.send(webhookContent);
         }
@@ -444,7 +444,7 @@ async function tryWebhook(msgObj, webhookContent, webhook) {
  * @returns 
  */
 export async function sendWebhookMsg(msgObj, webhookContent) {
-    const webhook = await tulpCache.getWebhook(msgObj);
+    const webhook = await cache.getWebhook(msgObj);
 
     return tryWebhook(msgObj, webhookContent, webhook);
 }

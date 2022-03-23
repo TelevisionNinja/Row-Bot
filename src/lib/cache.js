@@ -1,10 +1,7 @@
-import {
-    webhooks,
-    tulps
-} from './database.js';
+import { webhooks } from './database.js';
 import { WebhookClient } from 'discord.js';
 
-let cache = new Map();
+const cache = new Map();
 // 1 min
 const expiryTime = 60000;
 
@@ -17,14 +14,9 @@ export default {
     replace,
     upsert,
 
-    cacheWebhook,
-    cacheUser,
     deleteWebhook,
-    updateCache,
-
-    fetchWebhookAndUpdateDB,
-    getWebhook,
-    getUser
+    fetchWebhookAndUpdateDBAndCache,
+    getWebhook
 }
 
 //-------------------------------------------------------
@@ -71,7 +63,7 @@ function has(id) {
  * @returns bool
  */
 function hasHit(id) {
-    let entry = cache.get(id);
+    const entry = cache.get(id);
 
     if (typeof entry === 'undefined') {
         return false;
@@ -87,7 +79,7 @@ function hasHit(id) {
  * @param {*} id 
  */
 function remove(id) {
-    let entry = cache.get(id);
+    const entry = cache.get(id);
 
     if (typeof entry !== 'undefined') {
         clearTimeout(entry.timeoutID);
@@ -102,7 +94,7 @@ function remove(id) {
  * @returns cached item
  */
 function get(id) {
-    let entry = cache.get(id);
+    const entry = cache.get(id);
 
     if (typeof entry === 'undefined') {
         return null;
@@ -134,7 +126,7 @@ function insert(id, data) {
  * @param {*} data 
  */
 function replace(id, data) {
-    let entry = cache.get(id);
+    const entry = cache.get(id);
 
     if (typeof entry !== 'undefined') {
         replaceEntryData(id, entry, data);
@@ -149,7 +141,7 @@ function replace(id, data) {
  * @param {*} data 
  */
 function upsert(id, data) {
-    let entry = cache.get(id);
+    const entry = cache.get(id);
 
     if (typeof entry === 'undefined') {
         insert(id, data);
@@ -194,14 +186,16 @@ async function fetchWebhookFromDiscord(msg) {
 
 /**
  * fetches or creates a webhook
- * updates the DB
+ * updates the DB and cache
  * 
  * @param {*} msg discord.js msg object
  * @returns discord.js webhook object
  */
-async function fetchWebhookAndUpdateDB(msg) {
+async function fetchWebhookAndUpdateDBAndCache(msg) {
     const webhook = await fetchWebhookFromDiscord(msg);
-    webhooks.upsert(msg.channel.id, webhook.id, webhook.token);
+    webhooks.update(msg.channel.id, webhook.id, webhook.token);
+    // webhooks.upsert(msg.channel.id, webhook.id, webhook.token);
+    upsert(msg.channel.id, webhook);
 
     return webhook;
 }
@@ -230,10 +224,9 @@ async function fetchWebhookFromDB(msg) {
 
     webhook = await fetchWebhookFromDiscord(msg);
     webhooks.set(msg.channel.id, webhook.id, webhook.token);
+    // webhooks.upsert(msg.channel.id, webhook.id, webhook.token);
 
     return webhook;
-
-    // return fetchWebhookAndUpdateDB(msg);
 }
 
 /**
@@ -262,7 +255,7 @@ function getWebhook(msg) {
 
     const webhook = get(msg.channel.id);
 
-    if (webhook) {
+    if (webhook !== null) {
         return webhook;
     }
 
@@ -270,53 +263,6 @@ function getWebhook(msg) {
     // check db
 
     return fetchWebhookAndUpdateCache(msg);
-}
-
-//-------------------------------------------------------
-// tulp caching functions
-
-/**
- * caches a webhook
- * 
- * @param {*} msg discord.js msg object
- */
-function cacheWebhook(msg) {
-    if (!hasHit(msg.channel.id)) {
-        fetchWebhookAndUpdateCache(msg);
-    }
-}
-
-/**
- * fetches user data from the db
- * 
- * @param {*} id 
- * @returns user data
- */
-async function fetchUser(id) {
-    const userData = await tulps.getAll(id);
-    insert(id, userData);
-    // upsert(id, userData);
-    return userData;
-}
-
-/**
- * caches a user
- * 
- * @param {*} id user id
- * @returns true - user exists, false - user doesn't exist
- */
-async function cacheUser(id) {
-    if (hasHit(id)) {
-        return true;
-    }
-
-    const userData = await fetchUser(id);
-
-    if (userData.length) {
-        return true;
-    }
-
-    return false;
 }
 
 /**
@@ -330,32 +276,4 @@ function deleteWebhook(id) {
 
     // delete from db
     webhooks.delete(id);
-}
-
-/**
- * adds a user and webhook to the cache
- * 
- * @param {*} msg discord.js msg object
- */
-async function updateCache(msg) {
-    if (await cacheUser(msg.user.id)) {
-        cacheWebhook(msg);
-    }
-}
-
-/**
- * gets a user from the cache
- * fetches the user if not in the cache
- * 
- * @param {*} id user id
- * @returns user data
- */
-function getUser(id) {
-    const userData = get(id);
-
-    if (userData) {
-        return userData;
-    }
-
-    return fetchUser(id);
 }
