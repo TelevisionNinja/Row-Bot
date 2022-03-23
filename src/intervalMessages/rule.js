@@ -1,6 +1,6 @@
 import { getImageRule0 } from '../commands/rule.js';
 import config from '../../config/config.json' assert { type: 'json' };
-import DailyInterval from 'daily-intervals';
+import { setDailyInterval } from 'daily-intervals';
 import {
     getChannel,
     createImgResult
@@ -17,11 +17,11 @@ const filter = ruleConfig.filterTags.map(t => `-${t}`);
 export async function execute(client) {
     const recipient = await getChannel(client, ruleConfig.intervalChannelID);
 
-    const interval = new DailyInterval(
+    setDailyInterval(
         async () => {
             const randIndex = randomMath(ruleConfig.intervalTags.length);
             const selection = ruleConfig.intervalTags[randIndex];
-            let tagArr = [selection, ...filter];
+            const tagArr = [selection, ...filter];
 
             const img = await getImageRule0(tagArr);
 
@@ -32,10 +32,6 @@ export async function execute(client) {
                 recipient.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
             }
         },
-        '0:0',
-        ruleConfig.intervalWait,
-        5000 // 5 second offset
+        ruleConfig.intervalWait
     );
-
-    interval.start();
 }

@@ -1,6 +1,6 @@
 import { getImage } from '../commands/derp.js';
 import config from '../../config/config.json' assert { type: 'json' };
-import DailyInterval from 'daily-intervals';
+import { setDailyInterval } from 'daily-intervals';
 import {
     getChannel,
     createImgResult
@@ -17,7 +17,7 @@ const filter = derpConfig.filterTags.map(t => `-${t}`);
 export async function execute(client) {
     const recipientDaily = await getChannel(client, derpConfig.intervalChannelID);
 
-    const interval1 = new DailyInterval(
+    setDailyInterval(
         async () => {
             const randIndex = randomMath(derpConfig.intervalTags.length);
             const selection = derpConfig.intervalTags[randIndex];
@@ -33,16 +33,15 @@ export async function execute(client) {
                 recipientDaily.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
             }
         },
-        derpConfig.intervalTime,
         1440, // 24 hrs in minutes
-        5000 // 5 second offset
+        derpConfig.intervalTime
     );
 
     //-------------------------------------------------------------------
 
     const recipientInterval = await getChannel(client, derpConfig.intervalWaitChannelID);
 
-    const interval2 = new DailyInterval(
+    setDailyInterval(
         async () => {
             const randIndex = randomMath(derpConfig.intervalWaitTags.length);
             const selection = derpConfig.intervalWaitTags[randIndex];
@@ -56,13 +55,6 @@ export async function execute(client) {
                 recipientInterval.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
             }
         },
-        '0:0',
-        derpConfig.intervalWait,
-        5000 // 5 second offset
+        derpConfig.intervalWait
     );
-
-    //-------------------------------------------------------------------
-
-    interval1.start();
-    interval2.start();
 }

@@ -1,4 +1,4 @@
-import DailyInterval from 'daily-intervals';
+import { setDailyInterval } from 'daily-intervals';
 import { getChannel } from '../lib/msgUtils.js';
 import config from '../../config/config.json' assert { type: 'json' };
 import { getDataEmbeds } from '../commands/covid.js';
@@ -9,7 +9,7 @@ const covidConfig = config.covid;
 export async function execute(client) {
     const recipient = await getChannel(client, covidConfig.intervalChannel);
 
-    const interval = new DailyInterval(
+    setDailyInterval(
         async () => {
             const embeds = await getDataEmbeds(covidConfig.intervalState);
 
@@ -18,10 +18,7 @@ export async function execute(client) {
 
             recipient.send({ embeds: embeds });
         },
-        covidConfig.intervalTime,
         1440, // 24 hrs in minutes
-        5000 // 5 second offset
+        covidConfig.intervalTime
     );
-
-    interval.start();
 }

@@ -1,7 +1,7 @@
 import config from '../../config/config.json' assert { type: 'json' };
 import messages from '../../config/messages.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
-import DailyInterval from 'daily-intervals';
+import { setDailyInterval } from 'daily-intervals';
 import {
     getChannel,
     sendDirectDm,
@@ -22,7 +22,7 @@ let asked = false;
 export async function execute(client) {
     const channel = await getChannel(client, askLateNight.channelID);
 
-    const interval = new DailyInterval(
+    setDailyInterval(
         () => {
             ask(
                 channel,
@@ -36,12 +36,9 @@ export async function execute(client) {
                 askLateNight.denied
             );
         },
-        askLateNight.time,
         1440, // 24 hrs in minutes
-        5000 // 5 second offset
+        askLateNight.time
     );
-
-    interval.start();
 }
 
 async function ask(channel, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, noReplyMsg, confirmed, undecided, denied) {

@@ -1,4 +1,4 @@
-import DailyInterval from 'daily-intervals';
+import { setDailyInterval } from 'daily-intervals';
 import { getChannel } from '../lib/msgUtils.js';
 import config from '../../config/config.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
@@ -9,7 +9,7 @@ const memes = config.memes;
 export async function execute(client) {
     const recipient = await getChannel(client, memes.channelID);
 
-    const interval = new DailyInterval(
+    setDailyInterval(
         async () => {
             const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.queryString}${memes.postCount}`;
             const response = await fetch(URL);
@@ -24,10 +24,6 @@ export async function execute(client) {
                 console.log(error);
             }
         },
-        '0:0',
-        360,
-        5000 // 5 second offset
+        360
     );
-
-    interval.start();
 }
