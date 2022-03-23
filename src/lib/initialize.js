@@ -56,7 +56,6 @@ const clientOptions = {
     intents: [
         // dm's
         Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.DIRECT_MESSAGE_TYPING, // tulp caching
 
         // guilds
         Intents.FLAGS.GUILDS, // webhook management
