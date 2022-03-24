@@ -14,7 +14,7 @@ export default {
     async sendEasyMsg(msg) {
         //-------------------------------------------------------------------
         // get specific tulp
-        const selectedTulp = await tulps.find(msg.author.id, msg.content);
+        const selectedTulp = await tulps.findTulp(msg.author.id, msg.content);
 
         if (!selectedTulp) {
             return false;

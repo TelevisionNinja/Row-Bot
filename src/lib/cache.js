@@ -1,4 +1,7 @@
-import { webhooks } from './database.js';
+import {
+    webhooks,
+    tulps
+} from './database.js';
 import { WebhookClient } from 'discord.js';
 
 const cache = new Map();
@@ -16,7 +19,9 @@ export default {
 
     deleteWebhook,
     fetchWebhookAndUpdateDBAndCache,
-    getWebhook
+    getWebhook,
+    getUser,
+    findTulp
 }
 
 //-------------------------------------------------------
@@ -276,4 +281,78 @@ function deleteWebhook(id) {
 
     // delete from db
     webhooks.delete(id);
+}
+
+//-------------------------------------------------------
+// user fetching functions
+
+/**
+ * fetches user data from the db
+ * 
+ * @param {*} id 
+ * @returns user data
+ */
+async function fetchUser(id) {
+    const userData = await tulps.getAll(id);
+    insert(id, userData);
+    // upsert(id, userData);
+    return userData;
+}
+
+/**
+ * gets a user from the cache
+ * fetches the user if not in the cache
+ * 
+ * @param {*} id user id
+ * @returns user data
+ */
+function getUser(id) {
+    const userData = get(id);
+
+    if (userData) {
+        return userData;
+    }
+
+    return fetchUser(id);
+}
+
+/**
+ * fetches all of the user's data
+ * the specific tulp is then found using linear search
+ * 
+ * @param {*} user_id id of the user
+ * @param {*} text message sent by the user
+ * @returns specific tulp
+ */
+async function findTulp(user_id, text) {
+    // fetch and cache the user's data
+    const tulpArr = await getUser(user_id);
+
+    if (!tulpArr.length) {
+        return null;
+    }
+
+    //-------------------------------------------------------------------
+    // linear search
+
+    let selectedTulp = {
+        start_bracket: '',
+        end_bracket: ''
+    };
+
+    for (let i = 0, n = tulpArr.length; i < n; i++) {
+        const currentTulp = tulpArr[i];
+
+        if (currentTulp.start_bracket.length + currentTulp.end_bracket.length > selectedTulp.start_bracket.length + selectedTulp.end_bracket.length &&
+            text.startsWith(currentTulp.start_bracket) &&
+            text.endsWith(currentTulp.end_bracket)) {
+            selectedTulp = currentTulp;
+        }
+    }
+
+    if (typeof selectedTulp.username === 'undefined') {
+        return null;
+    }
+
+    return selectedTulp;
 }

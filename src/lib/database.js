@@ -126,7 +126,7 @@ export const tulps = {
      * @param {*} text the user's text
      * @returns 
      */
-    async find(user_id, text) {
+    async findTulp(user_id, text) {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
             WHERE user_id = $1 AND $2 LIKE CONCAT(start_bracket, '%') AND $2 LIKE CONCAT('%', end_bracket)
