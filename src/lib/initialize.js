@@ -60,7 +60,6 @@ const clientOptions = {
         // guilds
         Intents.FLAGS.GUILDS, // webhook management
         Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_TYPING, // tulp caching
         Intents.FLAGS.GUILD_VOICE_STATES, // music commands
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS, // reaction roles
 
