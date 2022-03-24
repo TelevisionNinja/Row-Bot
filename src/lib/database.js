@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS tulps(
     username TEXT NOT NULL,
     avatar TEXT NOT NULL,
     start_bracket TEXT NOT NULL,
-    end_bracket TEXT NOT NULL,
+    end_bracket TEXT NOT NULL DEFAULT '',
 
     UNIQUE (user_id, username),
     PRIMARY KEY (user_id, username),
@@ -28,12 +28,34 @@ CREATE TABLE IF NOT EXISTS tulps(
 );
 
 CREATE INDEX IF NOT EXISTS user_id_index ON tulps(user_id);
+CREATE INDEX IF NOT EXISTS start_bracket_index ON tulps(start_bracket);
+CREATE INDEX IF NOT EXISTS end_bracket_index ON tulps(end_bracket) WHERE end_bracket != '';
 
 CREATE TABLE IF NOT EXISTS webhooks(
     channel_id TEXT PRIMARY KEY,
     id TEXT NOT NULL,
     token TEXT NOT NULL
 );
+`);
+
+// update existing tables
+tulpDB.query(`
+ALTER TABLE tulps ALTER COLUMN user_id TYPE TEXT;
+ALTER TABLE tulps ALTER COLUMN user_id SET NOT NULL;
+ALTER TABLE tulps ALTER COLUMN username TYPE TEXT;
+ALTER TABLE tulps ALTER COLUMN username SET NOT NULL;
+ALTER TABLE tulps ALTER COLUMN avatar TYPE TEXT;
+ALTER TABLE tulps ALTER COLUMN avatar SET NOT NULL;
+ALTER TABLE tulps ALTER COLUMN start_bracket TYPE TEXT;
+ALTER TABLE tulps ALTER COLUMN start_bracket SET NOT NULL;
+ALTER TABLE tulps ALTER COLUMN end_bracket TYPE TEXT;
+ALTER TABLE tulps ALTER COLUMN end_bracket SET NOT NULL;
+ALTER TABLE tulps ALTER COLUMN end_bracket SET DEFAULT '';
+
+ALTER TABLE webhooks ALTER COLUMN id TYPE TEXT;
+ALTER TABLE webhooks ALTER COLUMN id SET NOT NULL;
+ALTER TABLE webhooks ALTER COLUMN token TYPE TEXT;
+ALTER TABLE webhooks ALTER COLUMN token SET NOT NULL;
 `);
 
 export const webhooks = {
@@ -79,6 +101,12 @@ export const tulps = {
             INSERT INTO tulps (user_id, username, avatar, start_bracket, end_bracket)
             VALUES ($1, $2, $3, $4, $5);
         `, [user_id, username, avatar, start_bracket, end_bracket]);
+    },
+    create(user_id, username, avatar) {
+        return tulpDB.query(`
+            INSERT INTO tulps (user_id, username, avatar, start_bracket)
+            VALUES ($1, $2, $3, $4);
+        `, [user_id, username, avatar, `${username}:`]);
     },
     async getAll(user_id) {
         return (await tulpDB.query(`
