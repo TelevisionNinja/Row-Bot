@@ -105,8 +105,8 @@ export const tulps = {
     create(user_id, username, avatar) {
         return tulpDB.query(`
             INSERT INTO tulps (user_id, username, avatar, start_bracket)
-            VALUES ($1, $2, $3, $4);
-        `, [user_id, username, avatar, `${username}:`]);
+            VALUES ($1, $2, $3, CONCAT($2, ':'));
+        `, [user_id, username, avatar]);
     },
     async getAll(user_id) {
         return (await tulpDB.query(`
@@ -130,7 +130,7 @@ export const tulps = {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
             WHERE user_id = $1 AND $2 LIKE CONCAT(start_bracket, '%') AND $2 LIKE CONCAT('%', end_bracket)
-            ORDER BY LENGTH(CONCAT(start_bracket, end_bracket))
+            ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
             DESC
             LIMIT 1;
         `, [user_id, text])).rows[0];
