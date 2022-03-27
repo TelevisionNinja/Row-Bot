@@ -13,6 +13,26 @@ const tulpDB = new postgres.Pool({
     idleTimeoutMillis: 0
 });
 
+// console.log((await tulpDB.query(`
+//     SELECT con.*
+//     FROM pg_catalog.pg_constraint con
+//         INNER JOIN pg_catalog.pg_class rel
+//             ON rel.oid = con.conrelid
+//         INNER JOIN pg_catalog.pg_namespace nsp
+//             ON nsp.oid = connamespace
+//     WHERE rel.relname = 'tulps';
+
+//     -- ALTER TABLE tulps DROP CONSTRAINT tulps_pkey;
+//     -- ALTER TABLE tulps ADD PRIMARY KEY (user_id, start_bracket, end_bracket);
+
+//     -- ALTER TABLE tulps DROP CONSTRAINT tulps_user_id_start_bracket_end_bracket_key;
+//     -- ALTER TABLE tulps DROP CONSTRAINT tulps_user_id_username_key;
+
+//     -- DROP INDEX user_id_index;
+//     -- DROP INDEX start_bracket_index;
+//     -- DROP INDEX end_bracket_index;
+// `)).rows);
+
 // initialize
 tulpDB.query(`
 CREATE TABLE IF NOT EXISTS tulps(
@@ -23,13 +43,8 @@ CREATE TABLE IF NOT EXISTS tulps(
     end_bracket TEXT NOT NULL DEFAULT '',
 
     UNIQUE (user_id, username),
-    PRIMARY KEY (user_id, username),
-    UNIQUE (user_id, start_bracket, end_bracket)
+    PRIMARY KEY (user_id, start_bracket, end_bracket)
 );
-
-CREATE INDEX IF NOT EXISTS user_id_index ON tulps(user_id);
-CREATE INDEX IF NOT EXISTS start_bracket_index ON tulps(start_bracket);
-CREATE INDEX IF NOT EXISTS end_bracket_index ON tulps(end_bracket) WHERE end_bracket != '';
 
 CREATE TABLE IF NOT EXISTS webhooks(
     channel_id TEXT PRIMARY KEY,
@@ -129,7 +144,7 @@ export const tulps = {
     async findTulp(user_id, text) {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
-            WHERE user_id = $1 AND $2 LIKE CONCAT(start_bracket, '%') AND $2 LIKE CONCAT('%', end_bracket)
+            WHERE user_id = $1 AND SUBSTRING($2, 1, LENGTH(start_bracket)) = start_bracket AND SUBSTRING($2, LENGTH($2) - LENGTH(end_bracket) + 1) = end_bracket
             ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
             DESC
             LIMIT 1;
@@ -169,12 +184,12 @@ export const tulps = {
             WHERE user_id = $1 AND username = $2;
         `, [user_id, old_username, new_username]);
     },
-    updateUsernameAndBrackets(user_id, old_username, new_username, old_start_bracket, new_start_bracket, end_bracket) {
+    updateUsernameAndBrackets(user_id, old_username, new_username) {
         return tulpDB.query(`
             UPDATE tulps
-            SET username = $3, start_bracket = $5
-            WHERE user_id = $1 AND username = $2 AND start_bracket = $4 AND end_bracket = $6;
-        `, [user_id, old_username, new_username, old_start_bracket, new_start_bracket, end_bracket]);
+            SET username = $3, start_bracket = CONCAT($3, ':')
+            WHERE user_id = $1 AND username = $2 AND start_bracket = CONCAT($2, ':') AND end_bracket = '';
+        `, [user_id, old_username, new_username]);
     },
     updateAvatar(user_id, username, avatar) {
         return tulpDB.query(`

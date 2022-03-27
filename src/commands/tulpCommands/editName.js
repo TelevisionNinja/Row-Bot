@@ -54,7 +54,7 @@ export default {
         //-----------------------------------------------------------
 
         try {
-            const result = await tulps.updateUsernameAndBrackets(msg.author.id, oldName, newName, `${oldName}:`, `${newName}:`, '');
+            const result = await tulps.updateUsernameAndBrackets(msg.author.id, oldName, newName);
 
             if (result.rowCount) {
                 msg.reply(editName.confirmMsg);
@@ -82,7 +82,7 @@ export default {
         const oldName = interaction.options.getString('old-name');
 
         try {
-            const result = await tulps.updateUsernameAndBrackets(interaction.user.id, oldName, newName, `${oldName}:`, `${newName}:`, '');
+            const result = await tulps.updateUsernameAndBrackets(interaction.user.id, oldName, newName);
 
             if (result.rowCount) {
                 interaction.reply(editName.confirmMsg);
