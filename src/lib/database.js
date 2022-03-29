@@ -33,52 +33,6 @@ CREATE TABLE IF NOT EXISTS webhooks(
 );
 `);
 
-// tulpDB.query(`
-//     --ALTER TABLE tulps DROP CONSTRAINT tulps_pkey;
-//     --ALTER TABLE tulps ADD PRIMARY KEY (user_id, username);
-
-//     ALTER TABLE tulps DROP CONSTRAINT tulps_user_id_username_key;
-//     --ALTER TABLE tulps ADD CONSTRAINT tulps_user_id_start_bracket_end_bracket_key UNIQUE (user_id, start_bracket, end_bracket);
-
-//     DROP INDEX IF EXISTS user_id_index;
-//     DROP INDEX IF EXISTS start_bracket_index;
-//     DROP INDEX IF EXISTS end_bracket_index;
-// `);
-
-// console.log((await tulpDB.query(`
-//     SELECT con.* FROM pg_catalog.pg_constraint con
-//         INNER JOIN pg_catalog.pg_class rel
-//             ON rel.oid = con.conrelid
-//         INNER JOIN pg_catalog.pg_namespace nsp
-//             ON nsp.oid = connamespace
-//     WHERE rel.relname = 'tulps';
-// `)).rows);
-
-// console.log((await tulpDB.query(`
-//     SELECT * FROM pg_indexes
-//     WHERE tablename = 'tulps';
-// `)).rows);
-
-// update existing tables
-// tulpDB.query(`
-// ALTER TABLE tulps ALTER COLUMN user_id TYPE TEXT;
-// ALTER TABLE tulps ALTER COLUMN user_id SET NOT NULL;
-// ALTER TABLE tulps ALTER COLUMN username TYPE TEXT;
-// ALTER TABLE tulps ALTER COLUMN username SET NOT NULL;
-// ALTER TABLE tulps ALTER COLUMN avatar TYPE TEXT;
-// ALTER TABLE tulps ALTER COLUMN avatar SET NOT NULL;
-// ALTER TABLE tulps ALTER COLUMN start_bracket TYPE TEXT;
-// ALTER TABLE tulps ALTER COLUMN start_bracket SET NOT NULL;
-// ALTER TABLE tulps ALTER COLUMN end_bracket TYPE TEXT;
-// ALTER TABLE tulps ALTER COLUMN end_bracket SET NOT NULL;
-// ALTER TABLE tulps ALTER COLUMN end_bracket SET DEFAULT '';
-
-// ALTER TABLE webhooks ALTER COLUMN id TYPE TEXT;
-// ALTER TABLE webhooks ALTER COLUMN id SET NOT NULL;
-// ALTER TABLE webhooks ALTER COLUMN token TYPE TEXT;
-// ALTER TABLE webhooks ALTER COLUMN token SET NOT NULL;
-// `);
-
 export const webhooks = {
     async get(channel_id) {
         return (await tulpDB.query(`
