@@ -13,26 +13,6 @@ const tulpDB = new postgres.Pool({
     idleTimeoutMillis: 0
 });
 
-// console.log((await tulpDB.query(`
-//     SELECT con.*
-//     FROM pg_catalog.pg_constraint con
-//         INNER JOIN pg_catalog.pg_class rel
-//             ON rel.oid = con.conrelid
-//         INNER JOIN pg_catalog.pg_namespace nsp
-//             ON nsp.oid = connamespace
-//     WHERE rel.relname = 'tulps';
-
-//     -- ALTER TABLE tulps DROP CONSTRAINT tulps_pkey;
-//     -- ALTER TABLE tulps ADD PRIMARY KEY (user_id, start_bracket, end_bracket);
-
-//     -- ALTER TABLE tulps DROP CONSTRAINT tulps_user_id_start_bracket_end_bracket_key;
-//     -- ALTER TABLE tulps DROP CONSTRAINT tulps_user_id_username_key;
-
-//     -- DROP INDEX user_id_index;
-//     -- DROP INDEX start_bracket_index;
-//     -- DROP INDEX end_bracket_index;
-// `)).rows);
-
 // initialize
 tulpDB.query(`
 CREATE TABLE IF NOT EXISTS tulps(
@@ -42,8 +22,8 @@ CREATE TABLE IF NOT EXISTS tulps(
     start_bracket TEXT NOT NULL,
     end_bracket TEXT NOT NULL DEFAULT '',
 
-    UNIQUE (user_id, username),
-    PRIMARY KEY (user_id, start_bracket, end_bracket)
+    PRIMARY KEY (user_id, username),
+    UNIQUE (user_id, start_bracket, end_bracket)
 );
 
 CREATE TABLE IF NOT EXISTS webhooks(
@@ -53,25 +33,51 @@ CREATE TABLE IF NOT EXISTS webhooks(
 );
 `);
 
-// update existing tables
-tulpDB.query(`
-ALTER TABLE tulps ALTER COLUMN user_id TYPE TEXT;
-ALTER TABLE tulps ALTER COLUMN user_id SET NOT NULL;
-ALTER TABLE tulps ALTER COLUMN username TYPE TEXT;
-ALTER TABLE tulps ALTER COLUMN username SET NOT NULL;
-ALTER TABLE tulps ALTER COLUMN avatar TYPE TEXT;
-ALTER TABLE tulps ALTER COLUMN avatar SET NOT NULL;
-ALTER TABLE tulps ALTER COLUMN start_bracket TYPE TEXT;
-ALTER TABLE tulps ALTER COLUMN start_bracket SET NOT NULL;
-ALTER TABLE tulps ALTER COLUMN end_bracket TYPE TEXT;
-ALTER TABLE tulps ALTER COLUMN end_bracket SET NOT NULL;
-ALTER TABLE tulps ALTER COLUMN end_bracket SET DEFAULT '';
+// tulpDB.query(`
+//     --ALTER TABLE tulps DROP CONSTRAINT tulps_pkey;
+//     --ALTER TABLE tulps ADD PRIMARY KEY (user_id, username);
 
-ALTER TABLE webhooks ALTER COLUMN id TYPE TEXT;
-ALTER TABLE webhooks ALTER COLUMN id SET NOT NULL;
-ALTER TABLE webhooks ALTER COLUMN token TYPE TEXT;
-ALTER TABLE webhooks ALTER COLUMN token SET NOT NULL;
-`);
+//     ALTER TABLE tulps DROP CONSTRAINT tulps_user_id_username_key;
+//     --ALTER TABLE tulps ADD CONSTRAINT tulps_user_id_start_bracket_end_bracket_key UNIQUE (user_id, start_bracket, end_bracket);
+
+//     DROP INDEX IF EXISTS user_id_index;
+//     DROP INDEX IF EXISTS start_bracket_index;
+//     DROP INDEX IF EXISTS end_bracket_index;
+// `);
+
+// console.log((await tulpDB.query(`
+//     SELECT con.* FROM pg_catalog.pg_constraint con
+//         INNER JOIN pg_catalog.pg_class rel
+//             ON rel.oid = con.conrelid
+//         INNER JOIN pg_catalog.pg_namespace nsp
+//             ON nsp.oid = connamespace
+//     WHERE rel.relname = 'tulps';
+// `)).rows);
+
+// console.log((await tulpDB.query(`
+//     SELECT * FROM pg_indexes
+//     WHERE tablename = 'tulps';
+// `)).rows);
+
+// update existing tables
+// tulpDB.query(`
+// ALTER TABLE tulps ALTER COLUMN user_id TYPE TEXT;
+// ALTER TABLE tulps ALTER COLUMN user_id SET NOT NULL;
+// ALTER TABLE tulps ALTER COLUMN username TYPE TEXT;
+// ALTER TABLE tulps ALTER COLUMN username SET NOT NULL;
+// ALTER TABLE tulps ALTER COLUMN avatar TYPE TEXT;
+// ALTER TABLE tulps ALTER COLUMN avatar SET NOT NULL;
+// ALTER TABLE tulps ALTER COLUMN start_bracket TYPE TEXT;
+// ALTER TABLE tulps ALTER COLUMN start_bracket SET NOT NULL;
+// ALTER TABLE tulps ALTER COLUMN end_bracket TYPE TEXT;
+// ALTER TABLE tulps ALTER COLUMN end_bracket SET NOT NULL;
+// ALTER TABLE tulps ALTER COLUMN end_bracket SET DEFAULT '';
+
+// ALTER TABLE webhooks ALTER COLUMN id TYPE TEXT;
+// ALTER TABLE webhooks ALTER COLUMN id SET NOT NULL;
+// ALTER TABLE webhooks ALTER COLUMN token TYPE TEXT;
+// ALTER TABLE webhooks ALTER COLUMN token SET NOT NULL;
+// `);
 
 export const webhooks = {
     async get(channel_id) {
@@ -144,7 +150,7 @@ export const tulps = {
     async findTulp(user_id, text) {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
-            WHERE user_id = $1 AND SUBSTRING($2, 1, LENGTH(start_bracket)) = start_bracket AND SUBSTRING($2, LENGTH($2) - LENGTH(end_bracket) + 1) = end_bracket
+            WHERE user_id = $1 AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
             ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
             DESC
             LIMIT 1;
