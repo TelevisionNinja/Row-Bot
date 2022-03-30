@@ -11,7 +11,13 @@ const queue = new PQueue({
     interval: 1000,
     intervalCap: 50
 });
-const punctuation = ['.', ',', ':', '!', '?'];
+const punctuation = new Set([
+    '.',
+    ',',
+    ':',
+    '!',
+    '?'
+]);
 
 const errorMsg = 'Text must be at least 5 characters, and a valid character must be provided';
 
@@ -82,10 +88,10 @@ function filterText(text) {
         return '';
     }
 
-    let filteredText = cutOff(text.trim(), 200);
+    const filteredText = cutOff(text.trim(), 200);
     const lastChar = filteredText[filteredText.length - 1];
 
-    if (filteredText.length < 200 && !punctuation.includes(lastChar)) {
+    if (filteredText.length < 200 && !punctuation.has(lastChar)) {
         return `${filteredText}.`;
     }
 
@@ -149,6 +155,10 @@ export async function getTtsUrl(character, text, emotion = 'Contextual') {
  */
 export async function getTtsBuffer(url) {
     let buffer = undefined;
+
+    if (!url.length) {
+        return buffer;
+    }
 
     await queue.add(async () => {
         //----------------------------
