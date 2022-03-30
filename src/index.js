@@ -221,16 +221,13 @@ client.on('messageCreate', async msg => {
             }
             else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg)) {
                 const url = await getTtsUrl('Pinkie Pie', speechArr[randomMath(speechArr.length)]);
-
-                // play backup audio
-                if (!url.length) {
-                    audioUtils.playFile(msg, audio[randomMath(audio.length)]);
-                    return;
-                }
-
                 const buffer = await getTtsBuffer(url);
 
-                if (typeof buffer !== 'undefined') {
+                // play backup audio
+                if (typeof buffer === 'undefined') {
+                    audioUtils.playFile(msg, audio[randomMath(audio.length)]);
+                }
+                else {
                     audioUtils.playStream(msg, Readable.from(buffer));
                 }
 
