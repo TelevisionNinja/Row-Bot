@@ -259,38 +259,32 @@ function nextSong(msg) {
     if (audioQueue.pop(guildID)) {
         playSong(msg);
     }
-    else {
-        leaveVC(guildID);
-    }
+    // else {
+    //     leaveVC(guildID);
+    // }
 }
 
 /**
  * returns true if the user is in a vc with the bot
  * 
- * if the user is in a vc and the bot is not
- * the function will return true if 'strict' is false
- * and false if 'strict' is true
- * 
  * @param {*} msg 
- * @param {*} strict ignore the case when the user is in a vc and bot is not
  * @returns 
  */
-function vcCheck(msg, strict = false) {
+function vcCheck(msg) {
     if (!msg.member.voice.channel) {
         msg.reply('Please join a voice channel');
         return false;
     }
 
-    if (msg.guild.me.voice && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
+    if (msg.guild.me.voice && msg.guild.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
         if (msg.guild.me.voice.channel.id === msg.member.voice.channel.id) {
             return true;
         }
 
         msg.reply('Please join the voice channel the bot is in');
-        return false;
     }
 
-    return !strict;
+    return false;
 }
 
 /**
@@ -308,7 +302,7 @@ function joinVC(msg) {
         return false;
     }
 
-    if (msg.guild.me.voice && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
+    if (msg.guild.me.voice && msg.guild.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
         if (msg.guild.me.voice.channel.id !== msg.member.voice.channel.id) {
             msg.reply('Please join the voice channel the bot is in');
             return false;
