@@ -17,7 +17,7 @@ import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
 import { Readable } from 'stream';
 import {
     getTtsUrl,
-    getTtsBuffer
+    getTtsStream
 } from './commands/tts.js';
 import {
     // config vars
@@ -219,16 +219,16 @@ client.on('messageCreate', async msg => {
                 audioUtils.leaveVC(msg.guild.id);
                 return;
             }
-            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg)) {
+            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg, true)) {
                 const url = await getTtsUrl('Pinkie Pie', speechArr[randomMath(speechArr.length)]);
-                const buffer = await getTtsBuffer(url);
+                const stream = await getTtsStream(url);
 
                 // play backup audio
-                if (typeof buffer === 'undefined') {
+                if (typeof stream === 'undefined') {
                     audioUtils.playFile(msg, audio[randomMath(audio.length)]);
                 }
                 else {
-                    audioUtils.playStream(msg, Readable.from(buffer));
+                    audioUtils.playStream(msg, stream);
                 }
 
                 return;

@@ -265,12 +265,17 @@ function nextSong(msg) {
 }
 
 /**
- * returns true if the user is in a vc with the bot or the user is in a vc and the bot is not
+ * returns true if the user is in a vc with the bot
+ * 
+ * if the user is in a vc and the bot is not
+ * the function will return true if 'strict' is false
+ * and false if 'strict' is true
  * 
  * @param {*} msg 
+ * @param {*} strict ignore the case when the user is in a vc and bot is not
  * @returns 
  */
-function vcCheck(msg) {
+function vcCheck(msg, strict = false) {
     if (!msg.member.voice.channel) {
         msg.reply('Please join a voice channel');
         return false;
@@ -285,27 +290,39 @@ function vcCheck(msg) {
         return false;
     }
 
-    return true;
+    return !strict;
 }
 
 /**
- * returns true if there is an existing vc or the bot joined a vc
+ * returns true if the user is in a vc with the bot
+ * 
+ * if the user is in a vc and the bot is not
+ * it will join the user's vc and return true
  * 
  * @param {*} msg 
  * @returns 
  */
 function joinVC(msg) {
-    if (vcCheck(msg)) {
+    if (!msg.member.voice.channel) {
+        msg.reply('Please join a voice channel');
+        return false;
+    }
+
+    if (msg.guild.me.voice && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
+        if (msg.guild.me.voice.channel.id !== msg.member.voice.channel.id) {
+            msg.reply('Please join the voice channel the bot is in');
+            return false;
+        }
+    }
+    else {
         joinVoiceChannel({
             channelId: msg.member.voice.channel.id,
             guildId: msg.guild.id,
             adapterCreator: msg.guild.voiceAdapterCreator
         });
-
-        return true;
     }
 
-    return false;
+    return true;
 }
 
 /**

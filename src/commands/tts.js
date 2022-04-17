@@ -151,13 +151,13 @@ export async function getTtsUrl(character, text, emotion = 'Contextual') {
 /**
  * 
  * @param {*} url url from getTtsUrl()
- * @returns buffer
+ * @returns stream
  */
-export async function getTtsBuffer(url) {
-    let buffer = undefined;
+export async function getTtsStream(url) {
+    let stream = undefined;
 
     if (!url.length) {
-        return buffer;
+        return stream;
     }
 
     await queue.add(async () => {
@@ -170,8 +170,8 @@ export async function getTtsBuffer(url) {
             return;
         }
 
-        buffer = await response.buffer();
+        stream = (await response.blob()).stream();
     });
 
-    return buffer;
+    return stream;
 }
