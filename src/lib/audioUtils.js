@@ -6,7 +6,9 @@ import {
     joinVoiceChannel,
     getVoiceConnection,
     createAudioResource,
-    AudioPlayerStatus
+    AudioPlayerStatus,
+    VoiceConnectionStatus,
+    entersState
 } from '@discordjs/voice';
 import { createReadStream } from 'fs';
 import { resolve } from 'path';
@@ -124,7 +126,6 @@ function getPlayer(msg) {
         const connection = getVoiceConnection(id);
 
         players.set(id, player);
-        connection.subscribe(player);
 
         //--------------------------------------
 
@@ -138,6 +139,22 @@ function getPlayer(msg) {
                 nextSong(msg);
             }
         });
+
+        //--------------------------------------
+
+        connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+            try {
+                await Promise.race([
+                    entersState(connection, VoiceConnectionStatus.Signalling, 5000),
+                    entersState(connection, VoiceConnectionStatus.Connecting, 5000),
+                ]);
+            }
+            catch (error) {
+                leaveVC(id);
+            }
+        });
+
+        connection.subscribe(player);
     }
 
     return player;
@@ -230,7 +247,7 @@ function skip(msg, index = 0) {
         }
         else {
             msg.reply('Song skipped');
-            player.stop(); // the event listener will call nextSong()
+            player.stop(); // the event listener will call nextSong(). this is done so that the audio will stop playing immediately
         }
     }
 }
@@ -259,9 +276,10 @@ function nextSong(msg) {
     if (audioQueue.pop(guildID)) {
         playSong(msg);
     }
-    // else {
-    //     leaveVC(guildID);
-    // }
+    else {
+        // leaveVC(guildID);
+        deletePlayer(guildID);
+    }
 }
 
 /**
@@ -320,12 +338,21 @@ function joinVC(msg) {
 }
 
 /**
+ * deletes the player and queue
+ * 
+ * @param {*} guildID 
+ */
+function deletePlayer(guildID) {
+    players.delete(guildID);
+    audioQueue.deleteQueue(guildID);
+}
+
+/**
  * makes the bot leave the vc, deletes the guild's audio player, and deletes the guild's queue
  * 
  * @param {*} guildID 
  */
 function leaveVC(guildID) {
     getVoiceConnection(guildID).destroy();
-    players.delete(guildID);
-    audioQueue.deleteQueue(guildID);
+    deletePlayer(guildID);
 }
