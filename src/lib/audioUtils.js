@@ -1,5 +1,4 @@
 import { default as ytdl } from 'ytdl-core';
-import { Readable } from 'stream';
 import { default as audioQueue } from './audioQueue.js';
 import {
     createAudioPlayer,
@@ -28,28 +27,27 @@ export default {
 }
 
 /**
+ * 
+ * @param {*} url 
+ * @returns 
+ */
+async function getYoutubeTitle(url) {
+    const info = await ytdl.getInfo(url);
+    return `${info.videoDetails.title}\n${url}`;
+}
+
+/**
  * gets the audio from the youtube url and plays it
  * 
  * @param {*} msg 
  * @param {*} url 
  */
-function fetchAndPlayYoutubeAudio(msg, url) {
+async function fetchAndPlayYoutubeAudio(msg, url) {
     const ytStream = ytdl(url, {
         filter: 'audioonly'
     });
-    const info = ytdl.getInfo(url);
 
-    //--------------------------------------
-
-    let arr = [];
-
-    ytStream.on('data', d => arr.push(d));
-
-    //--------------------------------------
-
-    ytStream.on('end', async () => {
-        playStream(msg, Readable.from(arr), `${(await info).videoDetails.title}\n${url}`);
-    });
+    playStream(msg, ytStream, await getYoutubeTitle(url));
 }
 
 /**
@@ -61,10 +59,10 @@ function fetchAndPlayYoutubeAudio(msg, url) {
  */
 async function playYoutube(msg, url) {
     const id = msg.guild.id;
-
+    const hasSong = audioQueue.getCurrentSong(id).length !== 0;
     audioQueue.push(id, url);
 
-    if (audioQueue.get(id).length > 1) {
+    if (hasSong) {
         msg.reply(`Added to the queue:\n${url}`);
         return;
     }
@@ -138,6 +136,7 @@ function getPlayer(msg) {
                 ]);
             }
             catch (error) {
+                console.log(error)//######################################################
                 leaveVC(id);
             }
         });
@@ -195,17 +194,22 @@ function pause(guildID) {
 /**
  * resume an audio player of a guild
  * 
- * @param {*} guildID 
+ * @param {*} msg 
  * @returns 
  */
-function resume(guildID) {
-    const player = players.get(guildID);
+function resume(msg) {
+    const player = players.get(msg.guild.id);
 
     if (typeof player === 'undefined') {
         return;
     }
 
-    player.unpause();
+    if (player.state.status === AudioPlayerStatus.Paused) {
+        player.unpause();
+    }
+    else if (player.state.status === AudioPlayerStatus.Idle) {
+        playSong(msg);
+    }
 }
 
 /**
@@ -215,13 +219,12 @@ function resume(guildID) {
  * @param {*} index index of a certain song skip to
  * @returns 
  */
-function skip(msg, index = 0) {
+async function skip(msg, index = 0) {
     const guildID = msg.guild.id;
 
     if (index) {
         if (audioQueue.jump(guildID, index)) {
-            msg.reply(`Fetching song...`);
-            playSong(msg);
+            msg.reply(`Song #${index} skipped`);
         }
         else {
             msg.reply('No negative numbers or numbers bigger than the queue size!');
@@ -234,8 +237,20 @@ function skip(msg, index = 0) {
             msg.reply('No songs to skip');
         }
         else {
-            msg.reply('Song skipped');
-            player.stop(); // the event listener will call nextSong(). this is done so that the audio will stop playing immediately
+            if (player.state.status === AudioPlayerStatus.Paused) {
+                if (audioQueue.pop(guildID)) {
+                    msg.reply(`Song skipped. The new current song:\n${await getYoutubeTitle(audioQueue.getCurrentSong(guildID))}`);
+                }
+                else {
+                    msg.reply('No songs left to skip');
+                    deletePlayer(guildID);
+                }
+            }
+            else {
+                msg.reply('Song skipped');
+                // the event listener will call nextSong(). this is done so that the audio will stop playing immediately
+                player.stop();
+            }
         }
     }
 }

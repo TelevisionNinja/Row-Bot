@@ -145,7 +145,7 @@ function deleteQueue(guildID) {
  * 
  * @param {*} guildID 
  * @param {*} index 
- * @returns 
+ * @returns true if the queue was jumped, false if not
  */
 function jump(guildID, index) {
     let result = queues.get(guildID);

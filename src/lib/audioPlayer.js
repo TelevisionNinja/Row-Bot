@@ -46,43 +46,30 @@ export default {
             return;
         }
 
-        const isInteraction = msg.type === 'APPLICATION_COMMAND';
+        let reply = undefined;
 
-        if (isInteraction) {
+        if (msg.type === 'APPLICATION_COMMAND') { // interaction.reply() won't return a msg obj so editReply() is used
             await msg.deferReply();
+            reply = msg.editReply('Fetching song...');
+        }
+        else {
+            reply = msg.reply('Fetching song...');
         }
 
         if (ytdl.validateURL(song)) {
-            let reply = undefined;
-
-            if (isInteraction) {
-                reply = await msg.editReply('Fetching song...');
-            }
-            else {
-                reply = await msg.reply('Fetching song...');
-            }
-
-            audio.playYoutube(reply, song);
+            audio.playYoutube(await reply, song);
         }
         else {
             const results = await ytSearch(song);
+            reply = await reply;
             const videos = results.videos;
 
             if (videos.length) {
                 const songURL = videos[0].url;
-                let reply = undefined;
-
-                if (isInteraction) {
-                    reply = await msg.editReply('Fetching song...');
-                }
-                else {
-                    reply = await msg.reply('Fetching song...');
-                }
-
                 audio.playYoutube(reply, songURL);
             }
             else {
-                msg.reply('No results');
+                reply.reply('No results');
             }
         }
     },
@@ -97,7 +84,7 @@ export default {
 
         if (queue.length) {
             const playing = queue[0];
-            let queueStr = `Currently playing:\n${playing}`;
+            let queueStr = `Current song:\n${playing}`;
 
             if (queue.length > 1) {
                 let queueList = '\nQueue:';
@@ -156,7 +143,7 @@ export default {
      * @param {*} msg 
      */
     resume(msg) {
-        audio.resume(msg.guild.id);
+        audio.resume(msg);
         msg.reply('Song resumed');
     },
 
