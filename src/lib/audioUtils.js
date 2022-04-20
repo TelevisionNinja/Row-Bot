@@ -289,9 +289,10 @@ function nextSong(msg) {
  * returns true if the user is in a vc with the bot
  * 
  * @param {*} msg 
+ * @param {*} noVCMsg show message of bot not in any vc
  * @returns 
  */
-function vcCheck(msg) {
+function vcCheck(msg, noVCMsg = true) {
     if (!msg.member.voice.channel) {
         msg.reply('Please join a voice channel');
         return false;
@@ -302,7 +303,12 @@ function vcCheck(msg) {
             return true;
         }
 
-        msg.reply('Please join the voice channel the bot is in');
+        msg.reply('Please join the voice channel that I\'m in');
+    }
+    else {
+        if (noVCMsg) {
+            msg.reply('Command cancelled because I\'m not in any voice channel');
+        }
     }
 
     return false;

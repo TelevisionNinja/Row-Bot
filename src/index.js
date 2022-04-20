@@ -219,7 +219,7 @@ client.on('messageCreate', async msg => {
                 audioUtils.leaveVC(msg.guild.id);
                 return;
             }
-            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg)) {
+            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg, false)) {
                 const url = await getTtsUrl('Pinkie Pie', speechArr[randomMath(speechArr.length)]);
                 const stream = await getTtsStream(url);
 
