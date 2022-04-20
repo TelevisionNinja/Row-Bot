@@ -3,7 +3,6 @@ import { default as audioQueue } from './audioQueue.js';
 import { cutOff } from './stringUtils.js';
 import { default as ytdl } from 'ytdl-core';
 import { default as ytSearch } from 'yt-search';
-import { Constants }from 'discord.js';
 
 export default {
     /**
@@ -47,31 +46,40 @@ export default {
             return;
         }
 
-        if (ytdl.validateURL(song)) {
-            msg.reply('Fetching song...');
-            audio.playYoutube(msg, song);
+        const isInteraction = msg.type === 'APPLICATION_COMMAND';
+
+        if (isInteraction) {
+            await msg.deferReply();
         }
-        else {
-            const isInteraction = msg.type === Constants.InteractionTypes.APPLICATION_COMMAND;
+
+        if (ytdl.validateURL(song)) {
+            let reply = undefined;
 
             if (isInteraction) {
-                await msg.deferReply();
+                reply = await msg.editReply('Fetching song...');
+            }
+            else {
+                reply = await msg.reply('Fetching song...');
             }
 
+            audio.playYoutube(reply, song);
+        }
+        else {
             const results = await ytSearch(song);
             const videos = results.videos;
 
             if (videos.length) {
                 const songURL = videos[0].url;
+                let reply = undefined;
 
                 if (isInteraction) {
-                    msg.editReply('Fetching song...');
+                    reply = await msg.editReply('Fetching song...');
                 }
                 else {
-                    msg.reply('Fetching song...');
+                    reply = await msg.reply('Fetching song...');
                 }
 
-                audio.playYoutube(msg, songURL, songURL);
+                audio.playYoutube(reply, songURL);
             }
             else {
                 msg.reply('No results');

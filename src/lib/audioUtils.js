@@ -28,51 +28,54 @@ export default {
 }
 
 /**
+ * gets the audio from the youtube url and plays it
+ * 
+ * @param {*} msg 
+ * @param {*} url 
+ */
+function fetchAndPlayYoutubeAudio(msg, url) {
+    const ytStream = ytdl(url, {
+        filter: 'audioonly'
+    });
+    const info = ytdl.getInfo(url);
+
+    //--------------------------------------
+
+    let arr = [];
+
+    ytStream.on('data', d => arr.push(d));
+
+    //--------------------------------------
+
+    ytStream.on('end', async () => {
+        playStream(msg, Readable.from(arr), `${(await info).videoDetails.title}\n${url}`);
+    });
+}
+
+/**
  * play a youtube link
  * 
  * @param {*} msg 
  * @param {*} url 
- * @param {*} moreInfo 
  * @returns 
  */
-async function playYoutube(msg, url, moreInfo = '') {
+async function playYoutube(msg, url) {
     const id = msg.guild.id;
 
     audioQueue.push(id, url);
 
     if (audioQueue.get(id).length > 1) {
-        msg.channel.send('Added to the queue');
+        msg.reply(`Added to the queue:\n${url}`);
         return;
     }
 
     //--------------------------------------
 
     try {
-        const ytStream = ytdl(url, {
-            filter: 'audioonly'
-        });
-        const info = ytdl.getInfo(url);
-
-        //--------------------------------------
-
-        let arr = [];
-
-        ytStream.on('data', d => arr.push(d));
-
-        //--------------------------------------
-
-        ytStream.on('end', async () => {
-            let title = (await info).videoDetails.title;
-
-            if (moreInfo.length) {
-                title = `${title}\n${moreInfo}`;
-            }
-
-            playStream(msg, Readable.from(arr), title);
-        });
+        fetchAndPlayYoutubeAudio(msg, url);
     }
     catch (error) {
-        msg.channel.send(error.toString());
+        msg.reply(`Music queue error:\n${error.toString()}`);
     }
 }
 
@@ -84,25 +87,10 @@ async function playYoutube(msg, url, moreInfo = '') {
  */
 async function youtubeToStream(msg, url) {
     try {
-        const ytStream = ytdl(url, {
-            filter: 'audioonly'
-        });
-        const info = ytdl.getInfo(url);
-
-        //--------------------------------------
-
-        let arr = [];
-
-        ytStream.on('data', d => arr.push(d));
-
-        //--------------------------------------
-
-        ytStream.on('end', async () => {
-            playStream(msg, Readable.from(arr), `${(await info).videoDetails.title}\n${url}`);
-        });
+        fetchAndPlayYoutubeAudio(msg, url);
     }
     catch (error) {
-        msg.channel.send(error.toString());
+        msg.channel.send(`Music queue error:\n${error.toString()}`);
         nextSong(msg);
     }
 }
@@ -130,7 +118,7 @@ function getPlayer(msg) {
         //--------------------------------------
 
         player.on('error', error => {
-            msg.channel.send(error.toString());
+            msg.channel.send(`Music player error:\n${error.toString()}`);
             nextSong(msg);
         });
 
@@ -353,6 +341,11 @@ function deletePlayer(guildID) {
  * @param {*} guildID 
  */
 function leaveVC(guildID) {
-    getVoiceConnection(guildID).destroy();
+    const connection = getVoiceConnection(guildID);
+
+    if (typeof connection !== 'undefined') {
+        connection.destroy();
+    }
+
     deletePlayer(guildID);
 }
