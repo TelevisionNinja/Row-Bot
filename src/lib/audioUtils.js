@@ -136,7 +136,6 @@ function getPlayer(msg) {
                 ]);
             }
             catch (error) {
-                console.log(error)//######################################################
                 leaveVC(id);
             }
         });
@@ -224,7 +223,8 @@ async function skip(msg, index = 0) {
 
     if (index) {
         if (audioQueue.jump(guildID, index)) {
-            msg.reply(`Song #${index} skipped`);
+            msg.reply(`Skipped to song #${index} in the queue. Fetching the song...`);
+            playSong(msg);
         }
         else {
             msg.reply('No negative numbers or numbers bigger than the queue size!');
