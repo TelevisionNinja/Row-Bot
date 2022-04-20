@@ -13,6 +13,7 @@ export default {
 
 /**
  * get the queue of a guild
+ * do not manipulate the returned array, use the functions instead
  * 
  * @param {*} guildID 
  * @returns 
