@@ -6,7 +6,7 @@
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --experimental-json-modules --experimental-fetch ."
+    "start": "node --experimental-json-modules ."
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,6 @@
     "zlib-sync": "^0.1.7"
   },
   "engines": {
-    "node": ">=17.5.0"
+    "node": ">=18.0.0"
   }
 }
