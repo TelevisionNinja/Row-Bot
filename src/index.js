@@ -343,7 +343,7 @@ client.on('shardResume', () => {
     client.user.setActivity(activityStatus, { type: 'PLAYING' });
 
     //--------------------------------------------------------------------------------
-    // console log the start up time
+    // console log the time
 
     console.log(`Reconnected: ${new Date().toString()}`);
 });
@@ -443,6 +443,11 @@ client.on('messageReactionRemove', async (react, user) => {
 
     react.message.guild.members.cache.get(user.id).roles.remove(roleID);
 });
+
+//--------------------------------------------------------------------------------
+// error
+
+client.on('error', error => console.log(`${new Date().toString()}\n${error}`));
 
 //--------------------------------------------------------------------------------
 // login
