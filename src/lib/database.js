@@ -20,14 +20,11 @@ CREATE TABLE IF NOT EXISTS tulps(
     username TEXT NOT NULL,
     avatar TEXT NOT NULL,
     start_bracket TEXT NOT NULL,
-    end_bracket TEXT NOT NULL,
+    end_bracket TEXT NOT NULL DEFAULT '',
 
-    UNIQUE (user_id, username),
     PRIMARY KEY (user_id, username),
     UNIQUE (user_id, start_bracket, end_bracket)
 );
-
-CREATE INDEX IF NOT EXISTS user_id_index ON tulps(user_id);
 
 CREATE TABLE IF NOT EXISTS webhooks(
     channel_id TEXT PRIMARY KEY,
@@ -80,6 +77,12 @@ export const tulps = {
             VALUES ($1, $2, $3, $4, $5);
         `, [user_id, username, avatar, start_bracket, end_bracket]);
     },
+    create(user_id, username, avatar) {
+        return tulpDB.query(`
+            INSERT INTO tulps (user_id, username, avatar, start_bracket)
+            VALUES ($1, $2, $3, CONCAT($2, ':'));
+        `, [user_id, username, avatar]);
+    },
     async getAll(user_id) {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
@@ -98,11 +101,11 @@ export const tulps = {
      * @param {*} text the user's text
      * @returns 
      */
-    async find(user_id, text) {
+    async findTulp(user_id, text) {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
-            WHERE user_id = $1 AND $2 LIKE CONCAT(start_bracket, '%') AND $2 LIKE CONCAT('%', end_bracket)
-            ORDER BY LENGTH(CONCAT(start_bracket, end_bracket))
+            WHERE user_id = $1 AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
+            ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
             DESC
             LIMIT 1;
         `, [user_id, text])).rows[0];
@@ -141,12 +144,12 @@ export const tulps = {
             WHERE user_id = $1 AND username = $2;
         `, [user_id, old_username, new_username]);
     },
-    updateUsernameAndBrackets(user_id, old_username, new_username, old_start_bracket, new_start_bracket, end_bracket) {
+    updateUsernameAndBrackets(user_id, old_username, new_username) {
         return tulpDB.query(`
             UPDATE tulps
-            SET username = $3, start_bracket = $5
-            WHERE user_id = $1 AND username = $2 AND start_bracket = $4 AND end_bracket = $6;
-        `, [user_id, old_username, new_username, old_start_bracket, new_start_bracket, end_bracket]);
+            SET username = $3, start_bracket = CONCAT($3, ':')
+            WHERE user_id = $1 AND username = $2 AND start_bracket = CONCAT($2, ':') AND end_bracket = '';
+        `, [user_id, old_username, new_username]);
     },
     updateAvatar(user_id, username, avatar) {
         return tulpDB.query(`

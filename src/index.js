@@ -9,15 +9,14 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
-import { default as tulpCache } from './lib/tulpCache.js';
+import { default as cache } from './lib/cache.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
 import { default as audioUtils } from './lib/audioUtils.js';
 import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
-import { Readable } from 'stream';
 import {
     getTtsUrl,
-    getTtsBuffer
+    getTtsStream
 } from './commands/tts.js';
 import {
     // config vars
@@ -176,9 +175,7 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // send tulp messages easily
 
-    const userData = await tulpCache.getUser(msg.author.id);
-
-    if (await sendEasyMsg.sendEasyMsg(msg, userData)) {
+    if (await sendEasyMsg.sendEasyMsg(msg)) {
         return;
     }
 
@@ -221,19 +218,16 @@ client.on('messageCreate', async msg => {
                 audioUtils.leaveVC(msg.guild.id);
                 return;
             }
-            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg)) {
+            else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg, false)) {
                 const url = await getTtsUrl('Pinkie Pie', speechArr[randomMath(speechArr.length)]);
+                const stream = await getTtsStream(url);
 
                 // play backup audio
-                if (!url.length) {
+                if (typeof stream === 'undefined') {
                     audioUtils.playFile(msg, audio[randomMath(audio.length)]);
-                    return;
                 }
-
-                const buffer = await getTtsBuffer(url);
-
-                if (typeof buffer !== 'undefined') {
-                    audioUtils.playStream(msg, Readable.from(buffer));
+                else {
+                    audioUtils.playStream(msg, stream);
                 }
 
                 return;
@@ -349,7 +343,7 @@ client.on('shardResume', () => {
     client.user.setActivity(activityStatus, { type: 'PLAYING' });
 
     //--------------------------------------------------------------------------------
-    // console log the start up time
+    // console log the time
 
     console.log(`Reconnected: ${new Date().toString()}`);
 });
@@ -358,11 +352,8 @@ client.on('shardResume', () => {
 // tulp events
 
 // delete webhook data
-client.on('channelDelete', channel => tulpCache.deleteWebhook(channel.id));
-client.on('threadDelete', thread => tulpCache.deleteWebhook(thread.id));
-
-// cache user data and the channel webhook while the user is typing
-client.on('typingStart', typing => tulpCache.updateCache(typing));
+client.on('channelDelete', channel => cache.deleteWebhook(channel.id));
+client.on('threadDelete', thread => cache.deleteWebhook(thread.id));
 
 //--------------------------------------------------------------------------------
 // welcome message
@@ -452,6 +443,11 @@ client.on('messageReactionRemove', async (react, user) => {
 
     react.message.guild.members.cache.get(user.id).roles.remove(roleID);
 });
+
+//--------------------------------------------------------------------------------
+// error
+
+client.on('error', error => console.log(`${new Date().toString()}\n${error}`));
 
 //--------------------------------------------------------------------------------
 // login

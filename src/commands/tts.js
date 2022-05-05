@@ -11,7 +11,13 @@ const queue = new PQueue({
     interval: 1000,
     intervalCap: 50
 });
-const punctuation = ['.', ',', ':', '!', '?'];
+const punctuation = new Set([
+    '.',
+    ',',
+    ':',
+    '!',
+    '?'
+]);
 
 const errorMsg = 'Text must be at least 5 characters, and a valid character must be provided';
 
@@ -82,10 +88,10 @@ function filterText(text) {
         return '';
     }
 
-    let filteredText = cutOff(text.trim(), 200);
+    const filteredText = cutOff(text.trim(), 200);
     const lastChar = filteredText[filteredText.length - 1];
 
-    if (filteredText.length < 200 && !punctuation.includes(lastChar)) {
+    if (filteredText.length < 200 && !punctuation.has(lastChar)) {
         return `${filteredText}.`;
     }
 
@@ -130,7 +136,7 @@ export async function getTtsUrl(character, text, emotion = 'Contextual') {
         const body = await response.json();
 
         // if the post request errors, a message is returned
-        if (body.message) {
+        if (typeof body.message !== 'undefined') {
             return;
         }
 
@@ -145,10 +151,14 @@ export async function getTtsUrl(character, text, emotion = 'Contextual') {
 /**
  * 
  * @param {*} url url from getTtsUrl()
- * @returns buffer
+ * @returns stream
  */
-export async function getTtsBuffer(url) {
-    let buffer = undefined;
+export async function getTtsStream(url) {
+    let stream = undefined;
+
+    if (!url.length) {
+        return stream;
+    }
 
     await queue.add(async () => {
         //----------------------------
@@ -160,8 +170,8 @@ export async function getTtsBuffer(url) {
             return;
         }
 
-        buffer = await response.buffer();
+        stream = (await response.blob()).stream();
     });
 
-    return buffer;
+    return stream;
 }

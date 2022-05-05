@@ -3,7 +3,6 @@ import { default as audioQueue } from './audioQueue.js';
 import { cutOff } from './stringUtils.js';
 import { default as ytdl } from 'ytdl-core';
 import { default as ytSearch } from 'yt-search';
-import { Constants }from 'discord.js';
 
 export default {
     /**
@@ -47,34 +46,30 @@ export default {
             return;
         }
 
-        if (ytdl.validateURL(song)) {
-            msg.reply('Fetching song...');
-            audio.playYoutube(msg, song);
+        let reply = undefined;
+
+        if (msg.type === 'APPLICATION_COMMAND') { // interaction.reply() won't return a msg obj so editReply() is used
+            await msg.deferReply();
+            reply = msg.editReply('Fetching song...');
         }
         else {
-            const isInteraction = msg.type === Constants.InteractionTypes.APPLICATION_COMMAND;
+            reply = msg.reply('Fetching song...');
+        }
 
-            if (isInteraction) {
-                await msg.deferReply();
-            }
-
+        if (ytdl.validateURL(song)) {
+            audio.playYoutube(await reply, song);
+        }
+        else {
             const results = await ytSearch(song);
+            reply = await reply;
             const videos = results.videos;
 
             if (videos.length) {
                 const songURL = videos[0].url;
-
-                if (isInteraction) {
-                    msg.editReply('Fetching song...');
-                }
-                else {
-                    msg.reply('Fetching song...');
-                }
-
-                audio.playYoutube(msg, songURL, songURL);
+                audio.playYoutube(reply, songURL);
             }
             else {
-                msg.reply('No results');
+                reply.reply('No results');
             }
         }
     },
@@ -89,7 +84,7 @@ export default {
 
         if (queue.length) {
             const playing = queue[0];
-            let queueStr = `Currently playing:\n${playing}`;
+            let queueStr = `Current song:\n${playing}`;
 
             if (queue.length > 1) {
                 let queueList = '\nQueue:';
@@ -148,7 +143,7 @@ export default {
      * @param {*} msg 
      */
     resume(msg) {
-        audio.resume(msg.guild.id);
+        audio.resume(msg);
         msg.reply('Song resumed');
     },
 

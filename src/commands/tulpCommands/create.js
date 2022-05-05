@@ -53,7 +53,7 @@ export default {
         }
 
         try {
-            await tulps.set(msg.author.id, username, avatarLink, `${username}:`, '');
+            await tulps.create(msg.author.id, username, avatarLink);
 
             msg.reply(create.confirmMsg);
         }
@@ -72,7 +72,7 @@ export default {
         const username = interaction.options.getString('name');
 
         try {
-            await tulps.set(interaction.user.id, username, avatarLink, `${username}:`, '');
+            await tulps.create(interaction.user.id, username, avatarLink);
 
             interaction.reply(create.confirmMsg);
         }

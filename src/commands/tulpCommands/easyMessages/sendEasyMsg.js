@@ -1,6 +1,7 @@
 import { sendWebhookMsg } from '../../../lib/msgUtils.js';
 import { containsURL } from '../../../lib/urlUtils.js';
 import { cutOff } from '../../../lib/stringUtils.js';
+import { tulps } from '../../../lib/database.js';
 
 export default {
     usage: '<custom bracket><message><custom bracket>',
@@ -8,39 +9,19 @@ export default {
      * send tulp messages using brackets
      * 
      * @param {*} msg message obj
-     * @param {*} tulpArr tulp array
      * @returns 
      */
-    async sendEasyMsg(msg, tulpArr) {
-        if (!tulpArr.length) {
-            return false;
-        }
-
+    async sendEasyMsg(msg) {
         //-------------------------------------------------------------------
         // get specific tulp
+        const selectedTulp = await tulps.findTulp(msg.author.id, msg.content);
 
-        const userMessage = msg.content;
-        let selectedTulp = {
-            start_bracket: '',
-            end_bracket: ''
-        };
-
-        for (let i = 0, n = tulpArr.length; i < n; i++) {
-            const currentTulp = tulpArr[i];
-
-            if (currentTulp.start_bracket.length >= selectedTulp.start_bracket.length &&
-                currentTulp.end_bracket.length >= selectedTulp.end_bracket.length &&
-                userMessage.startsWith(currentTulp.start_bracket) &&
-                userMessage.endsWith(currentTulp.end_bracket)) {
-                selectedTulp = currentTulp;
-            }
-        }
-
-        if (typeof selectedTulp.username === 'undefined') {
+        if (!selectedTulp) {
             return false;
         }
 
-        let tulpMsg = userMessage.substring(selectedTulp.start_bracket.length, userMessage.length - selectedTulp.end_bracket.length).trim();
+        let tulpMsg = msg.content;
+        tulpMsg = tulpMsg.substring(selectedTulp.start_bracket.length, tulpMsg.length - selectedTulp.end_bracket.length).trim();
         let attachmentArr = undefined;
 
         if (msg.attachments.size) {

@@ -6,7 +6,7 @@
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --experimental-json-modules --experimental-fetch ."
+    "start": "node --experimental-json-modules ."
   },
   "repository": {
     "type": "git",
@@ -20,9 +20,9 @@
   "homepage": "https://github.com/TelevisionNinja/Row-Bot#readme",
   "dependencies": {
     "@discordjs/opus": "^0.7.0",
-    "@discordjs/voice": "^0.8.0",
+    "@discordjs/voice": "^0.9.0",
     "bufferutil": "^4.0.6",
-    "daily-intervals": "^3.0.0",
+    "daily-intervals": "^3.0.6",
     "discord.js": "^13.6.0",
     "erlpack": "github:discord/erlpack",
     "ffmpeg-static": "^5.0.0",
@@ -36,6 +36,6 @@
     "zlib-sync": "^0.1.7"
   },
   "engines": {
-    "node": ">=17.5.0"
+    "node": ">=18.0.0"
   }
 }

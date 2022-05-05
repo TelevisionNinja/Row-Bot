@@ -13,6 +13,7 @@ export default {
 
 /**
  * get the queue of a guild
+ * do not manipulate the returned array, use the functions instead
  * 
  * @param {*} guildID 
  * @returns 
@@ -145,7 +146,7 @@ function deleteQueue(guildID) {
  * 
  * @param {*} guildID 
  * @param {*} index 
- * @returns 
+ * @returns true if the queue was jumped, false if not
  */
 function jump(guildID, index) {
     let result = queues.get(guildID);

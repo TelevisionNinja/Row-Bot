@@ -1,12 +1,13 @@
 import { default as ytdl } from 'ytdl-core';
-import { Readable } from 'stream';
 import { default as audioQueue } from './audioQueue.js';
 import {
     createAudioPlayer,
     joinVoiceChannel,
     getVoiceConnection,
     createAudioResource,
-    AudioPlayerStatus
+    AudioPlayerStatus,
+    VoiceConnectionStatus,
+    entersState
 } from '@discordjs/voice';
 import { createReadStream } from 'fs';
 import { resolve } from 'path';
@@ -26,51 +27,53 @@ export default {
 }
 
 /**
+ * 
+ * @param {*} url 
+ * @returns 
+ */
+async function getYoutubeTitle(url) {
+    const info = await ytdl.getInfo(url);
+    return `${info.videoDetails.title}\n${url}`;
+}
+
+/**
+ * gets the audio from the youtube url and plays it
+ * 
+ * @param {*} msg 
+ * @param {*} url 
+ */
+async function fetchAndPlayYoutubeAudio(msg, url) {
+    const ytStream = ytdl(url, {
+        filter: 'audioonly'
+    });
+
+    playStream(msg, ytStream, await getYoutubeTitle(url));
+}
+
+/**
  * play a youtube link
  * 
  * @param {*} msg 
  * @param {*} url 
- * @param {*} moreInfo 
  * @returns 
  */
-async function playYoutube(msg, url, moreInfo = '') {
+async function playYoutube(msg, url) {
     const id = msg.guild.id;
-
+    const hasSong = audioQueue.getCurrentSong(id).length !== 0;
     audioQueue.push(id, url);
 
-    if (audioQueue.get(id).length > 1) {
-        msg.channel.send('Added to the queue');
+    if (hasSong) {
+        msg.reply(`Added to the queue:\n${url}`);
         return;
     }
 
     //--------------------------------------
 
     try {
-        const ytStream = ytdl(url, {
-            filter: 'audioonly'
-        });
-        const info = ytdl.getInfo(url);
-
-        //--------------------------------------
-
-        let arr = [];
-
-        ytStream.on('data', d => arr.push(d));
-
-        //--------------------------------------
-
-        ytStream.on('end', async () => {
-            let title = (await info).videoDetails.title;
-
-            if (moreInfo.length) {
-                title = `${title}\n${moreInfo}`;
-            }
-
-            playStream(msg, Readable.from(arr), title);
-        });
+        fetchAndPlayYoutubeAudio(msg, url);
     }
     catch (error) {
-        msg.channel.send(error.toString());
+        msg.reply(`Music queue error:\n${error.toString()}`);
     }
 }
 
@@ -82,25 +85,10 @@ async function playYoutube(msg, url, moreInfo = '') {
  */
 async function youtubeToStream(msg, url) {
     try {
-        const ytStream = ytdl(url, {
-            filter: 'audioonly'
-        });
-        const info = ytdl.getInfo(url);
-
-        //--------------------------------------
-
-        let arr = [];
-
-        ytStream.on('data', d => arr.push(d));
-
-        //--------------------------------------
-
-        ytStream.on('end', async () => {
-            playStream(msg, Readable.from(arr), `${(await info).videoDetails.title}\n${url}`);
-        });
+        fetchAndPlayYoutubeAudio(msg, url);
     }
     catch (error) {
-        msg.channel.send(error.toString());
+        msg.channel.send(`Music queue error:\n${error.toString()}`);
         nextSong(msg);
     }
 }
@@ -124,12 +112,11 @@ function getPlayer(msg) {
         const connection = getVoiceConnection(id);
 
         players.set(id, player);
-        connection.subscribe(player);
 
         //--------------------------------------
 
         player.on('error', error => {
-            msg.channel.send(error.toString());
+            msg.channel.send(`Music player error:\n${error.toString()}`);
             nextSong(msg);
         });
 
@@ -138,6 +125,22 @@ function getPlayer(msg) {
                 nextSong(msg);
             }
         });
+
+        //--------------------------------------
+
+        connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+            try {
+                await Promise.race([
+                    entersState(connection, VoiceConnectionStatus.Signalling, 5000),
+                    entersState(connection, VoiceConnectionStatus.Connecting, 5000),
+                ]);
+            }
+            catch (error) {
+                leaveVC(id);
+            }
+        });
+
+        connection.subscribe(player);
     }
 
     return player;
@@ -190,17 +193,22 @@ function pause(guildID) {
 /**
  * resume an audio player of a guild
  * 
- * @param {*} guildID 
+ * @param {*} msg 
  * @returns 
  */
-function resume(guildID) {
-    const player = players.get(guildID);
+function resume(msg) {
+    const player = players.get(msg.guild.id);
 
     if (typeof player === 'undefined') {
         return;
     }
 
-    player.unpause();
+    if (player.state.status === AudioPlayerStatus.Paused) {
+        player.unpause();
+    }
+    else if (player.state.status === AudioPlayerStatus.Idle) {
+        playSong(msg);
+    }
 }
 
 /**
@@ -210,12 +218,12 @@ function resume(guildID) {
  * @param {*} index index of a certain song skip to
  * @returns 
  */
-function skip(msg, index = 0) {
+async function skip(msg, index = 0) {
     const guildID = msg.guild.id;
 
     if (index) {
         if (audioQueue.jump(guildID, index)) {
-            msg.reply(`Fetching song...`);
+            msg.reply(`Skipped to song #${index} in the queue. Fetching the song...`);
             playSong(msg);
         }
         else {
@@ -229,8 +237,20 @@ function skip(msg, index = 0) {
             msg.reply('No songs to skip');
         }
         else {
-            msg.reply('Song skipped');
-            player.stop(); // the event listener will call nextSong()
+            if (player.state.status === AudioPlayerStatus.Paused) {
+                if (audioQueue.pop(guildID)) {
+                    msg.reply(`Song skipped. The new current song:\n${await getYoutubeTitle(audioQueue.getCurrentSong(guildID))}`);
+                }
+                else {
+                    msg.reply('No songs left to skip');
+                    deletePlayer(guildID);
+                }
+            }
+            else {
+                msg.reply('Song skipped');
+                // the event listener will call nextSong(). this is done so that the audio will stop playing immediately
+                player.stop();
+            }
         }
     }
 }
@@ -260,52 +280,80 @@ function nextSong(msg) {
         playSong(msg);
     }
     else {
-        leaveVC(guildID);
+        // leaveVC(guildID);
+        deletePlayer(guildID);
     }
 }
 
 /**
- * returns true if the user is in a vc with the bot or the user is in a vc and the bot is not
+ * returns true if the user is in a vc with the bot
  * 
  * @param {*} msg 
+ * @param {*} noVCMsg show message of bot not in any vc
  * @returns 
  */
-function vcCheck(msg) {
+function vcCheck(msg, noVCMsg = true) {
     if (!msg.member.voice.channel) {
         msg.reply('Please join a voice channel');
         return false;
     }
 
-    if (msg.guild.me.voice && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
+    if (msg.guild.me.voice && msg.guild.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
         if (msg.guild.me.voice.channel.id === msg.member.voice.channel.id) {
             return true;
         }
 
-        msg.reply('Please join the voice channel the bot is in');
+        msg.reply('Please join the voice channel that I\'m in');
+    }
+    else {
+        if (noVCMsg) {
+            msg.reply('Command cancelled because I\'m not in any voice channel');
+        }
+    }
+
+    return false;
+}
+
+/**
+ * returns true if the user is in a vc with the bot
+ * 
+ * if the user is in a vc and the bot is not
+ * it will join the user's vc and return true
+ * 
+ * @param {*} msg 
+ * @returns 
+ */
+function joinVC(msg) {
+    if (!msg.member.voice.channel) {
+        msg.reply('Please join a voice channel');
         return false;
+    }
+
+    if (msg.guild.me.voice && msg.guild.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
+        if (msg.guild.me.voice.channel.id !== msg.member.voice.channel.id) {
+            msg.reply('Please join the voice channel the bot is in');
+            return false;
+        }
+    }
+    else {
+        joinVoiceChannel({
+            channelId: msg.member.voice.channel.id,
+            guildId: msg.guild.id,
+            adapterCreator: msg.guild.voiceAdapterCreator
+        });
     }
 
     return true;
 }
 
 /**
- * returns true if there is an existing vc or the bot joined a vc
+ * deletes the player and queue
  * 
- * @param {*} msg 
- * @returns 
+ * @param {*} guildID 
  */
-function joinVC(msg) {
-    if (vcCheck(msg)) {
-        joinVoiceChannel({
-            channelId: msg.member.voice.channel.id,
-            guildId: msg.guild.id,
-            adapterCreator: msg.guild.voiceAdapterCreator
-        });
-
-        return true;
-    }
-
-    return false;
+function deletePlayer(guildID) {
+    players.delete(guildID);
+    audioQueue.deleteQueue(guildID);
 }
 
 /**
@@ -314,7 +362,11 @@ function joinVC(msg) {
  * @param {*} guildID 
  */
 function leaveVC(guildID) {
-    getVoiceConnection(guildID).destroy();
-    players.delete(guildID);
-    audioQueue.deleteQueue(guildID);
+    const connection = getVoiceConnection(guildID);
+
+    if (typeof connection !== 'undefined') {
+        connection.destroy();
+    }
+
+    deletePlayer(guildID);
 }

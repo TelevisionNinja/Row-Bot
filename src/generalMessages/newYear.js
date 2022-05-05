@@ -8,7 +8,9 @@ const newYear = messages.newYear,
 const newYearMap = new Map(),
     newYearsEveSet = new Set(newYearsEve.map(n => n.toLowerCase()));
 
-newYearLowerCase.forEach((n, i) => newYearMap.set(n, i));
+for (let i = 0, n = newYearLowerCase.length; i < n; i++) {
+    newYearMap.set(newYearLowerCase[i], i);
+}
 
 // wish a happy new year
 export function execute(msg, filteredMsg) {
