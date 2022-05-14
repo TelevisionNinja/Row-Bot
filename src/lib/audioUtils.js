@@ -15,9 +15,10 @@ import { resolve } from 'path';
 let players = new Map();
 
 export default {
-    playYoutubeURL,
+    queueASong,
     playStream,
     playFile,
+    playCurrentSong,
     pause,
     resume,
     skip,
@@ -55,26 +56,18 @@ async function fetchAndPlayYoutubeAudio(msg, url) {
  * 
  * @param {*} msg 
  * @param {*} url 
- * @returns 
+ * @returns bool for whether the song is the current song
  */
-async function playYoutubeURL(msg, url) {
+function queueASong(msg, url) {
     const id = msg.guild.id;
-    const hasSong = audioQueue.getCurrentSong(id).length !== 0;
+    const queued = audioQueue.getCurrentSong(id).length !== 0;
     audioQueue.push(id, url);
 
-    if (hasSong) {
+    if (queued) {
         msg.reply(`Added to the queue:\n${url}`);
-        return;
     }
 
-    //--------------------------------------
-
-    try {
-        fetchAndPlayYoutubeAudio(msg, url);
-    }
-    catch (error) {
-        msg.reply(`Music queue error:\n${error.toString()}`);
-    }
+    return !queued;
 }
 
 /**
@@ -83,9 +76,9 @@ async function playYoutubeURL(msg, url) {
  * @param {*} msg 
  * @param {*} url 
  */
-async function youtubeToStream(msg, url) {
+async function playYoutube(msg, url) {
     try {
-        fetchAndPlayYoutubeAudio(msg, url);
+        await fetchAndPlayYoutubeAudio(msg, url);
     }
     catch (error) {
         msg.channel.send(`Music queue error:\n${error.toString()}`);
@@ -206,9 +199,6 @@ function resume(msg) {
     if (player.state.status === AudioPlayerStatus.Paused) {
         player.unpause();
     }
-    else if (player.state.status === AudioPlayerStatus.Idle) {
-        playSong(msg);
-    }
 }
 
 /**
@@ -224,7 +214,7 @@ async function skip(msg, index = 0) {
     if (index) {
         if (audioQueue.jump(guildID, index)) {
             msg.reply(`Skipped to song #${index} in the queue. Fetching the song...`);
-            playSong(msg);
+            playCurrentSong(msg);
         }
         else {
             msg.reply('No negative numbers or numbers bigger than the queue size!');
@@ -260,10 +250,10 @@ async function skip(msg, index = 0) {
  * 
  * @param {*} msg 
  */
-function playSong(msg) {
+function playCurrentSong(msg) {
     const url = audioQueue.getCurrentSong(msg.guild.id);
 
-    youtubeToStream(msg, url);
+    playYoutube(msg, url);
 }
 
 /**
@@ -277,7 +267,7 @@ function nextSong(msg) {
     const guildID = msg.guild.id;
 
     if (audioQueue.pop(guildID)) {
-        playSong(msg);
+        playCurrentSong(msg);
     }
     else {
         // leaveVC(guildID);

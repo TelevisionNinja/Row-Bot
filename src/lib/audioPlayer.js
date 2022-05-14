@@ -47,13 +47,12 @@ export default {
         }
 
         if (ytdl.validateURL(song)) {
-            audio.playYoutubeURL(
-                await msg.reply({
-                    content: 'Fetching song...',
-                    fetchReply: true
-                }),
-                song
-            );
+            const isCurrentSong = audio.queueASong(msg, song);
+
+            if (isCurrentSong) {
+                msg.reply('Fetching song...');
+                audio.playCurrentSong(msg);
+            }
         }
         else {
             const results = ytSearch(song);
@@ -65,7 +64,11 @@ export default {
 
             if (videos.length) {
                 const songURL = videos[0].url;
-                audio.playYoutubeURL(reply, songURL);
+                const isCurrentSong = audio.queueASong(reply, songURL);
+
+                if (isCurrentSong) {
+                    audio.playCurrentSong(reply);
+                }
             }
             else {
                 reply.reply('No results');
