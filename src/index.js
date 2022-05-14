@@ -330,12 +330,10 @@ client.on('interactionCreate', async interaction => {
 });
 
 //--------------------------------------------------------------------------------
-// disconnect
+// connection
 
 client.on('shardDisconnect', () => console.log(`Disconnected: ${new Date().toString()}`));
-
-//--------------------------------------------------------------------------------
-// reconnect
+client.on('shardReconnecting', () => console.log(`Reconnecting: ${new Date().toString()}`));
 
 client.on('shardResume', () => {
     // set activity
@@ -345,7 +343,7 @@ client.on('shardResume', () => {
     //--------------------------------------------------------------------------------
     // console log the time
 
-    console.log(`Reconnected: ${new Date().toString()}`);
+    console.log(`Resumed: ${new Date().toString()}`);
 });
 
 //--------------------------------------------------------------------------------
@@ -447,7 +445,11 @@ client.on('messageReactionRemove', async (react, user) => {
 //--------------------------------------------------------------------------------
 // error
 
-client.on('error', error => console.log(`${new Date().toString()}\n${error}`));
+client.on('error', error => console.log(`Error: ${new Date().toString()}\n${error}`));
+client.on('shardError', error => console.log(`Shard Error: ${new Date().toString()}\n${error}`));
+client.on('unhandledRejection', error => console.log(`Unhandled Rejection: ${new Date().toString()}\n${error}`));
+client.on('uncaughtException', error => console.log(`Uncaught Exception: ${new Date().toString()}\n${error}`));
+client.on('uncaughtExceptionMonitor', error => console.log(`Uncaught Exception Monitor: ${new Date().toString()}\n${error}`));
 
 //--------------------------------------------------------------------------------
 // login
