@@ -57,21 +57,33 @@ export default {
         else {
             const results = ytSearch(song);
             const reply = await msg.reply({
-                content: 'Fetching song...',
+                content: 'Fetching result...',
                 fetchReply: true
             });
-            const videos = (await results).videos;
+            const searchResult = (await results).all[0];
 
-            if (videos.length) {
-                const songURL = videos[0].url;
-                const isCurrentSong = audio.queueASong(reply, songURL);
-
-                if (isCurrentSong) {
-                    audio.playCurrentSong(reply);
-                }
-            }
-            else {
+            if (typeof searchResult === 'undefined') {
                 reply.reply('No results');
+                return;
+            }
+
+            switch (searchResult.type) {
+                case 'list':
+                    const playlist = await ytSearch({ listId: searchResult.listId });
+                    playlist.videos.forEach(video => audio.queueASong(reply, `https://youtu.be/${video.videoId}`, false));
+                    audio.playCurrentSong(reply);
+                    break;
+                case 'video':
+                    const songURL = searchResult.url;
+                    const isCurrentSong = audio.queueASong(reply, songURL);
+
+                    if (isCurrentSong) {
+                        audio.playCurrentSong(reply);
+                    }
+
+                    break;
+                default:
+                    reply.reply('No results');
             }
         }
     },

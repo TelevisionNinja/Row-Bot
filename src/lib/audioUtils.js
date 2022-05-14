@@ -56,14 +56,15 @@ async function fetchAndPlayYoutubeAudio(msg, url) {
  * 
  * @param {*} msg 
  * @param {*} url 
+ * @param {*} sendReply send a reply that says the song was queued
  * @returns bool for whether the song is the current song
  */
-function queueASong(msg, url) {
+function queueASong(msg, url, sendReply = true) {
     const id = msg.guild.id;
     const queued = audioQueue.getCurrentSong(id).length !== 0;
     audioQueue.push(id, url);
 
-    if (queued) {
+    if (queued && sendReply) {
         msg.reply(`Added to the queue:\n${url}`);
     }
 
