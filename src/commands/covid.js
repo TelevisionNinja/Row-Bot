@@ -46,9 +46,11 @@ export default {
         msg.reply({ embeds: await getDataEmbeds(args.join(' ').trimStart()) });
     },
     async executeInteraction(interaction) {
+        const embeds = getDataEmbeds(interaction.options.getString('state'));
+
         await interaction.deferReply();
 
-        interaction.editReply({ embeds: await getDataEmbeds(interaction.options.getString('state')) });
+        interaction.editReply({ embeds: await embeds });
     }
 }
 

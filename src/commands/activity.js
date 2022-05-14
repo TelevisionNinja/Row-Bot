@@ -86,13 +86,13 @@ export default {
 
         //-------------------------------------------------------
 
-        await interaction.deferReply();
-
-        const invite = await vc.createInvite({
+        const invite = vc.createInvite({
             targetApplication: activityID,
             targetType: 2
         });
 
-        return interaction.editReply(invite.url);
+        await interaction.deferReply();
+
+        return interaction.editReply((await invite).url);
     }
 }

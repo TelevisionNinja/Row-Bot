@@ -49,10 +49,12 @@ export default {
         }
     },
     async executeInteraction(interaction) {
+        const symbol = interaction.options.getString('symbol');
+        let price = getStockStr(symbol);
+
         await interaction.deferReply();
 
-        const symbol = interaction.options.getString('symbol');
-        const price = await getStockStr(symbol);
+        price = await price;
 
         if (price.length) {
             interaction.editReply(`$${price}`);

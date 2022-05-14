@@ -46,23 +46,13 @@ export default {
             return;
         }
 
-        let reply = undefined;
-
-        if (msg.type === 'APPLICATION_COMMAND') { // interaction.reply() won't return a msg obj so editReply() is used
-            await msg.deferReply();
-            reply = msg.editReply('Fetching song...');
-        }
-        else {
-            reply = msg.reply('Fetching song...');
-        }
-
         if (ytdl.validateURL(song)) {
-            audio.playYoutube(await reply, song);
+            audio.playYoutube(await sendFetchingMsg(msg), song);
         }
         else {
-            const results = await ytSearch(song);
-            reply = await reply;
-            const videos = results.videos;
+            const results = ytSearch(song);
+            const reply = await sendFetchingMsg(msg);
+            const videos = (await results).videos;
 
             if (videos.length) {
                 const songURL = videos[0].url;
@@ -156,4 +146,18 @@ export default {
     skip(msg, index = 0) {
         audio.skip(msg, index);
     }
+}
+
+/**
+ * 
+ * @param {*} msg discord message obj
+ * @returns discord message object
+ */
+async function sendFetchingMsg(msg) {
+    if (msg.type === 'APPLICATION_COMMAND') { // interaction.reply() won't return a msg obj so editReply() is used
+        await msg.deferReply();
+        return msg.editReply('Fetching song...');
+    }
+
+    return msg.reply('Fetching song...');
 }

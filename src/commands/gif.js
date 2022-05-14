@@ -47,12 +47,14 @@ export default {
         }
     },
     async executeInteraction(interaction) {
+        const gifResult = getGif(interaction.options.getString('search'));
+
         await interaction.deferReply();
 
         const {
             gif,
             hasResult
-        } = await getGif(interaction.options.getString('search'));
+        } = await gifResult;
 
         if (hasResult) {
             interaction.editReply(gif);

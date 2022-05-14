@@ -68,11 +68,13 @@ export default {
         }
     },
     async executeInteraction(interaction) {
-        await interaction.deferReply();
-
         const character = interaction.options.getString('character');
         const text = interaction.options.getString('text');
-        const url = await getTtsUrl(character, text);
+        let url = getTtsUrl(character, text);
+
+        await interaction.deferReply();
+
+        url = await url;
 
         if (url.length) {
             interaction.editReply({ files: [url] });

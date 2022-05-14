@@ -48,12 +48,12 @@ export default {
         msg.reply(createImgResult(img));
     },
     async executeInteraction(interaction) {
+        const tags = interaction.options.getString('tags').split(tagSeparator);
+        const img = getImage(tags);
+
         await interaction.deferReply();
 
-        const tags = interaction.options.getString('tags').split(tagSeparator);
-        const img = await getImage(tags);
-
-        interaction.editReply(createImgResult(img));
+        interaction.editReply(createImgResult(await img));
     }
 }
 

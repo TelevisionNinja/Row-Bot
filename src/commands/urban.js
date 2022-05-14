@@ -78,12 +78,14 @@ export default {
         });
     },
     async executeInteraction(interaction) {
+        const definitionResult = getDefinition(interaction.options.getString('search'));
+
         await interaction.deferReply();
 
         const {
             definition,
             results
-        } = await getDefinition(interaction.options.getString('search'));
+        } = await definitionResult;
 
         if (typeof definition === 'undefined') {
             interaction.editReply(noResultsMsg);

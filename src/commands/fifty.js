@@ -35,12 +35,14 @@ export default {
         msg.reply(`${title}\n<${link}>`);
     },
     async executeInteraction(interaction) {
+        const fiftyResult = getRandomFifty();
+
         await interaction.deferReply();
 
         const {
             title,
             link
-        } = await getRandomFifty();
+        } = await fiftyResult;
 
         interaction.editReply(`${title}\n<${link}>`);
     }
