@@ -15,7 +15,7 @@ import { resolve } from 'path';
 let players = new Map();
 
 export default {
-    playYoutube,
+    playYoutubeURL,
     playStream,
     playFile,
     pause,
@@ -57,7 +57,7 @@ async function fetchAndPlayYoutubeAudio(msg, url) {
  * @param {*} url 
  * @returns 
  */
-async function playYoutube(msg, url) {
+async function playYoutubeURL(msg, url) {
     const id = msg.guild.id;
     const hasSong = audioQueue.getCurrentSong(id).length !== 0;
     audioQueue.push(id, url);
