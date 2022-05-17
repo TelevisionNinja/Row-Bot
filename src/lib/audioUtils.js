@@ -7,7 +7,8 @@ import {
     createAudioResource,
     AudioPlayerStatus,
     VoiceConnectionStatus,
-    entersState
+    entersState,
+    demuxProbe
 } from '@discordjs/voice';
 import { createReadStream } from 'fs';
 import { resolve } from 'path';
@@ -45,7 +46,8 @@ async function getYoutubeTitle(url) {
  */
 async function fetchAndPlayYoutubeAudio(msg, url) {
     const ytStream = ytdl(url, {
-        filter: 'audioonly'
+        filter: 'audioonly',
+        quality: 'highestaudio'
     });
 
     playStream(msg, ytStream, await getYoutubeTitle(url));
@@ -126,7 +128,7 @@ function getPlayer(msg) {
             try {
                 await Promise.race([
                     entersState(connection, VoiceConnectionStatus.Signalling, 5000),
-                    entersState(connection, VoiceConnectionStatus.Connecting, 5000),
+                    entersState(connection, VoiceConnectionStatus.Connecting, 5000)
                 ]);
             }
             catch (error) {
@@ -141,20 +143,41 @@ function getPlayer(msg) {
 }
 
 /**
+ * 
+ * @param {*} readableStream 
+ * @returns 
+ */
+async function probeAndCreateResource(readableStream) {
+    try {
+        const {
+            stream,
+            type
+        } = await demuxProbe(readableStream);
+
+        return createAudioResource(stream, { inputType: type });
+    }
+    catch (error) {
+        console.log(error);
+    }
+
+    return createAudioResource(readableStream);
+}
+
+/**
  * play a readable stream
  * 
  * @param {*} msg 
  * @param {*} stream readable stream
  * @param {*} title optional title
  */
-function playStream(msg, stream, title = '') {
+async function playStream(msg, stream, title = '') {
     const player = getPlayer(msg);
+
+    player.play(await probeAndCreateResource(stream));
 
     if (title.length) {
         msg.channel.send(`Now playing:\n${title}`);
     }
-
-    player.play(createAudioResource(stream));
 }
 
 /**
