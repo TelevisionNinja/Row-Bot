@@ -20,12 +20,20 @@ export default {
     playStream,
     playFile,
     playCurrentSong,
+    playYoutube,
+
     pause,
     resume,
     skip,
+
     vcCheck,
     joinVC,
-    leaveVC
+    leaveVC,
+    probeAndCreateResource,
+    getYoutubeTitle,
+
+    getPlayer,
+    deletePlayer
 }
 
 /**
@@ -49,6 +57,9 @@ async function fetchAndPlayYoutubeAudio(msg, url) {
         filter: 'audioonly',
         quality: 'highestaudio'
     });
+
+    // this is added so that the stream will not error outside the scope of the bot
+    ytStream.on('error', () => {});
 
     playStream(msg, ytStream, await getYoutubeTitle(url));
 }
@@ -84,8 +95,14 @@ async function playYoutube(msg, url) {
         await fetchAndPlayYoutubeAudio(msg, url);
     }
     catch (error) {
-        msg.channel.send(`Music queue error:\n${error.toString()}`);
-        nextSong(msg);
+        const player = players.get(msg.guild.id);
+
+        if (typeof player === 'undefined') {
+            msg.channel.send(`Music Player ${error.toString()}`);
+        }
+        else {
+            player.emit('error', error);
+        }
     }
 }
 
@@ -112,7 +129,7 @@ function getPlayer(msg) {
         //--------------------------------------
 
         player.on('error', error => {
-            msg.channel.send(`Music player error:\n${error.toString()}`);
+            msg.channel.send(`Music Player ${error.toString()}`);
             nextSong(msg);
         });
 
