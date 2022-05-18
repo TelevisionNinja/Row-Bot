@@ -53,15 +53,14 @@ async function getYoutubeTitle(url) {
  * @param {*} url 
  */
 async function fetchAndPlayYoutubeAudio(msg, url) {
+    const tile = await getYoutubeTitle(url);
+
     const ytStream = ytdl(url, {
         filter: 'audioonly',
         quality: 'highestaudio'
     });
 
-    // this is added so that the stream will not error outside the scope of the bot
-    ytStream.on('error', () => {});
-
-    playStream(msg, ytStream, await getYoutubeTitle(url));
+    playStream(msg, ytStream, tile);
 }
 
 /**
