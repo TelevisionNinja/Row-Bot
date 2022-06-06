@@ -216,11 +216,9 @@ function playFile(msg, file, title = '') {
 function pause(guildID) {
     const player = players.get(guildID);
 
-    if (typeof player === 'undefined') {
-        return;
+    if (typeof player !== 'undefined') {
+        player.pause(true);
     }
-
-    player.pause(true);
 }
 
 /**
@@ -232,11 +230,7 @@ function pause(guildID) {
 function resume(msg) {
     const player = players.get(msg.guild.id);
 
-    if (typeof player === 'undefined') {
-        return;
-    }
-
-    if (player.state.status === AudioPlayerStatus.Paused) {
+    if (typeof player !== 'undefined' && player.state.status === AudioPlayerStatus.Paused) {
         player.unpause();
     }
 }
@@ -310,8 +304,8 @@ function nextSong(msg) {
         playCurrentSong(msg);
     }
     else {
-        // leaveVC(guildID);
-        deletePlayer(guildID);
+        // leaveVC(guildID); // leaves the vc if there is nothing left to play
+        deletePlayer(guildID); // stays in the vc when there is nothing left to play
     }
 }
 
@@ -323,11 +317,12 @@ function nextSong(msg) {
  * @returns 
  */
 function vcCheck(msg, noVCMsg = true) {
-    if (!msg.member.voice.channel) {
+    if (!(msg.member.voice && msg.member.voice.channel)) {
         msg.reply('Please join a voice channel');
         return false;
     }
 
+    // msg.guild.me.voice can be undefined
     if (msg.guild.me.voice && msg.guild.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
         if (msg.guild.me.voice.channel.id === msg.member.voice.channel.id) {
             return true;
@@ -354,11 +349,12 @@ function vcCheck(msg, noVCMsg = true) {
  * @returns 
  */
 function joinVC(msg) {
-    if (!msg.member.voice.channel) {
+    if (!(msg.member.voice && msg.member.voice.channel)) {
         msg.reply('Please join a voice channel');
         return false;
     }
 
+    // msg.guild.me.voice can be undefined
     if (msg.guild.me.voice && msg.guild.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
         if (msg.guild.me.voice.channel.id !== msg.member.voice.channel.id) {
             msg.reply('Please join the voice channel the bot is in');

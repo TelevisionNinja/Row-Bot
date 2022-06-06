@@ -355,15 +355,15 @@ export function parseUserMentions(msg) {
  * @param {*} msg 
  * @param {*} args 
  * @returns 
- * success: if there is a username and avatar detected
+ * success: bool, if there is a username and avatar detected
  * 
- * validURL: if the link of the image is valid
+ * validURL: bool, if the link of the image is valid
  * 
- * username: extracted username string
+ * username: string, extracted username
  * 
- * avatarLink: extracted avatar link
+ * avatarLink: string, extracted avatar link
  */
-export function extractNameAndAvatar(msg, args) {
+export function tulpExtractNameAndAvatar(msg, args) {
     let validURL = true;
     let username = '';
     let avatarLink = '';
@@ -412,7 +412,7 @@ async function tryWebhook(msgObj, webhookContent, webhook) {
     }
 
     //-----------------------------
-    // check if the channel is a thread
+    // check if the channel is a discord thread
 
     if (msgObj.channel.isThread()) {
         webhookContent.threadId = msgObj.channel.id;

@@ -1,6 +1,6 @@
 import tulpConfig from '../../../config/tulpConfig.json' assert { type: 'json' };
 import config from '../../../config/config.json' assert { type: 'json' };
-import { extractNameAndAvatar } from '../../lib/msgUtils.js';
+import { tulpExtractNameAndAvatar } from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';
 import { Constants } from 'discord.js';
 import { isValidURL } from '../../lib/urlUtils.js';
@@ -41,7 +41,7 @@ export default {
             validURL,
             username,
             avatarLink
-        } = extractNameAndAvatar(msg, args);
+        } = tulpExtractNameAndAvatar(msg, args);
 
         if (!success) {
             msg.reply('Please provide a name and a profile picture');

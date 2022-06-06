@@ -97,8 +97,8 @@ export default {
         const queue = audioQueue.get(msg.guild.id);
 
         if (queue.length) {
-            const playing = queue[0];
-            let queueStr = `Current song:\n${playing}`;
+            const currentSongURL = queue[0];
+            let queueStr = `Current song:\n${currentSongURL}`;
 
             if (queue.length > 1) {
                 let queueList = '\nQueue:';
