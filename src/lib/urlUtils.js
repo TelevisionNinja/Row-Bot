@@ -96,7 +96,34 @@ export function containsURL(str) {
     return containsURLRegex.test(str);
 }
 
+const ampSubdomain = 'amp.';
 const googleRedirct = 'https://www.google.com/url?q=';
+const googleAMPPath = 'https://www.google.com/amp/s';
+const ampDetectRegex = new RegExp(/([^\w\s])amp([^\w\s]|\b)/i);
+
+/**
+ * construct a non-amp url
+ * 
+ * @param {*} startOfPath 
+ * @param {*} partialURL 
+ * @param {*} oldDomain 
+ * @param {*} oldURL 
+ * @param {*} newURL 
+ * @returns 
+ */
+async function makeNewNonAMPURL(startOfPath, partialURL, oldDomain, oldURL, newURL) {
+    const path = partialURL.substring(startOfPath);
+
+    if (oldDomain.startsWith(ampSubdomain) && !ampDetectRegex.test(path)) {
+        const response = await fetch(`https://${oldURL.substring(googleAMPPath.length + 1 + ampSubdomain.length)}`);
+
+        if (!backOff(response, queue) && response.ok) {
+            return response.url;
+        }
+    }
+
+    return newURL;
+}
 
 /**
  * 
@@ -105,6 +132,7 @@ const googleRedirct = 'https://www.google.com/url?q=';
  */
 export async function convertAMPSet(urlSet) {
     let newLinks = [];
+    let middleLinks = [];
     const urlArray = [...urlSet];
     let responses = [];
     const n = urlSet.size;
@@ -132,18 +160,52 @@ export async function convertAMPSet(urlSet) {
             if (newURL.startsWith(googleRedirct)) {
                 newURL = newURL.substring(googleRedirct.length);
             }
+            else {
+                const partialURL = oldURL.substring(googleAMPPath.length + 1);
+                const startOfPath = partialURL.indexOf('/');
+                const oldDomain = partialURL.substring(0, startOfPath);
+                const newDomain = extractDomain(newURL);
+                const oldDomainParts = oldDomain.split('.');
+                const newDomainParts = newDomain.split('.');
 
-            if (oldURL[oldURL.length - 1] === '/') {
-                oldURL = oldURL.substring(0, oldURL.length - 1);
+                if (oldDomainParts.length !== newDomainParts.length) {
+                    newURL = makeNewNonAMPURL(startOfPath, partialURL, oldDomain, oldURL, newURL);
+                }
+                else {
+                    for (let j = oldDomainParts.length - 1; j >= 0; j--) {
+                        if (oldDomainParts[j] !== newDomainParts[j]) {
+                            newURL = makeNewNonAMPURL(startOfPath, partialURL, oldDomain, oldURL, newURL);
+                            break;
+                        }
+                    }
+                }
             }
 
-            if (newURL[newURL.length - 1] === '/') {
-                newURL = newURL.substring(0, newURL.length - 1);
-            }
+            middleLinks.push(newURL);
+        }
+    }
 
-            if (newURL !== oldURL) {
-                newLinks.push(newURL);
-            }
+    middleLinks = await Promise.allSettled(middleLinks);
+
+    for (let i = 0, linksLen = middleLinks.length; i < linksLen; i++) {
+        let newURL = middleLinks[i].value;
+        let oldURL = urlArray[i];
+
+        //---------------------------
+        // remove forward slashs
+
+        if (oldURL[oldURL.length - 1] === '/') {
+            oldURL = oldURL.substring(0, oldURL.length - 1);
+        }
+
+        if (newURL[newURL.length - 1] === '/') {
+            newURL = newURL.substring(0, newURL.length - 1);
+        }
+
+        //---------------------------
+
+        if (newURL !== oldURL) {
+            newLinks.push(newURL);
         }
     }
 
@@ -175,4 +237,15 @@ export function extractAndConvertAmpLinks(str) {
     }
 
     return [];
+}
+
+const extractDomainRegex = new RegExp(/([^\s\/]{1,}\.)?[^\s\/]{1,}\.[^\s\/]{2,}/i);
+
+/**
+ * 
+ * @param {*} url 
+ * @returns ex: www.example.com
+ */
+export function extractDomain(url) {
+    return url.match(extractDomainRegex)[0];
 }
