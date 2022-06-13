@@ -47,21 +47,6 @@ export function backOff(response, queue) {
     return false;
 }
 
-/**
- * replaces html entities with their character equivalent
- * 
- * @param {*} str 
- * @returns 
- */
-export function replaceHTMLEntities(str) {
-    return str.replaceAll('&quot;', '"')
-        .replaceAll('&#39;', '\'')
-        .replaceAll('&apos;', '\'')
-        .replaceAll('&amp;', '&')
-        .replaceAll('&lt;', '<')
-        .replaceAll('&gt;', '>');
-}
-
 /*
  * check for a scheme of 'http' or 'https'
  * check if the top level domain is of 2 or more characters

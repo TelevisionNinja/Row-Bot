@@ -1,9 +1,7 @@
 import config from '../../config/config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
-import {
-    backOff,
-    replaceHTMLEntities
-} from '../lib/urlUtils.js';
+import { backOff } from '../lib/urlUtils.js';
+import { decodeHTML } from 'entities';
 
 const fifty = config.fifty;
 
@@ -62,7 +60,7 @@ export async function getRandomFifty() {
         const post = (await response.json())[0].data.children[0].data;
 
         title = post.title;
-        link = replaceHTMLEntities(post.url);
+        link = decodeHTML(post.url);
     });
 
     return {
