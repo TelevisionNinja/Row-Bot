@@ -1,10 +1,11 @@
 import config from '../../../config/config.json' assert { type: 'json' };
 import tulpConfigFile from '../../../config/tulpConfig.json' assert { type: 'json' };
 import { default as sendEasyMsg } from './easyMessages/sendEasyMsg.js';
-import { sendWebhookMsg } from '../../lib/msgUtils.js';
+import {
+    sendWebhookMsg,
+    buildReferenceMsg
+} from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';
-import { containsURL } from '../../lib/urlUtils.js';
-import { cutOff } from '../../lib/stringUtils.js';
 import { Constants } from 'discord.js';
 
 const tulpConfig = config.tulp,
@@ -74,34 +75,7 @@ export default {
         //-------------------------------------------------------------------------------------
         // referenced msg
 
-        if (msg.reference) {
-            const reference = await msg.fetchReference();
-            let referenceMsg = reference.cleanContent;
-            let mention = undefined;
-
-            // format mention and jump link
-            if (reference.webhookId === reference.author.id) {
-                mention = `[@${reference.author.username}](${reference.url})`;
-
-                // remove reference inside of reference
-                referenceMsg = referenceMsg.replace(/^(> )(.|\n){1,}(\[.{1,}\]\(https:\/\/discord\.com\/channels\/([0-9]{1,}|@me)\/[0-9]{1,}\/[0-9]{1,}\)\n)/i, '').trimStart();
-            }
-            else {
-                mention = `<@${reference.author.id}> - [jump](${reference.url})`;
-            }
-
-            // detect embed or prevent embed from showing
-            if (!referenceMsg.length || containsURL(referenceMsg)) {
-                referenceMsg = `[*Select to see attachment*](${reference.url})`;
-            }
-            else {
-                // put the referenced msg in a quote
-                referenceMsg = cutOff(referenceMsg.replaceAll('\n', '\n> '), 64);
-            }
-
-            // check if the msg is over the discord char limit
-            tulpMsg = cutOff(`> ${referenceMsg}\n${mention}\n${tulpMsg}`, 2000);
-        }
+        tulpMsg = await buildReferenceMsg(msg, tulpMsg);
 
         //-------------------------------------------------------------------------------------
         // detect dm channel
@@ -127,7 +101,6 @@ export default {
             });
         }
         else {
-            // webhook
             sendWebhookMsg(msg, {
                 content: tulpMsg,
                 username: selectedTulp.username,

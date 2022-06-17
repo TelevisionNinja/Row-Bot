@@ -1,5 +1,8 @@
 import config from '../../config/config.json' assert { type: 'json' };
-import { isValidURL } from './urlUtils.js';
+import {
+    isValidURL,
+    containsURL
+} from './urlUtils.js';
 import {
     cutOff,
     includesPhrase,
@@ -447,4 +450,45 @@ export async function sendWebhookMsg(msgObj, webhookContent) {
     const webhook = await cache.getWebhook(msgObj);
 
     return tryWebhook(msgObj, webhookContent, webhook);
+}
+
+/**
+ * discord webhook messages can't reply to other messages
+ * this builds a discord like reply for the webhook message
+ * 
+ * @param {*} msg discord message obj
+ * @param {*} tulpMsg message content
+ * @returns 
+ */
+export async function buildReferenceMsg(msg, tulpMsg) {
+    if (msg.reference) {
+        const reference = await msg.fetchReference();
+        let referenceMsg = reference.cleanContent;
+        let mention = undefined;
+
+        // format mention and jump link
+        if (reference.webhookId === reference.author.id) {
+            mention = `[@${reference.author.username}](${reference.url})`;
+
+            // remove reference inside of reference
+            referenceMsg = referenceMsg.replace(/^(> )(.|\n){1,}(\[.{1,}\]\(https:\/\/discord\.com\/channels\/([0-9]{1,}|@me)\/[0-9]{1,}\/[0-9]{1,}\)\n)/i, '').trimStart();
+        }
+        else {
+            mention = `<@${reference.author.id}> - [jump](${reference.url})`;
+        }
+
+        // detect embed and prevent it from showing
+        if (!referenceMsg.length || containsURL(referenceMsg)) {
+            referenceMsg = `[*Select to see attachment*](${reference.url})`;
+        }
+        else {
+            // put the referenced msg in a quote
+            referenceMsg = cutOff(referenceMsg.replaceAll('\n', '\n> '), 64);
+        }
+
+        // check if the msg is over the discord char limit
+        tulpMsg = cutOff(`> ${referenceMsg}\n${mention}\n${tulpMsg}`, 2000);
+    }
+
+    return tulpMsg;
 }
