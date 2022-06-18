@@ -12,7 +12,7 @@ export default {
         options: [
             {
                 name: 'song',
-                description: 'The URL or search term',
+                description: 'The song/playlist URL or search term',
                 required: true,
                 type: Constants.ApplicationCommandOptionTypes.STRING
             }
@@ -23,7 +23,7 @@ export default {
     argsRequired: true,
     argsOptional: false,
     vcMemberOnly: false,
-    usage: '<url> or <search term>',
+    usage: '<song/playlist url> or <search term>',
     async execute(msg, args) {
         audioPlayer.play(msg, args.join(' '));
     },

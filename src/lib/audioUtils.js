@@ -1,4 +1,5 @@
 import { default as ytdl } from 'ytdl-core';
+import { Readable } from 'stream';
 import { default as audioQueue } from './audioQueue.js';
 import {
     createAudioPlayer,
@@ -53,14 +54,13 @@ async function getYoutubeTitle(url) {
  * @param {*} url 
  */
 async function fetchAndPlayYoutubeAudio(msg, url) {
-    const tile = await getYoutubeTitle(url);
+    // getYoutubeTitle() is awaited first bc ytdl() won't throw an error if the video doesn't exist
+    const title = await getYoutubeTitle(url);
+    let chunks = [];
+    const ytStream = ytdl(url, { filter: 'audioonly' });
 
-    const ytStream = ytdl(url, {
-        filter: 'audioonly',
-        quality: 'highestaudio'
-    });
-
-    playStream(msg, ytStream, tile);
+    ytStream.on('data', chunk => chunks.push(chunk));
+    ytStream.on('end', () => playStream(msg, Readable.from(chunks), title));
 }
 
 /**
@@ -129,6 +129,7 @@ function getPlayer(msg) {
 
         player.on('error', error => {
             msg.channel.send(`Music Player ${error.toString()}`);
+            console.log(error);
             nextSong(msg);
         });
 

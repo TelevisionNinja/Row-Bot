@@ -29,7 +29,7 @@
             "start",
             "p"
         ],
-        "description" : "plays music"
+        "description" : "play music by searching or using a URL of a song or playlist"
     },
 
     "queue" : {
