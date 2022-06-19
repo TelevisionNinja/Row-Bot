@@ -94,15 +94,62 @@ async function playYoutube(msg, url) {
         await fetchAndPlayYoutubeAudio(msg, url);
     }
     catch (error) {
-        const player = players.get(msg.guild.id);
+        const id = msg.guild.id;
+        const player = players.get(id);
 
         if (typeof player === 'undefined') {
             msg.channel.send(`Music Player ${error.toString()}`);
+            audioQueue.deleteQueue(id);
         }
         else {
             player.emit('error', error);
         }
     }
+}
+
+/**
+ * create an audio player for a guild
+ * 
+ * @param {*} msg discord message obj
+ * @param {*} id guild id
+ */
+function createPlayer(msg, id) {
+    const player = createAudioPlayer();
+    const connection = getVoiceConnection(id);
+
+    players.set(id, player);
+
+    //--------------------------------------
+
+    player.on('error', error => {
+        msg.channel.send(`Music Player ${error.toString()}`);
+        console.log(error);
+        nextSong(msg);
+    });
+
+    player.on('stateChange', (oldState, newState) => {
+        if (newState.status === AudioPlayerStatus.Idle) {
+            nextSong(msg);
+        }
+    });
+
+    //--------------------------------------
+
+    connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+        try {
+            await Promise.race([
+                entersState(connection, VoiceConnectionStatus.Signalling, 5000),
+                entersState(connection, VoiceConnectionStatus.Connecting, 5000)
+            ]);
+        }
+        catch (error) {
+            leaveVC(id);
+        }
+    });
+
+    connection.subscribe(player);
+
+    return player;
 }
 
 /**
@@ -120,40 +167,7 @@ function getPlayer(msg) {
     let player = players.get(id);
 
     if (typeof player === 'undefined') {
-        player = createAudioPlayer();
-        const connection = getVoiceConnection(id);
-
-        players.set(id, player);
-
-        //--------------------------------------
-
-        player.on('error', error => {
-            msg.channel.send(`Music Player ${error.toString()}`);
-            console.log(error);
-            nextSong(msg);
-        });
-
-        player.on('stateChange', (oldState, newState) => {
-            if (newState.status === AudioPlayerStatus.Idle) {
-                nextSong(msg);
-            }
-        });
-
-        //--------------------------------------
-
-        connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
-            try {
-                await Promise.race([
-                    entersState(connection, VoiceConnectionStatus.Signalling, 5000),
-                    entersState(connection, VoiceConnectionStatus.Connecting, 5000)
-                ]);
-            }
-            catch (error) {
-                leaveVC(id);
-            }
-        });
-
-        connection.subscribe(player);
+        return createPlayer(msg, id);
     }
 
     return player;
