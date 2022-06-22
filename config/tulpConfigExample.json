@@ -33,7 +33,7 @@
             "auto_mode",
             "auto-mode"
         ],
-        "description" : "Toggle on or off autoproxy",
+        "description" : "Turn on or off autoproxy",
         "errorMsg" : ""
     },
 
