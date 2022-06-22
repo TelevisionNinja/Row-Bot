@@ -91,7 +91,7 @@ export const tulps = {
     create(user_id, username, avatar) {
         return tulpDB.query(`
             INSERT INTO tulps (user_id, username, avatar, start_bracket)
-            VALUES ($1, $2, $3, CONCAT($2, ':'));
+            VALUES ($1, $2, $3, CONCAT($2::TEXT, ':'));
         `, [user_id, username, avatar]);
     },
     async getAll(user_id) {
@@ -190,8 +190,8 @@ export const tulps = {
     updateUsernameAndBrackets(user_id, old_username, new_username) {
         return tulpDB.query(`
             UPDATE tulps
-            SET username = $3, start_bracket = CONCAT($3, ':')
-            WHERE user_id = $1 AND username = $2 AND start_bracket = CONCAT($2, ':') AND end_bracket = '';
+            SET username = $3, start_bracket = CONCAT($3::TEXT, ':')
+            WHERE user_id = $1 AND username = $2 AND start_bracket = CONCAT($2::TEXT, ':') AND end_bracket = '';
         `, [user_id, old_username, new_username]);
     },
     updateAvatar(user_id, username, avatar) {
