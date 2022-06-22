@@ -94,10 +94,12 @@ export function removeMentions(msgStr, botName = '') {
     let noMentions = msgStr.replaceAll(/(<(#|(@(!|&)?))\d{1,}>)|(@((here)|(everyone)))/ig, '');
 
     if (botName.length) {
+        // used for names that may contain regex chars
         // const escapedName = `\\b${escapeRegex(botName)}\\b`;
         // const nameRegex = new RegExp(escapedName, 'ig');
         // noMentions = noMentions.replaceAll(nameRegex, '');
 
+        // used for names that never need to be escaped
         noMentions = noMentions.replaceAll(new RegExp(`\\b${botName}\\b`, 'ig'), '');
     }
 
