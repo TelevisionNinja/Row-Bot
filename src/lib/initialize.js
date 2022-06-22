@@ -9,7 +9,7 @@ import reactionRoles from '../../config/reactionRoles.json' assert { type: 'json
 // import {
 //     buildCommandJSON,
 //     loadGlobalSlashCommands
-// } from './lib/slashCommandUtils.js';
+// } from './slashCommandUtils.js';
 
 export {
     prefix,

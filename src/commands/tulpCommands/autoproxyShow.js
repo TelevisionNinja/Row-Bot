@@ -28,7 +28,7 @@ export default {
         }
     },
     async executeInteraction(interaction) {
-        const result = await autoProxy.get(msg.author.id);
+        const result = await autoProxy.get(interaction.user.id);
 
         if (result) {
             interaction.reply(`${result.username} is set for autoproxy`);
