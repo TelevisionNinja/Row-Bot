@@ -342,8 +342,10 @@ async function findTulp(user_id, text) {
 
     for (let i = 0, n = tulpArr.length; i < n; i++) {
         const currentTulp = tulpArr[i];
+        const combinedLength = currentTulp.start_bracket.length + currentTulp.end_bracket.length;
 
-        if (currentTulp.start_bracket.length + currentTulp.end_bracket.length > selectedTulp.start_bracket.length + selectedTulp.end_bracket.length &&
+        if (combinedLength > selectedTulp.start_bracket.length + selectedTulp.end_bracket.length &&
+            combinedLength <= text.length &&
             text.startsWith(currentTulp.start_bracket) &&
             text.endsWith(currentTulp.end_bracket)) {
             selectedTulp = currentTulp;
