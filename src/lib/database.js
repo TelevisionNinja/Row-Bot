@@ -31,6 +31,17 @@ CREATE TABLE IF NOT EXISTS webhooks(
     id TEXT NOT NULL,
     token TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS autoproxy(
+    user_id TEXT PRIMARY KEY,
+    username TEXT,
+    mode BOOLEAN NOT NULL DEFAULT FALSE,
+
+    FOREIGN KEY (user_id, username)
+        REFERENCES tulps(user_id, username)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
 `);
 
 export const webhooks = {
@@ -96,12 +107,44 @@ export const tulps = {
         `, [user_id, username])).rows[0];
     },
     /**
+     * finds the auto proxy or bracket row
      * 
      * @param {*} user_id discord id of the user
      * @param {*} text the user's text
      * @returns 
      */
     async findTulp(user_id, text) {
+        return (await tulpDB.query(`
+            SELECT username, avatar, start_bracket, end_bracket FROM (
+                (
+                    SELECT tulps.username, tulps.avatar, '' AS start_bracket, '' AS end_bracket, 0 AS ordering FROM tulps
+                    JOIN (
+                        SELECT username FROM autoproxy
+                        WHERE user_id = $1 AND mode = TRUE
+                    ) auto_result
+                    ON tulps.user_id = $1 AND tulps.username = auto_result.username
+                )
+                UNION
+                (
+                    SELECT username, avatar, start_bracket, end_bracket, 1 AS ordering FROM tulps
+                    WHERE user_id = $1 AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
+                    ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
+                    DESC
+                    LIMIT 1
+                )
+            ) finds
+            ORDER BY ordering
+            LIMIT 1;
+        `, [user_id, text])).rows[0];
+    },
+    /**
+     * finds the matching bracket row
+     * 
+     * @param {*} user_id discord id of the user
+     * @param {*} text the user's text
+     * @returns 
+     */
+    async findBracketTulp(user_id, text) {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
             WHERE user_id = $1 AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
@@ -163,5 +206,30 @@ export const tulps = {
             SELECT username FROM tulps
             WHERE user_id = $1;
         `, [user_id])).rows;
+    }
+};
+
+export const autoProxy = {
+    updateTulp(user_id, username) {
+        return tulpDB.query(`
+            INSERT INTO autoproxy (user_id, username)
+            VALUES ($1, $2)
+            ON CONFLICT (user_id)
+            DO UPDATE
+            SET username = $2;
+        `, [user_id, username]);
+    },
+    updateMode(user_id, mode) {
+        return tulpDB.query(`
+            UPDATE autoproxy
+            SET mode = $2
+            WHERE user_id = $1;
+        `, [user_id, mode]);
+    },
+    async get(user_id) {
+        return (await tulpDB.query(`
+            SELECT username FROM autoproxy
+            WHERE user_id = $1;
+        `, [user_id])).rows[0];
     }
 };

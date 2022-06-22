@@ -1,4 +1,55 @@
 {
+    "autoproxyShow" : {
+        "names" : [
+            "autoproxylist",
+            "autoproxy_list",
+            "autoproxy-list",
+            "autoproxyls",
+            "autoproxy_ls",
+            "autoproxy-ls",
+            "autoproxyshow",
+            "autoproxy_show",
+            "autoproxy-show",
+            "autoproxyview",
+            "autoproxy_view",
+            "autoproxy-view"
+        ],
+        "description" : "",
+        "noResultMsg" : ""
+    },
+
+    "autoproxyToggle" : {
+        "names" : [
+            "autoproxytoggle",
+            "autoproxy_toggle",
+            "autoproxy-toggle",
+            "autotoggle",
+            "auto_toggle",
+            "auto-toggle",
+            "autoproxymode",
+            "autoproxy_mode",
+            "autoproxy-mode",
+            "automode",
+            "auto_mode",
+            "auto-mode"
+        ],
+        "description" : "Toggle on or off autoproxy",
+        "errorMsg" : ""
+    },
+
+    "autoproxyTulp" : {
+        "names" : [
+            "autoproxyselect",
+            "autoproxy_select",
+            "autoproxy-select",
+            "autoproxyselection",
+            "autoproxy_selection",
+            "autoproxy-selection"
+        ],
+        "description" : "",
+        "confirmMsg" : ""
+    },
+
     "create" : {
         "names" : [
             "create",
