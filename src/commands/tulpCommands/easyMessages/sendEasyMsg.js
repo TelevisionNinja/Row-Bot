@@ -22,7 +22,7 @@ export default {
         }
 
         let tulpMsg = msg.content;
-        tulpMsg = tulpMsg.substring(selectedTulp.start_bracket.length, tulpMsg.length - selectedTulp.end_bracket.length).trim();
+        tulpMsg = tulpMsg.substring(selectedTulp.start_bracket_length, tulpMsg.length - selectedTulp.end_bracket_length).trim();
         let attachmentArr = undefined;
 
         if (msg.attachments.size) {

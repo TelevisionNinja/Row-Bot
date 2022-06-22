@@ -28,7 +28,7 @@ export default {
     usage: '<name>',
     async execute(msg, args) {
         const username = args.join(' ').trimStart();
-        const selectedTulp = await tulps.get(msg.author.id, username);
+        const selectedTulp = await tulps.getInfo(msg.author.id, username);
 
         if (typeof selectedTulp === 'undefined') {
             msg.reply(tulpConfig.noDataMsg);
@@ -50,7 +50,7 @@ export default {
     },
     async executeInteraction(interaction) {
         const username = interaction.options.getString('name');
-        const selectedTulp = await tulps.get(interaction.user.id, username);
+        const selectedTulp = await tulps.getInfo(interaction.user.id, username);
 
         if (typeof selectedTulp === 'undefined') {
             interaction.reply(tulpConfig.noDataMsg);
