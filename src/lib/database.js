@@ -133,7 +133,7 @@ export const tulps = {
                 UNION
                 (
                     SELECT username, avatar, LENGTH(start_bracket) AS start_bracket_length, LENGTH(end_bracket) AS end_bracket_length, 1 AS ordering FROM tulps
-                    WHERE user_id = $1 AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
+                    WHERE user_id = $1 AND LENGTH(start_bracket) + LENGTH(end_bracket) <= LENGTH($2) AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
                     ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
                     DESC
                     LIMIT 1
@@ -153,7 +153,7 @@ export const tulps = {
     async findBracketTulp(user_id, text) {
         return (await tulpDB.query(`
             SELECT username, avatar, LENGTH(start_bracket) AS start_bracket_length, LENGTH(end_bracket) AS end_bracket_length FROM tulps
-            WHERE user_id = $1 AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
+            WHERE user_id = $1 AND LENGTH(start_bracket) + LENGTH(end_bracket) <= LENGTH($2) AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
             ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
             DESC
             LIMIT 1;
