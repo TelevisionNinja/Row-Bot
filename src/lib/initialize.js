@@ -41,7 +41,7 @@ export {
 const prefix = config.prefix,
     token = config.token,
     clientID = config.clientID,
-    activityStatus = config.activityStatus,
+    activityStatus = `${config.activityStatus} | ${prefix}help or /help`,
     minimumPermissions = config.minimumPermissions,
     devGuildID = config.devGuildID,
     ruleChannelID = config.ruleChannelID,

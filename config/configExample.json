@@ -1,10 +1,10 @@
 {
-    "prefix" : ".",
+    "prefix" : "",
     "token" : "",
     "clientID" : "",
     "activityStatus" : "",
     "names" : [""],
-    "icon" : "iconExampleURL",
+    "icon" : "icon.example.url",
     "readingSpeed" : 300,
     "typingSpeed" : 200,
     "reactionSpeed" : 1000,
@@ -20,11 +20,11 @@
     "ruleChannelID" : "",
 
     "postgresql" : {
-        "host": "localhost",
+        "host": "",
         "port": 5432,
-        "user": "postgres",
+        "user": "",
         "password": "",
-        "database": "tulps"
+        "database": ""
     },
 
     "noResultsMsg" : "Aww there's no results 😢",
