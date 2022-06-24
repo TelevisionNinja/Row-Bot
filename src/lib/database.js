@@ -121,26 +121,22 @@ export const tulps = {
      */
     async findTulp(user_id, text) {
         return (await tulpDB.query(`
-            SELECT username, avatar, start_bracket_length, end_bracket_length FROM (
-                (
-                    SELECT tulps.username, tulps.avatar, 0 AS start_bracket_length, 0 AS end_bracket_length, 0 AS ordering FROM tulps
-                    JOIN (
-                        SELECT username FROM autoproxy
-                        WHERE user_id = $1 AND mode = TRUE
-                    ) auto_result
-                    ON tulps.user_id = $1 AND tulps.username = auto_result.username
-                )
-                UNION
-                (
-                    SELECT username, avatar, LENGTH(start_bracket) AS start_bracket_length, LENGTH(end_bracket) AS end_bracket_length, 1 AS ordering FROM tulps
-                    WHERE user_id = $1 AND LENGTH(start_bracket) + LENGTH(end_bracket) <= LENGTH($2) AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
-                    ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
-                    DESC
-                    LIMIT 1
-                )
-            ) finds
-            ORDER BY ordering
-            LIMIT 1;
+            WITH proxy_result AS (
+                SELECT tulps.username, tulps.avatar, 0 AS start_bracket_length, 0 AS end_bracket_length FROM
+                tulps JOIN autoproxy
+                    ON tulps.user_id = autoproxy.user_id AND tulps.username = autoproxy.username
+                WHERE tulps.user_id = $1 AND autoproxy.mode = TRUE
+            )
+            SELECT * FROM proxy_result
+            UNION (
+                SELECT username, avatar, LENGTH(start_bracket) AS start_bracket_length, LENGTH(end_bracket) AS end_bracket_length FROM tulps
+                WHERE NOT EXISTS (
+                    SELECT * FROM proxy_result
+                ) AND user_id = $1 AND LENGTH(start_bracket) + LENGTH(end_bracket) <= LENGTH($2) AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
+                ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
+                DESC
+                LIMIT 1
+            );
         `, [user_id, text])).rows[0];
     },
     /**
