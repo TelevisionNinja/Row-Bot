@@ -78,7 +78,7 @@ client.on('ready', () => {
 
 client.on('messageCreate', async msg => {
     // filter messages
-    if (msg.author.bot || !msg.content.length) {
+    if (msg.author.bot || (!msg.content.length && !msg.attachments.size)) {
         return;
     }
 
