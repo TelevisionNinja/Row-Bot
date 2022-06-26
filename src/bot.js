@@ -56,22 +56,16 @@ client.tulpCommands = tulpCommandMap;
 client.musicCommands = musicCommandMap;
 
 //--------------------------------------------------------------------------------
-// login actions
+// ready actions
 
 client.on('ready', () => {
     // start interval messages
     initializeIntervals(client);
 
-    //--------------------------------------------------------------------------------
-    // set activity
-
-    client.user.setActivity(activityStatus, { type: 'PLAYING' });
-
-    //--------------------------------------------------------------------------------
-    // console log the start up time
-
-    console.log(`Startup: ${client.readyAt.toString()}`);
+    console.log(`Ready Client: ${client.readyAt.toString()}`);
 });
+
+client.on('shardReady', shardId => console.log(`Ready Shard ${shardId}: ${new Date().toString()}`));
 
 //--------------------------------------------------------------------------------
 // message actions
@@ -332,18 +326,14 @@ client.on('interactionCreate', async interaction => {
 //--------------------------------------------------------------------------------
 // connection
 
-client.on('shardDisconnect', () => console.log(`Disconnected: ${new Date().toString()}`));
-client.on('shardReconnecting', () => console.log(`Reconnecting: ${new Date().toString()}`));
+client.on('shardDisconnect', (closeEvent, shardId) => console.log(`Disconnected Shard ${shardId}: ${new Date().toString()}`));
+client.on('shardReconnecting', shardId => console.log(`Reconnecting Shard ${shardId}: ${new Date().toString()}`));
 
-client.on('shardResume', () => {
-    // set activity
-
+client.on('shardResume', shardId => {
+    // set activity again because the status will be blank
     client.user.setActivity(activityStatus, { type: 'PLAYING' });
 
-    //--------------------------------------------------------------------------------
-    // console log the time
-
-    console.log(`Resumed: ${new Date().toString()}`);
+    console.log(`Resumed Shard ${shardId}: ${new Date().toString()}`);
 });
 
 //--------------------------------------------------------------------------------
@@ -446,7 +436,7 @@ client.on('messageReactionRemove', async (react, user) => {
 // error
 
 client.on('error', error => console.log(`Error: ${new Date().toString()}\n${error}`));
-client.on('shardError', error => console.log(`Shard Error: ${new Date().toString()}\n${error}`));
+client.on('shardError', (error, shardId) => console.log(`Error Shard ${shardId}: ${new Date().toString()}\n${error}`));
 client.on('unhandledRejection', error => console.log(`Unhandled Rejection: ${new Date().toString()}\n${error}`));
 client.on('uncaughtException', error => console.log(`Uncaught Exception: ${new Date().toString()}\n${error}`));
 client.on('uncaughtExceptionMonitor', error => console.log(`Uncaught Exception Monitor: ${new Date().toString()}\n${error}`));

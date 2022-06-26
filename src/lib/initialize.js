@@ -71,7 +71,16 @@ const clientOptions = {
         'CHANNEL', // dm channels
         'MESSAGE', // reaction roles
         'REACTION' // reaction roles
-    ]
+    ],
+
+    presence: {
+        activities: [
+            {
+                name: activityStatus,
+                type: 'PLAYING'
+            }
+        ]
+    }
 };
 let commandMap = new Map();
 let tulpCommandMap = new Map();
