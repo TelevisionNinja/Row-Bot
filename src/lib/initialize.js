@@ -59,12 +59,14 @@ const clientOptions = {
 
         // guilds
         Intents.FLAGS.GUILDS, // webhook management
-        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGES, // messages and proxy
         Intents.FLAGS.GUILD_VOICE_STATES, // music commands
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS, // reaction roles
 
         // priviledged
         Intents.FLAGS.GUILD_MEMBERS // late night bois, guild welcome message
+
+        // Intents.FLAGS.MESSAGE_CONTENT // messages
     ],
 
     partials: [

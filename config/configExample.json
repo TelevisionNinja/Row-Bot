@@ -9,9 +9,17 @@
     "typingSpeed" : 200,
     "reactionSpeed" : 1000,
     "minimumPermissions" : [
-        "MANAGE_WEBHOOKS",
+        "SEND_MESSAGES",
+
+        "VIEW_CHANNEL",
+        "CONNECT",
+        "SPEAK",
+        "USE_EMBEDDED_ACTIVITIES",
+
         "MANAGE_MESSAGES",
-        "SEND_MESSAGES"
+        "ATTACH_FILES",
+        "MANAGE_WEBHOOKS",
+        "SEND_MESSAGES_IN_THREADS"
     ],
 
     "tagSeparator" : ",",
