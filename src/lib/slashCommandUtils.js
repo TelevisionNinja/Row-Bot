@@ -1,4 +1,4 @@
-const apiVersion = 9;
+const apiVersion = 10;
 const apiURL = `https://discord.com/api/v${apiVersion}`;
 
 /**
