@@ -110,6 +110,16 @@ async function makeNewNonAMPURL(startOfPath, partialURL, oldDomain, oldURL, newU
     return newURL;
 }
 
+function removeForwardSlash(url) {
+    const index = url.length - 1;
+
+    if (url[index] === '/') {
+        return url.substring(0, index);
+    }
+
+    return url;
+}
+
 /**
  * 
  * @param {*} urlSet set of AMP URL's
@@ -173,19 +183,8 @@ export async function convertAMPSet(urlSet) {
     middleLinks = await Promise.allSettled(middleLinks);
 
     for (let i = 0, linksLen = middleLinks.length; i < linksLen; i++) {
-        let newURL = middleLinks[i].value;
-        let oldURL = urlArray[i];
-
-        //---------------------------
-        // remove forward slashs
-
-        if (oldURL[oldURL.length - 1] === '/') {
-            oldURL = oldURL.substring(0, oldURL.length - 1);
-        }
-
-        if (newURL[newURL.length - 1] === '/') {
-            newURL = newURL.substring(0, newURL.length - 1);
-        }
+        const newURL = removeForwardSlash(middleLinks[i].value);
+        const oldURL = removeForwardSlash(urlArray[i]);
 
         //---------------------------
 
