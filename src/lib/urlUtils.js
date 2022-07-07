@@ -99,7 +99,7 @@ const ampDetectRegex = new RegExp(/([^\w\s])amp([^\w\s]|\b)/i);
     if (oldDomain.startsWith(ampSubdomain) && !ampDetectRegex.test(oldPath)) {
         const response = await fetch(`https://${oldURL.substring(googleAMPPath.length + ampSubdomain.length)}`);
 
-        if (!backOffFetch(response, queue) && response.ok) {
+        if (!backOff(response, queue) && response.ok) {
             return response.url;
         }
     }
@@ -124,7 +124,6 @@ function removeForwardSlash(url) {
  */
 export async function convertAMPSet(urlSet) {
     let newLinks = [];
-    let middleLinks = [];
     const urlArray = [...urlSet];
     let responses = [];
     const n = urlSet.size;
@@ -163,21 +162,25 @@ export async function convertAMPSet(urlSet) {
                     newURL = makeNewNonAMPURL(oldPath, oldDomain, oldURL, newURL);
                 }
             }
-
-            middleLinks.push(newURL);
         }
+
+        responses[i] = newURL;
     }
 
-    middleLinks = await Promise.allSettled(middleLinks);
+    responses = await Promise.allSettled(responses);
 
-    for (let i = 0, linksLen = middleLinks.length; i < linksLen; i++) {
-        const newURL = removeForwardSlash(middleLinks[i].value);
-        const oldURL = removeForwardSlash(urlArray[i]);
+    for (let i = 0; i < n; i++) {
+        let newURL = responses[i].value;
 
-        //---------------------------
+        if (newURL.length !== 0) {
+            newURL = removeForwardSlash(newURL);
+            const oldURL = removeForwardSlash(urlArray[i]);
 
-        if (newURL !== oldURL) {
-            newLinks.push(newURL);
+            //---------------------------
+
+            if (newURL !== oldURL) {
+                newLinks.push(newURL);
+            }
         }
     }
 
