@@ -159,7 +159,7 @@ initializeMusicHelp(musicCommands);
 let once = false;
 
 export function initializeIntervals(client) {
-    if (once) {
+    if (once || !client.guilds.cache.has(devGuildID)) {
         return;
     }
 
