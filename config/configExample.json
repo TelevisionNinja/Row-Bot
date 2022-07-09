@@ -275,6 +275,15 @@
         "link" : ""
     },
 
+    "stats" : {
+        "names" : [
+            "stats",
+            "status",
+            "statistics"
+        ],
+        "description" : "Gets some information about the bot"
+    },
+
     "stock" : {
         "names" : [
             "stock",
