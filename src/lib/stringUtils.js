@@ -105,3 +105,54 @@ export function removeMentions(msgStr, botName = '') {
 
     return noMentions.trim();
 }
+
+/**
+ * 
+ * @param {*} n 
+ * @returns string of at least length 2
+ */
+export function numberLengthFormat(n) {
+    if (n < 10) {
+        return `0${n}`;
+    }
+
+    return n;
+}
+
+/**
+ * 
+ * @param {*} ms 
+ * @returns hh:mm:ss
+ */
+export function timeFormat(ms) {
+    ms = Math.trunc(ms / 1000);
+    const s = ms % 60;
+    ms = Math.trunc(ms / 60);
+    const min = ms % 60;
+    const hr = Math.trunc(ms / 60);
+
+    return `${numberLengthFormat(hr)}:${numberLengthFormat(min)}:${numberLengthFormat(s)}`;
+}
+
+const unit = 1024;
+const byteUnits = [
+    'Bytes',
+    'KB',
+    'MB',
+    'GB',
+    'TB',
+    'PB',
+    'EB',
+    'ZB',
+    'YB'
+];
+
+export function byteFormat(bytes, precision = 2) {
+    if (precision < 0) {
+        precision = 0;
+    }
+
+    const power = Math.trunc(Math.log(bytes) / Math.log(unit));
+
+    return `${parseFloat((bytes / Math.pow(unit, power)).toFixed(precision))} ${byteUnits[power]}`;
+}

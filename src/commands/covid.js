@@ -2,6 +2,7 @@ import config from '../../config/config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { Constants } from 'discord.js';
+import { numberLengthFormat } from '../lib/stringUtils.js';
 
 const covid = config.covid,
     noResultsMsg = config.noResultsMsg;
@@ -90,21 +91,10 @@ function getTestURL(nthDayAgo) {
 
     dateObj.setUTCDate(dateObj.getUTCDate() - nthDayAgo);
 
-    const month = dateObj.getUTCMonth() + 1;
-    let monthStr = `${month}`;
+    const month = numberLengthFormat(dateObj.getUTCMonth() + 1);
+    const day = numberLengthFormat(dateObj.getUTCDate());
 
-    if (month < 10) {
-        monthStr = `0${monthStr}`;
-    }
-
-    const day = dateObj.getUTCDate();
-    let dayStr = `${day}`;
-
-    if (day < 10) {
-        dayStr = `0${dayStr}`;
-    }
-
-    return `${covid.dataURL}${monthStr}-${dayStr}-${dateObj.getUTCFullYear()}.csv`;
+    return `${covid.dataURL}${month}-${day}-${dateObj.getUTCFullYear()}.csv`;
 }
 
 /**
