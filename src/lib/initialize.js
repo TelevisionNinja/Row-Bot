@@ -115,12 +115,21 @@ genMsg = genMsgFiles.map(f => import(`../generalMessages/${f}`));
 intervalMsgs = intervalMsgFiles.map(f => import(`../intervalMessages/${f}`));
 audio = audioFiles.map(f => `../audioFiles/${f}`);
 
-commands = (await Promise.all(commands)).map(i => i.default);
-tulpCommands = (await Promise.all(tulpCommands)).map(i => i.default);
-musicCommands = (await Promise.all(musicCommands)).map(i => i.default);
-noncommands = await Promise.all(noncommands);
-genMsg = await Promise.all(genMsg);
-intervalMsgs = await Promise.all(intervalMsgs);
+const loadedModules = await Promise.all([
+    Promise.all(commands),
+    Promise.all(tulpCommands),
+    Promise.all(musicCommands),
+    Promise.all(noncommands),
+    Promise.all(genMsg),
+    Promise.all(intervalMsgs)
+]);
+
+commands = loadedModules[0].map(i => i.default);
+tulpCommands = loadedModules[1].map(i => i.default);
+musicCommands = loadedModules[2].map(i => i.default);
+noncommands = loadedModules[3];
+genMsg = loadedModules[4];
+intervalMsgs = loadedModules[5];
 
 for (let i = 0, n = commands.length; i < n; i++) {
     const command = commands[i];
