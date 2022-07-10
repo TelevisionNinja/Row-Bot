@@ -331,7 +331,11 @@ client.on('shardReconnecting', shardId => console.log(`Reconnecting Shard ${shar
 
 client.on('shardResume', shardId => {
     // set activity again because the status will be blank
-    client.user.setActivity(activityStatus, { type: 'PLAYING' });
+    client.user.setActivity({
+        name: activityStatus,
+        type: 'PLAYING',
+        shardId: shardId
+    });
 
     console.log(`Resumed Shard ${shardId}: ${new Date().toString()}`);
 });
