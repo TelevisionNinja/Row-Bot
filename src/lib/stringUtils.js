@@ -148,6 +148,10 @@ const byteUnits = [
 ];
 
 export function byteFormat(bytes, precision = 2) {
+    if (!bytes) {
+        return `0 ${byteUnits[0]}`;
+    }
+
     if (precision < 0) {
         precision = 0;
     }
