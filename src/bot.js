@@ -368,68 +368,52 @@ client.on('guildMemberAdd', member => {
 //--------------------------------------------------------------------------------
 // reaction roles
 
-client.on('messageReactionAdd', async (react, user) => {
+/**
+ * 
+ * @param {*} react 
+ * @param {*} user 
+ * @returns role id as a string or null
+ */
+async function getReactionRoleID(react, user) {
     if (react.partial) {
         try {
             await react.fetch();
         }
         catch (error) {
             console.log(error);
-            return;
+            return null;
         }
     }
 
     //--------------------------------------------------------------------------------
 
     if (!react.message.guild || user.bot || react.message.guild.id !== devGuildID) {
-        return;
+        return null;
     }
 
     const roles = reactionRoles[react.message.id];
 
     if (typeof roles === 'undefined') {
-        return;
+        return null;
     }
 
-    const roleID = roles[react.emoji.name];
+    return roles[react.emoji.name];
+}
 
-    if (typeof roleID === 'undefined') {
-        return;
+client.on('messageReactionAdd', async (react, user) => {
+    const roleID = await getReactionRoleID(react, user);
+
+    if (roleID) {
+        react.message.guild.members.cache.get(user.id).roles.add(roleID);
     }
-
-    react.message.guild.members.cache.get(user.id).roles.add(roleID);
 });
 
 client.on('messageReactionRemove', async (react, user) => {
-    if (react.partial) {
-        try {
-            await react.fetch();
-        }
-        catch (error) {
-            console.log(error);
-            return;
-        }
+    const roleID = await getReactionRoleID(react, user);
+
+    if (roleID) {
+        react.message.guild.members.cache.get(user.id).roles.remove(roleID);
     }
-
-    //--------------------------------------------------------------------------------
-
-    if (!react.message.guild || user.bot || react.message.guild.id !== devGuildID) {
-        return;
-    }
-
-    const roles = reactionRoles[react.message.id];
-
-    if (typeof roles === 'undefined') {
-        return;
-    }
-
-    const roleID = roles[react.emoji.name];
-
-    if (typeof roleID === 'undefined') {
-        return;
-    }
-
-    react.message.guild.members.cache.get(user.id).roles.remove(roleID);
 });
 
 //--------------------------------------------------------------------------------
