@@ -110,7 +110,7 @@ export default {
                 queueStr = `${queueStr}${queueList}`;
             }
 
-            msg.reply(cutOff(queueStr, 2000));
+            msg.reply(cutOff(queueStr));
         }
         else {
             msg.reply('There are no songs in the queue');

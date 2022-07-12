@@ -29,7 +29,7 @@ export async function execute(client) {
                 recipient.send(createImgResult(img, false));
             }
             else {
-                recipient.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
+                recipient.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``));
             }
         },
         ruleConfig.intervalWait

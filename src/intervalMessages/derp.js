@@ -30,7 +30,7 @@ export async function execute(client) {
                 recipientDaily.send(createImgResult(img, false));
             }
             else {
-                recipientDaily.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
+                recipientDaily.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``));
             }
         },
         1440, // 24 hrs in minutes
@@ -52,7 +52,7 @@ export async function execute(client) {
                 recipientInterval.send(createImgResult(img, false));
             }
             else {
-                recipientInterval.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``, 2000));
+                recipientInterval.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``));
             }
         },
         derpConfig.intervalWait

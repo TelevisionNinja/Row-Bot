@@ -2,10 +2,10 @@
  * reduce oversized strings
  * 
  * @param {*} str 
- * @param {*} charLimit 
+ * @param {*} charLimit default is the discord char limit of 2000
  * @returns 
  */
-export function cutOff(str, charLimit) {
+export function cutOff(str, charLimit = 2000) {
     if (str.length > charLimit) {
         return `${str.substring(0, charLimit - 3)}...`;
     }

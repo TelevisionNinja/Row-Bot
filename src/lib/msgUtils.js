@@ -121,6 +121,10 @@ export function createImgResult(img, sendResults = true) {
     return { content: noResultsMsg };
 }
 
+// 30 seconds
+const readingLimit = 1000 * 30;
+const typingLimit = 1000 * 30;
+
 /**
  * starts typing and then sends a message
  * 
@@ -135,12 +139,12 @@ export function sendTypingMsg(recipient, sendingContent, readingMsg = '', isRepl
     let readingTime = readingMsg.length * readingSpeed + reactionSpeed;
 
     // limit of 30 seconds
-    if (typingTime > 30000) {
-        typingTime = 30000;
+    if (typingTime > typingLimit) {
+        typingTime = typingLimit;
     }
 
-    if (readingTime > 30000) {
-        readingTime = 30000;
+    if (readingTime > readingLimit) {
+        readingTime = readingLimit;
     }
 
     return new Promise((resolve, reject) => {
@@ -487,7 +491,7 @@ export async function buildReferenceMsg(msg, tulpMsg) {
         }
 
         // check if the msg is over the discord char limit
-        tulpMsg = cutOff(`> ${referenceMsg}\n${mention}\n${tulpMsg}`, 2000);
+        tulpMsg = cutOff(`> ${referenceMsg}\n${mention}\n${tulpMsg}`);
     }
 
     return tulpMsg;

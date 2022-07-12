@@ -6,7 +6,7 @@ import { WebhookClient } from 'discord.js';
 
 const cache = new Map();
 // 1 min
-const expiryTime = 60000;
+const expiryTime = 1000 * 60;
 
 export default {
     has,

@@ -5,9 +5,7 @@ const queue = new PQueue({
     intervalCap: 50
 });
 
-const errorCodes = new Set([
-    429
-]);
+const errorCodes = new Set([]);
 
 /**
  * back off using node-fetch and p-queue
@@ -19,7 +17,7 @@ const errorCodes = new Set([
 export function backOff(response, queue) {
     const errorCode = response.status;
 
-    if ((errorCodes.has(errorCode) || errorCode >= 500) && !queue.isPaused) {
+    if ((errorCode >= 400 || errorCodes.has(errorCode)) && !queue.isPaused) {
         queue.pause();
 
         const retryTime = response.headers.get('retry-after');
