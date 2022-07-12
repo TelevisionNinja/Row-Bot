@@ -134,7 +134,7 @@ export function timeFormat(ms) {
     return `${numberLengthFormat(hr)}:${numberLengthFormat(min)}:${numberLengthFormat(s)}`;
 }
 
-const unit = 1024;
+const oneKilobyte = Math.pow(2, 10);
 const byteUnits = [
     'Bytes',
     'KB',
@@ -147,8 +147,15 @@ const byteUnits = [
     'YB'
 ];
 
+/**
+ * converts n bytes into the a string of highest byte unit it can be represented by that is not less than 1 unit
+ * 
+ * @param {*} bytes 
+ * @param {*} precision 
+ * @returns 
+ */
 export function byteFormat(bytes, precision = 2) {
-    if (!bytes) {
+    if (bytes <= 0) {
         return `0 ${byteUnits[0]}`;
     }
 
@@ -156,7 +163,7 @@ export function byteFormat(bytes, precision = 2) {
         precision = 0;
     }
 
-    const power = Math.trunc(Math.log(bytes) / Math.log(unit));
+    const power = Math.trunc(Math.log(bytes) / Math.log(oneKilobyte));
 
-    return `${parseFloat((bytes / Math.pow(unit, power)).toFixed(precision))} ${byteUnits[power]}`;
+    return `${parseFloat((bytes / Math.pow(oneKilobyte, power)).toFixed(precision))} ${byteUnits[power]}`;
 }
