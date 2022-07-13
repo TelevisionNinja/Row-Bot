@@ -165,5 +165,6 @@ export function byteFormat(bytes, precision = 2) {
 
     const power = Math.trunc(Math.log(bytes) / Math.log(oneKilobyte));
 
+    // parseFloat() is used to remove trailing zeros
     return `${parseFloat((bytes / Math.pow(oneKilobyte, power)).toFixed(precision))} ${byteUnits[power]}`;
 }
