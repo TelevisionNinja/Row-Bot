@@ -10,7 +10,6 @@ const expiryTime = 1000 * 60;
 
 export default {
     has,
-    hasHit,
     remove,
     get,
     insert,
@@ -58,24 +57,6 @@ function replaceEntryData(id, entry, data) {
  */
 function has(id) {
     return cache.has(id);
-}
-
-/**
- * check if the id is in the cache
- * if the id is present, cacheHit() will be called
- * 
- * @param {*} id 
- * @returns bool
- */
-function hasHit(id) {
-    const entry = cache.get(id);
-
-    if (typeof entry === 'undefined') {
-        return false;
-    }
-
-    cacheHit(id, entry);
-    return true;
 }
 
 /**
