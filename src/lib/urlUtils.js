@@ -8,7 +8,7 @@ const queue = new PQueue({
 const errorCodes = new Set([]);
 
 /**
- * back off using node-fetch and p-queue
+ * back off using fetch and p-queue
  * 
  * @param {*} response 
  * @param {*} queue 
