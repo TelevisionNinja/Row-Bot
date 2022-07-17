@@ -1,6 +1,6 @@
 import tulpConfig from '../../../config/tulpConfig.json' assert { type: 'json' };
 import { tulps } from '../../lib/database.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 import { cutOff } from '../../lib/stringUtils.js';
 
 const listConfig = tulpConfig.list;
@@ -9,7 +9,7 @@ export default {
     interactionData: {
         name: listConfig.names[0],
         description: listConfig.description,
-        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: ApplicationCommandOptionType.Subcommand,
         options: []
     },
     names: listConfig.names,

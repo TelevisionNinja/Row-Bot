@@ -1,4 +1,7 @@
-import { Client } from 'discord.js';
+import {
+    Client,
+    InteractionType
+} from 'discord.js';
 import {
     hasBotMention,
     sendTypingMsg,
@@ -286,7 +289,7 @@ client.on('messageCreate', async msg => {
 // interaction actions
 
 client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) {
+    if (interaction.type !== InteractionType.ApplicationCommand) {
         return;
     }
 

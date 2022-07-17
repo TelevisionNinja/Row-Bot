@@ -1,7 +1,7 @@
 import config from '../../config/config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const tenor = config.tenor,
     noResultsMsg = config.noResultsMsg;
@@ -21,7 +21,7 @@ export default {
                 name: 'search',
                 description: 'What to search gifs for',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

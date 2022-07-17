@@ -5,7 +5,7 @@ import { parse } from 'txml';
 import config from '../../config/config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const rule = config.rule,
     tagSeparator = config.tagSeparator;
@@ -28,7 +28,7 @@ export default {
                 name: 'tags',
                 description: 'The tags to search for',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

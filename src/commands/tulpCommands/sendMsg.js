@@ -6,7 +6,10 @@ import {
     buildReferenceMsg
 } from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';
-import { Constants } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    ChannelType
+} from 'discord.js';
 
 const tulpConfig = config.tulp,
     tagSeparator = config.tagSeparator,
@@ -17,19 +20,19 @@ export default {
     interactionData: {
         name: sendMsg.names[0],
         description: sendMsg.description,
-        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: ApplicationCommandOptionType.Subcommand,
         options: [
             {
                 name: 'name',
                 description: 'The name',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             },
             {
                 name: 'message',
                 description: 'The message',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },
@@ -40,7 +43,7 @@ export default {
     guildOnly: false,
     usage: `<name>${tagSeparator} <message>\`\nor the easier way:\n\`${easyUsage}`,
     async execute(msg, args) {
-        const isDM = msg.channel.type === 'DM';
+        const isDM = msg.channel.type === ChannelType.DM;
 
         if (!isDM) {
             msg.delete();

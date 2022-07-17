@@ -3,7 +3,7 @@ import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const urban = config.urban,
     noResultsMsg = config.noResultsMsg;
@@ -22,7 +22,7 @@ export default {
                 name: 'search',
                 description: 'What term to search',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

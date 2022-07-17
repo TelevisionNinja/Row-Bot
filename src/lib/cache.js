@@ -3,6 +3,7 @@ import {
     tulps
 } from './database.js';
 import { WebhookClient } from 'discord.js';
+import config from '../../config/config.json' assert { type: 'json' };
 
 const cache = new Map();
 // 1 min
@@ -164,7 +165,11 @@ async function fetchWebhookFromDiscord(msg) {
 
     // create webhook
     if (typeof webhook === 'undefined') {
-        return await channel.createWebhook(msg.client.user.username);
+        return await channel.createWebhook({
+            name: msg.client.user.username,
+            avatar: config.icon,
+            reason: 'This is needed for tulp commands and message proxying'
+        });
     }
 
     return webhook;

@@ -1,5 +1,5 @@
 import config from '../../config/config.json' assert { type: 'json' };
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 import { cutOff } from '../lib/stringUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
@@ -30,13 +30,13 @@ export default {
                 name: 'character',
                 description: 'The character to speak',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             },
             {
                 name: 'text',
                 description: 'The text to say',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

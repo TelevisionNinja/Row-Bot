@@ -1,5 +1,5 @@
 import config from '../../config/config.json' assert { type: 'json' };
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const prefix = config.prefix,
     help = config.help,
@@ -37,7 +37,7 @@ export default {
                 name: 'command',
                 description: 'The command to get specific information about',
                 required: false,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

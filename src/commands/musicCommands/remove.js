@@ -1,6 +1,6 @@
 import musicConfig from '../../../config/musicConfig.json' assert { type: 'json' };
 import { default as audioPlayer } from '../../lib/audioPlayer.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const removeConfig = musicConfig.remove;
 
@@ -8,13 +8,13 @@ export default {
     interactionData: {
         name: removeConfig.names[0],
         description: removeConfig.description,
-        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: ApplicationCommandOptionType.Subcommand,
         options: [
             {
                 name: 'index',
                 description: 'The index of the song to remove',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.INTEGER
+                type: ApplicationCommandOptionType.Integer
             }
         ]
     },

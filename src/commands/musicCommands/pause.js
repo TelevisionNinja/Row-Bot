@@ -1,6 +1,6 @@
 import musicConfig from '../../../config/musicConfig.json' assert { type: 'json' };
 import { default as audioPlayer } from '../../lib/audioPlayer.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const pauseConfig = musicConfig.pause;
 
@@ -8,7 +8,7 @@ export default {
     interactionData: {
         name: pauseConfig.names[0],
         description: pauseConfig.description,
-        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: ApplicationCommandOptionType.Subcommand,
         options: []
     },
     names: pauseConfig.names,

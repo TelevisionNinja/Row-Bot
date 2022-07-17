@@ -1,7 +1,7 @@
 import config from '../../config/config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 import { numberLengthFormat } from '../lib/stringUtils.js';
 
 const covid = config.covid,
@@ -31,7 +31,7 @@ export default {
                 name: 'state',
                 description: 'The state to get information of',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

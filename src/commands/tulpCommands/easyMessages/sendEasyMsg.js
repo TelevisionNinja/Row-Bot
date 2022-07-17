@@ -3,6 +3,7 @@ import {
     buildReferenceMsg
 } from '../../../lib/msgUtils.js';
 import { tulps } from '../../../lib/database.js';
+import { ChannelType } from 'discord.js';
 
 export default {
     usage: '<custom bracket><message><custom bracket>',
@@ -40,7 +41,7 @@ export default {
         //-------------------------------------------------------------------------------------
         // detect dm channel
 
-        if (msg.channel.type === 'DM') { // send emulated message
+        if (msg.channel.type === ChannelType.DM) { // send emulated message
             let imageObj = undefined;
 
             if (typeof attachmentArr !== 'undefined') {

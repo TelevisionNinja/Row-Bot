@@ -1,4 +1,5 @@
 import config from '../../config/config.json' assert { type: 'json' };
+import { ChannelType } from 'discord.js';
 
 const tulp = config.tulp,
     prefix = config.prefix;
@@ -28,7 +29,7 @@ export default {
             return;
         }
 
-        if (command.guildOnly && msg.channel.type === 'DM') {
+        if (command.guildOnly && msg.channel.type === ChannelType.DM) {
             msg.channel.send('I can\'t execute that command in DM\'s');
             return;
         }

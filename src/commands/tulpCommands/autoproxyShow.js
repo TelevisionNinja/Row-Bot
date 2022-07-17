@@ -1,6 +1,6 @@
 import tulpConfig from '../../../config/tulpConfig.json' assert { type: 'json' };
 import { autoProxy } from '../../lib/database.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const commandConfig = tulpConfig.autoproxyShow;
 
@@ -8,7 +8,7 @@ export default {
     interactionData: {
         name: commandConfig.names[0],
         description: commandConfig.description,
-        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: ApplicationCommandOptionType.Subcommand,
         options: []
     },
     names: commandConfig.names,

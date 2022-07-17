@@ -1,4 +1,7 @@
-import { Intents } from 'discord.js';
+import {
+    GatewayIntentBits,
+    Partials
+} from 'discord.js';
 import { readdirSync } from 'fs';
 import config from '../../config/config.json' assert { type: 'json' };
 import { initialize as initializeHelp } from '../commands/help.js';
@@ -55,24 +58,24 @@ const clientOptions = {
 
     intents: [
         // dm's
-        Intents.FLAGS.DIRECT_MESSAGES,
+        GatewayIntentBits.DirectMessages,
 
         // guilds
-        Intents.FLAGS.GUILDS, // webhook management
-        Intents.FLAGS.GUILD_MESSAGES, // messages and proxy
-        Intents.FLAGS.GUILD_VOICE_STATES, // music commands
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS, // reaction roles
+        GatewayIntentBits.Guilds, // webhook management
+        GatewayIntentBits.GuildMessages, // messages and proxy
+        GatewayIntentBits.GuildVoiceStates, // music commands
+        GatewayIntentBits.GuildMessageReactions, // reaction roles
 
         // priviledged
-        Intents.FLAGS.GUILD_MEMBERS // late night bois, guild welcome message
+        GatewayIntentBits.GuildMembers, // late night bois, guild welcome message
 
-        // Intents.FLAGS.MESSAGE_CONTENT // messages
+        GatewayIntentBits.MessageContent // messages
     ],
 
     partials: [
-        'CHANNEL', // dm channels
-        'MESSAGE', // reaction roles
-        'REACTION' // reaction roles
+        Partials.Channel, // dm channels
+        Partials.Message, // reaction roles
+        Partials.Reaction // reaction roles
     ],
 
     presence: {

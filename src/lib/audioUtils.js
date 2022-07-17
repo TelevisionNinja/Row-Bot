@@ -337,9 +337,9 @@ function vcCheck(msg, noVCMsg = true) {
         return false;
     }
 
-    // msg.guild.me.voice can be undefined
-    if (msg.guild.me.voice && msg.guild.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
-        if (msg.guild.me.voice.channel.id === msg.member.voice.channel.id) {
+    // msg.guild.members.me.voice can be undefined
+    if (msg.guild.members.me.voice && msg.guild.members.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
+        if (msg.guild.members.me.voice.channel.id === msg.member.voice.channel.id) {
             return true;
         }
 
@@ -369,9 +369,9 @@ function joinVC(msg) {
         return false;
     }
 
-    // msg.guild.me.voice can be undefined
-    if (msg.guild.me.voice && msg.guild.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
-        if (msg.guild.me.voice.channel.id !== msg.member.voice.channel.id) {
+    // msg.guild.members.me.voice can be undefined
+    if (msg.guild.members.me.voice && msg.guild.members.me.voice.channel && typeof getVoiceConnection(msg.guild.id) !== 'undefined') {
+        if (msg.guild.members.me.voice.channel.id !== msg.member.voice.channel.id) {
             msg.reply('Please join the voice channel the bot is in');
             return false;
         }

@@ -1,5 +1,5 @@
 import config from '../../config/config.json' assert { type: 'json' };
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const activityConfig = config.activity;
 
@@ -21,7 +21,7 @@ export default {
                 name: 'activity',
                 description: 'The activity name',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

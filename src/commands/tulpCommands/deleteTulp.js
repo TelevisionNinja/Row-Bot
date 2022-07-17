@@ -1,7 +1,7 @@
 import tulpConfig from '../../../config/tulpConfig.json' assert { type: 'json' };
 import config from '../../../config/config.json' assert { type: 'json' };
 import { tulps } from '../../lib/database.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const deleteTulp = tulpConfig.deleteTulp,
     tulpConfigObj = config.tulp;
@@ -10,13 +10,13 @@ export default {
     interactionData: {
         name: deleteTulp.names[0],
         description: deleteTulp.description,
-        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: ApplicationCommandOptionType.Subcommand,
         options: [
             {
                 name: 'name',
                 description: 'The name',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

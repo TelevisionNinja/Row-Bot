@@ -2,7 +2,7 @@ import tulpConfig from '../../../config/tulpConfig.json' assert { type: 'json' }
 import config from '../../../config/config.json' assert { type: 'json' };
 import { tulpExtractNameAndAvatar } from '../../lib/msgUtils.js';
 import { tulps } from '../../lib/database.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 import { isValidURL } from '../../lib/urlUtils.js';
 
 const editAvatar = tulpConfig.editAvatar,
@@ -13,19 +13,19 @@ export default {
     interactionData: {
         name: editAvatar.names[0],
         description: editAvatar.description,
-        type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+        type: ApplicationCommandOptionType.Subcommand,
         options: [
             {
                 name: 'name',
                 description: 'The name',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             },
             {
                 name: 'avatar',
                 description: 'The profile picture link',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },

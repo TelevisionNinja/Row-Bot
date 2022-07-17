@@ -9,6 +9,7 @@ import {
     removeAllSpecialChars
 } from './stringUtils.js';
 import { default as cache } from './cache.js';
+import { ChannelType } from 'discord.js';
 
 /**
  * wpm to ms per char derivation
@@ -211,7 +212,7 @@ export async function getDMChannel(client, id) {
 }
 
 /**
- * Sends a message to the author's DM's.
+ * Sends a message to the author's DM's and replies to the command telling them the result of the command is in their DM's
  * 
  * @param {*} msg discord js message obj
  * @param {*} content message to be sent through DM's
@@ -221,7 +222,7 @@ export async function sendAuthorDm(msg, content) {
     try {
         await msg.author.send(content);
 
-        if (msg.channel.type === 'DM') {
+        if (msg.channel.type === ChannelType.DM) {
             return;
         }
 
@@ -236,19 +237,19 @@ export async function sendAuthorDm(msg, content) {
 /**
  * Sends a message to someone's DM's.
  * 
- * @param {*} channel channel
+ * @param {*} user discord.js user object
  * @param {*} msgContent message content object to be sent through DM's
  * @param {*} sendTyping send a typing message or not, default value is false
  * @param {*} readingMsg message to read before typing, default value is an empty string
  */
-export async function sendDirectDm(channel, msgContent, sendTyping = false, readingMsg = '') {
+export async function sendDirectDm(user, msgContent, sendTyping = false, readingMsg = '') {
     if (sendTyping) {
-        const dm = await channel.createDM();
+        const dm = await user.createDM();
 
         sendTypingMsg(dm, msgContent, readingMsg);
     }
     else {
-        channel.send(msgContent);
+        user.send(msgContent);
     }
 }
 

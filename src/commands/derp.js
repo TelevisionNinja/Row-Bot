@@ -2,7 +2,7 @@ import config from '../../config/config.json' assert { type: 'json' };
 import { createImgResult } from '../lib/msgUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 const derp = config.derp,
     tagSeparator = config.tagSeparator;
@@ -22,7 +22,7 @@ export default {
                 name: 'tags',
                 description: 'The tags to search for',
                 required: true,
-                type: Constants.ApplicationCommandOptionTypes.STRING
+                type: ApplicationCommandOptionType.String
             }
         ]
     },
