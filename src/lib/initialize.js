@@ -1,6 +1,7 @@
 import {
     GatewayIntentBits,
-    Partials
+    Partials,
+    ActivityType
 } from 'discord.js';
 import { readdirSync } from 'fs';
 import config from '../../config/config.json' assert { type: 'json' };
@@ -54,8 +55,6 @@ const prefix = config.prefix,
 // client vars
 
 const clientOptions = {
-    retryLimit: Infinity,
-
     intents: [
         // dm's
         GatewayIntentBits.DirectMessages,
@@ -82,7 +81,7 @@ const clientOptions = {
         activities: [
             {
                 name: activityStatus,
-                type: 'PLAYING'
+                type: ActivityType.Playing
             }
         ]
     }
