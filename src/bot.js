@@ -1,6 +1,7 @@
 import {
     Client,
-    InteractionType
+    InteractionType,
+    ActivityType
 } from 'discord.js';
 import {
     hasBotMention,
@@ -336,7 +337,7 @@ client.on('shardResume', shardId => {
     // set activity again because the status will be blank
     client.user.setActivity({
         name: activityStatus,
-        type: 'PLAYING',
+        type: ActivityType.Playing,
         shardId: shardId
     });
 
