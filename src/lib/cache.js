@@ -4,6 +4,7 @@ import {
 } from './database.js';
 import { WebhookClient } from 'discord.js';
 import config from '../../config/config.json' assert { type: 'json' };
+import { getChannel } from './msgUtils.js';
 
 const cache = new Map();
 // 1 min
