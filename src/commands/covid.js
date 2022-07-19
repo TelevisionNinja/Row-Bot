@@ -66,16 +66,13 @@ function getStateDataLine(state, csvStr) {
 
     state = state.toLowerCase();
 
-    let stateData = '';
-
     for (let i = 1, n = states.length; i < n; i++) {
         if (states[i].toLowerCase().includes(state)) {
-            stateData = states[i];
-            break;
+            return states[i];
         }
     }
 
-    return stateData;
+    return '';
 }
 
 //---------------------------------------------------------------
@@ -179,21 +176,21 @@ function extractStateTestData(stateData, precision = 2) {
 
     const dataArr = stateData.split(',');
 
-    stateName = dataArr[0];
-    lastUpdate = dataArr[2].split(' ').join(' at ');
-    confirmed = parseInt(dataArr[5]);
-    deaths = parseInt(dataArr[6]);
-    recovered = parseInt(dataArr[7]);
-    active = parseInt(dataArr[8]);
+    stateName = dataArr[1];
+    lastUpdate = dataArr[3].split(' ').join(' at ');
+    confirmed = parseInt(dataArr[6]);
+    deaths = parseInt(dataArr[7]);
+    recovered = parseInt(dataArr[8]);
+    active = parseInt(dataArr[9]);
 
     // per 100,000 people
-    incidenceRate = (parseFloat(dataArr[10]) / 1000).toFixed(precision);
+    incidenceRate = (parseFloat(dataArr[11]) / 1000).toFixed(precision);
 
-    totalTestResults = parseInt(dataArr[11]);
-    fatalityRatio = parseFloat(dataArr[13]).toFixed(precision);
+    totalTestResults = parseInt(dataArr[12]);
+    fatalityRatio = parseFloat(dataArr[14]).toFixed(precision);
 
     // per 100,000 people
-    testingPercentage = (parseFloat(dataArr[16]) / 1000).toFixed(precision);
+    testingPercentage = (parseFloat(dataArr[17]) / 1000).toFixed(precision);
 
     source = 'Data from Johns Hopkins University';
 

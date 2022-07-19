@@ -16,6 +16,7 @@ const errorCodes = new Set([]);
  */
 export function backOff(response, queue) {
     const errorCode = response.status;
+    let backedOff = false;
 
     if ((errorCode >= 400 || errorCodes.has(errorCode)) && !queue.isPaused) {
         queue.pause();
@@ -26,23 +27,27 @@ export function backOff(response, queue) {
         if (typeof retryTime !== 'undefined') {
             const parsedNum = parseInt(retryTime);
 
-            if (parsedNum) {
-                time = parsedNum * 1000;
+            if (isNaN(parsedNum)) {
+                time = (new Date(retryTime).getTime() - Date.now()) || 1000;
             }
             else {
-                time = (new Date(retryTime).getTime() - Date.now()) || 1000;
+                time = parsedNum * 1000;
+            }
+
+            if (time <= 0) {
+                time = 1;
+            }
+            else {
+                backedOff = true;
             }
         }
 
         setTimeout(() => {
-            queue.clear();
             queue.start();
         }, time);
-
-        return true;
     }
 
-    return false;
+    return backedOff;
 }
 
 /*
