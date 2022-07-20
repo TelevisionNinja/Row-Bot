@@ -301,7 +301,8 @@
             "clock",
             "timezone",
             "time-zone",
-            "time_zone"
+            "time_zone",
+            "timestamp"
         ],
         "description" : "Send a timestamp that will automatically convert into any time zone"
     },
