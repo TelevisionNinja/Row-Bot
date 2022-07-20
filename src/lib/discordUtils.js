@@ -3,7 +3,7 @@ import {
     tulps
 } from './database.js';
 import { WebhookClient } from 'discord.js';
-import { cache } from './cache.js';
+import { webhookCache } from './cache.js';
 
 /**
  * 
@@ -85,7 +85,7 @@ async function fetchWebhookFromDiscord(msg) {
 export async function fetchWebhookAndUpdateDBAndCache(msg) {
     const webhook = await fetchWebhookFromDiscord(msg);
     webhooks.update(msg.channel.id, webhook.id, webhook.token);
-    cache.set(msg.channel.id, webhook);
+    webhookCache.set(msg.channel.id, webhook);
 
     return webhook;
 }
@@ -126,7 +126,7 @@ async function fetchWebhookFromDB(msg) {
  */
 async function fetchWebhookAndUpdateCache(msg) {
     const webhook = await fetchWebhookFromDB(msg);
-    cache.set(msg.channel.id, webhook);
+    webhookCache.set(msg.channel.id, webhook);
 
     return webhook;
 }
@@ -141,7 +141,7 @@ async function fetchWebhookAndUpdateCache(msg) {
 export function getWebhook(msg) {
     // check cache
 
-    const webhook = cache.get(msg.channel.id);
+    const webhook = webhookCache.get(msg.channel.id);
 
     if (webhook) {
         return webhook;
@@ -160,7 +160,7 @@ export function getWebhook(msg) {
  */
 export function deleteWebhook(id) {
     // delete from cache
-    cache.delete(id);
+    webhookCache.delete(id);
 
     // delete from db
     webhooks.delete(id);
@@ -169,75 +169,75 @@ export function deleteWebhook(id) {
 //-------------------------------------------------------
 // tulp user fetching functions
 
-/**
- * fetches user data from the db
- * 
- * @param {*} id 
- * @returns user data
- */
-async function fetchUser(id) {
-    const userData = await tulps.getAll(id);
-    cache.set(id, userData);
+// /**
+//  * fetches user data from the db
+//  * 
+//  * @param {*} id 
+//  * @returns user data
+//  */
+// async function fetchUser(id) {
+//     const userData = await tulps.getAll(id);
+//     userCache.set(id, userData);
 
-    return userData;
-}
+//     return userData;
+// }
 
-/**
- * gets a user from the cache
- * fetches the user if not in the cache
- * 
- * @param {*} id user id
- * @returns user data
- */
-export function getUser(id) {
-    const userData = cache.get(id);
+// /**
+//  * gets a user from the cache
+//  * fetches the user if not in the cache
+//  * 
+//  * @param {*} id user id
+//  * @returns user data
+//  */
+// export function getUser(id) {
+//     const userData = userCache.get(id);
 
-    if (userData) {
-        return userData;
-    }
+//     if (userData) {
+//         return userData;
+//     }
 
-    return fetchUser(id);
-}
+//     return fetchUser(id);
+// }
 
-/**
- * fetches all of the user's data
- * the specific tulp is then found using linear search
- * 
- * @param {*} user_id id of the user
- * @param {*} text message sent by the user
- * @returns specific tulp
- */
-export async function findTulp(user_id, text) {
-    // fetch and cache the user's data
-    const tulpArr = await getUser(user_id);
+// /**
+//  * fetches all of the user's data
+//  * the specific tulp is then found using linear search
+//  * 
+//  * @param {*} user_id id of the user
+//  * @param {*} text message sent by the user
+//  * @returns specific tulp
+//  */
+// export async function findTulp(user_id, text) {
+//     // fetch and cache the user's data
+//     const tulpArr = await getUser(user_id);
 
-    if (!tulpArr.length) {
-        return null;
-    }
+//     if (!tulpArr.length) {
+//         return null;
+//     }
 
-    //-------------------------------------------------------------------
-    // linear search
+//     //-------------------------------------------------------------------
+//     // linear search
 
-    let selectedTulp = {
-        start_bracket: '',
-        end_bracket: ''
-    };
+//     let selectedTulp = {
+//         start_bracket: '',
+//         end_bracket: ''
+//     };
 
-    for (let i = 0, n = tulpArr.length; i < n; i++) {
-        const currentTulp = tulpArr[i];
-        const combinedLength = currentTulp.start_bracket.length + currentTulp.end_bracket.length;
+//     for (let i = 0, n = tulpArr.length; i < n; i++) {
+//         const currentTulp = tulpArr[i];
+//         const combinedLength = currentTulp.start_bracket.length + currentTulp.end_bracket.length;
 
-        if (combinedLength > selectedTulp.start_bracket.length + selectedTulp.end_bracket.length &&
-            combinedLength <= text.length &&
-            text.startsWith(currentTulp.start_bracket) &&
-            text.endsWith(currentTulp.end_bracket)) {
-            selectedTulp = currentTulp;
-        }
-    }
+//         if (combinedLength > selectedTulp.start_bracket.length + selectedTulp.end_bracket.length &&
+//             combinedLength <= text.length &&
+//             text.startsWith(currentTulp.start_bracket) &&
+//             text.endsWith(currentTulp.end_bracket)) {
+//             selectedTulp = currentTulp;
+//         }
+//     }
 
-    if (typeof selectedTulp.username === 'undefined') {
-        return null;
-    }
+//     if (typeof selectedTulp.username === 'undefined') {
+//         return null;
+//     }
 
-    return selectedTulp;
-}
+//     return selectedTulp;
+// }

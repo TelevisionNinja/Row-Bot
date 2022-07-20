@@ -263,4 +263,4 @@ export class Cache {
     }
 }
 
-export const cache = new Cache(Math.pow(2, 11));
+export const webhookCache = new Cache(Math.pow(2, 11));
