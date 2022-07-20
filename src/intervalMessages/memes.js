@@ -1,5 +1,5 @@
 import { setDailyInterval } from 'daily-intervals';
-import { getChannel } from '../lib/msgUtils.js';
+import { getChannel } from '../lib/discordUtils.js';
 import config from '../../config/config.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
 

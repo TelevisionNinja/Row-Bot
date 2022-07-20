@@ -1,347 +1,266 @@
-import {
-    webhooks,
-    tulps
-} from './database.js';
-import { WebhookClient } from 'discord.js';
-import config from '../../config/config.json' assert { type: 'json' };
-import { getChannel } from './msgUtils.js';
+// least frequently used cache
+// also uses least recently used
+// has a maximum frequency
 
-const cache = new Map();
-// 1 min
-const expiryTime = 1000 * 60;
+// new entry has frequency of 1, but any number can be used as the starting list id
+const minimumFrequency = 1;
 
-export default {
-    has,
-    remove,
-    get,
-    insert,
-    replace,
-    upsert,
-
-    deleteWebhook,
-    fetchWebhookAndUpdateDBAndCache,
-    getWebhook,
-    getUser,
-    findTulp
-}
-
-//-------------------------------------------------------
-// cache functions
-
-/**
- * resets the entry's timeout time
- * 
- * @param {*} id 
- * @param {*} entry 
- */
-function cacheHit(id, entry) {
-    clearTimeout(entry.timeoutID);
-    entry.timeoutID = setTimeout(() => cache.delete(id), expiryTime);
-}
-
-/**
- * updates the entry's data with new data
- * 
- * @param {*} id 
- * @param {*} entry 
- * @param {*} data 
- */
-function replaceEntryData(id, entry, data) {
-    cacheHit(id, entry);
-    entry.data = data;
-}
-
-/**
- * check if the id is in the cache
- * 
- * @param {*} id 
- * @returns bool
- */
-function has(id) {
-    return cache.has(id);
-}
-
-/**
- * removes the entry
- * 
- * @param {*} id 
- */
-function remove(id) {
-    const entry = cache.get(id);
-
-    if (typeof entry !== 'undefined') {
-        clearTimeout(entry.timeoutID);
-        cache.delete(id);
+class Node {
+    constructor(key, value) {
+        this.key = key;
+        this.value = value;
+        this.frequency = minimumFrequency;
+        this.next = null;
+        this.previous = null;
     }
 }
 
-/**
- * returns the data for the id
- * 
- * @param {*} id 
- * @returns cached item
- */
-function get(id) {
-    const entry = cache.get(id);
-
-    if (typeof entry === 'undefined') {
-        return null;
+class DoublyLinkedList {
+    constructor() {
+        this.head = null;
+        this.tail = null;
     }
 
-    cacheHit(id, entry);
-    //cache.set(id, element);
+    /**
+     * 
+     * @param {Node} node 
+     */
+    insertHeadNode(node) {
+        node.next = this.head;
+        node.previous = null;
 
-    return entry.data;
-}
+        if (this.head === null) {
+            this.tail = node;
+        }
+        else {
+            this.head.previous = node;
+        }
 
-/**
- * this does not reset the timeout for the id if there is an existing entry
- * 
- * @param {*} id 
- * @param {*} data 
- */
-function insert(id, data) {
-    cache.set(id, {
-        data: data,
-        timeoutID: setTimeout(() => cache.delete(id), expiryTime)
-    });
-}
-
-/**
- * replaces the data for the id
- * 
- * @param {*} id 
- * @param {*} data 
- */
-function replace(id, data) {
-    const entry = cache.get(id);
-
-    if (typeof entry !== 'undefined') {
-        replaceEntryData(id, entry, data);
-        //cache.set(id, element);
-    }
-}
-
-/**
- * replaces the data for the id if there is an existing entry
- * 
- * @param {*} id 
- * @param {*} data 
- */
-function upsert(id, data) {
-    const entry = cache.get(id);
-
-    if (typeof entry === 'undefined') {
-        insert(id, data);
-    }
-    else {
-        replaceEntryData(id, entry, data);
-        //cache.set(id, element);
-    }
-}
-
-//-------------------------------------------------------
-// webhook fetching functions
-
-/**
- * fetches or creates a webhook
- * 
- * @param {*} msg discord.js msg object
- * @returns discord.js webhook object
- */
-async function fetchWebhookFromDiscord(msg) {
-    // check if the channel is a thread
-
-    let channel = msg.channel;
-
-    if (channel.isThread()) {
-        channel = await getChannel(msg.client, channel.parent.id);
+        this.head = node;
     }
 
-    //-----------------------------
-    // fetch webhook
-
-    const channelWebhooks = await channel.fetchWebhooks();
-    const webhook = channelWebhooks.find(w => w.owner.id === clientID);
-
-    // create webhook
-    if (typeof webhook === 'undefined') {
-        return await channel.createWebhook({
-            name: msg.client.user.username,
-            avatar: config.icon,
-            reason: 'This is needed for tulp commands and message proxying'
-        });
+    isEmpty() {
+        return this.head === null;
     }
 
-    return webhook;
-}
-
-/**
- * fetches or creates a webhook
- * updates the DB and cache
- * 
- * @param {*} msg discord.js msg object
- * @returns discord.js webhook object
- */
-async function fetchWebhookAndUpdateDBAndCache(msg) {
-    const webhook = await fetchWebhookFromDiscord(msg);
-    webhooks.update(msg.channel.id, webhook.id, webhook.token);
-    // webhooks.upsert(msg.channel.id, webhook.id, webhook.token);
-    upsert(msg.channel.id, webhook);
-
-    return webhook;
-}
-
-/**
- * fetches a webhook from the DB
- * updates the DB if not found
- * 
- * @param {*} msg discord.js msg object
- * @returns discord.js webhook object
- */
-async function fetchWebhookFromDB(msg) {
-    let webhook = await webhooks.get(msg.channel.id);
-
-    if (webhook) {
-        const webhookObj = new WebhookClient({
-            id: webhook.id,
-            token: webhook.token
-        });
-
-        return webhookObj;
-    }
-
-    //-----------------------------
-    // check discord or create one
-
-    webhook = await fetchWebhookFromDiscord(msg);
-    webhooks.set(msg.channel.id, webhook.id, webhook.token);
-    // webhooks.upsert(msg.channel.id, webhook.id, webhook.token);
-
-    return webhook;
-}
-
-/**
- * fetches a webhook and updates the cache
- * 
- * @param {*} msg discord.js msg object
- * @returns 
- */
-async function fetchWebhookAndUpdateCache(msg) {
-    const webhook = await fetchWebhookFromDB(msg);
-    insert(msg.channel.id, webhook);
-    // upsert(msg.channel.id, webhook);
-
-    return webhook;
-}
-
-/**
- * gets a webhook from the cache
- * updates the cache if not found
- * 
- * @param {*} msg discord.js msg object
- * @returns discord.js webhook object
- */
-function getWebhook(msg) {
-    // check cache
-
-    const webhook = get(msg.channel.id);
-
-    if (webhook !== null) {
-        return webhook;
-    }
-
-    //-----------------------------
-    // check db
-
-    return fetchWebhookAndUpdateCache(msg);
-}
-
-/**
- * deletes a webhook from the cache and the db
- * 
- * @param {*} id channel id
- */
-function deleteWebhook(id) {
-    // delete from cache
-    remove(id);
-
-    // delete from db
-    webhooks.delete(id);
-}
-
-//-------------------------------------------------------
-// user fetching functions
-
-/**
- * fetches user data from the db
- * 
- * @param {*} id 
- * @returns user data
- */
-async function fetchUser(id) {
-    const userData = await tulps.getAll(id);
-    insert(id, userData);
-    // upsert(id, userData);
-    return userData;
-}
-
-/**
- * gets a user from the cache
- * fetches the user if not in the cache
- * 
- * @param {*} id user id
- * @returns user data
- */
-function getUser(id) {
-    const userData = get(id);
-
-    if (userData) {
-        return userData;
-    }
-
-    return fetchUser(id);
-}
-
-/**
- * fetches all of the user's data
- * the specific tulp is then found using linear search
- * 
- * @param {*} user_id id of the user
- * @param {*} text message sent by the user
- * @returns specific tulp
- */
-async function findTulp(user_id, text) {
-    // fetch and cache the user's data
-    const tulpArr = await getUser(user_id);
-
-    if (!tulpArr.length) {
-        return null;
-    }
-
-    //-------------------------------------------------------------------
-    // linear search
-
-    let selectedTulp = {
-        start_bracket: '',
-        end_bracket: ''
-    };
-
-    for (let i = 0, n = tulpArr.length; i < n; i++) {
-        const currentTulp = tulpArr[i];
-        const combinedLength = currentTulp.start_bracket.length + currentTulp.end_bracket.length;
-
-        if (combinedLength > selectedTulp.start_bracket.length + selectedTulp.end_bracket.length &&
-            combinedLength <= text.length &&
-            text.startsWith(currentTulp.start_bracket) &&
-            text.endsWith(currentTulp.end_bracket)) {
-            selectedTulp = currentTulp;
+    deleteTail() {
+        if (this.tail === this.head) {
+            this.head = null;
+            this.tail = null;
+        }
+        else {
+            this.tail = this.tail.previous;
+            this.tail.next = null;
         }
     }
 
-    if (typeof selectedTulp.username === 'undefined') {
-        return null;
+    /**
+     * 
+     * @param {Node} node 
+     */
+    deleteNode(node) {
+        // connect the previous node to the next node
+        if (node === this.head) {
+            this.head = node.next;
+        }
+        else {
+            node.previous.next = node.next;
+        }
+
+        // connect the next node to the previous node
+        if (node === this.tail) {
+            this.tail = node.previous;
+        }
+        else {
+            node.next.previous = node.previous;
+        }
+
+        // delete detached node; or GC
+    }
+}
+
+export class Cache {
+    #minimumFrequency = minimumFrequency;
+    #maximumFrequency = minimumFrequency;
+    #frequencyLimit;
+    #limit;
+    #nodeMap = new Map();
+    #frequencyMap = new Map();
+    #decayNow = true;
+
+    constructor(limit) {
+        this.#limit = limit;
+        this.#frequencyLimit = Math.pow(2, Math.trunc(Math.log(limit) / Math.log(2)));
     }
 
-    return selectedTulp;
+    get(key) {
+        const node = this.#nodeMap.get(key);
+
+        if (typeof node === 'undefined') {
+            return null;
+        }
+
+        this.#updateFrequency(node);
+
+        return node.value;
+    }
+
+    set(key, value) {
+        if (this.#limit <= 0) {
+            return;
+        }
+
+        const node = this.#nodeMap.get(key);
+
+        if (typeof node === 'undefined') {
+            if (this.#nodeMap.size === this.#limit) {
+                // remove an entry from minimum frequency list
+                const minimunFrequencyList = this.#frequencyMap.get(this.#minimumFrequency);
+
+                // remove an entry using least recently used policy if there are multiple entries in the list
+                this.#nodeMap.delete(minimunFrequencyList.tail.key);
+                minimunFrequencyList.deleteTail();
+
+                // delete any empty lists
+                // the minimum frequency is checked so that the list will not be deleted and created
+                if (this.#minimumFrequency !== minimumFrequency && minimunFrequencyList.isEmpty()) {
+                    this.#frequencyMap.delete(this.#minimumFrequency);
+                }
+            }
+
+            // new entry has frequency of 1, but any number can be used as the starting list id
+            this.#minimumFrequency = minimumFrequency;
+
+            // add node to the frequency list and node map
+            const newHead = new Node(key, value);
+            this.#insertHead(newHead);
+            this.#nodeMap.set(key, newHead);
+        }
+        else {
+            // update the value and frequency
+            node.value = value;
+            this.#updateFrequency(node);
+        }
+    }
+
+    /**
+     * 
+     * @param {Node} node 
+     */
+    #updateFrequency(node) {
+        // remove the entry from the old frequency list
+        const list = this.#frequencyMap.get(node.frequency);
+        list.deleteNode(node);
+
+        // have a max frequency
+        if (node.frequency === this.#frequencyLimit) {
+            // insert the node into the front of the frequency list
+            list.insertHeadNode(node);
+            return;
+        }
+
+        if (list.isEmpty()) {
+            // delete any empty lists
+            this.#frequencyMap.delete(node.frequency);
+
+            if (node.frequency === this.#minimumFrequency) {
+                // increase the minimum frequency
+                this.#minimumFrequency++;
+            }
+        }
+
+        // update the frequency
+        node.frequency++;
+        this.#insertHead(node);
+
+        if (this.#maximumFrequency < node.frequency) {
+            this.#maximumFrequency = node.frequency;
+        }
+        else {
+            this.#decay();
+        }
+    }
+
+    /**
+     * 
+     * @param {Node} node 
+     */
+    #insertHead(node) {
+        let list = this.#frequencyMap.get(node.frequency);
+
+        // check if the list for the frequency exists
+        if (typeof list === 'undefined') {
+            list = new DoublyLinkedList();
+            this.#frequencyMap.set(node.frequency, list);
+        }
+
+        // insert the key into the front of the new frequency list
+        list.insertHeadNode(node);
+    }
+
+    #decay() {
+        this.#decayNow = !this.#decayNow;
+
+        if (!this.#decayNow) {
+            return;
+        }
+
+        if (this.#maximumFrequency === this.#minimumFrequency) {
+            return;
+        }
+
+        const maximumList = this.#frequencyMap.get(this.#maximumFrequency);
+
+        // need to check if exists bc delete(key) can make the max frequency unknown
+        if (typeof maximumList === 'undefined') {
+            return;
+        }
+
+        const decayingNode = maximumList.tail;
+        decayingNode.frequency--;
+        maximumList.deleteTail();
+
+        if (maximumList.isEmpty()) {
+            this.#frequencyMap.delete(this.#maximumFrequency);
+            this.#maximumFrequency = decayingNode.frequency;
+        }
+
+        this.#insertHead(decayingNode);
+    }
+
+    get size() {
+        return this.#nodeMap.size;
+    }
+
+    get limit() {
+        return this.#limit;
+    }
+
+    clear() {
+        this.#nodeMap.clear();
+        this.#frequencyMap.clear();
+    }
+
+    has(key) {
+        return this.#nodeMap.has(key);
+    }
+
+    delete(key) {
+        const node = this.#nodeMap.get(key);
+
+        if (typeof node === 'undefined') {
+            return;
+        }
+
+        this.#nodeMap.delete(key);
+        const list = this.#frequencyMap.get(node.frequency);
+        list.deleteNode(node);
+
+        // delete any empty lists
+        if (list.isEmpty()) {
+            this.#frequencyMap.delete(node.frequency);
+        }
+    }
 }
+
+export const cache = new Cache(Math.pow(2, 11));

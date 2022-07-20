@@ -8,7 +8,10 @@ import {
     includesPhrase,
     removeAllSpecialChars
 } from './stringUtils.js';
-import { default as cache } from './cache.js';
+import {
+    getWebhook,
+    fetchWebhookAndUpdateDBAndCache
+} from './discordUtils.js';
 import { ChannelType } from 'discord.js';
 
 /**
@@ -177,38 +180,6 @@ export function sendTypingMsg(recipient, sendingContent, readingMsg = '', isRepl
             }, typingTime); // time before sending
         }, readingTime) // time before typing
     });
-}
-
-/**
- * 
- * @param {*} client 
- * @param {*} id channel id
- * @returns 
- */
-export async function getChannel(client, id) {
-    const recipient = client.channels.cache.get(id);
-
-    if (typeof recipient === 'undefined') {
-        return await client.channels.fetch(id);
-    }
-
-    return recipient;
-}
-
-/**
- * 
- * @param {*} client 
- * @param {*} id user id
- * @returns 
- */
-export async function getDMChannel(client, id) {
-    const recipient = client.users.cache.get(id);
-
-    if (typeof recipient === 'undefined') {
-        return (await client.users.fetch(id)).createDM();
-    }
-
-    return recipient.createDM();
 }
 
 /**
@@ -435,7 +406,7 @@ async function tryWebhook(msgObj, webhookContent, webhook) {
     catch (error) {
         // Unknown Webhook error
         if (error.code === 10015) {
-            webhook = await cache.fetchWebhookAndUpdateDBAndCache(msgObj);
+            webhook = await fetchWebhookAndUpdateDBAndCache(msgObj);
 
             return webhook.send(webhookContent);
         }
@@ -452,7 +423,7 @@ async function tryWebhook(msgObj, webhookContent, webhook) {
  * @returns 
  */
 export async function sendWebhookMsg(msgObj, webhookContent) {
-    const webhook = await cache.getWebhook(msgObj);
+    const webhook = await getWebhook(msgObj);
 
     return tryWebhook(msgObj, webhookContent, webhook);
 }

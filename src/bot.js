@@ -13,7 +13,7 @@ import {
     removeMentions
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
-import { default as cache } from './lib/cache.js';
+import { deleteWebhook } from './lib/discordUtils.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
 import { default as audioUtils } from './lib/audioUtils.js';
@@ -348,8 +348,8 @@ client.on('shardResume', shardId => {
 // tulp events
 
 // delete webhook data
-client.on('channelDelete', channel => cache.deleteWebhook(channel.id));
-client.on('threadDelete', thread => cache.deleteWebhook(thread.id));
+client.on('channelDelete', channel => deleteWebhook(channel.id));
+client.on('threadDelete', thread => deleteWebhook(thread.id));
 
 //--------------------------------------------------------------------------------
 // welcome message

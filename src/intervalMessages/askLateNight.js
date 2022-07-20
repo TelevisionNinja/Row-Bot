@@ -3,11 +3,11 @@ import messages from '../../config/messages.json' assert { type: 'json' };
 import { randomMath } from '../lib/randomFunctions.js';
 import { setDailyInterval } from 'daily-intervals';
 import {
-    getChannel,
     sendDirectDm,
     hasBotMention,
     sendTypingMsg
 } from '../lib/msgUtils.js';
+import { getChannel } from '../lib/discordUtils.js';
 import { includesPhrase } from '../lib/stringUtils.js';
 
 const askLateNight = config.askLateNight,

@@ -1,10 +1,8 @@
 import { getImage } from '../commands/derp.js';
 import config from '../../config/config.json' assert { type: 'json' };
 import { setDailyInterval } from 'daily-intervals';
-import {
-    getChannel,
-    createImgResult
-} from '../lib/msgUtils.js';
+import { createImgResult } from '../lib/msgUtils.js';
+import { getChannel } from '../lib/discordUtils.js';
 import { randomMath } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
 
