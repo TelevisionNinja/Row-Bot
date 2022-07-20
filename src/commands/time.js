@@ -28,7 +28,7 @@ export default {
         const timeArr = args.join('').split(':').map(number => parseInt(number.trim()));
 
         if (timeArr.length !== 2 || isNaN(timeArr[0]) || isNaN(timeArr[1])) {
-            msg.reply('Enter the time in the correct format: `hours:minutes`');
+            msg.reply('Enter the time in the correct 24 hour format: `hours:minutes`');
         }
         else {
             const time = new Date();
@@ -41,7 +41,7 @@ export default {
         const timeArr = timeStr.split(':').map(number => parseInt(number.trim()));
 
         if (timeArr.length !== 2 || isNaN(timeArr[0]) || isNaN(timeArr[1])) {
-            interaction.reply('Enter the time in the correct format: `hours:minutes`');
+            interaction.reply('Enter the time in the correct 24 hour format: `hours:minutes`');
         }
         else {
             const time = new Date();
