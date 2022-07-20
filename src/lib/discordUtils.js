@@ -1,7 +1,4 @@
-import {
-    webhooks,
-    tulps
-} from './database.js';
+import { webhooks } from './database.js';
 import { WebhookClient } from 'discord.js';
 import { webhookCache } from './cache.js';
 
@@ -59,7 +56,7 @@ async function fetchWebhookFromDiscord(msg) {
     // fetch webhook
 
     const channelWebhooks = await channel.fetchWebhooks();
-    const webhook = channelWebhooks.find(w => w.owner.id === clientID);
+    const webhook = channelWebhooks.find(w => w.owner.id === msg.client.user.id);
 
     // create webhook
     if (typeof webhook === 'undefined') {
