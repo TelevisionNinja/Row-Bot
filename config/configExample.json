@@ -295,6 +295,17 @@
         "API" : "https://finance.yahoo.com/q?s="
     },
 
+    "time" : {
+        "names" : [
+            "time",
+            "clock",
+            "timezone",
+            "time-zone",
+            "time_zone"
+        ],
+        "description" : "Send a timestamp that will automatically convert into any time zone"
+    },
+
     "tts" : {
         "names" : [
             "tts",
