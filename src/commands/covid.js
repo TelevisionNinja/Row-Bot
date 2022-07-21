@@ -3,6 +3,7 @@ import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { ApplicationCommandOptionType } from 'discord.js';
 import { numberLengthFormat } from '../lib/stringUtils.js';
+import { parse } from 'csv-parse/sync';
 
 const covid = config.covid,
     noResultsMsg = config.noResultsMsg;
@@ -57,22 +58,51 @@ export default {
 
 /**
  * 
+ * @param {*} csv csv string
+ * @returns array of array
+ */
+function parseCSV(csv) {
+    return parse(csv, { skipEmptyLines: true });
+}
+
+/**
+ * 
  * @param {*} state 
- * @param {*} csvStr 
+ * @param {*} parsedCSV use parseCSV()
  * @returns 
  */
-function getStateDataLine(state, csvStr) {
-    const states = csvStr.split('\n');
-
+function getStateData(state, parsedCSV) {
     state = state.toLowerCase();
+    const columnNames = parsedCSV[0];
+    let stateNameIndex = 0;
 
-    for (let i = 1, n = states.length; i < n; i++) {
-        if (states[i].toLowerCase().includes(state)) {
-            return states[i];
+    for (let i = 0, n = columnNames.length; i < n; i++) {
+        const name = columnNames[i];
+
+        if (name === 'Province_State') {
+            stateNameIndex = i;
+            break;
         }
     }
 
-    return '';
+    let stateDataArray = [];
+
+    for (let i = 1, n = parsedCSV.length; i < n; i++) {
+        const stateData = parsedCSV[i];
+
+        if (stateData[stateNameIndex].toLowerCase().includes(state)) {
+            stateDataArray = stateData;
+            break;
+        }
+    }
+
+    const stateDataMap = new Map();
+
+    for (let i = 0, n = stateDataArray.length; i < n; i++) {
+        stateDataMap.set(columnNames[i], stateDataArray[i]);
+    }
+
+    return stateDataMap;
 }
 
 //---------------------------------------------------------------
@@ -129,11 +159,11 @@ export async function getTestData(nthDay = 0) {
 /**
  * gets a states data from the csv
  * 
- * @param {*} stateData use getStateDataLine()
+ * @param {Map} stateData use getStateData()
  * @param {*} precision 
  * @returns 
  */
-function extractStateTestData(stateData, precision = 2) {
+function processStateTestData(stateData, precision = 2) {
     let stateName = '';
     let lastUpdate = '';
     let confirmed = 0;
@@ -154,7 +184,7 @@ function extractStateTestData(stateData, precision = 2) {
 
     let stateFound = false;
 
-    if (stateData.length) {
+    if (stateData.size) {
         stateFound = true;
     }
     else {
@@ -174,23 +204,21 @@ function extractStateTestData(stateData, precision = 2) {
         };
     }
 
-    const dataArr = stateData.split(',');
-
-    stateName = dataArr[1];
-    lastUpdate = dataArr[3].split(' ').join(' at ');
-    confirmed = parseInt(dataArr[6]);
-    deaths = parseInt(dataArr[7]);
-    recovered = parseInt(dataArr[8]);
-    active = parseInt(dataArr[9]);
+    stateName = stateData.get('Province_State');
+    lastUpdate = stateData.get('Last_Update').split(' ').join(' at ');
+    confirmed = parseInt(stateData.get('Confirmed'));
+    deaths = parseInt(stateData.get('Deaths'));
+    recovered = parseInt(stateData.get('Recovered'));
+    active = parseInt(stateData.get('Active'));
 
     // per 100,000 people
-    incidenceRate = (parseFloat(dataArr[11]) / 1000).toFixed(precision);
+    incidenceRate = (parseFloat(stateData.get('Incident_Rate')) / 1000).toFixed(precision);
 
-    totalTestResults = parseInt(dataArr[12]);
-    fatalityRatio = parseFloat(dataArr[14]).toFixed(precision);
+    totalTestResults = parseInt(stateData.get('Total_Test_Results'));
+    fatalityRatio = parseFloat(stateData.get('Case_Fatality_Ratio')).toFixed(precision);
 
     // per 100,000 people
-    testingPercentage = (parseFloat(dataArr[17]) / 1000).toFixed(precision);
+    testingPercentage = (parseFloat(stateData.get('Testing_Rate')) / 1000).toFixed(precision);
 
     source = 'Data from Johns Hopkins University';
 
@@ -358,10 +386,10 @@ export async function getVaccineData() {
 /**
  * gets a states data from the csv
  * 
- * @param {*} stateData use getStateDataLine()
+ * @param {Map} stateData use getStateData()
  * @returns 
  */
-function extractStateVaccineData(stateData) {
+function processStateVaccineData(stateData) {
     let stateName = '';
     let lastUpdate = '';
     let fullyVaccinated = 0;
@@ -372,7 +400,7 @@ function extractStateVaccineData(stateData) {
 
     let stateFound = false;
 
-    if (stateData.length) {
+    if (stateData.size) {
         stateFound = true;
     }
     else {
@@ -387,12 +415,10 @@ function extractStateVaccineData(stateData) {
         };
     }
 
-    const dataArr = stateData.split(',');
-
-    stateName = dataArr[1];
-    lastUpdate = dataArr[3];
-    fullyVaccinated = parseInt(dataArr[8]);
-    partiallyVaccinated = parseInt(dataArr[9]);
+    stateName = stateData.get('Province_State');
+    lastUpdate = stateData.get('Date');
+    fullyVaccinated = parseInt(stateData.get('People_Fully_Vaccinated'));
+    partiallyVaccinated = parseInt(stateData.get('People_Partially_Vaccinated'));
     totalVaccinated = fullyVaccinated + partiallyVaccinated;
 
     source = 'Data from Johns Hopkins University';
@@ -547,15 +573,15 @@ export async function getDataEmbeds(state, precision = 2) {
 
     if (testData.length) {
         let embeds = [
-            createTestEmbed(extractStateTestData(getStateDataLine(state, testData), precision))
+            createTestEmbed(processStateTestData(getStateData(state, parseCSV(testData)), precision))
         ];
-        const vaccineStateData = extractStateVaccineData(getStateDataLine(state, vaccineData));
+        const vaccineStateData = processStateVaccineData(getStateData(state, parseCSV(vaccineData)));
         let vaccineEmbed = createVaccineEmbed(vaccineStateData);
 
         if (typeof vaccineEmbed.description !== 'undefined') {
             if (populationData.length) {
                 const population = getStatePopulation(state, populationData);
-    
+
                 if (population !== -1) {
                     vaccineEmbed.fields = [
                         ...vaccineEmbed.fields,
@@ -570,7 +596,7 @@ export async function getDataEmbeds(state, precision = 2) {
                             inline: true
                         }
                     ];
-    
+
                     vaccineEmbed.footer.text = `${vaccineEmbed.footer.text} & US Census Bureau`;
                 }
             }
@@ -608,7 +634,7 @@ export async function getCombinedEmbed(state, precision = 2) {
         fatalityRatio,
         testingPercentage,
         source
-    } = extractStateTestData(getStateDataLine(state, response[0]), precision);
+    } = processStateTestData(getStateData(state, parseCSV(response[0])), precision);
 
     if (stateFound) {
         const {
@@ -617,7 +643,7 @@ export async function getCombinedEmbed(state, precision = 2) {
             fullyVaccinated,
             partiallyVaccinated,
             totalVaccinated
-        } = extractStateVaccineData(getStateDataLine(state, response[1]));
+        } = processStateVaccineData(getStateData(state, parseCSV(response[1])));
         const population = getStatePopulation(state, response[2]);
 
         return {
