@@ -122,16 +122,18 @@ export function numberLengthFormat(n) {
 /**
  * 
  * @param {*} ms 
- * @returns hh:mm:ss
+ * @returns xd xh xm xs
  */
 export function timeFormat(ms) {
     ms = Math.trunc(ms / 1000);
     const s = ms % 60;
     ms = Math.trunc(ms / 60);
     const min = ms % 60;
-    const hr = Math.trunc(ms / 60);
+    ms = Math.trunc(ms / 60);
+    const hr = ms % 24;
+    const days = Math.trunc(ms / 24);
 
-    return `${numberLengthFormat(hr)}:${numberLengthFormat(min)}:${numberLengthFormat(s)}`;
+    return `${days}d ${hr}h ${min}m ${s}s`;
 }
 
 const oneKilobyte = Math.pow(2, 10);

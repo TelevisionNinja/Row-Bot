@@ -128,13 +128,14 @@ function getTestURL(nthDayAgo) {
  * returns a csv of the latest us state covid data
  * 
  * @param {*} nthDay 
+ * @param {*} recursion 
  * @returns csv string
  */
-export async function getTestData(nthDay = 0) {
+export async function getTestData(nthDay = 0, recursion = 1) {
     let results = '';
 
     // limit recursion
-    if (nthDay === 5) {
+    if (recursion === 5) {
         return results;
     }
 
@@ -146,7 +147,7 @@ export async function getTestData(nthDay = 0) {
         }
 
         if (response.status === 404) {
-            results = await getTestData(nthDay + 1);
+            results = await getTestData(nthDay + 1, recursion + 1);
         }
         else {
             results = await response.text();
@@ -502,13 +503,14 @@ function getPopulationURL(yearOffset) {
 /**
  * 
  * @param {*} yearOffset 
+ * @param {*} recursion 
  * @returns array
  */
-export async function getPopulationData(yearOffset = 1) {
-    let results = '';
+export async function getPopulationData(yearOffset = 1, recursion = 1) {
+    let results = [];
 
     // limit recursion
-    if (yearOffset === 5) {
+    if (recursion === 5) {
         return results;
     }
 
@@ -520,7 +522,7 @@ export async function getPopulationData(yearOffset = 1) {
         }
 
         if (response.status === 404 || response.status === 400) {
-            results = await getPopulationData(yearOffset + 1);
+            results = await getPopulationData(yearOffset + 1, recursion + 1);
         }
         else {
             results = await response.json();
@@ -536,7 +538,7 @@ export async function getPopulationData(yearOffset = 1) {
  * @param {*} data use getPopulationData()
  * @returns -1 if no data is found
  */
-export function getStatePopulation(state, data) {
+export function extractStatePopulation(state, data) {
     let result = -1;
     state = state.toLowerCase();
 
@@ -580,7 +582,7 @@ export async function getDataEmbeds(state, precision = 2) {
 
         if (typeof vaccineEmbed.description !== 'undefined') {
             if (populationData.length) {
-                const population = getStatePopulation(state, populationData);
+                const population = extractStatePopulation(state, populationData);
 
                 if (population !== -1) {
                     vaccineEmbed.fields = [
@@ -644,7 +646,7 @@ export async function getCombinedEmbed(state, precision = 2) {
             partiallyVaccinated,
             totalVaccinated
         } = processStateVaccineData(getStateData(state, parseCSV(response[1])));
-        const population = getStatePopulation(state, response[2]);
+        const population = extractStatePopulation(state, response[2]);
 
         return {
             title: `${stateName}`,
