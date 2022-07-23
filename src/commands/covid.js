@@ -69,9 +69,10 @@ function parseCSV(csv) {
  * 
  * @param {*} state 
  * @param {*} parsedCSV use parseCSV()
+ * @param {*} stateNameField 
  * @returns 
  */
-function getStateData(state, parsedCSV) {
+function getStateData(state, parsedCSV, stateNameField = 'Province_State') {
     state = state.toLowerCase();
     const columnNames = parsedCSV[0];
     let stateNameIndex = 0;
@@ -79,7 +80,7 @@ function getStateData(state, parsedCSV) {
     for (let i = 0, n = columnNames.length; i < n; i++) {
         const name = columnNames[i];
 
-        if (name === 'Province_State') {
+        if (name === stateNameField) {
             stateNameIndex = i;
             break;
         }
