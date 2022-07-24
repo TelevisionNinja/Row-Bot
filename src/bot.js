@@ -47,7 +47,8 @@ import {
     greetings,
     reactionRoles,
 
-    initializeIntervals
+    initializeIntervals,
+    loadSlashCommands
 } from './lib/initialize.js';
 
 //--------------------------------------------------------------------------------
@@ -62,11 +63,21 @@ client.musicCommands = musicCommandMap;
 //--------------------------------------------------------------------------------
 // ready actions
 
-client.on('ready', () => {
+client.on('ready', client => {
     // start interval messages
     initializeIntervals(client);
 
     console.log(`Ready Client: ${client.readyAt.toString()}`);
+
+    // slash commands
+    const ids = client.shard.ids;
+
+    for (let i = 0, n = ids.length; i < n; i++) {
+        if (ids[i] === 0) {
+            // loadSlashCommands();
+            break;
+        }
+    }
 });
 
 client.on('shardReady', shardId => console.log(`Ready Shard ${shardId}: ${new Date().toString()}`));

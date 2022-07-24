@@ -10,10 +10,10 @@ import { initialize as initializeTulpHelp } from '../commands/tulpCommands/help.
 import { initialize as initializeMusicHelp } from '../commands/musicCommands/help.js';
 import messages from '../../config/messages.json' assert { type: 'json' };
 import reactionRoles from '../../config/reactionRoles.json' assert { type: 'json' };
-// import {
-//     buildCommandJSON,
-//     loadGlobalSlashCommands
-// } from './slashCommandUtils.js';
+import {
+    buildCommandJSON,
+    loadGlobalSlashCommands
+} from './slashCommandUtils.js';
 
 export {
     prefix,
@@ -184,41 +184,43 @@ export function initializeIntervals(client) {
 //--------------------------------------------------------------------------------
 // slash commands
 
-// let slashCommands = buildCommandJSON(commands);
-// let breakBool = false;
+export async function loadSlashCommands() {
+    let slashCommands = buildCommandJSON(commands);
+    let breakBool = false;
 
-// for (let i = 0, n = slashCommands.length; i < n; i++) {
-//     let slashCommand = slashCommands[i];
+    for (let i = 0, n = slashCommands.length; i < n; i++) {
+        let slashCommand = slashCommands[i];
 
-//     if (slashCommand.name === 'tulp') {
-//         slashCommand.options = buildCommandJSON(tulpCommands);
-//         slashCommands[i] = slashCommand;
+        if (slashCommand.name === 'tulp') {
+            slashCommand.options = buildCommandJSON(tulpCommands);
+            // slashCommands[i] = slashCommand;
 
-//         if (breakBool) {
-//             break;
-//         }
+            if (breakBool) {
+                break;
+            }
 
-//         breakBool = true;
-//     }
-//     else if (slashCommand.name === 'music') {
-//         slashCommand.options = buildCommandJSON(musicCommands);
-//         slashCommands[i] = slashCommand;
+            breakBool = true;
+        }
+        else if (slashCommand.name === 'music') {
+            slashCommand.options = buildCommandJSON(musicCommands);
+            // slashCommands[i] = slashCommand;
 
-//         if (breakBool) {
-//             break;
-//         }
+            if (breakBool) {
+                break;
+            }
 
-//         breakBool = true;
-//     }
-// }
+            breakBool = true;
+        }
+    }
 
-// console.log('Started refreshing application (/) commands.');
+    console.log('Started refreshing application (/) commands.');
 
-// const response = await loadGlobalSlashCommands(slashCommands, clientID, token);
+    const response = await loadGlobalSlashCommands(slashCommands, clientID, token);
 
-// if (response.ok) {
-//     console.log('Successfully reloaded application (/) commands.');
-// }
-// else {
-//     console.log(response);
-// }
+    if (response.ok) {
+        console.log('Successfully reloaded application (/) commands.');
+    }
+    else {
+        console.log(response);
+    }
+}
