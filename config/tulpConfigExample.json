@@ -31,7 +31,10 @@
             "autoproxy-mode",
             "automode",
             "auto_mode",
-            "auto-mode"
+            "auto-mode",
+            "autoproxyenable",
+            "autoproxy_enable",
+            "autoproxy-enable"
         ],
         "description" : "Turn on or off autoproxy",
         "errorMsg" : ""
@@ -161,6 +164,21 @@
         ],
         "description" : "",
         "noTulpsMsg" : ""
+    },
+
+    "proxyToggle" : {
+        "names" : [
+            "proxytoggle",
+            "proxy_toggle",
+            "proxy-toggle",
+            "proxymode",
+            "proxy_mode",
+            "proxy-mode",
+            "proxyenable",
+            "proxy_enable",
+            "proxy-enable"
+        ],
+        "description" : "Turn on or off proxying"
     },
 
     "sendMsg" : {

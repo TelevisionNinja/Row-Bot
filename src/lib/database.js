@@ -42,6 +42,10 @@ CREATE TABLE IF NOT EXISTS autoproxy(
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS proxy(
+    user_id TEXT PRIMARY KEY
+);
 `);
 
 export const webhooks = {
@@ -121,18 +125,32 @@ export const tulps = {
      */
     async findTulp(user_id, text) {
         return (await tulpDB.query(`
-            WITH proxy_result AS (
+            WITH enabled_result AS (
+                SELECT * FROM proxy
+                WHERE user_id = $1
+            ),
+            proxy_result AS (
                 SELECT tulps.username, tulps.avatar, 0 AS start_bracket_length, 0 AS end_bracket_length FROM
                 tulps JOIN autoproxy
                     ON tulps.user_id = autoproxy.user_id AND tulps.username = autoproxy.username
-                WHERE tulps.user_id = $1 AND autoproxy.mode = TRUE
+                WHERE EXISTS (
+                    SELECT * FROM enabled_result
+                )
+                AND
+                tulps.user_id = $1 AND autoproxy.mode = TRUE
             )
             SELECT * FROM proxy_result
             UNION (
                 SELECT username, avatar, LENGTH(start_bracket) AS start_bracket_length, LENGTH(end_bracket) AS end_bracket_length FROM tulps
-                WHERE NOT EXISTS (
+                WHERE EXISTS (
+                    SELECT * FROM enabled_result
+                )
+                AND
+                NOT EXISTS (
                     SELECT * FROM proxy_result
-                ) AND user_id = $1 AND LENGTH(start_bracket) + LENGTH(end_bracket) <= LENGTH($2) AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
+                )
+                AND
+                user_id = $1 AND LENGTH(start_bracket) + LENGTH(end_bracket) <= LENGTH($2) AND LEFT($2, LENGTH(start_bracket)) = start_bracket AND RIGHT($2, LENGTH(end_bracket)) = end_bracket
                 ORDER BY LENGTH(start_bracket) + LENGTH(end_bracket)
                 DESC
                 LIMIT 1
@@ -243,3 +261,18 @@ export const autoProxy = {
         `, [user_id])).rows[0];
     }
 };
+
+export const proxy = {
+    on(user_id) {
+        return tulpDB.query(`
+            INSERT INTO proxy
+            VALUES ($1);
+        `, [user_id]);
+    },
+    off(user_id) {
+        tulpDB.query(`
+            DELETE FROM proxy
+            WHERE user_id = $1;
+        `, [user_id]);
+    }
+}
