@@ -169,6 +169,18 @@
         "link" : ""
     },
 
+    "monkeypox" : {
+        "names" : [
+            "monkeypox"
+        ],
+        "description" : "Returns a country's current monkeypox information",
+        "embedColor" : "2244ee",
+
+        "intervalChannel" : "",
+        "intervalCountry" : "",
+        "intervalTime" : "12:00"
+    },
+
     "memes" : {
         "channelID" : "",
         "postCount" : 10,
