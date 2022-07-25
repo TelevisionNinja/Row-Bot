@@ -3,6 +3,7 @@ import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { ApplicationCommandOptionType } from 'discord.js';
 import { parse } from 'csv-parse/sync';
+import { randomMath } from '../lib/randomFunctions.js';
 
 const commandConfig = config.monkeypox,
     noResultsMsg = config.noResultsMsg;
