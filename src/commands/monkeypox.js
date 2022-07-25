@@ -37,7 +37,7 @@ export default {
         msg.reply({ embeds: [await getEmbed(args.join(' ').trimStart())] });
     },
     async executeInteraction(interaction) {
-        const embeds = getEmbed(interaction.options.getString('state'));
+        const embeds = getEmbed(interaction.options.getString('country'));
 
         await interaction.deferReply();
 
