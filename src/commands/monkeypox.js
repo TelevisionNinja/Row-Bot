@@ -9,7 +9,7 @@ const commandConfig = config.monkeypox,
 
 const queueCases = new PQueue({
     interval: 1000,
-    intervalCap: 50
+    intervalCap: 100
 });
 
 export default {
@@ -227,7 +227,7 @@ export async function getIndividualData() {
     await queueCases.add(async () => {
         const response = await fetch('https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest.json');
 
-        if (backOffFetch(response, queueCases)) {
+        if (backOff(response, queueCases)) {
             return;
         }
 
