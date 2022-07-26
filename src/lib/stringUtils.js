@@ -133,7 +133,7 @@ export function timeFormat(ms) {
     const hr = ms % 24;
     const days = Math.trunc(ms / 24);
 
-    return `${days}d ${hr}h ${min}m ${s}s`;
+    return `${days}d ${hr}h ${min}min ${s}s`;
 }
 
 const oneKilobyte = Math.pow(2, 10);

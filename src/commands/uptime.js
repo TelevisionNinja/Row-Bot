@@ -17,9 +17,7 @@ export default {
     usage: '',
     cooldown: 0,
     execute(msg, args) {
-        let uptime = msg.client.uptime;
-        const ms = uptime % 1000;
-        uptime = Math.trunc(uptime / 1000);
+        let uptime = Math.trunc(msg.client.uptime / 1000);
         const s = uptime % 60;
         uptime = Math.trunc(uptime / 60);
         const mins = uptime % 60;
@@ -28,12 +26,10 @@ export default {
         uptime = Math.trunc(uptime / 24);
         const days = uptime % 365;
 
-        msg.reply(`${days} day(s)\n${hrs} hr(s)\n${mins} min(s)\n${s} s\n${ms} ms`);
+        msg.reply(`${days} days\n${hrs} hours\n${mins} minutes\n${s} seconds`);
     },
     executeInteraction(interaction) {
-        let uptime = interaction.client.uptime;
-        const ms = uptime % 1000;
-        uptime = Math.trunc(uptime / 1000);
+        let uptime = Math.trunc(interaction.client.uptime / 1000);
         const s = uptime % 60;
         uptime = Math.trunc(uptime / 60);
         const mins = uptime % 60;
@@ -42,6 +38,6 @@ export default {
         uptime = Math.trunc(uptime / 24);
         const days = uptime % 365;
 
-        interaction.reply(`${days} day(s)\n${hrs} hr(s)\n${mins} min(s)\n${s} s\n${ms} ms`);
+        interaction.reply(`${days} days\n${hrs} hours\n${mins} minutes\n${s} seconds`);
     }
 }
