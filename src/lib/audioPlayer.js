@@ -1,8 +1,8 @@
 import { default as audio } from './audioUtils.js';
 import { default as audioQueue } from './audioQueue.js';
 import { cutOff } from './stringUtils.js';
-import { default as ytdl } from 'ytdl-core';
 import { default as ytSearch } from 'yt-search';
+import { isValidURL } from './urlUtils.js';
 
 export default {
     /**
@@ -36,7 +36,7 @@ export default {
     },
 
     /**
-     * play a youtube link or a search query
+     * play a youtube/soundcloud link or a search query
      * 
      * @param {*} msg 
      * @param {*} song link or search query
@@ -46,7 +46,7 @@ export default {
             return;
         }
 
-        if (ytdl.validateURL(song)) {
+        if (isValidURL(song)) {
             const isCurrentSong = audio.queueASong(msg, song);
 
             if (isCurrentSong) {

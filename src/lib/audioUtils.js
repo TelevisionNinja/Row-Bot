@@ -1,5 +1,3 @@
-import { default as ytdl } from 'ytdl-core';
-import { Readable } from 'stream';
 import { default as audioQueue } from './audioQueue.js';
 import {
     createAudioPlayer,
@@ -13,15 +11,27 @@ import {
 } from '@discordjs/voice';
 import { createReadStream } from 'fs';
 import { resolve } from 'path';
+import {
+    stream,
+    video_basic_info,
+    getFreeClientID,
+    setToken
+} from 'play-dl';
 
 let players = new Map();
+
+setToken({
+    soundcloud: {
+        client_id: await getFreeClientID()
+    }
+});
 
 export default {
     queueASong,
     playStream,
     playFile,
     playCurrentSong,
-    playYoutube,
+    playURL,
 
     pause,
     resume,
@@ -43,28 +53,30 @@ export default {
  * @returns 
  */
 async function getYoutubeTitle(url) {
-    const info = await ytdl.getInfo(url);
-    return `${info.videoDetails.title}\n${url}`;
+    try {
+        const info = await video_basic_info(url);
+        return `${info.video_details.title}\n${url}`;
+    }
+    catch (e) {
+        return url;
+    }
 }
 
 /**
- * gets the audio from the youtube url and plays it
+ * gets the audio from the youtube/soundcloud url and plays it
  * 
  * @param {*} msg 
  * @param {*} url 
  */
-async function fetchAndPlayYoutubeAudio(msg, url) {
-    // getYoutubeTitle() is awaited first bc ytdl() won't throw an error if the video doesn't exist
+async function fetchAndPlayURLAudio(msg, url) {
+    const streamObject = stream(url);
     const title = await getYoutubeTitle(url);
-    let chunks = [];
-    const ytStream = ytdl(url, { filter: 'audioonly' });
 
-    ytStream.on('data', chunk => chunks.push(chunk));
-    ytStream.on('end', () => playStream(msg, Readable.from(chunks), title));
+    playStream(msg, await streamObject, title);
 }
 
 /**
- * play a youtube link
+ * play a youtube/soundcloud link
  * 
  * @param {*} msg 
  * @param {*} url 
@@ -84,14 +96,14 @@ function queueASong(msg, url, sendReply = true) {
 }
 
 /**
- * gets a readable stream from a youtube link and then plays the stream
+ * gets a readable stream from a youtube/soundcloud link and then plays the stream
  * 
  * @param {*} msg 
  * @param {*} url 
  */
-async function playYoutube(msg, url) {
+async function playURL(msg, url) {
     try {
-        await fetchAndPlayYoutubeAudio(msg, url);
+        await fetchAndPlayURLAudio(msg, url);
     }
     catch (error) {
         const id = msg.guild.id;
@@ -179,6 +191,10 @@ function getPlayer(msg) {
  * @returns 
  */
 async function probeAndCreateResource(readableStream) {
+    if (readableStream.type && readableStream.type.length) {
+        return createAudioResource(readableStream.stream, { inputType: readableStream.type });
+    }
+
     try {
         const {
             stream,
@@ -188,10 +204,8 @@ async function probeAndCreateResource(readableStream) {
         return createAudioResource(stream, { inputType: type });
     }
     catch (error) {
-        console.log(error);
+        return createAudioResource(readableStream);
     }
-
-    return createAudioResource(readableStream);
 }
 
 /**
@@ -302,7 +316,7 @@ async function skip(msg, index = 0) {
 function playCurrentSong(msg) {
     const url = audioQueue.getCurrentSong(msg.guild.id);
 
-    playYoutube(msg, url);
+    playURL(msg, url);
 }
 
 /**
