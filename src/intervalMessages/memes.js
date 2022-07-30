@@ -1,7 +1,7 @@
 import { setDailyInterval } from 'daily-intervals';
 import { getChannel } from '../lib/discordUtils.js';
 import config from '../../config/config.json' assert { type: 'json' };
-import { randomMath } from '../lib/randomFunctions.js';
+import { getMeme } from '../lib/meme.js';
 
 const memes = config.memes;
 
@@ -11,17 +11,10 @@ export async function execute(client) {
 
     setDailyInterval(
         async () => {
-            const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.queryString}${memes.postCount}`;
-            const response = await fetch(URL);
+            const meme = await getMeme();
 
-            try {
-                const postArr = (await response.json()).data.children;
-                const post = postArr[randomMath(memes.postCount)];
-
-                recipient.send(post.data.url);
-            }
-            catch (error) {
-                console.log(error);
+            if (meme.length) {
+                recipient.send(meme);
             }
         },
         360

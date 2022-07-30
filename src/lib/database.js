@@ -55,12 +55,14 @@ export const webhooks = {
             WHERE channel_id = $1;
         `, [channel_id])).rows[0];
     },
+
     set(channel_id, id, token) {
         tulpDB.query(`
             INSERT INTO webhooks (channel_id, id, token)
             VALUES ($1, $2, $3);
         `, [channel_id, id, token]);
     },
+
     update(channel_id, id, token) {
         tulpDB.query(`
             UPDATE webhooks
@@ -68,6 +70,7 @@ export const webhooks = {
             WHERE channel_id = $1;
         `, [channel_id, id, token]);
     },
+
     upsert(channel_id, id, token) {
         tulpDB.query(`
             INSERT INTO webhooks (channel_id, id, token)
@@ -77,6 +80,7 @@ export const webhooks = {
             SET id = $2, token = $3;
         `, [channel_id, id, token]);
     },
+
     delete(channel_id) {
         tulpDB.query(`
             DELETE FROM webhooks
@@ -92,30 +96,35 @@ export const tulps = {
             VALUES ($1, $2, $3, $4, $5);
         `, [user_id, username, avatar, start_bracket, end_bracket]);
     },
+
     create(user_id, username, avatar) {
         return tulpDB.query(`
             INSERT INTO tulps (user_id, username, avatar, start_bracket)
             VALUES ($1, $2, $3, CONCAT($2::TEXT, ':'));
         `, [user_id, username, avatar]);
     },
+
     async getAll(user_id) {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
             WHERE user_id = $1;
         `, [user_id])).rows;
     },
+
     async get(user_id, username) {
         return (await tulpDB.query(`
             SELECT username, avatar FROM tulps
             WHERE user_id = $1 AND username = $2;
         `, [user_id, username])).rows[0];
     },
+
     async getInfo(user_id, username) {
         return (await tulpDB.query(`
             SELECT username, avatar, start_bracket, end_bracket FROM tulps
             WHERE user_id = $1 AND username = $2;
         `, [user_id, username])).rows[0];
     },
+
     /**
      * finds the auto proxy or bracket row
      * 
@@ -157,6 +166,7 @@ export const tulps = {
             );
         `, [user_id, text])).rows[0];
     },
+
     /**
      * finds the matching bracket row
      * 
@@ -173,6 +183,7 @@ export const tulps = {
             LIMIT 1;
         `, [user_id, text])).rows[0];
     },
+
     /**
      * checks if a user is in the db
      * 
@@ -187,12 +198,14 @@ export const tulps = {
             );
         `, [user_id])).rows[0];
     },
+
     delete(user_id, username) {
         return tulpDB.query(`
             DELETE FROM tulps
             WHERE user_id = $1 AND username = $2;
         `, [user_id, username]);
     },
+
     updateBrackets(user_id, username, start_bracket, end_bracket) {
         return tulpDB.query(`
             UPDATE tulps
@@ -200,6 +213,7 @@ export const tulps = {
             WHERE user_id = $1 AND username = $2;
         `, [user_id, username, start_bracket, end_bracket]);
     },
+
     updateUsername(user_id, old_username, new_username) {
         return tulpDB.query(`
             UPDATE tulps
@@ -207,6 +221,7 @@ export const tulps = {
             WHERE user_id = $1 AND username = $2;
         `, [user_id, old_username, new_username]);
     },
+
     /**
      * if the brackets are the default, then they will get updated too
      * 
@@ -222,6 +237,7 @@ export const tulps = {
             WHERE user_id = $1 AND username = $2 AND start_bracket = CONCAT($2::TEXT, ':') AND end_bracket = '';
         `, [user_id, old_username, new_username]);
     },
+
     updateAvatar(user_id, username, avatar) {
         return tulpDB.query(`
             UPDATE tulps
@@ -229,6 +245,7 @@ export const tulps = {
             WHERE user_id = $1 AND username = $2;
         `, [user_id, username, avatar]);
     },
+
     async listAll(user_id) {
         return (await tulpDB.query(`
             SELECT username FROM tulps
@@ -247,6 +264,7 @@ export const autoProxy = {
             SET username = $2;
         `, [user_id, username]);
     },
+
     updateMode(user_id, mode) {
         return tulpDB.query(`
             UPDATE autoproxy
@@ -254,6 +272,7 @@ export const autoProxy = {
             WHERE user_id = $1;
         `, [user_id, mode]);
     },
+
     async get(user_id) {
         return (await tulpDB.query(`
             SELECT username FROM autoproxy
@@ -269,6 +288,7 @@ export const proxy = {
             VALUES ($1);
         `, [user_id]);
     },
+
     off(user_id) {
         tulpDB.query(`
             DELETE FROM proxy

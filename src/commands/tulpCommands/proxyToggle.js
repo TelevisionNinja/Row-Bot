@@ -41,7 +41,7 @@ export default {
                 await proxy.on(msg.author.id);
                 msg.reply('Proxying enabled');
             }
-            catch (e) {
+            catch (error) {
                 msg.reply('Proxying is already enabled');
             }
         }
@@ -58,7 +58,7 @@ export default {
                 await proxy.on(interaction.user.id);
                 interaction.reply('Proxying enabled');
             }
-            catch (e) {
+            catch (error) {
                 interaction.reply('Proxying is already enabled');
             }
         }

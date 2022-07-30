@@ -27,7 +27,7 @@ export default {
     async execute(msg, args) {
         const timeArr = args.join('').split(':').map(number => parseInt(number, 10));
 
-        if (timeArr.length !== 2 || isNaN(timeArr[0]) || isNaN(timeArr[1])) {
+        if (timeArr.length !== 2 || isNaN(timeArr[0]) || isNaN(timeArr[1]) || timeArr[1] < 0) {
             msg.reply('Enter the time in the correct format: `hours:minutes` or `-hours:minutes`');
         }
         else {
@@ -45,7 +45,7 @@ export default {
         const timeStr = interaction.options.getString('time');
         const timeArr = timeStr.split(':').map(number => parseInt(number, 10));
 
-        if (timeArr.length !== 2 || isNaN(timeArr[0]) || isNaN(timeArr[1])) {
+        if (timeArr.length !== 2 || isNaN(timeArr[0]) || isNaN(timeArr[1]) || timeArr[1] < 0) {
             interaction.reply('Enter the time in the correct format: `hours:minutes` or `-hours:minutes`');
         }
         else {

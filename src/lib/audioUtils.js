@@ -57,7 +57,7 @@ async function getYoutubeTitle(url) {
         const info = await video_basic_info(url);
         return `${info.video_details.title}\n${url}`;
     }
-    catch (e) {
+    catch (error) {
         return url;
     }
 }

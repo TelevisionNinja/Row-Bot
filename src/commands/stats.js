@@ -19,7 +19,7 @@ export default {
     noSpecialChars: false,
     guildOnly: false,
     usage: '',
-    cooldown: 0,
+    cooldown: 1,
     async execute(msg, args) {
         const results = await msg.client.shard.broadcastEval(client => {
             return [
