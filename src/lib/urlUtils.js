@@ -1,6 +1,6 @@
 import PQueue from 'p-queue';
 
-const queue = new PQueue({
+const ampQueue = new PQueue({
     interval: 1000,
     intervalCap: 50
 });
@@ -43,6 +43,10 @@ export function backOff(response, queue) {
         }
 
         setTimeout(() => {
+            if (backedOff) {
+                queue.clear();
+            }
+
             queue.start();
         }, time);
     }
@@ -102,7 +106,7 @@ const ampDetectRegex = new RegExp(/([^\w\s])amp([^\w\s]|\b)/i);
     if (oldDomain.startsWith(ampSubdomain) && !ampDetectRegex.test(oldPath)) {
         const response = await fetch(`https://${oldURL.substring(googleAMPPath.length + ampSubdomain.length)}`);
 
-        if (!backOff(response, queue) && response.ok) {
+        if (!backOff(response, ampQueue) && response.ok) {
             return response.url;
         }
     }
@@ -132,10 +136,10 @@ export async function convertAMPSet(urlSet) {
     const n = urlSet.size;
 
     for (let i = 0; i < n; i++) {
-        responses.push(queue.add(async () => {
+        responses.push(ampQueue.add(async () => {
             const response = await fetch(urlArray[i]);
 
-            if (backOff(response, queue)) {
+            if (backOff(response, ampQueue)) {
                 return '';
             }
 

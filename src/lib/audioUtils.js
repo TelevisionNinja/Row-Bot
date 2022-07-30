@@ -134,8 +134,7 @@ function createPlayer(msg, id) {
     //--------------------------------------
 
     player.on('error', error => {
-        msg.channel.send(`Music Player ${error.toString()}`);
-        console.log(error);
+        msg.channel.send(`Music Player ${error.toString()}\n${audioQueue.getCurrentSong(msg.guild.id)}`);
         nextSong(msg);
     });
 

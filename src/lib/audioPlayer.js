@@ -1,4 +1,4 @@
-import { default as audio } from './audioUtils.js';
+import { default as audioUtils } from './audioUtils.js';
 import { default as audioQueue } from './audioQueue.js';
 import { cutOff } from './stringUtils.js';
 import { default as ytSearch } from 'yt-search';
@@ -21,7 +21,7 @@ export default {
      * @param {*} msg 
      */
     leaveVC(msg) {
-        audio.leaveVC(msg.guild.id);
+        audioUtils.leaveVC(msg.guild.id);
         msg.reply('Okie dokie lokie!');
     },
 
@@ -31,7 +31,7 @@ export default {
      * @param {*} msg 
      */
     pause(msg) {
-        audio.pause(msg.guild.id);
+        audioUtils.pause(msg.guild.id);
         msg.reply('Song paused');
     },
 
@@ -42,16 +42,16 @@ export default {
      * @param {*} song link or search query
      */
     async play(msg, song) {
-        if (!audio.joinVC(msg)) {
+        if (!audioUtils.joinVC(msg)) {
             return;
         }
 
         if (isValidURL(song)) {
-            const isCurrentSong = audio.queueASong(msg, song);
+            const isCurrentSong = audioUtils.queueASong(msg, song);
 
             if (isCurrentSong) {
                 msg.reply('Fetching song...');
-                audio.playCurrentSong(msg);
+                audioUtils.playCurrentSong(msg);
             }
         }
         else {
@@ -70,15 +70,15 @@ export default {
             switch (searchResult.type) {
                 case 'list':
                     const playlist = await ytSearch({ listId: searchResult.listId });
-                    playlist.videos.forEach(video => audio.queueASong(reply, `https://youtu.be/${video.videoId}`, false));
-                    audio.playCurrentSong(reply);
+                    playlist.videos.forEach(video => audioUtils.queueASong(reply, `https://youtu.be/${video.videoId}`, false));
+                    audioUtils.playCurrentSong(reply);
                     break;
                 case 'video':
                     const songURL = searchResult.url;
-                    const isCurrentSong = audio.queueASong(reply, songURL);
+                    const isCurrentSong = audioUtils.queueASong(reply, songURL);
 
                     if (isCurrentSong) {
-                        audio.playCurrentSong(reply);
+                        audioUtils.playCurrentSong(reply);
                     }
 
                     break;
@@ -157,7 +157,7 @@ export default {
      * @param {*} msg 
      */
     resume(msg) {
-        audio.resume(msg);
+        audioUtils.resume(msg);
         msg.reply('Song resumed');
     },
 
@@ -168,6 +168,6 @@ export default {
      * @param {*} index index of a certain song skip to
      */
     skip(msg, index = 0) {
-        audio.skip(msg, index);
+        audioUtils.skip(msg, index);
     }
 }
