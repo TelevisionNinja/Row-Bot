@@ -17,8 +17,14 @@ import {
     getFreeClientID,
     setToken
 } from 'play-dl';
+import PQueue from 'p-queue';
 
 let players = new Map();
+
+const queue = new PQueue({
+    interval: 1000,
+    intervalCap: 100
+});
 
 setToken({
     soundcloud: {
@@ -54,7 +60,7 @@ export default {
  */
 async function getYoutubeTitle(url) {
     try {
-        const info = await video_basic_info(url);
+        const info = await queue.add(() => video_basic_info(url));
         return `${info.video_details.title}\n${url}`;
     }
     catch (error) {
@@ -69,10 +75,9 @@ async function getYoutubeTitle(url) {
  * @param {*} url 
  */
 async function fetchAndPlayURLAudio(msg, url) {
-    const streamObject = stream(url);
-    const title = await getYoutubeTitle(url);
+    const streamObject = await queue.add(() => stream(url));
 
-    playStream(msg, await streamObject, title);
+    playStream(msg, streamObject, await getYoutubeTitle(url));
 }
 
 /**
@@ -272,37 +277,46 @@ function resume(msg) {
  */
 async function skip(msg, index = 0) {
     const guildID = msg.guild.id;
+    const player = players.get(guildID);
 
-    if (index) {
-        if (audioQueue.jump(guildID, index)) {
-            msg.reply(`Skipped to song #${index} in the queue. Fetching the song...`);
-            playCurrentSong(msg);
+    if (typeof player === 'undefined') {
+        msg.reply('No songs to skip');
+        return;
+    }
+
+    if (player.state.status === AudioPlayerStatus.Paused) {
+        if (index) {
+            if (audioQueue.jump(guildID, index)) {
+                msg.reply(`Skipped to song #${index} in the queue. The new current song:\n${await getYoutubeTitle(audioQueue.getCurrentSong(guildID))}`);
+            }
+            else {
+                msg.reply('No negative numbers or numbers bigger than the queue size!');
+            }
         }
         else {
-            msg.reply('No negative numbers or numbers bigger than the queue size!');
+            if (audioQueue.pop(guildID)) {
+                msg.reply(`Song skipped. The new current song:\n${await getYoutubeTitle(audioQueue.getCurrentSong(guildID))}`);
+            }
+            else {
+                msg.reply('No songs left to skip');
+                deletePlayer(guildID);
+            }
         }
     }
     else {
-        const player = players.get(guildID);
-
-        if (typeof player === 'undefined') {
-            msg.reply('No songs to skip');
-        }
-        else {
-            if (player.state.status === AudioPlayerStatus.Paused) {
-                if (audioQueue.pop(guildID)) {
-                    msg.reply(`Song skipped. The new current song:\n${await getYoutubeTitle(audioQueue.getCurrentSong(guildID))}`);
-                }
-                else {
-                    msg.reply('No songs left to skip');
-                    deletePlayer(guildID);
-                }
+        if (index) {
+            if (audioQueue.jump(guildID, index)) {
+                await msg.reply(`Skipped to song #${index} in the queue. Fetching the song...`);
+                playCurrentSong(msg);
             }
             else {
-                msg.reply('Song skipped');
-                // the event listener will call nextSong(). this is done so that the audio will stop playing immediately
-                player.stop();
+                msg.reply('No negative numbers or numbers bigger than the queue size!');
             }
+        }
+        else {
+            await msg.reply('Song skipped');
+            // the event listener will call nextSong(). this is done so that the audio will stop playing immediately
+            player.stop();
         }
     }
 }

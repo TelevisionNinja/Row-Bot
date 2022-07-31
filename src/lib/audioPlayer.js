@@ -3,6 +3,17 @@ import { default as audioQueue } from './audioQueue.js';
 import { cutOff } from './stringUtils.js';
 import { default as ytSearch } from 'yt-search';
 import { isValidURL } from './urlUtils.js';
+import PQueue from 'p-queue';
+
+const queue = new PQueue({
+    interval: 1000,
+    intervalCap: 100
+});
+
+function isPlaylistURL(url) {
+    url = url.toLowerCase();
+    return url.startsWith('https://www.youtube.com/playlist?list=') || url.startsWith('http://www.youtube.com/playlist?list=');
+}
 
 export default {
     /**
@@ -46,7 +57,7 @@ export default {
             return;
         }
 
-        if (isValidURL(song)) {
+        if (isValidURL(song) && !isPlaylistURL(song)) {
             const isCurrentSong = audioUtils.queueASong(msg, song);
 
             if (isCurrentSong) {
@@ -55,7 +66,7 @@ export default {
             }
         }
         else {
-            const results = ytSearch(song);
+            const results = queue.add(() => ytSearch(song));
             const reply = await msg.reply({
                 content: 'Fetching result...',
                 fetchReply: true
@@ -69,7 +80,7 @@ export default {
 
             switch (searchResult.type) {
                 case 'list':
-                    const playlist = await ytSearch({ listId: searchResult.listId });
+                    const playlist = await queue.add(() => ytSearch({ listId: searchResult.listId }));
                     playlist.videos.forEach(video => audioUtils.queueASong(reply, `https://youtu.be/${video.videoId}`, false));
                     audioUtils.playCurrentSong(reply);
                     break;
