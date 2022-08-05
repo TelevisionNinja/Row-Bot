@@ -88,27 +88,97 @@ export function containsURL(str) {
     return containsURLRegex.test(str);
 }
 
-const ampSubdomain = 'amp.';
+const protocolHttps = 'https://';
 const googleRedirct = 'https://www.google.com/url?q=';
 const googleAMPPath = 'https://www.google.com/amp/s/';
-const ampDetectRegex = new RegExp(/([^\w\s])amp([^\w\s]|\b)/i);
+
+const ampEndsRegex = new RegExp(/(^amp\.)|([^\w\s]amp$)/ig);
+
+/**
+ * 
+ * @param {*} url url string without the protocol
+ * @returns url with amp head or tail removed
+ */
+function removeAMPEnds(url) {
+    return url.replaceAll(ampEndsRegex, '');
+}
+
+const ampPathRegex = new RegExp(/\/(([^\/\.]{1,}-amp)|(amp-[^\/\.]{1,})|(amp))\//ig);
+
+/**
+ * 
+ * @param {*} url url string
+ * @returns url with amp path removed
+ */
+function removeAMPPath(url) {
+    return url.replaceAll(ampPathRegex, '/');
+}
+
+const protocolRegex = new RegExp(/^[a-z]{1,}:\/\//i);
+
+/**
+ * 
+ * @param {*} url single url string
+ * @returns 
+ */
+export function getProtocol(url) {
+    const results = url.match(protocolRegex);
+
+    if (results === null) {
+        return '';
+    }
+
+    return results[0];
+}
+
+const removeProtocolRegex = new RegExp(/^[a-z]{1,}:\/\//i);
+
+/**
+ * 
+ * @param {*} url single url string
+ * @returns 
+ */
+export function removeProtocol(url) {
+    return url.replace(removeProtocolRegex, '');
+}
+
+/**
+ * 
+ * @param {*} url url string
+ * @returns url with amp head, tail, or path removed
+ */
+export function removeAMPFromURL(url) {
+    const protocol = getProtocol(url);
+    return `${protocol}${removeAMPEnds(removeProtocol(removeAMPPath(url)))}`;
+}
 
 /**
  * construct a non-amp url
  * 
- * @param {*} oldPath 
- * @param {*} oldDomain 
  * @param {*} oldURL 
  * @param {*} newURL 
+ * @param {*} prefix 
  * @returns 
  */
- async function makeNewNonAMPURL(oldPath, oldDomain, oldURL, newURL) {
-    if (oldDomain.startsWith(ampSubdomain) && !ampDetectRegex.test(oldPath)) {
-        const response = await fetch(`https://${oldURL.substring(googleAMPPath.length + ampSubdomain.length)}`);
+async function makeNonAMPURL(oldURL, newURL, prefix = '') {
+    oldURL = oldURL.substring(prefix.length);
+    let protocol = getProtocol(oldURL);
+    const partOfURL = removeProtocol(oldURL);
 
-        if (!backOff(response, ampQueue) && response.ok) {
-            return response.url;
-        }
+    if (protocol.length === 0) {
+        protocol = protocolHttps;
+    }
+
+    if (partOfURL.match(ampEndsRegex) !== null || partOfURL.match(ampPathRegex) !== null) {
+        return ampQueue.add(async () => {
+            const response = await fetch(`${protocol}${removeAMPEnds(removeAMPPath(partOfURL))}`);
+
+            if (!backOff(response, ampQueue) && response.ok) {
+                return response.url;
+            }
+
+            return newURL;
+        });
     }
 
     return newURL;
@@ -124,6 +194,23 @@ function removeForwardSlash(url) {
     return url;
 }
 
+const extractDomainRegex = new RegExp(/([^\s\/]{1,}\.)?[^\s\/]{1,}\.[^\s\/]{2,}/i);
+
+/**
+ * 
+ * @param {*} url 
+ * @returns ex: www.example.com
+ */
+export function extractDomain(url) {
+    const results = url.match(extractDomainRegex);
+
+    if (results === null) {
+        return '';
+    }
+
+    return results[0];
+}
+
 /**
  * 
  * @param {*} urlSet set of AMP URL's
@@ -137,36 +224,44 @@ export async function convertAMPSet(urlSet) {
 
     for (let i = 0; i < n; i++) {
         responses.push(ampQueue.add(async () => {
-            const response = await fetch(urlArray[i]);
+            let url = urlArray[i];
 
-            if (backOff(response, ampQueue)) {
-                return '';
+            if (!url.startsWith(googleAMPPath)) {
+                url = removeAMPFromURL(url);
             }
 
-            return response.url;
+            const response = await fetch(url);
+
+            if (!backOff(response, ampQueue) && response.ok) {
+                return response.url;
+            }
+
+            return '';
         }));
     }
 
     responses = await Promise.allSettled(responses);
 
     for (let i = 0; i < n; i++) {
-        let newURL = responses[i].value;
+        let newURL = '';
 
-        if (newURL.length !== 0) {
-            let oldURL = urlArray[i];
+        if (responses[i].status === 'fulfilled') {
+            newURL = responses[i].value;
 
-            if (newURL.startsWith(googleRedirct)) {
-                newURL = newURL.substring(googleRedirct.length);
-            }
-            else {
-                const partialURL = oldURL.substring(googleAMPPath.length);
-                const startOfPath = partialURL.indexOf('/');
-                const oldPath = partialURL.substring(startOfPath);
-                const oldDomain = partialURL.substring(0, startOfPath);
-                const newDomain = extractDomain(newURL);
+            if (newURL.length !== 0) {
+                let oldURL = urlArray[i];
 
-                if (oldDomain !== newDomain) {
-                    newURL = makeNewNonAMPURL(oldPath, oldDomain, oldURL, newURL);
+                if (newURL.startsWith(googleRedirct)) {
+                    newURL = makeNonAMPURL(newURL, newURL, googleRedirct);
+                }
+                else if (oldURL.startsWith(googleAMPPath)) {
+                    const partialURL = oldURL.substring(googleAMPPath.length);
+                    const startOfPath = partialURL.indexOf('/');
+                    const oldDomain = partialURL.substring(0, startOfPath);
+
+                    if (oldDomain !== extractDomain(newURL)) {
+                        newURL = makeNonAMPURL(oldURL, newURL, googleAMPPath);
+                    }
                 }
             }
         }
@@ -177,16 +272,18 @@ export async function convertAMPSet(urlSet) {
     responses = await Promise.allSettled(responses);
 
     for (let i = 0; i < n; i++) {
-        let newURL = responses[i].value;
+        if (responses[i].status === 'fulfilled') {
+            let newURL = responses[i].value;
 
-        if (newURL.length !== 0) {
-            newURL = removeForwardSlash(newURL);
-            const oldURL = removeForwardSlash(urlArray[i]);
+            if (newURL.length !== 0) {
+                newURL = removeForwardSlash(newURL);
+                const oldURL = removeForwardSlash(urlArray[i]);
 
-            //---------------------------
+                //---------------------------
 
-            if (newURL !== oldURL) {
-                newLinks.push(newURL);
+                if (newURL !== oldURL) {
+                    newLinks.push(newURL);
+                }
             }
         }
     }
@@ -219,15 +316,4 @@ export function extractAndConvertAmpLinks(str) {
     }
 
     return [];
-}
-
-const extractDomainRegex = new RegExp(/([^\s\/]{1,}\.)?[^\s\/]{1,}\.[^\s\/]{2,}/i);
-
-/**
- * 
- * @param {*} url 
- * @returns ex: www.example.com
- */
-export function extractDomain(url) {
-    return url.match(extractDomainRegex)[0];
 }
