@@ -66,5 +66,5 @@ export async function getRandomFifty() {
     return {
         title,
         link
-    }
+    };
 }
