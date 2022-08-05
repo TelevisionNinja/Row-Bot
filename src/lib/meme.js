@@ -13,22 +13,25 @@ const memes = config.memes;
 // posts a daily meme
 export async function getMeme() {
     const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.queryString}${memes.postCount}`;
-    const response = await fetch(URL);
     let memeURL = '';
 
-    if (backOff(response, queue)) {
-        return memeURL;
-    }
+    await queue.add(async () => {
+        const response = await fetch(URL);
 
-    try {
-        const postArr = (await response.json()).data.children;
-        const post = postArr[randomMath(memes.postCount)];
+        if (backOff(response, queue)) {
+            return;
+        }
 
-        memeURL = post.data.url;
-    }
-    catch (error) {
-        console.log(error);
-    }
+        try {
+            const postArr = (await response.json()).data.children;
+            const post = postArr[randomMath(memes.postCount)];
+
+            memeURL = post.data.url;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
 
     return memeURL;
 }
