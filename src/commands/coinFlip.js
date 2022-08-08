@@ -1,4 +1,4 @@
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import config from '../../config/config.json' assert { type: 'json' };
 
 const coin = config.coin;
@@ -18,7 +18,7 @@ export default {
     usage: '',
     cooldown: 0,
     execute(msg, args) {
-        if (randomMath(2)) {
+        if (randomInteger(2)) {
             msg.reply('Heads');
         }
         else {
@@ -26,7 +26,7 @@ export default {
         }
     },
     executeInteraction(interaction) {
-        if (randomMath(2)) {
+        if (randomInteger(2)) {
             interaction.reply('Heads');
         }
         else {

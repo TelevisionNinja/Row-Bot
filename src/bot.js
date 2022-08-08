@@ -14,7 +14,7 @@ import {
 } from './lib/stringUtils.js';
 import { default as sendEasyMsg } from './commands/tulpCommands/easyMessages/sendEasyMsg.js';
 import { deleteWebhook } from './lib/discordUtils.js';
-import { randomMath } from './lib/randomFunctions.js';
+import { randomInteger } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
 import { default as audioUtils } from './lib/audioUtils.js';
 import { extractAmpUrls } from './lib/urlUtils.js';
@@ -229,12 +229,12 @@ client.on('messageCreate', async msg => {
                 return;
             }
             else if ((noMentionsMsg === 'speak' || noMentionsMsg === 'talk') && audioUtils.vcCheck(msg, false)) {
-                const url = await getTtsUrl('Pinkie Pie', speechArr[randomMath(speechArr.length)]);
+                const url = await getTtsUrl('Pinkie Pie', speechArr[randomInteger(speechArr.length)]);
                 const stream = await getTtsStream(url);
 
                 // play backup audio
                 if (typeof stream === 'undefined') {
-                    audioUtils.playFile(msg, audio[randomMath(audio.length)]);
+                    audioUtils.playFile(msg, audio[randomInteger(audio.length)]);
                 }
                 else {
                     audioUtils.playStream(msg, stream);
@@ -377,7 +377,7 @@ client.on('guildMemberAdd', member => {
         return;
     }
 
-    const greetingMsg = greetings[randomMath(greetings.length)];
+    const greetingMsg = greetings[randomInteger(greetings.length)];
     const msg = `Please check the <#${ruleChannelID}> channel for some info 🙂`;
 
     sendTypingMsg(channel, {

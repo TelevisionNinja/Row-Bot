@@ -1,4 +1,4 @@
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import { createImgResult } from '../lib/msgUtils.js';
 import { tagArrToParsedTagArr } from '../lib/stringUtils.js';
 import { parse } from 'txml';
@@ -96,7 +96,7 @@ async function getImageRule0Formatted(tagArr) {
                 count = 200000;
             }
 
-            const pid = randomMath(count);
+            const pid = randomInteger(count);
 
             response = await fetch(`${URL}1&pid=${pid}`);
 
@@ -160,7 +160,7 @@ async function getImageRule1Formatted(tagArr) {
 
             // (max # images) / (limit per request) = pid max
             // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
-            const pid = randomMath(count);
+            const pid = randomInteger(count);
 
             response = await fetch(`${URL}1&pid=${pid}`);
 
@@ -202,7 +202,7 @@ export async function getImage(tagArr) {
     tagArr = tagArrToParsedTagArr(tagArr, rule.sites[0].whitespace);
 
     const numOfSites = rule.sites.length;
-    const randomSiteID = randomMath(numOfSites);
+    const randomSiteID = randomInteger(numOfSites);
     let requestedImg;
 
     if (randomSiteID) {

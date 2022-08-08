@@ -1,4 +1,4 @@
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import config from '../../config/config.json' assert { type: 'json' };
 import { ApplicationCommandOptionType } from 'discord.js';
 
@@ -41,7 +41,7 @@ export default {
         }
 
         const choiceArr = [...choices.keys()];
-        const botChoice = choiceArr[randomMath(choices.size)];
+        const botChoice = choiceArr[randomInteger(choices.size)];
 
         let winnerMsg = `${botChoice}\n`;
 
@@ -68,7 +68,7 @@ export default {
         }
 
         const choiceArr = [...choices.keys()];
-        const botChoice = choiceArr[randomMath(choices.size)];
+        const botChoice = choiceArr[randomInteger(choices.size)];
 
         let winnerMsg = `${botChoice}\n`;
 

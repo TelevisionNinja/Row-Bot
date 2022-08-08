@@ -43,3 +43,14 @@ export function randomCrypto(min = 0, max = 0) {
 
     return randomInt(min, max);
 }
+
+/**
+ * 
+ * @param {*} min inclusive min
+ * @param {*} max 
+ * @param {*} inclusive exclusive max
+ * @returns 
+ */
+export function randomInteger(min = 0, max = 0) {
+    return randomCrypto(min, max);
+}

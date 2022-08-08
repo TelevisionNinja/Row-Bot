@@ -1,5 +1,5 @@
 import messages from '../../config/messages.json' assert { type: 'json' };
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import { includesPhrase } from '../lib/stringUtils.js';
 
 const loveYous = messages.loveYous,
@@ -14,13 +14,13 @@ loveYouReplies.push(...kissMeReplies);
 export function execute(msg, filteredMsg) {
     for (let i = 0, n = loveYous.length; i < n; i++) {
         if (includesPhrase(filteredMsg, loveYous[i], false)) {
-            return loveYouReplies[randomMath(loveYouReplies.length)];
+            return loveYouReplies[randomInteger(loveYouReplies.length)];
         }
     }
 
     for (let i = 0, n = kissMes.length; i < n; i++) {
         if (includesPhrase(filteredMsg, kissMes[i], false)) {
-            return kissMeReplies[randomMath(kissMeReplies.length)];
+            return kissMeReplies[randomInteger(kissMeReplies.length)];
         }
     }
 

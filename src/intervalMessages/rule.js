@@ -3,7 +3,7 @@ import config from '../../config/config.json' assert { type: 'json' };
 import { setDailyInterval } from 'daily-intervals';
 import { createImgResult } from '../lib/msgUtils.js';
 import { getChannel } from '../lib/discordUtils.js';
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
 
 const ruleConfig = config.rule,
@@ -17,7 +17,7 @@ export async function execute(client) {
 
     setDailyInterval(
         async () => {
-            const randIndex = randomMath(ruleConfig.intervalTags.length);
+            const randIndex = randomInteger(ruleConfig.intervalTags.length);
             const selection = ruleConfig.intervalTags[randIndex];
             const tagArr = [selection, ...filter];
 

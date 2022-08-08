@@ -1,5 +1,5 @@
 import config from '../../config/config.json' assert { type: 'json' };
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
@@ -142,7 +142,7 @@ export async function getDefinition(term) {
         results = defs.length;
 
         if (results) {
-            definition = defs[randomMath(results)];
+            definition = defs[randomInteger(results)];
         }
     });
 

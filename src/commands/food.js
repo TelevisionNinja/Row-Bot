@@ -1,4 +1,4 @@
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import config from '../../config/config.json' assert { type: 'json' };
 import { ApplicationCommandOptionType } from 'discord.js';
 
@@ -37,7 +37,7 @@ export default {
         let message = '';
 
         if (len) {
-            const result = placeArr[randomMath(len)].name;
+            const result = placeArr[randomInteger(len)].name;
             message = `Your random restaurant is ${result}`;
         }
         else {
@@ -59,7 +59,7 @@ export default {
         let message = '';
 
         if (len) {
-            const result = placeArr[randomMath(len)].name;
+            const result = placeArr[randomInteger(len)].name;
             message = `Your random restaurant is ${result}`;
         }
         else {

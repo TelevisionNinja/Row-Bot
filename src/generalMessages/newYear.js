@@ -1,5 +1,5 @@
 import messages from '../../config/messages.json' assert { type: 'json' };
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 
 const newYear = messages.newYear,
     newYearsEve = messages.newYearsEve,
@@ -23,7 +23,7 @@ export function execute(msg, filteredMsg) {
     //------------------------
 
     if (newYearsEveSet.has(filteredMsg)) {
-        return newYearsEve[randomMath(newYearsEve.length)];
+        return newYearsEve[randomInteger(newYearsEve.length)];
     }
 
     return '';

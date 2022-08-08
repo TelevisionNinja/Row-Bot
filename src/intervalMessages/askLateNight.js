@@ -1,6 +1,6 @@
 import config from '../../config/config.json' assert { type: 'json' };
 import messages from '../../config/messages.json' assert { type: 'json' };
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import { setDailyInterval } from 'daily-intervals';
 import {
     sendDirectDm,
@@ -89,7 +89,7 @@ async function ask(channel, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, 
                 reply = allConfirmsMsg;
             }
             else {
-                reply = acknowledgements[randomMath(acknowledgements.length)];
+                reply = acknowledgements[randomInteger(acknowledgements.length)];
             }
 
             memberObj.user.decision = confirmed;

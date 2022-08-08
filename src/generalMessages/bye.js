@@ -1,5 +1,5 @@
 import messages from '../../config/messages.json' assert { type: 'json' };
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 
 const farewells = messages.farewells;
 
@@ -8,7 +8,7 @@ const farewellsSet = new Set(farewells.map(f => f.toLowerCase()));
 // say goodbye
 export function execute(msg, filteredMsg) {
     if (farewellsSet.has(filteredMsg)) {
-        return farewells[randomMath(farewells.length)];
+        return farewells[randomInteger(farewells.length)];
     }
 
     return '';

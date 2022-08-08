@@ -1,5 +1,5 @@
 import config from '../../config/config.json' assert { type: 'json' };
-import { randomMath } from './randomFunctions.js';
+import { randomInteger } from './randomFunctions.js';
 import { backOff } from './urlUtils.js';
 import PQueue from 'p-queue';
 
@@ -12,7 +12,7 @@ const memes = config.memes;
 
 // posts a daily meme
 export async function getMeme() {
-    const URL = `${memes.URLs[randomMath(memes.URLs.length)]}${memes.queryString}${memes.postCount}`;
+    const URL = `${memes.URLs[randomInteger(memes.URLs.length)]}${memes.queryString}${memes.postCount}`;
     let memeURL = '';
 
     await queue.add(async () => {
@@ -24,7 +24,7 @@ export async function getMeme() {
 
         try {
             const postArr = (await response.json()).data.children;
-            const post = postArr[randomMath(memes.postCount)];
+            const post = postArr[randomInteger(memes.postCount)];
 
             memeURL = post.data.url;
         }

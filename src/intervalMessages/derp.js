@@ -3,7 +3,7 @@ import config from '../../config/config.json' assert { type: 'json' };
 import { setDailyInterval } from 'daily-intervals';
 import { createImgResult } from '../lib/msgUtils.js';
 import { getChannel } from '../lib/discordUtils.js';
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
 
 const derpConfig = config.derp,
@@ -17,7 +17,7 @@ export async function execute(client) {
 
     setDailyInterval(
         async () => {
-            const randIndex = randomMath(derpConfig.intervalTags.length);
+            const randIndex = randomInteger(derpConfig.intervalTags.length);
             const selection = derpConfig.intervalTags[randIndex];
             const tagArr = [selection, 'safe', 'solo', 'score.gte:25', ...filter];
             const img = await getImage(tagArr);
@@ -41,7 +41,7 @@ export async function execute(client) {
 
     setDailyInterval(
         async () => {
-            const randIndex = randomMath(derpConfig.intervalWaitTags.length);
+            const randIndex = randomInteger(derpConfig.intervalWaitTags.length);
             const selection = derpConfig.intervalWaitTags[randIndex];
             const tagArr = [selection, 'score.gte:450', ...filter];
             const img = await getImage(tagArr);

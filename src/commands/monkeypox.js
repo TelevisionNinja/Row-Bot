@@ -3,7 +3,7 @@ import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { ApplicationCommandOptionType } from 'discord.js';
 import { parse } from 'csv-parse/sync';
-import { randomMath } from '../lib/randomFunctions.js';
+import { randomInteger } from '../lib/randomFunctions.js';
 
 const commandConfig = config.monkeypox,
     noResultsMsg = config.noResultsMsg;
@@ -248,7 +248,7 @@ export async function getRandomSymptoms(cases = null) {
         cases = await getIndividualData();
     }
 
-    const symptoms = cases[randomMath(cases.length)]['Symptoms'];
+    const symptoms = cases[randomInteger(cases.length)]['Symptoms'];
 
     if (symptoms.length === 0) {
         return getRandomSymptoms(cases);
