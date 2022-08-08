@@ -81,7 +81,7 @@ export function containsURL(str) {
     return containsURLRegex.test(str);
 }
 
-const extractAmpUrlsRegex = new RegExp(/\bhttps?:\/\/([a-z0-9]{1,}\.){0,}((amp\.([a-z0-9]{1,}\.){0,}([a-z0-9]{1,}\.)([a-z0-9]{2,})((\/\S{0,})|\b))|(([a-z0-9]{1,}\.)([a-z0-9]{2,})\/([a-z0-9]{0,}[^a-z0-9\s]){0,}amp(([^a-z0-9\s]\S{1,})|\b)))/ig);
+const extractAmpUrlsRegex = new RegExp(/\bhttps?:\/\/([a-z0-9]{1,}\.){0,}(([a-z0-9]{0,}amp[a-z0-9]{0,}\.([a-z0-9]{1,}\.){0,}[a-z0-9]{1,}\.[a-z0-9]{2,}(\/\S{0,})?)|([a-z0-9]{1,}\.[a-z0-9]{2,}\/\S{0,}amp\S{0,}))\b/ig);
 
 /**
  * 
