@@ -17,7 +17,8 @@ import { deleteWebhook } from './lib/discordUtils.js';
 import { randomMath } from './lib/randomFunctions.js';
 import { getChatBotReply } from './lib/chatBot.js';
 import { default as audioUtils } from './lib/audioUtils.js';
-import { extractAndConvertAmpLinks } from './lib/urlUtils.js';
+import { extractAmpUrls } from './lib/urlUtils.js';
+import { getCanonicals } from './lib/amputatorbot.js';
 import {
     getTtsUrl,
     getTtsStream
@@ -285,7 +286,7 @@ client.on('messageCreate', async msg => {
         return;
     }
 
-    const links = await extractAndConvertAmpLinks(msg.content);
+    const links = await getCanonicals([...extractAmpUrls(msg.content).values()]);
 
     if (links.length) {
         msg.reply({
