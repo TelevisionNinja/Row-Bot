@@ -34,10 +34,10 @@ export default {
     cooldown: 0,
     execute(msg, args) {
         let min = 0;
-        const max = parseInt(args[0]);
+        const max = parseInt(args[0], 10);
 
         if (args.length > 1) {
-            min = parseInt(args[1]);
+            min = parseInt(args[1], 10);
         }
 
         if (isNaN(min) || isNaN(max)) {
@@ -48,8 +48,8 @@ export default {
         msg.reply(`Your random number is ${randomInteger(min, max + 1)}`);
     },
     executeInteraction(interaction) {
-        let min = interaction.options.getInteger('min');
-        const max = interaction.options.getInteger('max');
+        let min = parseInt(interaction.options.getInteger('min'), 10);
+        const max = parseInt(interaction.options.getInteger('max'), 10);
 
         if (min === null) {
             min = 0;

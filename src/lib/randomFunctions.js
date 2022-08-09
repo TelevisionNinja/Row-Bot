@@ -52,5 +52,10 @@ export function randomCrypto(min = 0, max = 0) {
  * @returns 
  */
 export function randomInteger(min = 0, max = 0) {
-    return randomCrypto(min, max);
+    try {
+        return randomCrypto(min, max);
+    }
+    catch (error) {
+        return randomMath(min, max);
+    }
 }

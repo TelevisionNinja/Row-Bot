@@ -18,7 +18,7 @@ export function backOff(response, queue) {
         let time = 1;
 
         if (typeof retryTime !== 'undefined') {
-            const parsedNum = parseInt(retryTime);
+            const parsedNum = parseInt(retryTime, 10);
 
             if (isNaN(parsedNum)) {
                 time = (new Date(retryTime).getTime() - Date.now()) || 1000;

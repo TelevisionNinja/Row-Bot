@@ -4,13 +4,14 @@ import { ApplicationCommandOptionType } from 'discord.js';
 const prefix = config.prefix,
     help = config.help,
     icon = config.icon,
-    names = config.names;
+    names = config.names,
+    color = parseInt(help.embedColor, 16);
 
 let helpCenter = {
     embeds: [{
         title: `${names[0]}\'s Help Center`,
         thumbnail: { url: icon },
-        color: parseInt(help.embedColor, 16)
+        color: color
     }]
 };
 
@@ -85,7 +86,7 @@ export default {
                 embeds: [{
                     title: `Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
-                    color: parseInt(help.embedColor, 16),
+                    color: color,
                     fields: [
                         {
                             name: 'Aliases',
@@ -148,7 +149,7 @@ export default {
                 embeds: [{
                     title: `Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
-                    color: parseInt(help.embedColor, 16),
+                    color: color,
                     fields: [
                         {
                             name: 'Aliases',

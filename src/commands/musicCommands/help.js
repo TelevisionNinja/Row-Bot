@@ -5,13 +5,14 @@ const prefix = config.prefix,
     help = config.help,
     icon = config.icon,
     names = config.names,
-    music = config.music;
+    music = config.music,
+    color = parseInt(help.embedColor, 16);
 
 let helpCenter = {
     embeds: [{
         title: `${names[0]}\'s Music Help Center`,
         thumbnail: { url: icon },
-        color: parseInt(help.embedColor, 16)
+        color: color
     }]
 };
 
@@ -85,7 +86,7 @@ export default {
                 embeds: [{
                     title: `Music Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
-                    color: parseInt(help.embedColor, 16),
+                    color: color,
                     fields: [
                         {
                             name: 'Aliases',
@@ -144,7 +145,7 @@ export default {
                 embeds: [{
                     title: `Music Command: ${argCommand.names[0]}`,
                     description: argCommand.description,
-                    color: parseInt(help.embedColor, 16),
+                    color: color,
                     fields: [
                         {
                             name: 'Aliases',

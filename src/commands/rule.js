@@ -81,7 +81,7 @@ async function getImageRule0Formatted(tagArr) {
         let parsedXML = parse(await response.text());
 
         // 'count' is # of images for the provided tags
-        let count = parseInt(parsedXML[1].attributes.count);
+        let count = parseInt(parsedXML[1].attributes.count, 10);
 
         if (count) {
             imgObj.results = count;
@@ -152,7 +152,7 @@ async function getImageRule1Formatted(tagArr) {
         let parsedXML = parse(await response.text());
 
         // 'count' is # of images for the provided tags
-        const count = parseInt(parsedXML[0].attributes.count);
+        const count = parseInt(parsedXML[0].attributes.count, 10);
 
         if (count) {
             // the site has a max of 100 posts per request

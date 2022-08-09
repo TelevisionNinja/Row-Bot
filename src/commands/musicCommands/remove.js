@@ -25,7 +25,7 @@ export default {
     vcMemberOnly: true,
     usage: '<index>',
     execute(msg, args) {
-        const index = parseInt(args[0]);
+        const index = parseInt(args[0], 10);
 
         if (isNaN(index)) {
             msg.reply('Please provide a number');
@@ -35,7 +35,7 @@ export default {
         }
     },
     executeInteraction(interaction) {
-        const index = interaction.options.getInteger('index');
+        const index = parseInt(interaction.options.getInteger('index'), 10);
 
         audioPlayer.removeSong(interaction, index);
     }

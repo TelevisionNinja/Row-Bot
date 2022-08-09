@@ -6,7 +6,8 @@ import { parse } from 'csv-parse/sync';
 import { randomInteger } from '../lib/randomFunctions.js';
 
 const commandConfig = config.monkeypox,
-    noResultsMsg = config.noResultsMsg;
+    noResultsMsg = config.noResultsMsg,
+    color = parseInt(commandConfig.embedColor, 16);
 
 const queueCases = new PQueue({
     interval: 1000,
@@ -148,8 +149,8 @@ function processCountryCaseData(data) {
 
     countryName = data.get('Country');
     lastUpdate = data.get('Date');
-    newCases = parseInt(data.get('Cases'));
-    totalCases = parseInt(data.get('Cumulative_cases'));
+    newCases = parseInt(data.get('Cases'), 10);
+    totalCases = parseInt(data.get('Cumulative_cases'), 10);
     source = `Global.health Monkeypox (accessed on ${new Date().toLocaleDateString('en-CA')})`;
 
     return {
@@ -189,7 +190,7 @@ export async function getEmbed(country) {
             title: `${countryName} Cases`,
             description: `Last updated on ${lastUpdate}`,
             footer: { text: source },
-            color: parseInt(commandConfig.embedColor, 16),
+            color: color,
             fields: [
                 {
                     name: 'New Daily Cases',
@@ -212,7 +213,7 @@ export async function getEmbed(country) {
 
     return {
         title: noResultsMsg,
-        color: parseInt(commandConfig.embedColor, 16)
+        color: color
     };
 }
 

@@ -6,7 +6,8 @@ import { numberLengthFormat } from '../lib/stringUtils.js';
 import { parse } from 'csv-parse/sync';
 
 const covid = config.covid,
-    noResultsMsg = config.noResultsMsg;
+    noResultsMsg = config.noResultsMsg,
+    color = parseInt(covid.embedColor, 16);
 
 const queueTests = new PQueue({
     interval: 1000,
@@ -208,15 +209,15 @@ function processStateTestData(stateData, precision = 2) {
 
     stateName = stateData.get('Province_State');
     lastUpdate = stateData.get('Last_Update').split(' ').join(' at ');
-    confirmed = parseInt(stateData.get('Confirmed'));
-    deaths = parseInt(stateData.get('Deaths'));
-    recovered = parseInt(stateData.get('Recovered'));
-    active = parseInt(stateData.get('Active'));
+    confirmed = parseInt(stateData.get('Confirmed'), 10);
+    deaths = parseInt(stateData.get('Deaths'), 10);
+    recovered = parseInt(stateData.get('Recovered'), 10);
+    active = parseInt(stateData.get('Active'), 10);
 
     // per 100,000 people
     incidenceRate = (parseFloat(stateData.get('Incident_Rate')) / 1000).toFixed(precision);
 
-    totalTestResults = parseInt(stateData.get('Total_Test_Results'));
+    totalTestResults = parseInt(stateData.get('Total_Test_Results'), 10);
     fatalityRatio = parseFloat(stateData.get('Case_Fatality_Ratio')).toFixed(precision);
 
     // per 100,000 people
@@ -311,7 +312,7 @@ export function createTestEmbed(data) {
             title: `${stateName} Cases`,
             description: `Last updated on ${lastUpdate} UTC`,
             footer: { text: source },
-            color: parseInt(covid.embedColor, 16),
+            color: color,
             fields: [
                 {
                     name: 'Confirmed Cases',
@@ -359,7 +360,7 @@ export function createTestEmbed(data) {
 
     return {
         title: noResultsMsg,
-        color: parseInt(covid.embedColor, 16)
+        color: color
     };
 }
 
@@ -419,8 +420,8 @@ function processStateVaccineData(stateData) {
 
     stateName = stateData.get('Province_State');
     lastUpdate = stateData.get('Date');
-    fullyVaccinated = parseInt(stateData.get('People_Fully_Vaccinated'));
-    partiallyVaccinated = parseInt(stateData.get('People_Partially_Vaccinated'));
+    fullyVaccinated = parseInt(stateData.get('People_Fully_Vaccinated'), 10);
+    partiallyVaccinated = parseInt(stateData.get('People_Partially_Vaccinated'), 10);
     totalVaccinated = fullyVaccinated + partiallyVaccinated;
 
     source = 'Data from Johns Hopkins University';
@@ -458,7 +459,7 @@ export function createVaccineEmbed(data) {
             title: `${stateName} Vaccinations`,
             description: `Last updated on ${lastUpdate}`,
             footer: { text: source },
-            color: parseInt(covid.embedColor, 16),
+            color: color,
             fields: [
                 {
                     name: 'Fully Vaccinated',
@@ -481,7 +482,7 @@ export function createVaccineEmbed(data) {
 
     return {
         title: noResultsMsg,
-        color: parseInt(covid.embedColor, 16)
+        color: color
     };
 }
 
@@ -547,7 +548,7 @@ export function extractStatePopulation(state, data) {
         const current = data[i];
 
         if (current[0].toLowerCase().startsWith(state)) {
-            result = parseInt(current[1]);
+            result = parseInt(current[1], 10);
             break;
         }
     }
@@ -653,7 +654,7 @@ export async function getCombinedEmbed(state, precision = 2) {
             title: `${stateName}`,
             description: `Last updated on ${lastUpdate}`,
             footer: { text: `${source} & US Census Bureau`},
-            color: parseInt(covid.embedColor, 16),
+            color: color,
             fields: [
                 {
                     name: 'Confirmed Cases',
@@ -726,6 +727,6 @@ export async function getCombinedEmbed(state, precision = 2) {
 
     return {
         title: noResultsMsg,
-        color: parseInt(covid.embedColor, 16)
+        color: color
     };
 }
