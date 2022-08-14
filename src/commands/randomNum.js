@@ -48,11 +48,15 @@ export default {
         msg.reply(`Your random number is ${randomInteger(min, max + 1)}`);
     },
     executeInteraction(interaction) {
-        let min = parseInt(interaction.options.getInteger('min'), 10);
+        let min = interaction.options.getInteger('min');
         const max = parseInt(interaction.options.getInteger('max'), 10);
 
+        // optional args will be null if they are not included by the user
         if (min === null) {
             min = 0;
+        }
+        else {
+            min = parseInt(min, 10);
         }
 
         interaction.reply(`Your random number is ${randomInteger(min, max + 1)}`);

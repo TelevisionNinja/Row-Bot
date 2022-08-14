@@ -40,7 +40,15 @@ export default {
         }
     },
     executeInteraction(interaction) {
-        const index = parseInt(interaction.options.getInteger('index'), 10);
+        let index = interaction.options.getInteger('index');
+
+        // optional args will be null if they are not included by the user
+        if (index === null) {
+            index = 0;
+        }
+        else {
+            index = parseInt(index, 10);
+        }
 
         audioPlayer.skip(interaction, index);
     }
