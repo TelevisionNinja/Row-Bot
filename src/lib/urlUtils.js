@@ -51,7 +51,7 @@ export function backOff(response, queue) {
  * check for a scheme of 'http' or 'https'
  * check if the top level domain is of 2 or more characters
  */
-const isValidURLRegex = new RegExp(/^https?:\/\/([a-z0-9]{1,}\.){0,}[a-z0-9]{1,}\.[a-z0-9]{2,}(\/\S{0,})?$/i);
+const isValidURLRegex = new RegExp(/^https?:\/\/(([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.){0,}([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.[a-z0-9][a-z0-9-]{0,61}[a-z0-9](\/\S{0,})?$/i);
 
 /**
  * check for a scheme of 'http' or 'https'
@@ -68,7 +68,7 @@ export function isValidURL(str) {
  * check for a scheme of 'http' or 'https'
  * check if the top level domain is of 2 or more characters
  */
-const containsURLRegex = new RegExp(/\bhttps?:\/\/([a-z0-9]{1,}\.){0,}[a-z0-9]{1,}\.[a-z0-9]{2,}(\/\S{0,})?\b/i);
+const containsURLRegex = new RegExp(/\bhttps?:\/\/(([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.){0,}([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.[a-z0-9][a-z0-9-]{0,61}[a-z0-9](\/\S{0,})?\b/i);
 
 /**
  * check for a scheme of 'http' or 'https'
@@ -81,7 +81,7 @@ export function containsURL(str) {
     return containsURLRegex.test(str);
 }
 
-const extractAmpUrlsRegex = new RegExp(/\bhttps?:\/\/([a-z0-9]{1,}\.){0,}(([a-z0-9]{0,}amp[a-z0-9]{0,}\.([a-z0-9]{1,}\.){0,}[a-z0-9]{1,}\.[a-z0-9]{2,}(\/\S{0,})?)|([a-z0-9]{1,}\.[a-z0-9]{2,}\/\S{0,}amp\S{0,}))\b/ig);
+const extractAmpUrlsRegex = new RegExp(/\bhttps?:\/\/(([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.){0,}(((?=([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.)[a-z0-9-]{0,}amp[a-z0-9-]{0,}\.(([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.){0,}([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.[a-z0-9][a-z0-9-]{0,61}[a-z0-9](\/\S{0,})?)|(([a-z0-9][a-z0-9-]{0,61})?[a-z0-9]\.[a-z0-9][a-z0-9-]{0,61}[a-z0-9]\/\S{0,}amp\S{0,}))\b/ig);
 
 /**
  * 
