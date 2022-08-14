@@ -84,7 +84,9 @@ const clientOptions = {
                 type: ActivityType.Playing
             }
         ]
-    }
+    },
+
+    rest: { retries: Infinity }
 };
 let commandMap = new Map();
 let tulpCommandMap = new Map();
