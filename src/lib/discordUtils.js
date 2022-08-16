@@ -8,14 +8,30 @@ import { webhookCache } from './cache.js';
  * @param {*} id channel id
  * @returns 
  */
-export async function getChannel(client, id) {
-    const recipient = client.channels.cache.get(id);
+export function getChannel(client, id) {
+    const channel = client.channels.cache.get(id);
 
-    if (typeof recipient === 'undefined') {
-        return await client.channels.fetch(id);
+    if (typeof channel === 'undefined') {
+        return client.channels.fetch(id);
     }
 
-    return recipient;
+    return channel;
+}
+
+/**
+ * 
+ * @param {*} client 
+ * @param {*} id user id
+ * @returns 
+ */
+export function getMember(client, id) {
+    const member = client.members.cache.get(id);
+
+    if (typeof member === 'undefined') {
+        return client.members.fetch(id);
+    }
+
+    return member;
 }
 
 /**
@@ -25,13 +41,7 @@ export async function getChannel(client, id) {
  * @returns 
  */
 export async function getDMChannel(client, id) {
-    const recipient = client.users.cache.get(id);
-
-    if (typeof recipient === 'undefined') {
-        return (await client.users.fetch(id)).createDM();
-    }
-
-    return recipient.createDM();
+    return (await getMember(client, id)).createDM();
 }
 
 //-------------------------------------------------------
