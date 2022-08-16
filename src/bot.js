@@ -373,7 +373,7 @@ client.on('guildMemberAdd', member => {
 
     const channel = member.guild.systemChannel;
 
-    if (channel === null || !channel.permissionsFor(clientID).has('SEND_MESSAGES')) {
+    if (channel === null || !channel.permissionsFor(clientID).has('SendMessages')) {
         return;
     }
 
