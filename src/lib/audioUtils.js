@@ -26,6 +26,9 @@ const queue = new PQueue({
     intervalCap: 100
 });
 
+const disconnectTimers = new Map();
+const disconnectTimeout = 1000 * 60; // 1 min
+
 setToken({
     soundcloud: {
         client_id: await getFreeClientID()
@@ -33,9 +36,12 @@ setToken({
 });
 
 export default {
+    // these clear the disconnect timer
     queueASong,
-    playStream,
+    playReadableStream,
     playFile,
+
+    // these do not clear the disconnect timer
     playCurrentSong,
     playURL,
 
@@ -51,6 +57,51 @@ export default {
 
     getPlayer,
     deletePlayer
+}
+
+function clearDisconnectTimer(guildID) {
+    const timer = disconnectTimers.get(guildID);
+
+    if (typeof timer !== 'undefined') {
+        clearTimeout(timer);
+        disconnectTimers.delete(guildID);
+    }
+}
+
+/**
+ * deletes the player and queue
+ * 
+ * @param {*} guildID 
+ */
+function deletePlayer(guildID) {
+    players.delete(guildID);
+    audioQueue.deleteQueue(guildID);
+}
+
+/**
+ * makes the bot leave the vc, deletes the guild's audio player, and deletes the guild's queue
+ * 
+ * @param {*} guildID 
+ */
+function leaveVC(guildID) {
+    const connection = getVoiceConnection(guildID);
+
+    if (typeof connection !== 'undefined') {
+        connection.destroy();
+    }
+
+    deletePlayer(guildID);
+    clearDisconnectTimer(guildID);
+}
+
+function setDisconnectTimer(guildID) {
+    const timer = disconnectTimers.get(guildID);
+
+    if (typeof timer !== 'undefined') {
+        clearTimeout(timer);
+    }
+
+    disconnectTimers.set(guildID, setTimeout(() => leaveVC(guildID), disconnectTimeout));
 }
 
 /**
@@ -86,18 +137,28 @@ async function fetchAndPlayURLAudio(msg, url) {
  * @param {*} msg 
  * @param {*} url 
  * @param {*} sendReply send a reply that says the song was queued
- * @returns bool for whether the song is the current song
+ * @param {*} startPlaying start playing music when the first song is queued
+ * @returns bool for whether the song is the current song (the only song in the queue)
  */
-function queueASong(msg, url, sendReply = true) {
+function queueASong(msg, url, sendReply = true, startPlaying = true) {
     const id = msg.guild.id;
-    const queued = audioQueue.getCurrentSong(id).length !== 0;
+    const isCurrent = audioQueue.getCurrentSong(id).length === 0;
     audioQueue.push(id, url);
 
-    if (queued && sendReply) {
-        msg.reply(`Added to the queue:\n${url}`);
+    if (isCurrent) {
+        clearDisconnectTimer(id);
+
+        if (startPlaying) {
+            playCurrentSong(msg);
+        }
+    }
+    else {
+        if (sendReply) {
+            msg.reply(`Added to the queue:\n${url}`);
+        }
     }
 
-    return !queued;
+    return isCurrent;
 }
 
 /**
@@ -125,31 +186,19 @@ async function playURL(msg, url) {
 }
 
 /**
- * create an audio player for a guild
+ * create a vc connection
  * 
- * @param {*} msg discord message obj
- * @param {*} id guild id
+ * @param {*} vcChannelID 
+ * @param {*} guildID 
+ * @param {*} voiceAdapterCreator 
+ * @returns 
  */
-function createPlayer(msg, id) {
-    const player = createAudioPlayer();
-    const connection = getVoiceConnection(id);
-
-    players.set(id, player);
-
-    //--------------------------------------
-
-    player.on('error', async error => {
-        await msg.channel.send(`Music Player ${error.toString()}\n${audioQueue.getCurrentSong(msg.guild.id)}`);
-        nextSong(msg);
+function createVCConnection(vcChannelID, guildID, voiceAdapterCreator) {
+    const connection = joinVoiceChannel({
+        channelId: vcChannelID,
+        guildId: guildID,
+        adapterCreator: voiceAdapterCreator
     });
-
-    player.on('stateChange', (oldState, newState) => {
-        if (newState.status === AudioPlayerStatus.Idle) {
-            nextSong(msg);
-        }
-    });
-
-    //--------------------------------------
 
     connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
         try {
@@ -159,9 +208,55 @@ function createPlayer(msg, id) {
             ]);
         }
         catch (error) {
-            leaveVC(id);
+            leaveVC(guildID);
         }
     });
+
+    return connection;
+}
+
+/**
+ * create an audio player for a guild
+ * 
+ * @param {*} msg discord message obj
+ * @param {*} id guild id
+ */
+async function createPlayer(msg, id) {
+    const player = createAudioPlayer();
+
+    player.on('error', async error => {
+        await msg.channel.send(`Music Player ${error.toString()}\n${audioQueue.getCurrentSong(id)}`);
+        nextSong(msg);
+    });
+
+    player.on('stateChange', (oldState, newState) => {
+        if (newState.status === AudioPlayerStatus.Idle) {
+            nextSong(msg);
+        }
+    });
+
+    players.set(id, player);
+
+    //--------------------------------------
+
+    let connection = getVoiceConnection(id);
+
+    if (typeof connection === 'undefined') {
+        // the reply to the user's command is 'msg'
+        // meaning the bot has no way of getting the voice channel id bc it left the vc
+        // thus the user's command message/interaction needs to be fetched
+        // to get the voice channel id
+        let member = undefined;
+
+        if (msg.interaction) {
+            member = await msg.guild.members.fetch(msg.interaction.user.id);
+        }
+        else {
+            member = (await msg.fetchReference()).member;
+        }
+
+        connection = createVCConnection(member.voice.channel.id, id, msg.guild.voiceAdapterCreator);
+    }
 
     connection.subscribe(player);
 
@@ -220,13 +315,25 @@ async function probeAndCreateResource(readableStream) {
  * @param {*} title optional title
  */
 async function playStream(msg, stream, title = '') {
-    const player = getPlayer(msg);
+    const player = await getPlayer(msg);
 
     player.play(await probeAndCreateResource(stream));
 
     if (title.length) {
         msg.channel.send(`Now playing:\n${title}`);
     }
+}
+
+/**
+ * play a readable stream
+ * 
+ * @param {*} msg 
+ * @param {*} stream readable stream
+ * @param {*} title optional title
+ */
+function playReadableStream(msg, stream, title = '') {
+    clearDisconnectTimer(msg.guild.id);
+    playStream(msg, stream, title);
 }
 
 /**
@@ -237,6 +344,7 @@ async function playStream(msg, stream, title = '') {
  * @param {*} title optional title
  */
 function playFile(msg, file, title = '') {
+    clearDisconnectTimer(msg.guild.id);
     playStream(msg, createReadStream(resolve(file)), title);
 }
 
@@ -300,6 +408,7 @@ async function skip(msg, index = 0) {
             else {
                 msg.reply('No songs left to skip');
                 deletePlayer(guildID);
+                setDisconnectTimer(guildID);
             }
         }
     }
@@ -315,7 +424,7 @@ async function skip(msg, index = 0) {
         }
         else {
             await msg.reply('Song skipped');
-            // the event listener will call nextSong(). this is done so that the audio will stop playing immediately
+            // the event listener will call nextSong(). player.stop() is called so that the audio will stop playing immediately
             player.stop();
         }
     }
@@ -347,7 +456,9 @@ function nextSong(msg) {
     }
     else {
         // leaveVC(guildID); // leaves the vc if there is nothing left to play
+
         deletePlayer(guildID); // stays in the vc when there is nothing left to play
+        setDisconnectTimer(guildID); // automatically disconnects from the vc after a certain amount of time
     }
 }
 
@@ -404,37 +515,8 @@ function joinVC(msg) {
         }
     }
     else {
-        joinVoiceChannel({
-            channelId: msg.member.voice.channel.id,
-            guildId: msg.guild.id,
-            adapterCreator: msg.guild.voiceAdapterCreator
-        });
+        createVCConnection(msg.member.voice.channel.id, msg.guild.id, msg.guild.voiceAdapterCreator);
     }
 
     return true;
-}
-
-/**
- * deletes the player and queue
- * 
- * @param {*} guildID 
- */
-function deletePlayer(guildID) {
-    players.delete(guildID);
-    audioQueue.deleteQueue(guildID);
-}
-
-/**
- * makes the bot leave the vc, deletes the guild's audio player, and deletes the guild's queue
- * 
- * @param {*} guildID 
- */
-function leaveVC(guildID) {
-    const connection = getVoiceConnection(guildID);
-
-    if (typeof connection !== 'undefined') {
-        connection.destroy();
-    }
-
-    deletePlayer(guildID);
 }

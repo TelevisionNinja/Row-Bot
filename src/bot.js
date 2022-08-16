@@ -237,7 +237,7 @@ client.on('messageCreate', async msg => {
                     audioUtils.playFile(msg, audio[randomInteger(audio.length)]);
                 }
                 else {
-                    audioUtils.playStream(msg, stream);
+                    audioUtils.playReadableStream(msg, stream);
                 }
 
                 return;

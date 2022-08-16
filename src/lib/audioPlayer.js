@@ -62,7 +62,6 @@ export default {
 
             if (isCurrentSong) {
                 msg.reply('Fetching song...');
-                audioUtils.playCurrentSong(msg);
             }
         }
         else {
@@ -82,16 +81,10 @@ export default {
                 case 'list':
                     const playlist = await queue.add(() => ytSearch({ listId: searchResult.listId }));
                     playlist.videos.forEach(video => audioUtils.queueASong(reply, `https://youtu.be/${video.videoId}`, false));
-                    audioUtils.playCurrentSong(reply);
                     break;
                 case 'video':
                     const songURL = searchResult.url;
-                    const isCurrentSong = audioUtils.queueASong(reply, songURL);
-
-                    if (isCurrentSong) {
-                        audioUtils.playCurrentSong(reply);
-                    }
-
+                    audioUtils.queueASong(reply, songURL);
                     break;
                 default:
                     reply.reply('No results');
