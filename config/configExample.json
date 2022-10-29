@@ -80,11 +80,7 @@
         "description" : "Returns a state's current covid information",
         "dataURL" : "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports_us/",
         "embedColor" : "ee3333",
-        "vaccineURL": "https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/us_data/hourly/vaccine_people_vaccinated_US.csv",
-
-        "intervalChannel" : "",
-        "intervalState" : "",
-        "intervalTime" : "12:00"
+        "vaccineURL": "https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/us_data/hourly/vaccine_people_vaccinated_US.csv"
     },
 
     "derp" : {
@@ -174,11 +170,7 @@
             "monkeypox"
         ],
         "description" : "Returns a country's current monkeypox information",
-        "embedColor" : "2244ee",
-
-        "intervalChannel" : "",
-        "intervalCountry" : "",
-        "intervalTime" : "12:00"
+        "embedColor" : "2244ee"
     },
 
     "memes" : {

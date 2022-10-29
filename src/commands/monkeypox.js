@@ -63,7 +63,7 @@ function parseCSV(csv) {
  * @param {*} countryNameField 
  * @returns 
  */
-function getCountryData(country, parsedCSV, countryNameField = 'Country') {
+function getCountryData(country, parsedCSV, countryNameField = 'COUNTRY') {
     country = country.toLowerCase();
     const columnNames = parsedCSV[0];
     let countryNameIndex = 0;
@@ -108,7 +108,7 @@ export async function getCaseData() {
     let results = '';
 
     await queueCases.add(async () => {
-        const response = await fetch('https://raw.githubusercontent.com/globaldothealth/monkeypox/main/timeseries-country-confirmed.csv');
+        const response = await fetch('https://raw.githubusercontent.com/globaldothealth/monkeypox/main/who_latest.csv');
 
         if (backOff(response, queueCases)) {
             return;
@@ -128,7 +128,7 @@ export async function getCaseData() {
 function processCountryCaseData(data) {
     let countryName = '';
     let lastUpdate = '';
-    let newCases = 0;
+    let deaths = 0;
     let totalCases = 0;
     let source = '';
     let countryFound = false;
@@ -141,23 +141,23 @@ function processCountryCaseData(data) {
             countryFound,
             countryName,
             lastUpdate,
-            newCases,
+            deaths,
             totalCases,
             source
         };
     }
 
-    countryName = data.get('Country');
-    lastUpdate = data.get('Date');
-    newCases = parseInt(data.get('Cases'), 10);
-    totalCases = parseInt(data.get('Cumulative_cases'), 10);
+    countryName = data.get('COUNTRY');
+    lastUpdate = data.get('LASTREPDATE');
+    deaths = parseInt(data.get('DeathsAll'), 10);
+    totalCases = parseInt(data.get('CasesAll'), 10);
     source = `Global.health Monkeypox (accessed on ${new Date().toLocaleDateString('en-CA')})`;
 
     return {
         countryFound,
         countryName,
         lastUpdate,
-        newCases,
+        deaths,
         totalCases,
         source
     };
@@ -180,7 +180,7 @@ export async function getEmbed(country) {
         countryFound,
         countryName,
         lastUpdate,
-        newCases,
+        deaths,
         totalCases,
         source
     } = processCountryCaseData(getCountryData(country, parseCSV(caseData)));
@@ -193,13 +193,13 @@ export async function getEmbed(country) {
             color: color,
             fields: [
                 {
-                    name: 'New Daily Cases',
-                    value: `${newCases}`,
+                    name: 'Total Cases',
+                    value: `${totalCases}`,
                     inline: true
                 },
                 {
-                    name: 'Total Cases',
-                    value: `${totalCases}`,
+                    name: 'Total Deaths',
+                    value: `${deaths}`,
                     inline: true
                 },
                 {
@@ -227,13 +227,13 @@ export async function getIndividualData() {
     let results = '';
 
     await queueCases.add(async () => {
-        const response = await fetch('https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest.json');
+        const response = await fetch('https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv');
 
         if (backOff(response, queueCases)) {
             return;
         }
 
-        results = await response.json();
+        results = await response.text();
     });
 
     return results;
@@ -244,15 +244,27 @@ export async function getIndividualData() {
  * @param {*} cases 
  * @returns 
  */
-export async function getRandomSymptoms(cases = null) {
+export async function getRandomSymptoms(cases = null, index = 0) {
     if (cases === null) {
-        cases = await getIndividualData();
+        cases = parseCSV(await getIndividualData());
+
+        // find index of 'Symptoms' field
+        const columnNames = cases[0];
+
+        for (let i = 0, n = columnNames.length; i < n; i++) {
+            const name = columnNames[i];
+
+            if (name === 'Symptoms') {
+                index = i;
+                break;
+            }
+        }
     }
 
-    const symptoms = cases[randomInteger(cases.length)]['Symptoms'];
+    const symptoms = cases[randomInteger(1, cases.length)][index];
 
     if (symptoms.length === 0) {
-        return getRandomSymptoms(cases);
+        return getRandomSymptoms(cases, index);
     }
 
     return symptoms;

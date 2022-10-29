@@ -298,8 +298,8 @@ export function createTestEmbed(data) {
         lastUpdate,
         confirmed,
         deaths,
-        // recovered,
-        // active,
+        recovered,
+        active,
         incidenceRate,
         totalTestResults,
         fatalityRatio,
@@ -324,16 +324,16 @@ export function createTestEmbed(data) {
                     value: `${deaths}`,
                     inline: true
                 },
-                // {
-                //     name: 'Recoveries',
-                //     value: recovered,
-                //     inline: true
-                // },
-                // {
-                //     name: 'Active Cases',
-                //     value: active,
-                //     inline: true
-                // },
+                {
+                    name: 'Recoveries',
+                    value: `${recovered}`,
+                    inline: true
+                },
+                {
+                    name: 'Active Cases',
+                    value: `${active}`,
+                    inline: true
+                },
                 {
                     name: 'Incidence Rate',
                     value: `${incidenceRate}%`,
@@ -631,8 +631,8 @@ export async function getCombinedEmbed(state, precision = 2) {
         stateFound,
         confirmed,
         deaths,
-        // recovered,
-        // active,
+        recovered,
+        active,
         incidenceRate,
         totalTestResults,
         fatalityRatio,
@@ -666,16 +666,16 @@ export async function getCombinedEmbed(state, precision = 2) {
                     value: `${deaths}`,
                     inline: true
                 },
-                // {
-                //     name: 'Recoveries',
-                //     value: recovered,
-                //     inline: true
-                // },
-                // {
-                //     name: 'Active Cases',
-                //     value: active,
-                //     inline: true
-                // },
+                {
+                    name: 'Recoveries',
+                    value: `${recovered}`,
+                    inline: true
+                },
+                {
+                    name: 'Active Cases',
+                    value: `${active}`,
+                    inline: true
+                },
                 {
                     name: 'Incidence Rate',
                     value: `${incidenceRate}%`,
