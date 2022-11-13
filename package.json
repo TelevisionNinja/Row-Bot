@@ -20,9 +20,9 @@
   "homepage": "https://github.com/TelevisionNinja/Row-Bot#readme",
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
-    "@discordjs/voice": "^0.13.0",
+    "@discordjs/voice": "^0.14.0-dev.1668298253-ff85481.0",
     "bufferutil": "^4.0.7",
-    "csv-parse": "^5.3.1",
+    "csv-parse": "^5.3.2",
     "daily-intervals": "^3.0.7",
     "discord.js": "^14.6.0",
     "entities": "^4.4.0",
