@@ -4,6 +4,10 @@ import { ApplicationCommandOptionType } from 'discord.js';
 
 const food = config.food;
 
+for (let i = 0; i < food.places.length; i++) {
+    food.places[i].types = new Set(food.places[i].types.map(type => type.toLowerCase()));
+}
+
 export default {
     interactionData: {
         name: food.names[0],
@@ -30,7 +34,7 @@ export default {
 
         if (args.length) {
             const foodType = args.join(' ').toLowerCase();
-            placeArr = placeArr.filter(p => p.type.toLowerCase() === foodType);
+            placeArr = placeArr.filter(place => place.types.has(foodType));
         }
 
         const len = placeArr.length;
@@ -52,7 +56,7 @@ export default {
 
         if (foodType) {
             foodType = foodType.toLowerCase();
-            placeArr = placeArr.filter(p => p.type.toLowerCase() === foodType);
+            placeArr = placeArr.filter(place => place.types.has(foodType));
         }
 
         const len = placeArr.length;
