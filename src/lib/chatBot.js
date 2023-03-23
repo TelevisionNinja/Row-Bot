@@ -1,11 +1,15 @@
 import PQueue from 'p-queue';
-import { backOff } from './urlUtils.js';
-import config from '../../config/config.json' assert { type: 'json' };
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
+import { Readable } from 'stream';
 
 const queue = new PQueue({
     interval: 1000,
-    intervalCap: 50
+    intervalCap: 10
 });
+
+const directory = `${dirname(fileURLToPath(import.meta.url))}/ai/`;
 
 /**
  * 
@@ -17,14 +21,27 @@ export async function getChatBotReply(userID, msg) {
     let reply = '';
 
     await queue.add(async () => {
-        const response = await fetch(`${config.chatbotAPI}${userID}&msg=${encodeURIComponent(msg)}`);
-
-        if (backOff(response, queue)) {
-            return;
-        }
-
         try {
-            reply = (await response.json()).cnt;
+            await new Promise((resolve, reject) => {
+                msg = msg.replaceAll('\n', '\\');
+                const stdin = Readable.from([msg]);
+                const chat = spawn(directory + 'chat', [directory]);
+
+                chat.stderr.on('error', error => reject(error));
+                chat.stdout.on('error', error => reject(error));
+                chat.stdin.on('error', error => reject(error));
+                chat.on('error', error => reject(error));
+
+                chat.stdout.on('data', output => {
+                    reply = `${reply}${output.toString()} `;
+                });
+                chat.stdout.on('close', () => {
+                    reply = reply.substring(0, reply.length - 1);
+                    resolve(reply);
+                });
+
+                stdin.pipe(chat.stdin);
+            });
         }
         catch (error) {
             console.log(error);

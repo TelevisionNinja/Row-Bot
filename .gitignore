@@ -4,3 +4,7 @@ node_modules/
 tulpConfig.json
 audioFiles/
 musicConfig.json
+
+*.o
+chat.exe
+ggml-alpaca-7b-q4.bin

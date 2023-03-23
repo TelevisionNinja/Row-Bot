@@ -51,8 +51,6 @@
         "denied" : "❌"
     },
 
-    "chatbotAPI" : "",
-
     "activity" : {
         "names" : [
             "activity",
