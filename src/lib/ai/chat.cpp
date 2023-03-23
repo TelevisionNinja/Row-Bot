@@ -681,6 +681,12 @@ int main(int argc, char ** argv) {
     std::string input = "";
     std::getline(std::cin, input);
 
+    std::string directory = "";
+
+    if (argc > 1) {
+        directory = argv[1];
+    }
+
     ggml_time_init();
     const int64_t t_main_start_us = ggml_time_us();
 
@@ -700,7 +706,7 @@ int main(int argc, char ** argv) {
     // load the model
     {
         const int64_t t_start_us = ggml_time_us();
-        if (!llama_model_load(std::string(argv[1]) +  params.model, model, vocab, params.n_ctx)) {
+        if (!llama_model_load(directory + params.model, model, vocab, params.n_ctx)) {
             // fprintf(stderr, "%s: failed to load model from '%s'\n", __func__, params.model.c_str());
             return 1;
         }
