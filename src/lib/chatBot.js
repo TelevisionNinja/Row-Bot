@@ -5,8 +5,8 @@ import { spawn } from 'child_process';
 import { Readable } from 'stream';
 
 const queue = new PQueue({
-    interval: 1000 * 60 * 5, // raspberry pi 4 takes about a maximum of 10 mins to generate the response using the 7B model
-    intervalCap: 1 // raspberry pi 4 cant handle more than 1 instance
+    timeout: 1000 * 60 * 15, // raspberry pi 4 takes about a maximum of 10 mins to generate the response using the 7B model
+    concurrency: 1 // raspberry pi 4 cant handle more than 1 instance
 });
 
 const directory = `${dirname(fileURLToPath(import.meta.url))}/ai/`;
