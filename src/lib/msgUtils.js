@@ -236,19 +236,18 @@ export async function sendDirectDm(user, msgContent, sendTyping = false, reading
  * @returns a bool for whether the bot was mentioned and the name of the bot if it was used to mention the bot
  */
 export function hasBotMention(msg, everyone = true, users = true, roles = true, name = true, excludeSpecialChars = false) {
+    let mentioned = false;
+    let foundNames = [];
+
     if (msg.mentions.has(clientID, {
             ignoreEveryone: !everyone,
             ignoreDirect: !users
         }) || (roles && [...msg.mentions.roles.values()].some(r => r.members.has(clientID)))) {
-        return {
-            mentioned: true,
-            name: ''
-        };
+        mentioned = true;
     }
 
     if (name) {
-        let content = msg.content,
-            selectedName = '';
+        let content = msg.content;
 
         if (excludeSpecialChars) {
             content = removeAllSpecialChars(content);
@@ -257,22 +256,19 @@ export function hasBotMention(msg, everyone = true, users = true, roles = true, 
         for (let i = 0, n = names.length; i < n; i++) {
             const currentName = names[i];
     
-            if (currentName.length > selectedName.length && includesPhrase(content, currentName, false)) {
-                selectedName = currentName;
+            if (includesPhrase(content, currentName, false)) {
+                foundNames.push(currentName);
             }
         }
 
-        if (selectedName.length) {
-            return {
-                mentioned: true,
-                name: selectedName
-            };
+        if (foundNames.length) {
+            mentioned = true;
         }
     }
 
     return {
-        mentioned: false,
-        name: ''
+        mentioned: mentioned,
+        names: foundNames
     };
 }
 
