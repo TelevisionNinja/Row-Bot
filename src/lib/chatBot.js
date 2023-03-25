@@ -1,7 +1,7 @@
 import PQueue from 'p-queue';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { spawn } from 'child_process';
+import { execFile } from 'child_process';
 import { Readable } from 'stream';
 
 const queue = new PQueue({
@@ -22,22 +22,16 @@ export async function getChatBotReply(userID, msg) {
 
     await queue.add(async () => {
         try {
-            await new Promise((resolve, reject) => {
+            reply = await new Promise((resolve, reject) => {
                 msg = msg.replaceAll('\n', '\\');
                 const stdin = Readable.from([msg]);
-                const chat = spawn(directory + 'chat', [directory]);
+                const chat = execFile(`${directory}chat`, [directory], (error, stdout, stderr) => {
+                    if (error !== null) {
+                        reject(error);
+                        return;
+                    }
 
-                chat.stderr.on('error', error => reject(error));
-                chat.stdout.on('error', error => reject(error));
-                chat.stdin.on('error', error => reject(error));
-                chat.on('error', error => reject(error));
-
-                chat.stdout.on('data', output => {
-                    reply = `${reply}${output.toString()} `;
-                });
-                chat.stdout.on('close', () => {
-                    reply = reply.substring(0, reply.length - 1);
-                    resolve(reply);
+                    resolve(stdout);
                 });
 
                 stdin.pipe(chat.stdin);
