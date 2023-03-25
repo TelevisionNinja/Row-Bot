@@ -21,7 +21,7 @@ const directory = `${dirname(fileURLToPath(import.meta.url))}/ai/`;
  * @returns 
  */
 export async function getChatBotReply(userID, msg) {
-    let reply = '';
+    let reply = 'The prompt timed out or encountered an error';
 
     await queue.add(async () => {
         try {
