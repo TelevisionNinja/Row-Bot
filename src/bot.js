@@ -193,7 +193,9 @@ client.on('messageCreate', async msg => {
     // chat bot
 
     if (hasBotMention(msg, false, true, false, false).mentioned) {
-        const replyStr = await getChatBotReply(msg.author.id, msg.cleanContent);
+        // remove mentions from message
+        const noMentionsMsg = removeMentions(msg.content);
+        const replyStr = await getChatBotReply(msg.author.id, noMentionsMsg);
 
         // reply
         if (replyStr.length) {
@@ -209,12 +211,12 @@ client.on('messageCreate', async msg => {
 
     const {
         mentioned: botMention,
-        name: foundName
+        names: foundNames
     } = hasBotMention(msg);
 
     if (botMention) {
         // remove mentions or name from message
-        const noMentionsMsg = removeAllSpecialChars(removeMentions(msg.content, foundName)).trim().toLowerCase();
+        const noMentionsMsg = removeAllSpecialChars(removeMentions(msg.content, foundNames)).trim().toLowerCase();
 
         //--------------------------------------------------------------------------------
         // voice
