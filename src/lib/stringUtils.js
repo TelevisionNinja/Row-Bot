@@ -87,20 +87,24 @@ export function includesPhrase(str, phrase, caseSensitive = true) {
  * removes mentions, the bot's name, and special characters from the message
  * 
  * @param {*} msgStr message
- * @param {*} botName bot's name
+ * @param {*} botNames bot's names
  * @returns 
  */
-export function removeMentions(msgStr, botName = '') {
+export function removeMentions(msgStr, botNames = []) {
     let noMentions = msgStr.replaceAll(/(<(#|(@(!|&)?))\d{1,}>)|(@((here)|(everyone)))/ig, '');
 
-    if (botName.length) {
-        // used for names that may contain regex chars
-        // const escapedName = `\\b${escapeRegex(botName)}\\b`;
-        // const nameRegex = new RegExp(escapedName, 'ig');
-        // noMentions = noMentions.replaceAll(nameRegex, '');
+    if (botNames.length) {
+        botNames.sort((a, b) => b.length - a.length); // sort by decreasing length to eliminate the largest substrings first
 
-        // used for names that never need to be escaped
-        noMentions = noMentions.replaceAll(new RegExp(`\\b${botName}\\b`, 'ig'), '');
+        for (let i  = 0, n = botNames.length; i < n; i++) {
+            // used for names that may contain regex chars
+            // const escapedName = `\\b${escapeRegex(botName)}\\b`;
+            // const nameRegex = new RegExp(escapedName, 'ig');
+            // noMentions = noMentions.replaceAll(nameRegex, '');
+
+            // used for names that never need to be escaped
+            noMentions = noMentions.replaceAll(new RegExp(`\\b${botNames[i]}\\b`, 'ig'), '');
+        }
     }
 
     return noMentions.trim();
