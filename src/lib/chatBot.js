@@ -4,8 +4,11 @@ import { fileURLToPath } from 'url';
 import { execFile } from 'child_process';
 import { Readable } from 'stream';
 
+const timeout = 1000 * 60 * 15; // raspberry pi 4 takes about a maximum of 10 mins to generate the response using the 7B model
+const maxBufferSize = 2000 * 4; // discord character limit is 2000. utf8 can be a max of 4 bytes
+
 const queue = new PQueue({
-    timeout: 1000 * 60 * 15, // raspberry pi 4 takes about a maximum of 10 mins to generate the response using the 7B model
+    timeout: timeout,
     concurrency: 1 // raspberry pi 4 cant handle more than 1 instance
 });
 
@@ -25,7 +28,11 @@ export async function getChatBotReply(userID, msg) {
             reply = await new Promise((resolve, reject) => {
                 msg = msg.replaceAll('\n', '\\');
                 const stdin = Readable.from([msg]);
-                const chat = execFile(`${directory}chat`, [directory], (error, stdout, stderr) => {
+                const chat = execFile(`${directory}chat`, [directory], {
+                    timeout: timeout,
+                    encoding: 'utf8',
+                    maxBuffer: maxBufferSize
+                }, (error, stdout, stderr) => {
                     if (error !== null) {
                         reject(error);
                         return;
