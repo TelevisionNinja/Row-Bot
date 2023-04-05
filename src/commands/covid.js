@@ -46,14 +46,17 @@ export default {
     usage: `<state>`,
     cooldown: 1,
     async execute(msg, args) {
-        msg.reply({ embeds: await getDataEmbeds(args.join(' ').trimStart()) });
+        // msg.reply({ embeds: await getDataEmbeds(args.join(' ').trimStart()) });
+        msg.reply('This command is disabled');
     },
     async executeInteraction(interaction) {
-        const embeds = getDataEmbeds(interaction.options.getString('state'));
+        // const embeds = getDataEmbeds(interaction.options.getString('state'));
 
-        await interaction.deferReply();
+        // await interaction.deferReply();
 
-        interaction.editReply({ embeds: await embeds });
+        // interaction.editReply({ embeds: await embeds });
+
+        interaction.reply('This command is disabled');
     }
 }
 
