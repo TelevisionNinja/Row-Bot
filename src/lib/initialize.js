@@ -3,7 +3,7 @@ import {
     Partials,
     ActivityType
 } from 'discord.js';
-import { readdirSync } from 'fs';
+import { readdir } from 'fs/promises';
 import config from '../../config/config.json' assert { type: 'json' };
 import { initialize as initializeHelp } from '../commands/help.js';
 import { initialize as initializeTulpHelp } from '../commands/tulpCommands/help.js';
@@ -67,7 +67,6 @@ const clientOptions = {
 
         // priviledged
         GatewayIntentBits.GuildMembers, // late night bois, guild welcome message
-
         GatewayIntentBits.MessageContent // messages
     ],
 
@@ -103,21 +102,35 @@ let audio = [];
 //--------------------------------------------------------------------------------
 // load commands, tulp commands, noncommands, general messages, and interval messages
 
-const commandFiles = readdirSync('./src/commands/').filter(aFile => aFile.endsWith('.js'));
-const tulpCommandFiles = readdirSync('./src/commands/tulpCommands/').filter(aFile => aFile.endsWith('.js'));
-const musicCommandFiles = readdirSync('./src/commands/musicCommands/').filter(aFile => aFile.endsWith('.js'));
-const noncommandFiles = readdirSync('./src/noncommands/').filter(aFile => aFile.endsWith('.js'));
-const genMsgFiles = readdirSync('./src/generalMessages/').filter(aFile => aFile.endsWith('.js'));
-const intervalMsgFiles = readdirSync('./src/intervalMessages/').filter(aFile => aFile.endsWith('.js'));
-const audioFiles = readdirSync('./audioFiles/');
+// read files
 
-commands = commandFiles.map(f => import(`../commands/${f}`));
-tulpCommands = tulpCommandFiles.map(f => import(`../commands/tulpCommands/${f}`));
-musicCommands = musicCommandFiles.map(f => import(`../commands/musicCommands/${f}`));
-noncommands = noncommandFiles.map(f => import(`../noncommands/${f}`));
-genMsg = genMsgFiles.map(f => import(`../generalMessages/${f}`));
-intervalMsgs = intervalMsgFiles.map(f => import(`../intervalMessages/${f}`));
-audio = audioFiles.map(f => `../audioFiles/${f}`);
+const files = await Promise.all([
+    readdir('./src/commands/'),
+    readdir('./src/commands/tulpCommands/'),
+    readdir('./src/commands/musicCommands/'),
+    readdir('./src/noncommands/'),
+    readdir('./src/generalMessages/'),
+    readdir('./src/intervalMessages/'),
+    readdir('./audioFiles/')
+]);
+
+commands = files[0].filter(aFile => aFile.endsWith('.js'));
+tulpCommands = files[1].filter(aFile => aFile.endsWith('.js'));
+musicCommands = files[2].filter(aFile => aFile.endsWith('.js'));
+noncommands = files[3].filter(aFile => aFile.endsWith('.js'));
+genMsg = files[4].filter(aFile => aFile.endsWith('.js'));
+intervalMsgs = files[5].filter(aFile => aFile.endsWith('.js'));
+audio = files[6];
+
+// imports
+
+commands = commands.map(f => import(`../commands/${f}`));
+tulpCommands = tulpCommands.map(f => import(`../commands/tulpCommands/${f}`));
+musicCommands = musicCommands.map(f => import(`../commands/musicCommands/${f}`));
+noncommands = noncommands.map(f => import(`../noncommands/${f}`));
+genMsg = genMsg.map(f => import(`../generalMessages/${f}`));
+intervalMsgs = intervalMsgs.map(f => import(`../intervalMessages/${f}`));
+audio = audio.map(f => `../audioFiles/${f}`);
 
 const loadedModules = await Promise.all([
     Promise.all(commands),
@@ -127,6 +140,8 @@ const loadedModules = await Promise.all([
     Promise.all(genMsg),
     Promise.all(intervalMsgs)
 ]);
+
+// map names
 
 commands = loadedModules[0].map(i => i.default);
 tulpCommands = loadedModules[1].map(i => i.default);
