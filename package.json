@@ -24,7 +24,7 @@
     "bufferutil": "^4.0.7",
     "csv-parse": "^5.3.10",
     "daily-intervals": "^3.0.7",
-    "discord.js": "^14.10.2",
+    "discord.js": "^14.11.0",
     "entities": "^4.5.0",
     "erlpack": "github:discord/erlpack",
     "ffmpeg-static": "^5.1.0",
