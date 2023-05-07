@@ -36,14 +36,17 @@ export default {
     usage: `<country>`,
     cooldown: 1,
     async execute(msg, args) {
-        msg.reply({ embeds: [await getEmbed(args.join(' ').trimStart())] });
+        // msg.reply({ embeds: [await getEmbed(args.join(' ').trimStart())] });
+        msg.reply('This command is disabled');
     },
     async executeInteraction(interaction) {
-        const embeds = getEmbed(interaction.options.getString('country'));
+        // const embeds = getEmbed(interaction.options.getString('country'));
 
-        await interaction.deferReply();
+        // await interaction.deferReply();
 
-        interaction.editReply({ embeds: [await embeds] });
+        // interaction.editReply({ embeds: [await embeds] });
+
+        interaction.reply('This command is disabled');
     }
 }
 
