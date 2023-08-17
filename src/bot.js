@@ -49,7 +49,7 @@ import {
     reactionRoles,
 
     initializeIntervals,
-    loadSlashCommands
+    // loadSlashCommands
 } from './lib/initialize.js';
 
 //--------------------------------------------------------------------------------
@@ -71,14 +71,7 @@ client.on('ready', client => {
     console.log(`Ready Client: ${client.readyAt.toString()}`);
 
     // slash commands
-    const ids = client.shard.ids;
-
-    for (let i = 0, n = ids.length; i < n; i++) {
-        if (ids[i] === 0) {
-            // loadSlashCommands();
-            break;
-        }
-    }
+    // loadSlashCommands();
 });
 
 client.on('shardReady', shardId => console.log(`Ready Shard ${shardId}: ${new Date().toString()}`));
@@ -351,7 +344,8 @@ client.on('shardResume', shardId => {
     // set activity again because the status will be blank
     client.user.setActivity({
         name: activityStatus,
-        type: ActivityType.Playing,
+        type: ActivityType.Custom,
+        state: activityStatus,
         shardId: shardId
     });
 

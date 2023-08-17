@@ -80,7 +80,8 @@ const clientOptions = {
         activities: [
             {
                 name: activityStatus,
-                type: ActivityType.Playing
+                type: ActivityType.Custom,
+                state: activityStatus
             }
         ]
     },
