@@ -11,26 +11,27 @@ const derpConfig = config.derp,
 
 const filter = derpConfig.filterTags.map(t => `-${t}`);
 
+async function retryUntilResult() {
+    const randIndex = randomInteger(derpConfig.intervalTags.length);
+    const selection = derpConfig.intervalTags[randIndex];
+    const tagArr = [selection, 'safe', 'solo', 'score.gte:500', ...filter];
+    const img = await getImage(tagArr);
+
+    if (img.results) {
+        img.title = `${derpConfig.intervalMsg}${selection}`;
+
+        return createImgResult(img, false);
+    }
+
+    return retryUntilResult();
+}
+
 // posts a daily derp image
 export async function execute(client) {
     const recipientDaily = await getChannel(client, derpConfig.intervalChannelID);
 
     setDailyInterval(
-        async () => {
-            const randIndex = randomInteger(derpConfig.intervalTags.length);
-            const selection = derpConfig.intervalTags[randIndex];
-            const tagArr = [selection, 'safe', 'solo', 'score.gte:25', ...filter];
-            const img = await getImage(tagArr);
-
-            img.title = `${derpConfig.intervalMsg}${selection}`;
-
-            if (img.results) {
-                recipientDaily.send(createImgResult(img, false));
-            }
-            else {
-                recipientDaily.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``));
-            }
-        },
+        async () => recipientDaily.send(await retryUntilResult()),
         1440, // 24 hrs in minutes
         derpConfig.intervalTime
     );
@@ -43,7 +44,7 @@ export async function execute(client) {
         async () => {
             const randIndex = randomInteger(derpConfig.intervalWaitTags.length);
             const selection = derpConfig.intervalWaitTags[randIndex];
-            const tagArr = [selection, 'score.gte:450', ...filter];
+            const tagArr = [selection, 'score.gte:500', ...filter];
             const img = await getImage(tagArr);
 
             if (img.results) {
