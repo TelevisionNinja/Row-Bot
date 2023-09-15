@@ -13,6 +13,7 @@ export function backOff(response, queue) {
 
     if ((errorCode >= 400 || errorCodes.has(errorCode)) && !queue.isPaused) {
         queue.pause();
+        backedOff = true;
 
         const retryTime = response.headers.get('retry-after');
         let time = 1;
@@ -30,16 +31,10 @@ export function backOff(response, queue) {
             if (time <= 0) {
                 time = 1;
             }
-            else {
-                backedOff = true;
-            }
         }
 
         setTimeout(() => {
-            if (backedOff) {
-                queue.clear();
-            }
-
+            queue.clear();
             queue.start();
         }, time);
     }
