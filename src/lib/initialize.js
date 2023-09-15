@@ -131,7 +131,7 @@ musicCommands = musicCommands.map(f => import(`../commands/musicCommands/${f}`))
 noncommands = noncommands.map(f => import(`../noncommands/${f}`));
 genMsg = genMsg.map(f => import(`../generalMessages/${f}`));
 intervalMsgs = intervalMsgs.map(f => import(`../intervalMessages/${f}`));
-audio = audio.map(f => `../audioFiles/${f}`);
+audio = audio.map(f => `./audioFiles/${f}`);
 
 const loadedModules = await Promise.all([
     Promise.all(commands),
