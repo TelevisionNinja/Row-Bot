@@ -15,6 +15,7 @@ import {
     loadGlobalSlashCommands
 } from './slashCommandUtils.js';
 import { pathToFileURL } from 'url';
+import path from 'path';
 
 export {
     prefix,
@@ -105,13 +106,13 @@ let audio = [];
 // load commands, tulp commands, noncommands, general messages, and interval messages
 
 // read files
-const commandsDirectory = pathToFileURL('./src/commands/');
-const tulpCommandsDirectory = pathToFileURL('./src/commands/tulpCommands/');
-const musicCommandsDirectory = pathToFileURL('./src/commands/musicCommands/');
-const noncommandsDirectory = pathToFileURL('./src/noncommands/');
-const genMsgDirectory = pathToFileURL('./src/generalMessages/');
-const intervalMsgsDirectory = pathToFileURL('./src/intervalMessages/');
-const audioFilesDirectory = pathToFileURL('./audioFiles/');
+let commandsDirectory = path.resolve('./src/commands/');
+let tulpCommandsDirectory = path.resolve('./src/commands/tulpCommands/');
+let musicCommandsDirectory = path.resolve('./src/commands/musicCommands/');
+let noncommandsDirectory = path.resolve('./src/noncommands/');
+let genMsgDirectory = path.resolve('./src/generalMessages/');
+let intervalMsgsDirectory = path.resolve('./src/intervalMessages/');
+let audioFilesDirectory = path.resolve('./audioFiles/');
 
 const files = await Promise.all([
     readdir(commandsDirectory, {
@@ -147,13 +148,20 @@ audio = files[6];
 
 // imports
 
-commands = commands.map(f => import(`${commandsDirectory}${f}`));
-tulpCommands = tulpCommands.map(f => import(`${tulpCommandsDirectory}${f}`));
-musicCommands = musicCommands.map(f => import(`${musicCommandsDirectory}${f}`));
-noncommands = noncommands.map(f => import(`${noncommandsDirectory}${f}`));
-genMsg = genMsg.map(f => import(`${genMsgDirectory}${f}`));
-intervalMsgs = intervalMsgs.map(f => import(`${intervalMsgsDirectory}${f}`));
-audio = audio.map(f => `${audioFilesDirectory}${f}`);
+commandsDirectory = pathToFileURL(commandsDirectory).toString();
+tulpCommandsDirectory = pathToFileURL(tulpCommandsDirectory).toString();
+musicCommandsDirectory = pathToFileURL(musicCommandsDirectory).toString();
+noncommandsDirectory = pathToFileURL(noncommandsDirectory).toString();
+genMsgDirectory = pathToFileURL(genMsgDirectory).toString();
+intervalMsgsDirectory = pathToFileURL(intervalMsgsDirectory).toString();
+
+commands = commands.map(f => import(path.join(commandsDirectory, f)));
+tulpCommands = tulpCommands.map(f => import(path.join(tulpCommandsDirectory, f)));
+musicCommands = musicCommands.map(f => import(path.join(musicCommandsDirectory, f)));
+noncommands = noncommands.map(f => import(path.join(noncommandsDirectory, f)));
+genMsg = genMsg.map(f => import(path.join(genMsgDirectory, f)));
+intervalMsgs = intervalMsgs.map(f => import(path.join(intervalMsgsDirectory, f)));
+audio = audio.map(f => path.join(audioFilesDirectory, f));
 
 const loadedModules = await Promise.all([
     Promise.all(commands),
