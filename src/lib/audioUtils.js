@@ -10,7 +10,7 @@ import {
     demuxProbe
 } from '@discordjs/voice';
 import { createReadStream } from 'fs';
-import { resolve } from 'path';
+import path from 'path';
 import {
     stream,
     video_basic_info,
@@ -345,7 +345,7 @@ function playReadableStream(msg, stream, title = '') {
  */
 function playFile(msg, file, title = '') {
     clearDisconnectTimer(msg.guild.id);
-    playStream(msg, createReadStream(resolve(file)), title);
+    playStream(msg, createReadStream(path.resolve(file)), title);
 }
 
 /**
