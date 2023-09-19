@@ -14,7 +14,6 @@ import path from 'path';
 import {
     stream,
     video_basic_info,
-    getFreeClientID,
     setToken
 } from 'play-dl';
 import PQueue from 'p-queue';
@@ -29,9 +28,81 @@ const queue = new PQueue({
 const disconnectTimers = new Map();
 const disconnectTimeout = 1000 * 60; // 1 min
 
+async function getSoundCloudClientID(retryNumber = 0) {
+    try {
+        const response = await fetch('https://soundcloud.com/');
+        const body = await response.text();
+
+        //----------------------------------------------------
+
+        const urls = body.split('<script crossorigin src="');
+
+        for (let i = 0, length = urls.length; i < length; i++) {
+            const currentURL = urls[i];
+            const end = currentURL.indexOf('"');
+            urls[i] = currentURL.substring(0, end);
+        }
+
+        //----------------------------------------------------
+
+        let responses = [];
+
+        for (let i = 0, length = urls.length; i < length; i++) {
+            responses.push(fetch(urls[i]));
+        }
+
+        responses = await Promise.allSettled(responses);
+        let finalBodies = [];
+
+        for (let i = 0, length = responses.length; i < length; i++) {
+            const responseObject = responses[i];
+
+            if (responseObject.status === 'fulfilled') {
+                finalBodies.push(responseObject.value.text());
+            }
+        }
+
+        //----------------------------------------------------
+
+        finalBodies = await Promise.allSettled(finalBodies);
+
+        for (let i = 0, length = finalBodies.length; i < length; i++) {
+            const responseObject = finalBodies[i];
+
+            if (responseObject.status === 'fulfilled') {
+                let startString = ',client_id:"';
+                let startIndex = responseObject.value.indexOf(startString);
+
+                if (startIndex === -1) {
+                    startString = '{client_id:"';
+                    startIndex = responseObject.value.indexOf(startString);
+                }
+
+                if (startIndex !== -1) {
+                    startIndex += startString.length;
+
+                    const endIndex = responseObject.value.indexOf('"', startIndex);
+                    return responseObject.value.substring(startIndex, endIndex);
+                }
+            }
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+
+    //----------------------------------------------------
+
+    if (retryNumber < 2) {
+        return await getSoundCloudClientID(retryNumber + 1);
+    }
+
+    return '';
+}
+
 setToken({
     soundcloud: {
-        client_id: await getFreeClientID()
+        client_id: await getSoundCloudClientID()
     }
 });
 
