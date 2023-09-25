@@ -29,7 +29,7 @@
     "erlpack": "github:discord/erlpack",
     "p-queue": "^7.4.1",
     "pg": "^8.11.3",
-    "play-dl": "^1.9.6",
+    "play-dl": "^1.9.7",
     "sodium-native": "^4.0.4",
     "txml": "^5.1.1",
     "utf-8-validate": "^6.0.3",
