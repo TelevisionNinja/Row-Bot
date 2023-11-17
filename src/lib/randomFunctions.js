@@ -4,8 +4,7 @@ import { randomInt } from 'crypto';
  * uses Math.random()
  * 
  * @param {*} min inclusive min
- * @param {*} max 
- * @param {*} inclusive exclusive max
+ * @param {*} max exclusive max
  * @returns 
  */
 export function randomMath(min = 0, max = 0) {
@@ -26,8 +25,7 @@ export function randomMath(min = 0, max = 0) {
  * uses randomInt()
  * 
  * @param {*} min inclusive min
- * @param {*} max 
- * @param {*} inclusive exclusive max
+ * @param {*} max exclusive max
  * @returns 
  */
 export function randomCrypto(min = 0, max = 0) {
@@ -47,8 +45,7 @@ export function randomCrypto(min = 0, max = 0) {
 /**
  * 
  * @param {*} min inclusive min
- * @param {*} max 
- * @param {*} inclusive exclusive max
+ * @param {*} max exclusive max
  * @returns 
  */
 export function randomInteger(min = 0, max = 0) {
