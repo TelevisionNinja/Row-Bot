@@ -2,6 +2,7 @@ import config from '../../config/config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { decodeHTML } from 'entities';
+import { fetch as nodeFetch } from 'node-fetch';
 
 const fifty = config.fifty;
 
@@ -51,7 +52,11 @@ export async function getRandomFifty() {
     let link = '';
 
     await queue.add(async () => {
-        const response = await fetch(fifty.URL);
+        const response = await nodeFetch(fifty.URL, {
+            headers: {
+                'User-Agent': config.userAgents[randomInteger(config.userAgents.length)] // reddit api requires a user agent. some are blocked thus the user of browser user agents
+            }
+        });
 
         if (backOff(response, queue)) {
             return;
