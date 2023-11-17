@@ -27,6 +27,7 @@
     "discord.js": "^14.14.1",
     "entities": "^4.5.0",
     "erlpack": "github:discord/erlpack",
+    "node-fetch": "^3.3.2",
     "p-queue": "^7.4.1",
     "pg": "^8.11.3",
     "play-dl": "^1.9.7",
