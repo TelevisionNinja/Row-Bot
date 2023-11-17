@@ -2,7 +2,8 @@ import config from '../../config/config.json' assert { type: 'json' };
 import PQueue from 'p-queue';
 import { backOff } from '../lib/urlUtils.js';
 import { decodeHTML } from 'entities';
-import { fetch as nodeFetch } from 'node-fetch';
+import { default as nodeFetch } from 'node-fetch';
+import { randomInteger } from '../lib/randomFunctions.js';
 
 const fifty = config.fifty;
 
