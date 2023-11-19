@@ -29,7 +29,7 @@ export async function getMeme() {
 
         try {
             const postArr = (await response.json()).data.children;
-            const post = postArr[randomInteger(memes.postCount)];
+            const post = postArr[randomInteger(postArr.length)];
 
             memeURL = post.data.url;
         }
