@@ -98,7 +98,7 @@ async function getImageRule0Formatted(tagArr) {
 
             const pid = randomInteger(count);
 
-            response = await fetch(`${URL}1&pid=${pid}`);
+            response = await queueZero.add(() => fetch(`${URL}1&pid=${pid}`));
 
             if (backOff(response, queueZero)) {
                 return;
@@ -162,7 +162,7 @@ async function getImageRule1Formatted(tagArr) {
             // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
             const pid = randomInteger(count);
 
-            response = await fetch(`${URL}1&pid=${pid}`);
+            response = await queueOne.add(() => fetch(`${URL}1&pid=${pid}`));
 
             if (backOff(response, queueOne)) {
                 return;

@@ -30,7 +30,7 @@ const disconnectTimeout = 1000 * 60; // 1 min
 
 async function getSoundCloudClientID(retryNumber = 0) {
     try {
-        const response = await fetch('https://soundcloud.com/');
+        const response = await queue.add(() => fetch('https://soundcloud.com/'));
         const body = await response.text();
 
         //----------------------------------------------------
@@ -48,7 +48,7 @@ async function getSoundCloudClientID(retryNumber = 0) {
         let responses = [];
 
         for (let i = 0, length = urls.length; i < length; i++) {
-            responses.push(fetch(urls[i]));
+            responses.push(queue.add(() => fetch(urls[i])));
         }
 
         responses = await Promise.allSettled(responses);
