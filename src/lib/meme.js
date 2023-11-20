@@ -29,9 +29,14 @@ export async function getMeme() {
 
         try {
             const postArr = (await response.json()).data.children;
-            const post = postArr[randomInteger(postArr.length)];
 
-            memeURL = post.data.url;
+            if (postArr.length === 0) { // some subreddits don't have results for the parameters
+                memeURL = getMeme();
+            }
+            else {
+                const post = postArr[randomInteger(postArr.length)];
+                memeURL = post.data.url;
+            }
         }
         catch (error) {
             console.log(error);
