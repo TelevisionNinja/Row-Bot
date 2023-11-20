@@ -1,3 +1,10 @@
+import PQueue from 'p-queue';
+
+const queue = new PQueue({
+    interval: 5000,
+    intervalCap: 1
+});
+
 const apiVersion = 10;
 const apiURL = `https://discord.com/api/v${apiVersion}`;
 
@@ -74,7 +81,7 @@ export async function deleteGuildSlashCommands(slashCommands, clientID, token, g
     const data = await response.json();
 
     for (let i = 0, n = data.length; i < n; i++) {
-        setTimeout(() => {
+        queue.add(() => {
             console.log(data[i]);
             console.log();
 
@@ -84,7 +91,7 @@ export async function deleteGuildSlashCommands(slashCommands, clientID, token, g
                     Authorization: `Bot ${token}`
                 }
             });
-        }, 5000 * i);
+        });
     }
 }
 
@@ -100,7 +107,7 @@ export async function deleteGlobalSlashCommands(slashCommands, clientID, token) 
     const data = await response.json();
 
     for (let i = 0, n = data.length; i < n; i++) {
-        setTimeout(() => {
+        queue.add(() => {
             console.log(data[i]);
             console.log();
 
@@ -110,6 +117,6 @@ export async function deleteGlobalSlashCommands(slashCommands, clientID, token) 
                     Authorization: `Bot ${token}`
                 }
             });
-        }, 5000 * i);
+        });
     }
 }
