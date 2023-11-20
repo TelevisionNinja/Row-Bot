@@ -94,7 +94,7 @@ async function getSoundCloudClientID(retryNumber = 0) {
     //----------------------------------------------------
 
     if (retryNumber < 2) {
-        return await getSoundCloudClientID(retryNumber + 1);
+        return getSoundCloudClientID(retryNumber + 1);
     }
 
     return '';
