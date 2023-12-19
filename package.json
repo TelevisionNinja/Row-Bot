@@ -28,7 +28,7 @@
     "entities": "^4.5.0",
     "erlpack": "github:discord/erlpack",
     "node-fetch": "^3.3.2",
-    "p-queue": "^8.0.0",
+    "p-queue": "^8.0.1",
     "pg": "^8.11.3",
     "play-dl": "^1.9.7",
     "sodium-native": "^4.0.4",
