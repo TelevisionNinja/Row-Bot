@@ -1,7 +1,7 @@
 import PQueue from 'p-queue';
 import { cutOff } from './stringUtils.js';
 
-const timeout = 1000 * 60 * 4; // 4 mins
+const timeout = 1000 * 60 * 8; // 8 mins
 const model = 'tinyllama';
 
 const queue = new PQueue({
