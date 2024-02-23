@@ -7,7 +7,7 @@ const model = 'tinyllama';
 
 const queue = new PQueue({
     timeout: timeout,
-    concurrency: 1 // raspberry pi 4 cant handle more than 1 instance
+    concurrency: 2
 });
 
 // pull the model
