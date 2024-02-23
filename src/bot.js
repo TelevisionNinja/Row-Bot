@@ -187,8 +187,18 @@ client.on('messageCreate', async msg => {
 
     if (hasBotMention(msg, false, true, false, false).mentioned) {
         // remove mentions from message
-        const noMentionsMsg = removeMentions(msg.content);
-        const replyStr = await getChatBotReply(msg.author.id, noMentionsMsg);
+        const clientUser = msg.channel.members.get(msg.client.user.id);
+
+        let name = '';
+        if (clientUser.nickname === null) {
+            name = clientUser.user.username;
+        }
+        else {
+            name = clientUser.nickname;
+        }
+
+        const cleanMsg = msg.cleanContent.replaceAll(`@${name}`, '').trim();
+        const replyStr = await getChatBotReply(msg.author.id, cleanMsg);
 
         // reply
         if (replyStr.length) {
