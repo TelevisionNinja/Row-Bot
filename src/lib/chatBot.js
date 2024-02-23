@@ -1,5 +1,6 @@
 import PQueue from 'p-queue';
 import { cutOff } from './stringUtils.js';
+import { Agent } from 'undici';
 
 const timeout = 1000 * 60 * 8; // 8 mins
 const model = 'tinyllama';
@@ -16,7 +17,8 @@ fetch('http://localhost:11434/api/pull', {
         name: model,
         stream: false,
         insecure: false
-    })
+    }),
+    dispatcher: new Agent({ headersTimeout: 1000 * 60 * 60 }) // 1 hour
 });
 
 /**
@@ -41,12 +43,16 @@ export async function getChatBotReply(userID, msg) {
                             content: msg
                         }
                     ]
-                })
+                }),
+                dispatcher: new Agent({ headersTimeout: timeout })
             });
 
             const data = await response.json();
-            reply = data.message.content;
-            reply = cutOff(reply);
+
+            if (typeof data.message !== 'undefined') {
+                reply = data.message.content;
+                reply = cutOff(reply);
+            }
         }
         catch (error) {
             console.log(error);
