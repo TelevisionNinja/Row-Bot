@@ -3,7 +3,7 @@ My 1st discord bot
 
 This bot uses:
 - PostgreSQL
-- a machine learning language model
+- the TinyLlama small language language model using Ollama
 - Node.js
 - discord.js
 - multiple APIs
