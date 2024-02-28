@@ -162,17 +162,21 @@ export function sendTypingMsg(recipient, sendingContent, readingMsg = '', isRepl
 
             setTimeout(async () => {
                 try {
+                    let response = undefined;
+
                     if (typeof recipient.channel === 'undefined') { // is channel
-                        resolve(await recipient.send(sendingContent));
+                        response = await recipient.send(sendingContent);
                     }
                     else { // is message
                         if (isReply) {
-                            resolve(await recipient.reply(sendingContent));
+                            response = await recipient.reply(sendingContent);
                         }
                         else {
-                            resolve(await recipient.channel.send(sendingContent));
+                            response = await recipient.channel.send(sendingContent);
                         }
                     }
+
+                    resolve(response);
                 }
                 catch (error) {
                     reject(error);
