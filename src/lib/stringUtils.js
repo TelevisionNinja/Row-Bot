@@ -91,6 +91,7 @@ export function includesPhrase(str, phrase, caseSensitive = true) {
  * @returns 
  */
 export function removeMentions(msgStr, botNames = []) {
+    // handles channels, roles, users, here, everyone
     let noMentions = msgStr.replaceAll(/(<(#|(@(!|&)?))\d{1,}>)|(@((here)|(everyone)))/ig, '');
 
     if (botNames.length) {
