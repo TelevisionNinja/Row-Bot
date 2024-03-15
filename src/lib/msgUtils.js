@@ -237,18 +237,19 @@ export async function sendDirectDm(user, msgContent, sendTyping = false, reading
  * @param {*} roles check for mentions of roles in the message, default is true
  * @param {*} name check for mentions of one of the bot's names in the message, default is true
  * @param {*} excludeSpecialChars exclude special chars in the message, default is false
+ * @param {*} replies check for mentions by replies in the message, default is true
  * @returns a bool for whether the bot was mentioned and the name of the bot if it was used to mention the bot
  */
-export function hasBotMention(msg, everyone = true, users = true, roles = true, name = true, excludeSpecialChars = false) {
+export function hasBotMention(msg, everyone = true, users = true, roles = true, name = true, excludeSpecialChars = false, replies = true) {
     let mentioned = false;
     let foundNames = [];
 
-    if (msg.mentions.has(clientID, {
-            ignoreEveryone: !everyone,
-            ignoreDirect: !users
-        }) || (roles && [...msg.mentions.roles.values()].some(r => r.members.has(clientID)))) {
-        mentioned = true;
-    }
+    mentioned = msg.mentions.has(clientID, {
+        ignoreEveryone: !everyone,
+        ignoreDirect: !users,
+        ignoreRoles: !roles,
+        ignoreRepliedUser: !replies
+    });
 
     if (name) {
         let content = msg.content;
