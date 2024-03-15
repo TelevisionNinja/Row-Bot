@@ -1,7 +1,8 @@
 import {
     Client,
     InteractionType,
-    ActivityType
+    ActivityType,
+    cleanContent
 } from 'discord.js';
 import {
     hasBotMention,
@@ -51,6 +52,8 @@ import {
     initializeIntervals,
     // loadSlashCommands
 } from './lib/initialize.js';
+
+const mentionRegex = new RegExp(`<@!?${clientID}>`, 'g');
 
 //--------------------------------------------------------------------------------
 // client vars
@@ -187,25 +190,18 @@ client.on('messageCreate', async msg => {
 
     if (hasBotMention(msg, false, true, false, false).mentioned) {
         // remove mentions from message
-        const clientUser = msg.channel.members.get(msg.client.user.id);
+        const cleanMsg = cleanContent(msg.content.replaceAll(mentionRegex, ''), msg.channel).trim();
 
-        let name = '';
-        if (clientUser.nickname === null) {
-            name = clientUser.user.username;
-        }
-        else {
-            name = clientUser.nickname;
-        }
+        if (cleanMsg.length > 0) {
+            const replyStr = await getChatBotReply(msg.author.id, cleanMsg);
 
-        const cleanMsg = msg.cleanContent.replaceAll(`@${name}`, '').trim();
-        const replyStr = await getChatBotReply(msg.author.id, cleanMsg);
-
-        // reply
-        if (replyStr.length) {
-            sendTypingMsg(msg, {
-                content: replyStr
-            }, msg.content, true);
-            return;
+            // reply
+            if (replyStr.length) {
+                sendTypingMsg(msg, {
+                    content: replyStr
+                }, msg.content, true);
+                return;
+            }
         }
     }
 
