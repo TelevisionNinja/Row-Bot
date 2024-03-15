@@ -287,19 +287,9 @@ export function hasBotMention(msg, everyone = true, users = true, roles = true, 
  * @returns 
  */
 export function hasMentions(msg, everyone = true, users = true, roles = true) {
-    if (everyone && msg.mentions.everyone) {
-        return true;
-    }
-
-    if (users && msg.mentions.users.size) {
-        return true;
-    }
-
-    if (roles && msg.mentions.roles.size) {
-        return true;
-    }
-
-    return false;
+    return (everyone && msg.mentions.everyone) ||
+        (users && msg.mentions.users.size) ||
+        (roles && msg.mentions.roles.size);
 }
 
 /**
