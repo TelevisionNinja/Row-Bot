@@ -31,9 +31,9 @@
     "p-queue": "^8.0.1",
     "pg": "^8.11.3",
     "play-dl": "^1.9.7",
-    "sodium-native": "^4.0.10",
+    "sodium-native": "^4.1.1",
     "txml": "^5.1.1",
-    "undici": "^6.9.0",
+    "undici": "^6.10.1",
     "utf-8-validate": "^6.0.3",
     "yt-search": "^2.10.4",
     "zlib-sync": "^0.1.9"
