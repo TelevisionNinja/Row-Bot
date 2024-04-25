@@ -1,4 +1,4 @@
-import tulpConfig from '../../../config/tulpConfig.json' assert { type: 'json' };
+import tulpConfig from '../../../config/tulpConfig.json' with { type: 'json' };
 import { proxy } from '../../lib/database.js';
 import { ApplicationCommandOptionType } from 'discord.js';
 

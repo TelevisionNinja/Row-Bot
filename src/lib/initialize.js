@@ -4,12 +4,12 @@ import {
     ActivityType
 } from 'discord.js';
 import { readdir } from 'fs/promises';
-import config from '../../config/config.json' assert { type: 'json' };
+import config from '../../config/config.json' with { type: 'json' };
 import { initialize as initializeHelp } from '../commands/help.js';
 import { initialize as initializeTulpHelp } from '../commands/tulpCommands/help.js';
 import { initialize as initializeMusicHelp } from '../commands/musicCommands/help.js';
-import messages from '../../config/messages.json' assert { type: 'json' };
-import reactionRoles from '../../config/reactionRoles.json' assert { type: 'json' };
+import messages from '../../config/messages.json' with { type: 'json' };
+import reactionRoles from '../../config/reactionRoles.json' with { type: 'json' };
 import {
     buildCommandJSON,
     loadGlobalSlashCommands

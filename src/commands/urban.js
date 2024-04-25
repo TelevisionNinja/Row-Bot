@@ -1,4 +1,4 @@
-import config from '../../config/config.json' assert { type: 'json' };
+import config from '../../config/config.json' with { type: 'json' };
 import { randomInteger } from '../lib/randomFunctions.js';
 import { cutOff } from '../lib/stringUtils.js';
 import PQueue from 'p-queue';

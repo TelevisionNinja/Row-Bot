@@ -1,4 +1,4 @@
-import config from '../../config/config.json' assert { type: 'json' };
+import config from '../../config/config.json' with { type: 'json' };
 
 const donateConfig = config.donate;
 

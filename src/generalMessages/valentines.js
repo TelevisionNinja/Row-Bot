@@ -1,4 +1,4 @@
-import messages from '../../config/messages.json' assert { type: 'json' };
+import messages from '../../config/messages.json' with { type: 'json' };
 import { randomInteger } from '../lib/randomFunctions.js';
 
 const valentines = messages.valentines;

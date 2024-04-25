@@ -1,5 +1,5 @@
 import { randomInteger } from '../lib/randomFunctions.js';
-import config from '../../config/config.json' assert { type: 'json' };
+import config from '../../config/config.json' with { type: 'json' };
 
 const coin = config.coin;
 

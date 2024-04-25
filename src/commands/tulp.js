@@ -1,4 +1,4 @@
-import config from '../../config/config.json' assert { type: 'json' };
+import config from '../../config/config.json' with { type: 'json' };
 import { ChannelType } from 'discord.js';
 
 const tulp = config.tulp,

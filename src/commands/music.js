@@ -1,4 +1,4 @@
-import config from '../../config/config.json' assert { type: 'json' };
+import config from '../../config/config.json' with { type: 'json' };
 import { default as audioUtils } from '../lib/audioUtils.js';
 
 const music = config.music,

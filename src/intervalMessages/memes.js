@@ -1,6 +1,6 @@
 import { setDailyInterval } from 'daily-intervals';
 import { getChannel } from '../lib/discordUtils.js';
-import config from '../../config/config.json' assert { type: 'json' };
+import config from '../../config/config.json' with { type: 'json' };
 import { getMeme } from '../lib/meme.js';
 
 const memes = config.memes;
