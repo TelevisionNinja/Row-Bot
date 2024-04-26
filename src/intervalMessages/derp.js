@@ -14,7 +14,7 @@ const filter = derpConfig.filterTags.map(t => `-${t}`);
 async function retryUntilResult() {
     const randIndex = randomInteger(derpConfig.intervalTags.length);
     const selection = derpConfig.intervalTags[randIndex];
-    const tagArr = [selection, 'safe', 'solo', 'score.gte:500', ...filter];
+    const tagArr = [selection, 'safe', 'solo', 'score.gte:300', ...filter];
     const img = await getImage(tagArr);
 
     if (img.results) {
@@ -44,7 +44,7 @@ export async function execute(client) {
         async () => {
             const randIndex = randomInteger(derpConfig.intervalWaitTags.length);
             const selection = derpConfig.intervalWaitTags[randIndex];
-            const tagArr = [selection, 'score.gte:500', ...filter];
+            const tagArr = [selection, 'score.gte:300', ...filter];
             const img = await getImage(tagArr);
 
             if (img.results) {
