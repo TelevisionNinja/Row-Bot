@@ -144,14 +144,7 @@ function buildMessage(memberMap, askingMsg) {
     let msg = `${askingMsg}\n\n`;
 
     memberMap.forEach((value, key) => {
-        msg = `${msg}${value.user.decision} `;
-
-        if (value.nickname === null) {
-            msg = `${msg}${value.user.username}\n`;
-        }
-        else {
-            msg = `${msg}${value.nickname}\n`;
-        }
+        msg = `${msg}${value.user.decision} ${value.displayName}\n`;
     });
 
     return msg.substring(0, msg.length - 1);
