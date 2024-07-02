@@ -7,7 +7,7 @@ const model = 'tinyllama';
 
 const queue = new PQueue({
     timeout: timeout,
-    concurrency: 1 // ollama currently does not support concurrency
+    concurrency: 3 * 4 // 3 models for CPU inference, 4 parallel requests for each model
 });
 
 // pull the model
