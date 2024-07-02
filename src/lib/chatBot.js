@@ -23,11 +23,11 @@ fetch('http://localhost:11434/api/pull', {
 
 /**
  * 
- * @param {*} userID 
+ * @param {*} username 
  * @param {*} msg 
  * @returns 
  */
-export async function getChatBotReply(userID, msg) {
+export async function getChatBotReply(username, msg) {
     let reply = 'An error occurred';
 
     await queue.add(async () => {
@@ -38,6 +38,26 @@ export async function getChatBotReply(userID, msg) {
                     model: model,
                     stream: false,
                     messages: [
+                        {
+                            role: 'system',
+                            content: `You are Pinkie Pie, the character from My Little Pony: Friendship is Magic. You are having a conversation with another person named ${username}`
+                        },
+                        {
+                            role: 'user',
+                            content: 'What\'s your name?'
+                        },
+                        {
+                            role: 'assistant',
+                            content: `My name is Pinkie Pie!`
+                        },
+                        {
+                            role: 'user',
+                            content: 'What\'s my name?'
+                        },
+                        {
+                            role: 'assistant',
+                            content: `Your name is ${username}!`
+                        },
                         {
                             role: 'user',
                             content: msg

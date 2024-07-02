@@ -193,7 +193,7 @@ client.on('messageCreate', async msg => {
         const cleanMsg = cleanContent(msg.content.replaceAll(mentionRegex, ''), msg.channel).trim();
 
         if (cleanMsg.length > 0) {
-            const replyStr = await getChatBotReply(msg.author.id, cleanMsg);
+            const replyStr = await getChatBotReply(msg.author.displayName, cleanMsg);
 
             // reply
             if (replyStr.length) {
