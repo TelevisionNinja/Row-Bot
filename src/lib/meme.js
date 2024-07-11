@@ -19,7 +19,7 @@ export async function getMeme() {
     await queue.add(async () => {
         const response = await nodeFetch(URL, {
             headers: {
-                'User-Agent': config.userAgents[randomInteger(config.userAgents.length)] // reddit api requires a user agent. some are blocked thus the user of browser user agents
+                'User-Agent': config.userAgents[randomInteger(config.userAgents.length)] // reddit api requires a user agent. some are blocked thus the use of browser user agents
             }
         });
 
