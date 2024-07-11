@@ -11,6 +11,13 @@ const queue = new PQueue({
 
 const memes = config.memes;
 
+/*
+reddit endpoint listings
+
+top.json?raw_json=1&t=week&limit=
+hot.json?raw_json=1&limit=
+*/
+
 // posts a daily meme
 export async function getMeme() {
     const URL = `${memes.URLs[randomInteger(memes.URLs.length)]}${memes.queryString}${memes.postCount}`;

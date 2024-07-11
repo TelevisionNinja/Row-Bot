@@ -176,29 +176,11 @@
     "memes" : {
         "channelID" : "",
         "postCount" : 10,
-        "queryString" : "top.json?raw_json=1&t=week&limit=",
+        "queryString" : "hot.json?raw_json=1&limit=",
         "URLs" : [
-            "https://www.reddit.com/r/memes/",
-            "https://www.reddit.com/r/dankmemes/",
             "https://www.reddit.com/r/goodanimemes/",
             "https://www.reddit.com/r/Animemes/",
-            "https://www.reddit.com/r/anime_irl/",
-
-            "https://www.reddit.com/r/Whatcouldgowrong/",
-            "https://www.reddit.com/r/CatastrophicFailure/",
-            "https://www.reddit.com/r/donthelpjustfilm/",
-            "https://www.reddit.com/r/IdiotsInCars/",
-            "https://www.reddit.com/r/ParentsAreFuckingDumb/",
-            "https://www.reddit.com/r/KidsAreFuckingStupid/",
-            "https://www.reddit.com/r/WatchPeopleDieInside/",
-            "https://www.reddit.com/r/watchpeoplesurvive/",
-            "https://www.reddit.com/r/PublicFreakout/",
-            "https://www.reddit.com/r/nottheonion/",
-            "https://www.reddit.com/r/nextfuckinglevel/",
-            "https://www.reddit.com/r/CrazyFuckingVideos/",
-            "https://www.reddit.com/r/ActualPublicFreakouts/",
-            "https://www.reddit.com/r/AbruptChaos/",
-            "https://www.reddit.com/r/SweatyPalms/"
+            "https://www.reddit.com/r/anime_irl/"
         ]
     },
 
