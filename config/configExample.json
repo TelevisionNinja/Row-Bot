@@ -175,7 +175,7 @@
 
     "memes" : {
         "channelID" : "",
-        "postCount" : 10,
+        "postCount" : 16,
         "queryString" : "hot.json?raw_json=1&limit=",
         "URLs" : [
             "https://www.reddit.com/r/goodanimemes/",
