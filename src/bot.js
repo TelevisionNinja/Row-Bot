@@ -52,6 +52,8 @@ import {
     initializeIntervals,
     // loadSlashCommands
 } from './lib/initialize.js';
+import { channelIsActive } from './intervalMessages/askLateNight.js';
+import config from '../config/config.json' with { type: 'json' };
 
 const mentionRegex = new RegExp(`<@!?${clientID}>`, 'g');
 
@@ -98,6 +100,13 @@ client.on('messageCreate', async msg => {
         if (!permissions.has(minimumPermissions)) {
             return;
         }
+    }
+
+    //--------------------------------------------------------------------------------
+    // askLateNight
+
+    if (msg.channelId === config.askLateNight.channelID) {
+        channelIsActive();
     }
 
     //--------------------------------------------------------------------------------

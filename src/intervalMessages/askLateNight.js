@@ -17,6 +17,7 @@ const askLateNight = config.askLateNight,
     nos = messages.nos;
 
 let asked = false;
+let dontAsk = true;
 
 // ask the late night bois if they're going to get on
 export async function execute(client) {
@@ -41,11 +42,16 @@ export async function execute(client) {
     );
 }
 
+export function channelIsActive() {
+    dontAsk = false;
+}
+
 async function ask(channel, timeOut, askingMsg, allConfirmsMsg, fewConfirmsMsg, noReplyMsg, confirmed, undecided, denied) {
-    if (asked) {
+    if (asked || dontAsk) {
         return;
     }
 
+    dontAsk = true;
     asked = true;
 
     await channel.guild.members.fetch();
