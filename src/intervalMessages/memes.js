@@ -17,6 +17,19 @@ export async function execute(client) {
                 recipient.send(meme);
             }
         },
-        360
+        60 * 24,
+        '12:0'
+    );
+
+    setDailyInterval(
+        async () => {
+            const meme = await getMeme();
+
+            if (meme.length) {
+                recipient.send(meme);
+            }
+        },
+        60 * 12,
+        '6:0'
     );
 }
