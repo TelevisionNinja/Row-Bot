@@ -30,6 +30,26 @@ export async function execute(client) {
                 recipient.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``));
             }
         },
-        ruleConfig.intervalWait
+        60 * 24,
+        '12:0'
+    );
+
+    setDailyInterval(
+        async () => {
+            const randIndex = randomInteger(ruleConfig.intervalTags.length);
+            const selection = ruleConfig.intervalTags[randIndex];
+            const tagArr = [selection, ...filter];
+
+            const img = await getImageRule0(tagArr);
+
+            if (img.results) {
+                recipient.send(createImgResult(img, false));
+            }
+            else {
+                recipient.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``));
+            }
+        },
+        60 * 12,
+        '6:0'
     );
 }

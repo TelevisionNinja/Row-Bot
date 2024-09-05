@@ -98,7 +98,6 @@
         "intervalTime" : "12:0",
         "filterTags" : [""],
 
-        "intervalWait" : 360,
         "intervalWaitTags" : [
             [""]
         ],
@@ -242,7 +241,6 @@
         ],
 
         "intervalChannelID" : "",
-        "intervalWait" : 360,
         "intervalTags" : [""],
         "filterTags" : [""]
     },
