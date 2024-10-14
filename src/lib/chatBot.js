@@ -3,7 +3,7 @@ import { cutOff } from './stringUtils.js';
 import { Agent } from 'undici';
 
 const timeout = 1000 * 60 * 8; // 8 mins
-const model = 'tinyllama';
+const model = 'llama3.2:1b';
 
 const queue = new PQueue({
     timeout: timeout,
