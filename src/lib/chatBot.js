@@ -11,10 +11,10 @@ const queue = new PQueue({
 });
 
 // pull the model
-fetch('http://localhost:11434/api/pull', {
+fetch('http://127.0.0.1:11434/api/pull', { // ipv4 instead of localhost bc ipv6 doesnt work
     method: 'POST',
     body: JSON.stringify({
-        name: model,
+        model: model,
         stream: false,
         insecure: false
     }),
@@ -32,7 +32,7 @@ export async function getChatBotReply(username, msg) {
 
     await queue.add(async () => {
         try {
-            const response = await fetch('http://localhost:11434/api/chat', {
+            const response = await fetch('http://127.0.0.1:11434/api/chat', { // ipv4 instead of localhost bc ipv6 doesnt work
                 method: 'POST',
                 body: JSON.stringify({
                     model: model,
