@@ -356,12 +356,13 @@ function getPlayer(msg) {
 }
 
 /**
+ * probe files and create audio streams
  * 
  * @param {*} readableStream 
  * @returns 
  */
 async function probeAndCreateResource(readableStream) {
-    if (readableStream.type && readableStream.type.length) {
+    if (readableStream.type && readableStream.type.length) { // play-dl stream
         return createAudioResource(readableStream.stream, { inputType: readableStream.type });
     }
 
