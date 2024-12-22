@@ -22,3 +22,24 @@ Previous versions used:
 
 Invite link:<br />
 https://discord.com/oauth2/authorize?client_id=785922000723509298&permissions=8&scope=bot%20applications.commands
+
+# Run
+1. install the dependencies
+2. edit the configs
+3. run the command to start the bot
+
+## Native
+```bash
+npm start
+```
+
+## Docker or Podman
+### Docker
+```bash
+docker compose up
+```
+
+### Podman
+```bash
+podman compose up
+```

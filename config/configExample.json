@@ -28,11 +28,16 @@
     "ruleChannelID" : "",
 
     "postgresql" : {
-        "host": "",
+        "host": "localhost",
         "port": 5432,
         "user": "",
         "password": "",
         "database": ""
+    },
+
+    "ollama" : {
+        "host": "127.0.0.1",
+        "port": 11434
     },
 
     "noResultsMsg" : "Aww there's no results 😢",

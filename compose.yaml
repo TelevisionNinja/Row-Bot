@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: 
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
+
+  ollama:
+    image: ollama:latest
+
+  rowbot:
+    build: .
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /rowbot
+    # retart until db started
+    restart: on-failure

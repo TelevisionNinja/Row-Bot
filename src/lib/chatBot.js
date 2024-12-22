@@ -1,6 +1,9 @@
 import PQueue from 'p-queue';
 import { cutOff } from './stringUtils.js';
 import { Agent } from 'undici';
+import config from '../../config/config.json' with { type: 'json' };
+
+const ollamaConfig = config.ollama;
 
 const timeout = 1000 * 60 * 8; // 8 mins
 const model = 'llama3.2:1b';
@@ -10,8 +13,10 @@ const queue = new PQueue({
     concurrency: 3 * 4 // 3 models for CPU inference, 4 parallel requests for each model
 });
 
+const address = `http://${ollamaConfig.host}:${ollamaConfig.port}/api/`; // use ipv4 instead of localhost bc ollama doesnt work w/ ipv6
+
 // pull the model
-fetch('http://127.0.0.1:11434/api/pull', { // ipv4 instead of localhost bc ipv6 doesnt work
+fetch(`${address}pull`, {
     method: 'POST',
     body: JSON.stringify({
         model: model,
@@ -32,7 +37,7 @@ export async function getChatBotReply(username, msg) {
 
     await queue.add(async () => {
         try {
-            const response = await fetch('http://127.0.0.1:11434/api/chat', { // ipv4 instead of localhost bc ipv6 doesnt work
+            const response = await fetch(`${address}chat`, {
                 method: 'POST',
                 body: JSON.stringify({
                     model: model,
