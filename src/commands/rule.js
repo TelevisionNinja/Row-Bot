@@ -72,51 +72,56 @@ async function getImageRule0Formatted(tagArr) {
     let imgObj = { results: 0 };
 
     await queueZero.add(async () => {
-        let response = await fetch(`${URL}0`);
-
-        if (backOff(response, queueZero)) {
-            return;
-        }
-
-        let parsedXML = parse(await response.text());
-
-        // 'count' is # of images for the provided tags
-        let count = parseInt(parsedXML[1].attributes.count, 10);
-
-        if (count) {
-            imgObj.results = count;
-
-            // the max number of images for the rule0 api is 200001 images (0-200000)
-            // the site has a max of 100 posts per request
-            // pid range: zero to count / (limit per request)
-
-            // (max # images) / (limit per request) = pid max
-            // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
-            if (count > 200000) {
-                count = 200000;
-            }
-
-            const pid = randomInteger(count);
-
-            response = await queueZero.add(() => fetch(`${URL}1&pid=${pid}`));
+        try { // possible bot check response received
+            let response = await fetch(`${URL}0`);
 
             if (backOff(response, queueZero)) {
                 return;
             }
 
-            parsedXML = parse(await response.text());
+            let parsedXML = parse(await response.text());
 
-            // get the first image from the 'posts' array
-            // elements of the array are named 'post'
-            const img = parsedXML[1].children[0].attributes;
+            // 'count' is # of images for the provided tags
+            let count = parseInt(parsedXML[1].attributes.count, 10);
 
-            imgObj.source = `${rule.sites[0].URL}${img.id}`;
-            imgObj.url = img.file_url;
-            imgObj.artist = [];
-            imgObj.description = '';
-            imgObj.title = '';
-            imgObj.website = rule.websiteName;
-            imgObj.embedColor = rule.embedColor;
+            if (count) {
+                imgObj.results = count;
+
+                // the max number of images for the rule0 api is 200001 images (0-200000)
+                // the site has a max of 100 posts per request
+                // pid range: zero to count / (limit per request)
+
+                // (max # images) / (limit per request) = pid max
+                // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
+                if (count > 200000) {
+                    count = 200000;
+                }
+
+                const pid = randomInteger(count);
+
+                response = await queueZero.add(() => fetch(`${URL}1&pid=${pid}`));
+
+                if (backOff(response, queueZero)) {
+                    return;
+                }
+
+                parsedXML = parse(await response.text());
+
+                // get the first image from the 'posts' array
+                // elements of the array are named 'post'
+                const img = parsedXML[1].children[0].attributes;
+
+                imgObj.source = `${rule.sites[0].URL}${img.id}`;
+                imgObj.url = img.file_url;
+                imgObj.artist = [];
+                imgObj.description = '';
+                imgObj.title = '';
+                imgObj.website = rule.websiteName;
+                imgObj.embedColor = rule.embedColor;
+            }
+        }
+        catch (error) {
+            console.log(error);
         }
     });
 
@@ -143,45 +148,50 @@ async function getImageRule1Formatted(tagArr) {
     let imgObj = { results: 0 };
 
     await queueOne.add(async () => {
-        let response = await fetch(`${URL}0`);
-
-        if (backOff(response, queueOne)) {
-            return;
-        }
-
-        let parsedXML = parse(await response.text());
-
-        // 'count' is # of images for the provided tags
-        const count = parseInt(parsedXML[0].attributes.count, 10);
-
-        if (count) {
-            // the site has a max of 100 posts per request
-            // pid range: zero to count / (limit per request)
-
-            // (max # images) / (limit per request) = pid max
-            // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
-            const pid = randomInteger(count);
-
-            response = await queueOne.add(() => fetch(`${URL}1&pid=${pid}`));
+        try { // possible bot check response received
+            let response = await fetch(`${URL}0`);
 
             if (backOff(response, queueOne)) {
                 return;
             }
 
-            parsedXML = parse(await response.text());
+            let parsedXML = parse(await response.text());
 
-            // get the first image from the 'posts' array
-            // elements of the array are named 'tag'
-            const img = parsedXML[0].children[0].attributes;
+            // 'count' is # of images for the provided tags
+            const count = parseInt(parsedXML[0].attributes.count, 10);
 
-            imgObj.source = `${rule.sites[1].URL}${img.id}`;
-            imgObj.url = img.file_url;
-            imgObj.results = count;
-            imgObj.artist = [];
-            imgObj.description = '';
-            imgObj.title = '';
-            imgObj.website = rule.websiteName;
-            imgObj.embedColor = rule.embedColor;
+            if (count) {
+                // the site has a max of 100 posts per request
+                // pid range: zero to count / (limit per request)
+
+                // (max # images) / (limit per request) = pid max
+                // ex: 200001 / 100 = a pid max of 2000 bc it starts at 0
+                const pid = randomInteger(count);
+
+                response = await queueOne.add(() => fetch(`${URL}1&pid=${pid}`));
+
+                if (backOff(response, queueOne)) {
+                    return;
+                }
+
+                parsedXML = parse(await response.text());
+
+                // get the first image from the 'posts' array
+                // elements of the array are named 'tag'
+                const img = parsedXML[0].children[0].attributes;
+
+                imgObj.source = `${rule.sites[1].URL}${img.id}`;
+                imgObj.url = img.file_url;
+                imgObj.results = count;
+                imgObj.artist = [];
+                imgObj.description = '';
+                imgObj.title = '';
+                imgObj.website = rule.websiteName;
+                imgObj.embedColor = rule.embedColor;
+            }
+        }
+        catch (error) {
+            console.log(error);
         }
     });
 
