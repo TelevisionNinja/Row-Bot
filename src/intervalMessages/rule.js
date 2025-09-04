@@ -11,12 +11,24 @@ const ruleConfig = config.rule,
 
 const filter = ruleConfig.filterTags.map(t => `-${t}`);
 
+let dontPost = true;
+
+export function channelIsActive() {
+    dontPost = false;
+}
+
 // posts a daily rule image
 export async function execute(client) {
     const recipient = await getChannel(client, ruleConfig.intervalChannelID);
 
     setDailyInterval(
         async () => {
+            if (dontPost) {
+                return;
+            }
+
+            dontPost = true;
+
             const randIndex = randomInteger(ruleConfig.intervalTags.length);
             const selection = ruleConfig.intervalTags[randIndex];
             const tagArr = [selection, ...filter];
@@ -36,6 +48,12 @@ export async function execute(client) {
 
     setDailyInterval(
         async () => {
+            if (dontPost) {
+                return;
+            }
+
+            dontPost = true;
+
             const randIndex = randomInteger(ruleConfig.intervalTags.length);
             const selection = ruleConfig.intervalTags[randIndex];
             const tagArr = [selection, ...filter];

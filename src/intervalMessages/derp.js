@@ -11,6 +11,16 @@ const derpConfig = config.derp,
 
 const filter = derpConfig.filterTags.map(t => `-${t}`);
 
+let dontPostDaily = true;
+let dontPostRule = true;
+
+export function channelIsActiveDaily() {
+    dontPostDaily = false;
+}
+export function channelIsActiveRule() {
+    dontPostRule = false;
+}
+
 async function retryUntilResult() {
     const randIndex = randomInteger(derpConfig.intervalTags.length);
     const selection = derpConfig.intervalTags[randIndex];
@@ -26,12 +36,20 @@ async function retryUntilResult() {
     return retryUntilResult();
 }
 
-// posts a daily derp image
 export async function execute(client) {
     const recipientDaily = await getChannel(client, derpConfig.intervalChannelID);
 
+    // posts a daily derp image
     setDailyInterval(
-        async () => recipientDaily.send(await retryUntilResult()),
+        async () => {
+            if (dontPostDaily) {
+                return;
+            }
+
+            dontPostDaily = true;
+
+            recipientDaily.send(await retryUntilResult());
+        },
         1440, // 24 hrs in minutes
         derpConfig.intervalTime
     );
@@ -42,6 +60,12 @@ export async function execute(client) {
 
     setDailyInterval(
         async () => {
+            if (dontPostRule) {
+                return;
+            }
+
+            dontPostRule = true;
+
             const randIndex = randomInteger(derpConfig.intervalWaitTags.length);
             const selection = derpConfig.intervalWaitTags[randIndex];
             const tagArr = [selection, 'score.gte:350', ...filter];
@@ -60,6 +84,12 @@ export async function execute(client) {
 
     setDailyInterval(
         async () => {
+            if (dontPostRule) {
+                return;
+            }
+
+            dontPostRule = true;
+
             const randIndex = randomInteger(derpConfig.intervalWaitTags.length);
             const selection = derpConfig.intervalWaitTags[randIndex];
             const tagArr = [selection, 'score.gte:350', ...filter];

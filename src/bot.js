@@ -52,7 +52,13 @@ import {
     initializeIntervals,
     // loadSlashCommands
 } from './lib/initialize.js';
-import { channelIsActive } from './intervalMessages/askLateNight.js';
+import { channelIsActive as isActiveLateNight } from './intervalMessages/askLateNight.js';
+import { channelIsActive as isActiveMemes } from './intervalMessages/memes.js';
+import { channelIsActive as isActiveRule } from './intervalMessages/rule.js';
+import {
+    channelIsActiveDaily as isActiveDerpDaily,
+    channelIsActiveRule as isActiveDerpRule
+} from './intervalMessages/derp.js';
 import config from '../config/config.json' with { type: 'json' };
 
 const mentionRegex = new RegExp(`<@!?${clientID}>`, 'g');
@@ -103,10 +109,26 @@ client.on('messageCreate', async msg => {
     }
 
     //--------------------------------------------------------------------------------
-    // askLateNight
+    // mark channels as active
 
-    if (msg.channelId === config.askLateNight.channelID) {
-        channelIsActive();
+    switch (msg.channelID) {
+        case config.askLateNight.channelID:
+            isActiveLateNight();
+            break;
+        case config.memes.channelID:
+            isActiveMemes();
+            break;
+        case config.rule.intervalChannelID:
+            isActiveRule();
+            break;
+        case config.derp.intervalChannelID:
+            isActiveDerpDaily();
+            break;
+        case config.derp.intervalWaitChannelID:
+            isActiveDerpRule();
+            break;
+        default:
+            break;
     }
 
     //--------------------------------------------------------------------------------

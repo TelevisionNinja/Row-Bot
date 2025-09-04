@@ -5,12 +5,24 @@ import { getMeme } from '../lib/meme.js';
 
 const memes = config.memes;
 
+let dontPost = true;
+
+export function channelIsActive() {
+    dontPost = false;
+}
+
 // posts a daily meme
 export async function execute(client) {
     const recipient = await getChannel(client, memes.channelID);
 
     setDailyInterval(
         async () => {
+            if (dontPost) {
+                return;
+            }
+
+            dontPost = true;
+
             const meme = await getMeme();
 
             if (meme.length) {
@@ -23,6 +35,12 @@ export async function execute(client) {
 
     setDailyInterval(
         async () => {
+            if (dontPost) {
+                return;
+            }
+
+            dontPost = true;
+
             const meme = await getMeme();
 
             if (meme.length) {
