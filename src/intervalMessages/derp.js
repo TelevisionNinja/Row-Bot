@@ -21,7 +21,11 @@ export function channelIsActiveRule() {
     dontPostRule = false;
 }
 
-async function retryUntilResult() {
+async function getDailyResult(retry = 3) {
+    if (retry <= 0) {
+        return null;
+    }
+
     const randIndex = randomInteger(derpConfig.intervalTags.length);
     const selection = derpConfig.intervalTags[randIndex];
     const tagArr = [selection, 'safe', 'solo', 'score.gte:200', ...filter];
@@ -33,7 +37,7 @@ async function retryUntilResult() {
         return createImgResult(img, false);
     }
 
-    return retryUntilResult();
+    return getDailyResult(retry - 1);
 }
 
 export async function execute(client) {
@@ -48,7 +52,11 @@ export async function execute(client) {
 
             dontPostDaily = true;
 
-            recipientDaily.send(await retryUntilResult());
+            const result = await getDailyResult();
+
+            if (result !== null) {
+                recipientDaily.send(result);
+            }
         },
         1440, // 24 hrs in minutes
         derpConfig.intervalTime
