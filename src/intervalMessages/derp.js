@@ -83,7 +83,9 @@ export async function execute(client) {
                 recipientInterval.send(createImgResult(img, false));
             }
             else {
-                recipientInterval.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``));
+                const result = cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``);
+                // recipientInterval.send(result);
+                console.log(result);
             }
         },
         60 * 24,
@@ -107,7 +109,9 @@ export async function execute(client) {
                 recipientInterval.send(createImgResult(img, false));
             }
             else {
-                recipientInterval.send(cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``));
+                const result = cutOff(`${noResultsMsg}\nTags:\n\`${tagArr}\``);
+                // recipientInterval.send(result);
+                console.log(result);
             }
         },
         60 * 12,
