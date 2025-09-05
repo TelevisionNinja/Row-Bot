@@ -111,24 +111,20 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // mark channels as active
 
-    switch (msg.channelId) {
-        case config.askLateNight.channelID:
-            isActiveLateNight();
-            break;
-        case config.memes.channelID:
-            isActiveMemes();
-            break;
-        case config.rule.intervalChannelID:
-            isActiveRule();
-            break;
-        case config.derp.intervalChannelID:
-            isActiveDerpDaily();
-            break;
-        case config.derp.intervalWaitChannelID:
-            isActiveDerpRule();
-            break;
-        default:
-            break;
+    if (msg.channelId === config.askLateNight.channelID) {
+        isActiveLateNight();
+    }
+    if (msg.channelId === config.memes.channelID) {
+        isActiveMemes();
+    }
+    if (msg.channelId === config.rule.intervalChannelID) {
+        isActiveRule();
+    }
+    if (msg.channelId === config.derp.intervalChannelID) {
+        isActiveDerpDaily();
+    }
+    if (msg.channelId === config.derp.intervalWaitChannelID) {
+        isActiveDerpRule();
     }
 
     //--------------------------------------------------------------------------------
