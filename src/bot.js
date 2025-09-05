@@ -111,7 +111,7 @@ client.on('messageCreate', async msg => {
     //--------------------------------------------------------------------------------
     // mark channels as active
 
-    switch (msg.channelID) {
+    switch (msg.channelId) {
         case config.askLateNight.channelID:
             isActiveLateNight();
             break;
